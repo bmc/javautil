@@ -243,7 +243,7 @@ public class BuildInfo
         {
         }
 
-        props.setProperty (BUILT_BY_KEY, user + "@" + host);
+        props.setProperty (BUILT_BY_KEY, user + " on " + host);
 
         // Save it.
 

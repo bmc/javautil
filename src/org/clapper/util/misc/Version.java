@@ -33,8 +33,9 @@ import java.util.MissingResourceException;
 
 /**
  * <p>Contains the software version for the <i>org.clapper.util</i>
- * library. Also contains a main program which, invoked, displays the
- * name of the API and the version on standard output.</p>
+ * library. Also contains a main program which, invoked, displays the name
+ * of the API, the version, and detailed build information on standard
+ * output.</p>
  *
  * @version <tt>$Revision$</tt>
  *
