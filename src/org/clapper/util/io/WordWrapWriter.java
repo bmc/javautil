@@ -26,13 +26,16 @@
 
 package org.clapper.util.io;
 
-import java.io.*;
-import java.util.*;
-import java.text.*;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
+
+import java.util.StringTokenizer;
 
 /**
  * <p>The <tt>WordWrapWriter</tt> class is a filter class. A
- * <WordWrapWriter</tt> object wraps a <tt>Writer</tt> or
+ * WordWrapWriter</tt> object wraps a <tt>Writer</tt> or
  * <tt>OutputStream</tt> object, filtering output to the wrapped object so
  * that output lines are broken on word boundaries and fit nicely within
  * the proscribed output width. Messages may be written with prefixes or
@@ -126,10 +129,10 @@ public class WordWrapWriter extends PrintWriter
     /**
      * The default line length.
      */
-    public static final int DEFAULT_LINE_LENGTH = 79;
+    public static final int DEFAULT_LINE_LENGTH = 80;
 
     /*----------------------------------------------------------------------*\
-                             Private Constants
+                         Package-visible Constants
     \*----------------------------------------------------------------------*/
 
     /**
@@ -138,7 +141,7 @@ public class WordWrapWriter extends PrintWriter
      * doesn't really matter what we use, as long as it doesn't match
      * something else we *do* care about.
      */
-    private static final char NEWLINE_MARKER = '\n';
+    static final char NEWLINE_MARKER = '\n';
 
     /*----------------------------------------------------------------------*\
                             Private Data Items
@@ -190,14 +193,37 @@ public class WordWrapWriter extends PrintWriter
     /**
      * Build an <code>WordWrapWriter</code> object that will write its
      * output to the specified <code>Writer</code> object, using the
-     * default line length of 79.
+     * default line length of 80.
      *
      * @param output      Where the output goes.
      *
      * @see #DEFAULT_LINE_LENGTH
+     * @see #WordWrapWriter(Writer,int)
+     * @see #WordWrapWriter(Writer,int,int)
+     * @see #WordWrapWriter(PrintWriter)
+     * @see #WordWrapWriter(OutputStream)
      * @see java.io.Writer
      */
     public WordWrapWriter (Writer output)
+    {
+        this (new PrintWriter (output));
+    }
+
+    /**
+     * Build an <code>WordWrapWriter</code> object that will write its
+     * output to the specified <code>PrintWriter</code> object, using the
+     * default line length of 80.
+     *
+     * @param output      Where the output goes.
+     *
+     * @see #DEFAULT_LINE_LENGTH
+     * @see #WordWrapWriter(Writer)
+     * @see #WordWrapWriter(PrintWriter,int)
+     * @see #WordWrapWriter(PrintWriter,int,int)
+     * @see #WordWrapWriter(OutputStream)
+     * @see java.io.Writer
+     */
+    public WordWrapWriter (PrintWriter output)
     {
         this (output, DEFAULT_LINE_LENGTH);
     }
@@ -205,11 +231,15 @@ public class WordWrapWriter extends PrintWriter
     /**
      * Build an <code>WordWrapWriter</code> object that will write its
      * output to the specified <code>OutputStream</code> object, using the
-     * default line length of 79.
+     * default line length of 80.
      *
      * @param output      Where the output goes.
      *
      * @see #DEFAULT_LINE_LENGTH
+     * @see #WordWrapWriter(OutputStream,int)
+     * @see #WordWrapWriter(OutputStream,int,int)
+     * @see #WordWrapWriter(Writer)
+     * @see #WordWrapWriter(PrintWriter)
      * @see java.io.OutputStream
      */
     public WordWrapWriter (OutputStream output)
@@ -226,9 +256,33 @@ public class WordWrapWriter extends PrintWriter
      * @param lineLength  The desired line length.
      *
      * @see #DEFAULT_LINE_LENGTH
+     * @see #WordWrapWriter(Writer)
+     * @see #WordWrapWriter(Writer,int,int)
+     * @see #WordWrapWriter(PrintWriter,int)
+     * @see #WordWrapWriter(OutputStream,int)
      * @see java.io.Writer
      */
     public WordWrapWriter (Writer output, int lineLength)
+    {
+        this (new PrintWriter (output), lineLength);
+    } 
+
+    /**
+     * Build an <code>WordWrapWriter</code> object that will write its
+     * output to the specified <code>PrintWriter</code> object, using the
+     * specified line length.
+     *
+     * @param output      Where the output goes.
+     * @param lineLength  The desired line length.
+     *
+     * @see #DEFAULT_LINE_LENGTH
+     * @see #WordWrapWriter(PrintWriter)
+     * @see #WordWrapWriter(PrintWriter,int,int)
+     * @see #WordWrapWriter(Writer,int)
+     * @see #WordWrapWriter(OutputStream,int)
+     * @see java.io.Writer
+     */
+    public WordWrapWriter (PrintWriter output, int lineLength)
     {
         this (output, lineLength, 0);
     } 
@@ -242,6 +296,10 @@ public class WordWrapWriter extends PrintWriter
      * @param lineLength  The desired line length.
      *
      * @see #DEFAULT_LINE_LENGTH
+     * @see #WordWrapWriter(OutputStream)
+     * @see #WordWrapWriter(OutputStream,int,int)
+     * @see #WordWrapWriter(Writer,int)
+     * @see #WordWrapWriter(PrintWriter,int)
      * @see java.io.Writer
      */
     public WordWrapWriter (OutputStream output, int lineLength)
@@ -260,13 +318,42 @@ public class WordWrapWriter extends PrintWriter
      * @param indentSpaces How many blanks to indent lines that are wrapped.
      *
      * @see #DEFAULT_LINE_LENGTH
+     * @see #WordWrapWriter(Writer)
+     * @see #WordWrapWriter(Writer,int)
+     * @see #WordWrapWriter(PrintWriter,int,int)
+     * @see #WordWrapWriter(OutputStream,int,int)
      * @see #setIndentationChar
      * @see java.io.Writer
      */
     public WordWrapWriter (Writer output, int lineLength, int indentSpaces)
     {
+        this (new PrintWriter (output), lineLength, indentSpaces);
+    } 
+
+    /**
+     * Build an <code>WordWrapWriter</code> object that will write its
+     * output to the specified <code>PrintWriter</code> object, using the
+     * specified line length. In addition, wrapped lines will be indented
+     * by the indicated number of spaces.
+     *
+     * @param output       Where the output goes.
+     * @param lineLength   The desired line length.
+     * @param indentSpaces How many blanks to indent lines that are wrapped.
+     *
+     * @see #DEFAULT_LINE_LENGTH
+     * @see #WordWrapWriter(PrintWriter)
+     * @see #WordWrapWriter(PrintWriter,int)
+     * @see #WordWrapWriter(Writer,int,int)
+     * @see #WordWrapWriter(OutputStream,int,int)
+     * @see #setIndentationChar
+     * @see java.io.Writer
+     */
+    public WordWrapWriter (PrintWriter output,
+                           int         lineLength,
+                           int         indentSpaces)
+    {
         super (output);
-        writer = new PrintWriter (output);
+        writer = output;
         setLineLength (lineLength);
         setIndentation (indentSpaces);
     } 
@@ -282,6 +369,10 @@ public class WordWrapWriter extends PrintWriter
      * @param indentSpaces How many blanks to indent lines that are wrapped.
      *
      * @see #DEFAULT_LINE_LENGTH
+     * @see #WordWrapWriter(OutputStream)
+     * @see #WordWrapWriter(OutputStream,int)
+     * @see #WordWrapWriter(Writer,int,int)
+     * @see #WordWrapWriter(PrintWriter,int,int)
      * @see #setIndentationChar
      * @see java.io.Writer
      */
@@ -856,13 +947,25 @@ public class WordWrapWriter extends PrintWriter
      */
     private int indent()
     {
-        int result = indentation;
+        int result = 0;
         int i;
 
         if (prefix != null)
         {
-            writer.write (prefix);
-            result += prefix.length();
+            int len = prefix.length();
+
+            if (! emittedPrefix)
+            {
+                writer.write (prefix);
+                emittedPrefix = true;
+            }
+            else
+            {
+                for (i = 0; i < len; i++)
+                    writer.write (indentChar);
+            }
+
+            result += len;
         }
 
         for (i = 0; i < indentation; i++)
