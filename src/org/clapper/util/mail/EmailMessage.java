@@ -26,7 +26,8 @@
 
 package org.clapper.util.mail;
 
-import java.net.InetAddress;
+import org.clapper.util.io.FileUtil;
+import org.clapper.util.misc.MIMETypeUtil;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -40,14 +41,17 @@ import java.io.StringWriter;
 import java.io.Reader;
 import java.io.InputStreamReader;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Collection;
-import java.util.Iterator;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import java.text.SimpleDateFormat;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.activation.DataHandler;
 import javax.activation.FileTypeMap;
@@ -210,6 +214,17 @@ public class EmailMessage implements Serializable
     {
         "X-Mailer: " + EmailMessage.class.getName()
     };
+
+    /**
+     * Use to generate base file names
+     */
+    private static final SimpleDateFormat GENERATED_FILE_NAME_FMT =
+        new SimpleDateFormat ("yyyyMMddHHmmss");
+
+    /**
+     * Default text file extension
+     */
+    private static final String DEFAULT_TEXT_FILE_EXTENSION = ".txt";
 
     /*----------------------------------------------------------------------*\
                             Private Data Items
@@ -888,10 +903,13 @@ public class EmailMessage implements Serializable
      *
      * @see #setText(String)
      * @see #setText(String,String)
-     * @see #setText(String[],String)
-     * @see #setText(InputStream)
+     * @see #setText(String,String,String)
+     * @see #setText(String[],String,String)
      * @see #setText(InputStream,String)
+     * @see #setText(InputStream,String,String)
      * @see #setText(Iterator)
+     * @see #setText(Iterator,String)
+     * @see #setText(Iterator,String,String)
      * @see #setText(File)
      */
     public String getText()
@@ -936,19 +954,21 @@ public class EmailMessage implements Serializable
      * The corresponding MIME type is assumed to be "text/plain". If this
      * message already has a text part, it will be replaced.
      *
-     * @param text   The string to use as the text of the message. It may
-     *               contain multiple lines.
+     * @param text     The string to use as the text of the message. It may
+     *                 contain multiple lines.
      *
      * @throws EmailException  error setting text part of message
      *
      * @see #getText()
      * @see #setText(String,String)
-     * @see #setText(String[])
+     * @see #setText(String,String,String)
      * @see #setText(String[],String)
-     * @see #setText(InputStream)
+     * @see #setText(String[],String,String)
      * @see #setText(InputStream,String)
+     * @see #setText(InputStream,String,String)
      * @see #setText(Iterator)
      * @see #setText(Iterator,String)
+     * @see #setText(Iterator,String,String)
      * @see #setText(File)
      * @see #setText(File,String)
      * @see #clearText()
@@ -958,7 +978,47 @@ public class EmailMessage implements Serializable
     {
         try
         {
-            this.textPart = makeTextBodyPart (text);
+            this.textPart = makeTextBodyPart (text, null);
+        }
+
+        catch (MessagingException ex)
+        {
+            throw new EmailException ("Cannot set text part of email message",
+                                      ex);
+        }
+    }
+
+    /**
+     * Set the text part of the message from a <tt>String</tt> object.
+     * The corresponding MIME type is assumed to be "text/plain". If this
+     * message already has a text part, it will be replaced.
+     *
+     * @param text     The string to use as the text of the message. It may
+     *                 contain multiple lines.
+     * @param fileName File name to associate with attachment, or null for
+     *                 generated one
+     *
+     * @throws EmailException  error setting text part of message
+     *
+     * @see #getText()
+     * @see #setText(String,String,String)
+     * @see #setText(String[],String)
+     * @see #setText(String[],String,String)
+     * @see #setText(InputStream,String)
+     * @see #setText(InputStream,String,String)
+     * @see #setText(Iterator)
+     * @see #setText(Iterator,String)
+     * @see #setText(Iterator,String,String)
+     * @see #setText(File)
+     * @see #setText(File,String)
+     * @see #clearText()
+     */
+    public void setText (String text, String fileName)
+        throws EmailException
+    {
+        try
+        {
+            this.textPart = makeTextBodyPart (text, fileName);
         }
 
         catch (MessagingException ex)
@@ -974,28 +1034,31 @@ public class EmailMessage implements Serializable
      *
      * @param text     The string to use as the text of the message. It may
      *                 contain multiple lines.
+     * @param fileName File name to associate with attachment, or null for
+     *                 generated one
      * @param mimeType The MIME type for the text
      *
      * @throws EmailException  error setting text part of message
      *
      * @see #getText()
-     * @see #setText(String)
-     * @see #setText(String[])
+     * @see #setText(String,String)
      * @see #setText(String[],String)
-     * @see #setText(InputStream)
+     * @see #setText(String[],String,String)
      * @see #setText(InputStream,String)
+     * @see #setText(InputStream,String,String)
      * @see #setText(Iterator)
      * @see #setText(Iterator,String)
+     * @see #setText(Iterator,String,String)
      * @see #setText(File)
      * @see #setText(File,String)
      * @see #clearText()
      */
-    public void setText (String text, String mimeType)
+    public void setText (String text, String fileName, String mimeType)
         throws EmailException
     {
         try
         {
-            this.textPart = makeTextBodyPart (text, mimeType);
+            this.textPart = makeTextBodyPart (text, fileName, mimeType);
         }
 
         catch (MessagingException ex)
@@ -1012,35 +1075,28 @@ public class EmailMessage implements Serializable
      * "text/plain". If this message already has a text part, it will be
      * replaced.
      *
-     * @param text The strings to use as the text of the message.
+     * @param text     The strings to use as the text of the message.
+     * @param fileName The file name for the attachment
      *
      * @throws EmailException  error setting text part of message
      *
      * @see #getText()
-     * @see #setText(String)
      * @see #setText(String,String)
-     * @see #setText(String[],String)
-     * @see #setText(InputStream)
+     * @see #setText(String,String,String)
+     * @see #setText(String[],String,String)
      * @see #setText(InputStream,String)
+     * @see #setText(InputStream,String,String)
      * @see #setText(Iterator)
      * @see #setText(Iterator,String)
+     * @see #setText(Iterator,String,String)
      * @see #setText(File)
      * @see #setText(File,String)
      * @see #clearText()
      */
-    public void setText (String[] text)
+    public void setText (String[] text, String fileName)
         throws EmailException
     {
-        try
-        {
-            this.textPart = makeTextBodyPart (text);
-        }
-
-        catch (MessagingException ex)
-        {
-            throw new EmailException ("Cannot set text part of email message",
-                                      ex);
-        }
+        setText (text, fileName, "text/plain");
     }
 
     /**
@@ -1050,28 +1106,31 @@ public class EmailMessage implements Serializable
      * replaced.
      *
      * @param text     The strings to use as the text of the message.
+     * @param fileName File name to associate with attachment, or null for
+     *                 generated one
      * @param mimeType The MIME type for the text
      *
      * @throws EmailException  error setting text part of message
      *
      * @see #getText()
-     * @see #setText(String)
      * @see #setText(String,String)
-     * @see #setText(String[],String)
-     * @see #setText(InputStream)
+     * @see #setText(String,String,String)
+     * @see #setText(String[],String,String)
      * @see #setText(InputStream,String)
+     * @see #setText(InputStream,String,String)
      * @see #setText(Iterator)
      * @see #setText(Iterator,String)
+     * @see #setText(Iterator,String,String)
      * @see #setText(File)
      * @see #setText(File,String)
      * @see #clearText()
      */
-    public void setText (String[] text, String mimeType)
+    public void setText (String[] text, String fileName, String mimeType)
         throws EmailException
     {
         try
         {
-            this.textPart = makeTextBodyPart (text, mimeType);
+            this.textPart = makeTextBodyPart (text, fileName, mimeType);
         }
 
         catch (MessagingException ex)
@@ -1086,19 +1145,20 @@ public class EmailMessage implements Serializable
      * object. The corresponding MIME type is assumed to be "text/plain".
      * If this message already has a text part, it will be replaced.
      *
-     * @param is  The <tt>InputStream</tt> whose contents are to be read
-     *            and fed into the text part of this message
+     * @param is       The <tt>InputStream</tt> whose contents are to be read
+     *                 and fed into the text part of this message
      *
      * @throws EmailException  error setting text part of message
      *
      * @see #getText()
-     * @see #setText(String)
      * @see #setText(String,String)
-     * @see #setText(String[],String)
-     * @see #setText(InputStream)
+     * @see #setText(String,String,String)
+     * @see #setText(String[],String,String)
      * @see #setText(InputStream,String)
+     * @see #setText(InputStream,String,String)
      * @see #setText(Iterator)
      * @see #setText(Iterator,String)
+     * @see #setText(Iterator,String,String)
      * @see #setText(File,String)
      * @see #setText(File)
      * @see #clearText()
@@ -1106,7 +1166,38 @@ public class EmailMessage implements Serializable
     public void setText (InputStream is)
         throws EmailException
     {
-        setText (is, "text/plain");
+        setText (is, (String) null);
+    }
+
+    /**
+     * Set the text part of the message from an <tt>InputStream</tt>
+     * object. The corresponding MIME type is assumed to be "text/plain".
+     * If this message already has a text part, it will be replaced.
+     *
+     * @param is       The <tt>InputStream</tt> whose contents are to be read
+     *                 and fed into the text part of this message
+     * @param fileName File name to associate with attachment, or null for
+     *                 generated one
+     *
+     * @throws EmailException  error setting text part of message
+     *
+     * @see #getText()
+     * @see #setText(String,String)
+     * @see #setText(String,String,String)
+     * @see #setText(String[],String,String)
+     * @see #setText(InputStream,String)
+     * @see #setText(InputStream,String,String)
+     * @see #setText(Iterator)
+     * @see #setText(Iterator,String)
+     * @see #setText(Iterator,String,String)
+     * @see #setText(File,String)
+     * @see #setText(File)
+     * @see #clearText()
+     */
+    public void setText (InputStream is, String fileName)
+        throws EmailException
+    {
+        setText (is, fileName, "text/plain");
     }
 
     /**
@@ -1116,28 +1207,31 @@ public class EmailMessage implements Serializable
      *
      * @param is       The <tt>InputStream</tt> whose contents are to be read
      *                 and fed into the text part of this message
+     * @param fileName File name to associate with attachment, or null for
+     *                 generated one
      * @param mimeType The MIME type for the text
      *
      * @throws EmailException  error setting text part of message
      *
      * @see #getText()
-     * @see #setText(String)
      * @see #setText(String,String)
-     * @see #setText(String[],String)
-     * @see #setText(InputStream)
+     * @see #setText(String,String,String)
+     * @see #setText(String[],String,String)
      * @see #setText(InputStream,String)
+     * @see #setText(InputStream,String,String)
      * @see #setText(Iterator)
      * @see #setText(Iterator,String)
+     * @see #setText(Iterator,String,String)
      * @see #setText(File)
      * @see #setText(File,String)
      * @see #clearText()
      */
-    public void setText (InputStream is, String mimeType)
+    public void setText (InputStream is, String fileName, String mimeType)
         throws EmailException
     {
         try
         {
-            this.textPart = makeBodyPart (is, mimeType);
+            this.textPart = makeBodyPart (is, fileName, mimeType);
         }
 
         catch (MessagingException ex)
@@ -1166,12 +1260,13 @@ public class EmailMessage implements Serializable
      * @throws EmailException  error setting text part of message
      *
      * @see #getText()
-     * @see #setText(String)
      * @see #setText(String,String)
-     * @see #setText(String[],String)
-     * @see #setText(InputStream)
+     * @see #setText(String,String,String)
+     * @see #setText(String[],String,String)
      * @see #setText(InputStream,String)
+     * @see #setText(InputStream,String,String)
      * @see #setText(Iterator,String)
+     * @see #setText(Iterator,String,String)
      * @see #setText(File)
      * @see #setText(File,String)
      * @see #clearText()
@@ -1179,16 +1274,38 @@ public class EmailMessage implements Serializable
     public void setText (Iterator iterator)
         throws EmailException
     {
-        try
-        {
-            this.textPart = makeTextBodyPart (iterator);
-        }
+        setText (iterator, null, null);
+    }
 
-        catch (MessagingException ex)
-        {
-            throw new EmailException ("Cannot set text part of email message",
-                                      ex);
-        }
+    /**
+     * Set the text part of the message from <tt>Iterator</tt> of
+     * <tt>String</tt> objects. Each element returned by the iterator is
+     * assumed to represent a single line of text. The corresponding MIME
+     * type is assumed to be "text/plain". If this message already has a
+     * text part, it will be replaced.
+     *
+     * @param iterator The <tt>Iterator</tt> that will return the
+     *                 <tt>String</tt> objects that represent the text lines
+     * @param mimeType The MIME type for the text
+     *
+     * @throws EmailException  error setting text part of message
+     *
+     * @see #getText()
+     * @see #setText(String,String)
+     * @see #setText(String,String,String)
+     * @see #setText(String[],String,String)
+     * @see #setText(InputStream,String)
+     * @see #setText(InputStream,String,String)
+     * @see #setText(Iterator)
+     * @see #setText(Iterator,String,String)
+     * @see #setText(File)
+     * @see #setText(File,String)
+     * @see #clearText()
+     */
+    public void setText (Iterator iterator, String mimeType)
+        throws EmailException
+    {
+        setText (iterator, null, mimeType);
     }
 
     /**
@@ -1199,27 +1316,30 @@ public class EmailMessage implements Serializable
      *
      * @param iterator The <tt>Iterator</tt> that will return the
      *                 <tt>String</tt> objects that represent the text lines
+     * @param fileName File name to associate with attachment, or null for
+     *                 generated one
      * @param mimeType The MIME type for the text
      *
      * @throws EmailException  error setting text part of message
      *
      * @see #getText()
-     * @see #setText(String)
      * @see #setText(String,String)
-     * @see #setText(String[],String)
-     * @see #setText(InputStream)
+     * @see #setText(String,String,String)
+     * @see #setText(String[],String,String)
      * @see #setText(InputStream,String)
+     * @see #setText(InputStream,String,String)
      * @see #setText(Iterator)
+     * @see #setText(Iterator,String)
      * @see #setText(File)
      * @see #setText(File,String)
      * @see #clearText()
      */
-    public void setText (Iterator iterator, String mimeType)
+    public void setText (Iterator iterator, String fileName, String mimeType)
         throws EmailException
     {
         try
         {
-            this.textPart = makeTextBodyPart (iterator, mimeType);
+            this.textPart = makeTextBodyPart (iterator, fileName, mimeType);
         }
 
         catch (MessagingException ex)
@@ -1240,12 +1360,14 @@ public class EmailMessage implements Serializable
      *
      * @see #getText()
      * @see #setText(File,String)
-     * @see #setText(String)
      * @see #setText(String,String)
-     * @see #setText(String[],String)
-     * @see #setText(InputStream)
+     * @see #setText(String,String,String)
+     * @see #setText(String[],String,String)
      * @see #setText(InputStream,String)
+     * @see #setText(InputStream,String,String)
      * @see #setText(Iterator)
+     * @see #setText(Iterator,String)
+     * @see #setText(Iterator,String,String)
      * @see #clearText()
      */
     public void setText (File file)
@@ -1266,12 +1388,14 @@ public class EmailMessage implements Serializable
      *
      * @see #getText()
      * @see #setText(File)
-     * @see #setText(String)
      * @see #setText(String,String)
-     * @see #setText(String[],String)
-     * @see #setText(InputStream)
+     * @see #setText(String,String,String)
+     * @see #setText(String[],String,String)
      * @see #setText(InputStream,String)
+     * @see #setText(InputStream,String,String)
      * @see #setText(Iterator)
+     * @see #setText(Iterator,String)
+     * @see #setText(Iterator,String,String)
      * @see #clearText()
      */
     public void setText (File file, String mimeType)
@@ -1279,7 +1403,9 @@ public class EmailMessage implements Serializable
     {
         try
         {
-            MimeBodyPart    bodyPart   = makeBodyPart (file, mimeType);
+            MimeBodyPart    bodyPart   = makeBodyPart (file,
+                                                       file.getName(),
+                                                       mimeType);
             int             slash;
             String          mainType;
 
@@ -1319,10 +1445,15 @@ public class EmailMessage implements Serializable
      * @see #getText()
      * @see #setText(String)
      * @see #setText(String,String)
+     * @see #setText(String,String,String)
      * @see #setText(String[],String)
+     * @see #setText(String[],String,String)
      * @see #setText(InputStream)
      * @see #setText(InputStream,String)
+     * @see #setText(InputStream,String,String)
      * @see #setText(Iterator)
+     * @see #setText(Iterator,String)
+     * @see #setText(Iterator,String,String)
      * @see #setText(File)
      * @see #clearAllAttachments()
      */
@@ -1347,14 +1478,14 @@ public class EmailMessage implements Serializable
      *
      * @see #getAttachmentContentType(int)
      * @see #totalAttachments()
-     * @see #addAttachment(String)
      * @see #addAttachment(String,String)
-     * @see #addAttachment(String[])
+     * @see #addAttachment(String,String,String)
      * @see #addAttachment(String[],String)
-     * @see #addAttachment(InputStream)
+     * @see #addAttachment(String[],String,String)
      * @see #addAttachment(InputStream,String)
-     * @see #addAttachment(Iterator)
+     * @see #addAttachment(InputStream,String,String)
      * @see #addAttachment(Iterator,String)
+     * @see #addAttachment(Iterator,String,String)
      * @see #addAttachment(File)
      * @see #addAttachment(File,String)
      */
@@ -1400,14 +1531,14 @@ public class EmailMessage implements Serializable
      *
      * @see #getAttachment(int)
      * @see #totalAttachments()
-     * @see #addAttachment(String)
      * @see #addAttachment(String,String)
-     * @see #addAttachment(String[])
+     * @see #addAttachment(String,String,String)
      * @see #addAttachment(String[],String)
-     * @see #addAttachment(InputStream)
+     * @see #addAttachment(String[],String,String)
      * @see #addAttachment(InputStream,String)
-     * @see #addAttachment(Iterator)
+     * @see #addAttachment(InputStream,String,String)
      * @see #addAttachment(Iterator,String)
+     * @see #addAttachment(Iterator,String,String)
      * @see #addAttachment(File)
      * @see #addAttachment(File,String)
      */
@@ -1439,14 +1570,14 @@ public class EmailMessage implements Serializable
      *
      * @see #getAttachment(int)
      * @see #getAttachmentContentType(int)
-     * @see #addAttachment(String)
      * @see #addAttachment(String,String)
-     * @see #addAttachment(String[])
+     * @see #addAttachment(String,String,String)
      * @see #addAttachment(String[],String)
-     * @see #addAttachment(InputStream)
+     * @see #addAttachment(String[],String,String)
      * @see #addAttachment(InputStream,String)
-     * @see #addAttachment(Iterator)
+     * @see #addAttachment(InputStream,String,String)
      * @see #addAttachment(Iterator,String)
+     * @see #addAttachment(Iterator,String,String)
      * @see #addAttachment(File)
      * @see #addAttachment(File,String)
      */
@@ -1466,12 +1597,12 @@ public class EmailMessage implements Serializable
      * @throws EmailException  error creating the attachment
      *
      * @see #addAttachment(String,String)
-     * @see #addAttachment(String[])
      * @see #addAttachment(String[],String)
-     * @see #addAttachment(InputStream)
+     * @see #addAttachment(String[],String,String)
      * @see #addAttachment(InputStream,String)
-     * @see #addAttachment(Iterator)
+     * @see #addAttachment(InputStream,String,String)
      * @see #addAttachment(Iterator,String)
+     * @see #addAttachment(Iterator,String,String)
      * @see #addAttachment(File)
      * @see #addAttachment(File,String)
      * @see #getAttachment(int)
@@ -1481,16 +1612,37 @@ public class EmailMessage implements Serializable
     public void addAttachment (String contents)
         throws EmailException
     {
-        try
-        {
-            attachments.add (makeTextBodyPart (contents));
-        }
+        addAttachment (contents, null);
+    }
 
-        catch (MessagingException ex)
-        {
-            throw new EmailException ("Cannot add attachment to email message",
-                                      ex);
-        }
+    /**
+     * Add a text attachment to this message. The attachment's MIME type is
+     * assumed to be "text/plain". The attachment is added onto the end of
+     * the attachments in the message.
+     *
+     * @param contents The string to use as the attachment's contents. It may
+     *                 contain multiple lines.
+     * @param fileName The file name for the attachment
+     *
+     * @throws EmailException  error creating the attachment
+     *
+     * @see #addAttachment(String,String)
+     * @see #addAttachment(String[],String)
+     * @see #addAttachment(String[],String,String)
+     * @see #addAttachment(InputStream,String)
+     * @see #addAttachment(InputStream,String,String)
+     * @see #addAttachment(Iterator,String)
+     * @see #addAttachment(Iterator,String,String)
+     * @see #addAttachment(File)
+     * @see #addAttachment(File,String)
+     * @see #getAttachment(int)
+     * @see #getAttachmentContentType(int)
+     * @see #totalAttachments()
+     */
+    public void addAttachment (String contents, String fileName)
+        throws EmailException
+    {
+        addAttachment (contents, fileName, null);
     }
 
     /**
@@ -1499,29 +1651,32 @@ public class EmailMessage implements Serializable
      *
      * @param contents The string to use as the attachment's contents. It may
      *                 contain multiple lines.
+     * @param fileName The file name for the attachment
      * @param mimeType The MIME type for the attachment
      *
      * @throws EmailException  error adding the attachment
      *
-     * @see #addAttachment(String)
-     * @see #addAttachment(String[])
+     * @see #addAttachment(String,String)
      * @see #addAttachment(String[],String)
-     * @see #addAttachment(InputStream)
+     * @see #addAttachment(String[],String,String)
      * @see #addAttachment(InputStream,String)
-     * @see #addAttachment(Iterator)
+     * @see #addAttachment(InputStream,String,String)
      * @see #addAttachment(Iterator,String)
+     * @see #addAttachment(Iterator,String,String)
      * @see #addAttachment(File)
      * @see #addAttachment(File,String)
      * @see #getAttachment(int)
      * @see #getAttachmentContentType(int)
      * @see #totalAttachments()
      */
-    public void addAttachment (String contents, String mimeType)
+    public void addAttachment (String contents,
+                               String fileName,
+                               String mimeType)
         throws EmailException
     {
         try
         {
-            attachments.add (makeTextBodyPart (contents, mimeType));
+            attachments.add (makeTextBodyPart (contents, fileName, mimeType));
         }
 
         catch (MessagingException ex)
@@ -1541,13 +1696,13 @@ public class EmailMessage implements Serializable
      *
      * @throws EmailException  error adding the attachment
      *
-     * @see #addAttachment(String)
      * @see #addAttachment(String,String)
-     * @see #addAttachment(String[],String)
-     * @see #addAttachment(InputStream)
+     * @see #addAttachment(String,String,String)
+     * @see #addAttachment(String[],String,String)
      * @see #addAttachment(InputStream,String)
-     * @see #addAttachment(Iterator)
+     * @see #addAttachment(InputStream,String,String)
      * @see #addAttachment(Iterator,String)
+     * @see #addAttachment(Iterator,String,String)
      * @see #addAttachment(File)
      * @see #addAttachment(File,String)
      * @see #getAttachment(int)
@@ -1557,16 +1712,37 @@ public class EmailMessage implements Serializable
     public void addAttachment (String[] contents)
         throws EmailException
     {
-        try
-        {
-            attachments.add (makeTextBodyPart (contents));
-        }
+        addAttachment (contents, null);
+    }
 
-        catch (MessagingException ex)
-        {
-            throw new EmailException ("Cannot add attachment to email message",
-                                      ex);
-        }
+    /**
+     * Add a text attachment to this message from an array of
+     * <tt>String</tt> objects. Each element in the array is assumed to
+     * represent a single line of text. The corresponding MIME type is
+     * assumed to be "text/plain".
+     *
+     * @param contents The strings to use as the attachment's contents
+     * @param fileName The file name for the attachment
+     *
+     * @throws EmailException  error adding the attachment
+     *
+     * @see #addAttachment(String,String)
+     * @see #addAttachment(String,String,String)
+     * @see #addAttachment(String[],String,String)
+     * @see #addAttachment(InputStream,String)
+     * @see #addAttachment(InputStream,String,String)
+     * @see #addAttachment(Iterator,String)
+     * @see #addAttachment(Iterator,String,String)
+     * @see #addAttachment(File)
+     * @see #addAttachment(File,String)
+     * @see #getAttachment(int)
+     * @see #getAttachmentContentType(int)
+     * @see #totalAttachments()
+     */
+    public void addAttachment (String[] contents, String fileName)
+        throws EmailException
+    {
+        addAttachment (contents, null, null);
     }
 
     /**
@@ -1575,28 +1751,29 @@ public class EmailMessage implements Serializable
      * represent a single line of text.
      *
      * @param text     The strings to use as the text of the message.
+     * @param fileName The file name for the attachment
      * @param mimeType The MIME type for the text
      *
      * @throws EmailException  error adding the attachment
      *
-     * @see #addAttachment(String)
      * @see #addAttachment(String,String)
-     * @see #addAttachment(String[],String)
-     * @see #addAttachment(InputStream)
+     * @see #addAttachment(String,String,String)
+     * @see #addAttachment(String[],String,String)
      * @see #addAttachment(InputStream,String)
-     * @see #addAttachment(Iterator)
+     * @see #addAttachment(InputStream,String,String)
      * @see #addAttachment(Iterator,String)
+     * @see #addAttachment(Iterator,String,String)
      * @see #addAttachment(File)
      * @see #getAttachment(int)
      * @see #getAttachmentContentType(int)
      * @see #totalAttachments()
      */
-    public void addAttachment (String[] text, String mimeType)
+    public void addAttachment (String[] text, String fileName, String mimeType)
         throws EmailException
     {
         try
         {
-            attachments.add (makeTextBodyPart (text, mimeType));
+            attachments.add (makeTextBodyPart (text, fileName, mimeType));
         }
 
         catch (MessagingException ex)
@@ -1611,8 +1788,8 @@ public class EmailMessage implements Serializable
      * object. The corresponding MIME type is assumed to be
      * "application/octet-stream".
      *
-     * @param is  The <tt>InputStream</tt> whose contents are to be read
-     *            to create the attachment
+     * @param is        The <tt>InputStream</tt> whose contents are to be read
+     *                  to create the attachment
      *
      * @throws EmailException  error adding the attachment
      *
@@ -1632,7 +1809,38 @@ public class EmailMessage implements Serializable
     public void addAttachment (InputStream is)
         throws EmailException
     {
-        addAttachment (is, "application/octet-stream");
+        addAttachment (is, null, "application/octet-stream");
+    }
+
+    /**
+     * Add an attachment to this message from an <tt>InputStream</tt>
+     * object. The corresponding MIME type is assumed to be
+     * "application/octet-stream".
+     *
+     * @param is        The <tt>InputStream</tt> whose contents are to be read
+     *                  to create the attachment
+     * @param fileName  the file name to use for the attachment, or null for
+     *                  a generated one
+     *
+     * @throws EmailException  error adding the attachment
+     *
+     * @see #addAttachment(String)
+     * @see #addAttachment(String,String)
+     * @see #addAttachment(String[],String)
+     * @see #addAttachment(InputStream)
+     * @see #addAttachment(InputStream,String)
+     * @see #addAttachment(Iterator)
+     * @see #addAttachment(Iterator,String)
+     * @see #addAttachment(File)
+     * @see #addAttachment(File,String)
+     * @see #getAttachment(int)
+     * @see #getAttachmentContentType(int)
+     * @see #totalAttachments()
+     */
+    public void addAttachment (InputStream is, String fileName)
+        throws EmailException
+    {
+        addAttachment (is, fileName, "application/octet-stream");
     }
 
     /**
@@ -1641,6 +1849,7 @@ public class EmailMessage implements Serializable
      *
      * @param is       The <tt>InputStream</tt> whose contents are to be read
      *                 to create the attachment
+     * @param fileName The file name for the attachment
      * @param mimeType The MIME type
      *
      * @throws EmailException  error adding the attachment
@@ -1658,12 +1867,14 @@ public class EmailMessage implements Serializable
      * @see #getAttachmentContentType(int)
      * @see #totalAttachments()
      */
-    public void addAttachment (InputStream is, String mimeType)
+    public void addAttachment (InputStream is,
+                               String      fileName,
+                               String      mimeType)
         throws EmailException
     {
         try
         {
-            attachments.add (makeBodyPart (is, mimeType));
+            attachments.add (makeBodyPart (is, fileName, mimeType));
         }
 
         catch (MessagingException ex)
@@ -1705,16 +1916,37 @@ public class EmailMessage implements Serializable
     public void addAttachment (Iterator iterator)
         throws EmailException
     {
-        try
-        {
-            attachments.add (makeTextBodyPart (iterator));
-        }
+        addAttachment (iterator, null, null);
+    }
 
-        catch (MessagingException ex)
-        {
-            throw new EmailException ("Cannot add attachment to email message",
-                                      ex);
-        }
+    /**
+     * Add a text attachment to this message from an <tt>Iterator</tt> of
+     * <tt>String</tt> objects. Each element in the array is assumed to
+     * represent a single line of text. The corresponding MIME type is
+     * assumed to be "text/plain".
+     *
+     * @param iterator The <tt>Iterator</tt> that will return the
+     *                 <tt>String</tt> objects that represent the text lines
+     * @param fileName The file name for the attachment
+     *
+     * @throws EmailException  error adding the attachment
+     *
+     * @see #addAttachment(String)
+     * @see #addAttachment(String,String)
+     * @see #addAttachment(String[],String)
+     * @see #addAttachment(InputStream)
+     * @see #addAttachment(InputStream,String)
+     * @see #addAttachment(Iterator,String)
+     * @see #addAttachment(File)
+     * @see #addAttachment(File,String)
+     * @see #getAttachment(int)
+     * @see #getAttachmentContentType(int)
+     * @see #totalAttachments()
+     */
+    public void addAttachment (Iterator iterator, String fileName)
+        throws EmailException
+    {
+        addAttachment (iterator, fileName, null);
     }
 
     /**
@@ -1729,6 +1961,8 @@ public class EmailMessage implements Serializable
      *
      * @param iterator The <tt>Iterator</tt> that will return the
      *                 <tt>String</tt> objects that represent the text lines
+     * @param fileName The file name for the attachment, or null to use
+     *                 a generated one.
      * @param mimeType The MIME type for the text
      *
      * @throws EmailException  error adding the attachment
@@ -1745,12 +1979,14 @@ public class EmailMessage implements Serializable
      * @see #getAttachmentContentType(int)
      * @see #totalAttachments()
      */
-    public void addAttachment (Iterator iterator, String mimeType)
+    public void addAttachment (Iterator iterator,
+                               String   fileName,
+                               String   mimeType)
         throws EmailException
     {
         try
         {
-            attachments.add (makeTextBodyPart (iterator, mimeType));
+            attachments.add (makeTextBodyPart (iterator, fileName, mimeType));
         }
 
         catch (MessagingException ex)
@@ -1810,7 +2046,7 @@ public class EmailMessage implements Serializable
     {
         try
         {
-            attachments.add (makeBodyPart (file, mimeType));
+            attachments.add (makeBodyPart (file, file.getName(), mimeType));
         }
 
         catch (MessagingException ex)
@@ -2188,19 +2424,12 @@ public class EmailMessage implements Serializable
      *
      * @throws EmailException      file doesn't exist
      * @throws MessagingException  Java Mail API error
-     *
-     * @see makeTextBodyPart(String)
-     * @see makeTextBodyPart(String,String)
-     * @see makeTextBodyPart(String[],String)
-     * @see makeBodyPart(InputStream,String)
-     * @see makeTextBodyPart(Iterator)
-     * @see makeTextBodyPart(File)
      */
     private MimeBodyPart makeBodyPart (File file)
         throws MessagingException,
                EmailException
     {
-        return makeBodyPart (file, null);
+        return makeBodyPart (file, file.getName(), null);
     }
 
     /**
@@ -2208,6 +2437,8 @@ public class EmailMessage implements Serializable
      * from the file's extension.
      *
      * @param file      The <tt>File</tt> object from which to get the text
+     * @param fileName  The file name to use with the attachment, or null to
+     *                  use the file's name
      * @param mimeType  The MIME type (or content type) to associate with
      *                  the contents of the file. If this parameter is
      *                  null, the content type will be inferred from the
@@ -2215,15 +2446,10 @@ public class EmailMessage implements Serializable
      *
      * @throws EmailException      file doesn't exist
      * @throws MessagingException  Java Mail API error
-     *
-     * @see makeTextBodyPart(String)
-     * @see makeTextBodyPart(String,String)
-     * @see makeTextBodyPart(String[],String)
-     * @see makeBodyPart(InputStream,String)
-     * @see makeTextBodyPart(Iterator)
-     * @see makeTextBodyPart(File)
      */
-    private MimeBodyPart makeBodyPart (File file, String mimeType)
+    private MimeBodyPart makeBodyPart (File   file,
+                                       String fileName,
+                                       String mimeType)
         throws MessagingException,
                EmailException
     {
@@ -2271,7 +2497,11 @@ public class EmailMessage implements Serializable
         // multipart/alternative message.
 
         if (multipartSubtype != MULTIPART_ALTERNATIVE)
-            bodyPart.setFileName (file.getName());
+        {
+            if (fileName == null)
+                fileName = file.getName();
+            bodyPart.setFileName (fileName);
+        }
 
         return bodyPart;
     }
@@ -2281,6 +2511,8 @@ public class EmailMessage implements Serializable
      *
      * @param is       The <tt>InputStream</tt> whose contents are to be read
      *                 and used to create the body part
+     * @param fileName File name to put in the message, or null to use a
+     *                 generated name
      * @param mimeType The MIME type for the contents
      *
      * @return the MimeBodyPart
@@ -2288,15 +2520,10 @@ public class EmailMessage implements Serializable
      * @throws IOException        Can't create temporary file
      * @throws MessagingException Java Mail API exception
      * @throws EmailException     Some other error
-     *
-     * @see makeTextBodyPart(String)
-     * @see makeTextBodyPart(String,String)
-     * @see makeTextBodyPart(String[],String)
-     * @see makeTextBodyPart(Iterator)
-     * @see makeTextBodyPart(Iterator,String)
-     * @see makeTextBodyPart(File)
      */
-    private MimeBodyPart makeBodyPart (InputStream is, String mimeType)
+    private MimeBodyPart makeBodyPart (InputStream is,
+                                       String      fileName,
+                                       String      mimeType)
         throws EmailException,
                MessagingException,
                IOException
@@ -2313,7 +2540,19 @@ public class EmailMessage implements Serializable
         // in a FileDataSource. The destructor for this class ensures that
         // the temporary files are deleted.
 
-        File tempFile = File.createTempFile ("mail", null);
+        String extension = null;
+
+        if (fileName != null)
+            extension = FileUtil.getFileNameExtension (fileName);
+
+        if (extension == null)
+            extension = MIMETypeUtil.fileExtensionForMIMEType (mimeType);
+
+        if (extension == null)
+            extension = "dat";
+
+        extension = "." + extension;
+        File tempFile = File.createTempFile ("mail", extension);
         tempFile.deleteOnExit();
         temporaryFiles.add (tempFile);
 
@@ -2332,32 +2571,28 @@ public class EmailMessage implements Serializable
         if (mimeType == null)
             mimeType = "application/octet-stream";
 
-        return makeBodyPart (tempFile, mimeType);
+        if (fileName == null)
+            fileName = tempFile.getName();
+
+        return makeBodyPart (tempFile, fileName, mimeType);
     }
 
     /**
      * Make a text body part from a <tt>String</tt> object. The
      * corresponding MIME type is assumed to be "text/plain".
      *
-     * @param text   The string to use as the body part's contents. It may
-     *               contain multiple lines.
+     * @param text     The string to use as the body part's contents. It may
+     *                 contain multiple lines.
+     * @param fileName The file name to use, if applicable
      *
      * @return the MimeBodyPart for the text
      *
      * @throws MessagingException Java Mail API error
-     *
-     * @see makeTextBodyPart(String,String)
-     * @see makeTextBodyPart(String[])
-     * @see makeTextBodyPart(String[],String)
-     * @see makeBodyPart(InputStream,String)
-     * @see makeTextBodyPart(Iterator)
-     * @see makeTextBodyPart(Iterator,String)
-     * @see makeTextBodyPart(File)
      */
-    private MimeBodyPart makeTextBodyPart (String text)
+    private MimeBodyPart makeTextBodyPart (String text, String fileName)
         throws MessagingException
     {
-        return makeTextBodyPart (text, "text/plain");
+        return makeTextBodyPart (text, fileName, "text/plain");
     }
 
     /**
@@ -2365,21 +2600,16 @@ public class EmailMessage implements Serializable
      *
      * @param text     The string to use as the text of the message. It may
      *                 contain multiple lines.
+     * @param fileName The file name to use, if applicable
      * @param mimeType The MIME type for the text
      *
      * @return the MimeBodyPart for the text
      *
      * @throws MessagingException Java Mail API error
-     *
-     * @see makeTextBodyPart(String)
-     * @see makeTextBodyPart(String[])
-     * @see makeTextBodyPart(String[],String)
-     * @see makeBodyPart(InputStream,String)
-     * @see makeTextBodyPart(Iterator)
-     * @see makeTextBodyPart(Iterator,String)
-     * @see makeTextBodyPart(File)
      */
-    private MimeBodyPart makeTextBodyPart (String text, String mimeType)
+    private MimeBodyPart makeTextBodyPart (String text,
+                                           String fileName,
+                                           String mimeType)
         throws MessagingException
     {
         MimeBodyPart      bodyPart   = new MimeBodyPart();
@@ -2389,6 +2619,10 @@ public class EmailMessage implements Serializable
         dataSource = new StringDataSource (text, mimeType, null);
 
         bodyPart.setDataHandler (new DataHandler (dataSource));
+
+        if (fileName != null)
+            bodyPart.setFileName (fileName);
+
         return bodyPart;
     }
 
@@ -2398,20 +2632,13 @@ public class EmailMessage implements Serializable
      * corresponding MIME type is assumed to be "text/plain".
      *
      * @param text The strings to use as the text of the message.
+     * @param fileName The file name, if applicable
      *
      * @return the MimeBodyPart for the text
      *
      * @throws MessagingException Java Mail API error
-     *
-     * @see makeTextBodyPart(String)
-     * @see makeTextBodyPart(String,String)
-     * @see makeTextBodyPart(String[],String)
-     * @see makeBodyPart(InputStream,String)
-     * @see makeTextBodyPart(Iterator)
-     * @see makeTextBodyPart(Iterator,String)
-     * @see makeTextBodyPart(File)
      */
-    private MimeBodyPart makeTextBodyPart (String[] text)
+    private MimeBodyPart makeTextBodyPart (String[] text, String fileName)
         throws MessagingException
     {
         // Quick and dirty approach
@@ -2422,7 +2649,7 @@ public class EmailMessage implements Serializable
         for (int i = 0; i < text.length; i++)
             pw.println (text[i]);
 
-        return makeTextBodyPart (w.toString());
+        return makeTextBodyPart (w.toString(), fileName, "text/plain");
     }
 
     /**
@@ -2430,6 +2657,7 @@ public class EmailMessage implements Serializable
      * objects, each of which is assumed to represent a single line. 
      *
      * @param text     The strings to use as the text of the message.
+     * @param fileName The file name to use, if applicable
      * @param mimeType The MIME type for the text
      *
      * @return the MimeBodyPart for the text
@@ -2444,7 +2672,9 @@ public class EmailMessage implements Serializable
      * @see makeTextBodyPart(Iterator,String)
      * @see makeTextBodyPart(File)
      */
-    private MimeBodyPart makeTextBodyPart (String[] text, String mimeType)
+    private MimeBodyPart makeTextBodyPart (String[] text,
+                                           String   fileName,
+                                           String   mimeType)
         throws MessagingException
     {
         // Quick and dirty approach
@@ -2455,7 +2685,7 @@ public class EmailMessage implements Serializable
         for (int i = 0; i < text.length; i++)
             pw.println (text[i]);
 
-        return makeTextBodyPart (w.toString(), mimeType);
+        return makeTextBodyPart (w.toString(), fileName, mimeType);
     }
 
     /**
@@ -2465,6 +2695,7 @@ public class EmailMessage implements Serializable
      *
      * @param iterator The <tt>Iterator</tt> that will return the
      *                 <tt>String</tt> objects that represent the text lines
+     * @param fileName The file name to use, if applicable
      *
      * @return the MimeBodyPart for the text
      *
@@ -2477,7 +2708,7 @@ public class EmailMessage implements Serializable
      * @see makeTextBodyPart(Iterator,String)
      * @see makeTextBodyPart(File)
      */
-    private MimeBodyPart makeTextBodyPart (Iterator iterator)
+    private MimeBodyPart makeTextBodyPart (Iterator iterator, String fileName)
         throws MessagingException
     {
         // Quick and dirty approach
@@ -2488,7 +2719,7 @@ public class EmailMessage implements Serializable
         while (iterator.hasNext())
             pw.println ((String) iterator.next());
 
-        return makeTextBodyPart (w.toString());
+        return makeTextBodyPart (w.toString(), fileName, "text/plain");
     }
 
     /**
@@ -2497,6 +2728,7 @@ public class EmailMessage implements Serializable
      *
      * @param iterator The <tt>Iterator</tt> that will return the
      *                 <tt>String</tt> objects that represent the text lines
+     * @param fileName The file name to use, if applicable
      * @param mimeType The MIME type for the text
      *
      * @return the MimeBodyPart for the text
@@ -2510,7 +2742,9 @@ public class EmailMessage implements Serializable
      * @see makeTextBodyPart(Iterator)
      * @see makeTextBodyPart(File)
      */
-    private MimeBodyPart makeTextBodyPart (Iterator iterator, String mimeType)
+    private MimeBodyPart makeTextBodyPart (Iterator iterator,
+                                           String   fileName,
+                                           String   mimeType)
         throws MessagingException
     {
         // Quick and dirty approach
@@ -2521,7 +2755,7 @@ public class EmailMessage implements Serializable
         while (iterator.hasNext())
             pw.println ((String) iterator.next());
 
-        return makeTextBodyPart (w.toString(), mimeType);
+        return makeTextBodyPart (w.toString(), fileName, mimeType);
     }
 
     /**
@@ -2539,5 +2773,20 @@ public class EmailMessage implements Serializable
         pw.println (s);
 
         return w.toString();
+    }
+
+    /**
+     * Generate a file name with a specific extension
+     *
+     * @param extension the extension to use, with the "."
+     */
+    private String generateFileName (String extension)
+    {
+        StringBuffer buf = new StringBuffer();
+
+        buf.append (GENERATED_FILE_NAME_FMT.format (new Date()));
+        buf.append (extension);
+
+        return buf.toString();
     }
 }
