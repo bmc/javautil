@@ -19,17 +19,15 @@ import org.apache.commons.logging.LogFactory;
  * {@link #enableAllLoggers enableAllLoggers()} method. The first call to
  * <tt>enableAllLoggers()</tt> traverses the list of instantiated
  * <tt>Logger</tt> objects and creates underlying Jakarta Commons Logging
- * <tt>Log</tt> objects for each <tt>Logger</tt>.</p>
+ * <tt>Log</tt> objects for each <tt>Logger</tt>. Any <tt>Logger</tt> objects
+ * created after <tt>enableAllLoggers()</tt> is called are automatically
+ * enabled.</p>
  *
  * <p>This approach prevents any interaction with the real logging layer,
  * unless logging is explicitly enabled (e.g., becaus a command-line option
  * has been specified). Among other things, this avoids annoying startup
  * messages from Log4J, which insists on writing warning messages to the
  * console when it can't find a configuration file.</p>
- *
- * <p>Note: It's best to allocate <tt>Logger</tt> objects statically, so
- * that they're already guaranteed to be constructed by the time
- * <tt>enableAllLoggers()</tt> is called.</p>
  *
  * @see curn
  * @see org.clapper.curn.parser.RSSChannel
@@ -71,13 +69,19 @@ public class Logger
      *
      * @param className  the class name to associate with the object
      */
-    Logger (String className)
+    public Logger (String className)
     {
         this.className = className;
 
         synchronized (loggers)
         {
             loggers.add (this);
+
+            // Handle the case where the logger is instantiated after all
+            // the loggers are enabled.
+
+            if (enabled)
+                enableLogger (this);
         }
     }
 
@@ -86,7 +90,7 @@ public class Logger
      *
      * @param cls  the class whose name should be associated with the object
      */
-    Logger (Class cls)
+    public Logger (Class cls)
     {
         this (cls.getName());
     }
@@ -106,11 +110,7 @@ public class Logger
             if (! enabled)
             {
                 for (Iterator it = loggers.iterator(); it.hasNext(); )
-                {
-                    Logger logger = (Logger) it.next();
-
-                    logger.log = LogFactory.getLog (logger.className);
-                }
+                    enableLogger ((Logger) it.next());
 
                 enabled = true;
             }
@@ -325,5 +325,14 @@ public class Logger
     public boolean isWarnEnabled()
     {
         return (log == null) ? false : log.isWarnEnabled();
+    }
+
+    /*----------------------------------------------------------------------*\
+                              Private Methods
+    \*----------------------------------------------------------------------*/
+
+    private static void enableLogger (Logger logger)
+    {
+        logger.log = LogFactory.getLog (logger.className);
     }
 }
