@@ -75,6 +75,43 @@ public class TextUtils
     }
 
     /**
+     * Split a string on white space, into one or more strings. This method
+     * is intended to be reminiscent of the corresponding perl or awk
+     * <i>split()</i> function, though without regular expression support.
+     * This method uses a <tt>StringTokenizer</tt> to do the actual work.
+     *
+     * @param s  the string to split
+     *
+     * @return an array of <tt>String</tt> objects
+     *
+     * @see #split(String,String)
+     * @see #split(String,char,Collection)
+     */
+    public static String[] split (String s)
+    {
+        return split (s, (String) null);
+    }
+
+    /**
+     * Split a string on white space, into one or more strings. This method
+     * is intended to be reminiscent of the corresponding perl or awk
+     * <i>split()</i> function, though without regular expression support.
+     * This method uses a <tt>StringTokenizer</tt> to do the actual work.
+     *
+     * @param s          the string to split
+     * @param collection where to store the split strings
+     *
+     * @return the number of strings added to the collection
+     *
+     * @see #split(String,String)
+     * @see #split(String,char,Collection)
+     */
+    public static int split (String s, Collection collection)
+    {
+        return split (s, null, collection);
+    }
+
+    /**
      * Split a string into one or more strings, based on a delimiter. This
      * method is intended to be reminiscent of the corresponding perl or
      * awk <i>split()</i> function, though without regular expression
@@ -102,7 +139,7 @@ public class TextUtils
      * <tt>StringTokenizer</tt> to do the actual work.
      *
      * @param s         the string to split
-     * @param delimSet  set of delimiters
+     * @param delimSet  set of delimiters, or null to use white space
      *
      * @return an array of <tt>String</tt> objects
      *
@@ -112,7 +149,12 @@ public class TextUtils
     public static String[] split (String s, String delimSet)
     {
         String[]        result = null;
-        StringTokenizer tok    = new StringTokenizer (delimSet);
+        StringTokenizer tok;
+
+        if (delimSet != null)
+            tok = new StringTokenizer (s, delimSet);
+        else
+            tok = new StringTokenizer (s);
 
         result = new String[tok.countTokens()];
 
