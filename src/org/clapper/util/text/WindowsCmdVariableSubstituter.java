@@ -43,9 +43,9 @@ import java.io.*;
  * </pre>
  * </blockquote>
  *
- * <p>a <code>WindowsStyleVarSubstituter</code> will attempt to produce
- * a result string by substituting values for the <code>user.home</code>,
- * and <code>PLATFORM</code> variables.</p>
+ * <p>a <tt>WindowsStyleVarSubstituter</tt> will attempt to produce a
+ * result string by substituting values for the <tt>user.home</tt> and
+ * <tt>PLATFORM</tt> variables.</p>
  *
  * <b><u>Notes and Caveats</u></b>
  *

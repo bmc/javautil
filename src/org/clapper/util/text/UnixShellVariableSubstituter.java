@@ -44,7 +44,7 @@ import java.io.*;
  * </blockquote>
  *
  * <p>a <tt>UnixShellVariableSubstituter</tt> will attempt to produce
- * a result string by substituting values for the <tt>user.home</tt>,
+ * a result string by substituting values for the <tt>user.home</tt> and
  * <tt>PLATFORM</tt> variables.</p>
  *
  * <b><u>Notes and Caveats</u></b>
