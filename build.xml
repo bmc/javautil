@@ -194,6 +194,18 @@
     </javac>
   </target>
 
+  <target name="cmdline">
+    <javac srcdir="${src.dir}" 
+	   depend="true"
+	   listfiles="${compile.listfiles}"
+	   destdir="${build}">
+      <classpath refid="project.class.path"/>
+      <patternset>
+        <include name="cmdline/*.java"/>
+      </patternset>
+    </javac>
+  </target>
+  
   <target name="ant.tasks">
     <javac srcdir="${src.dir}" 
 	   depend="true"
@@ -242,7 +254,8 @@
                      compiler="${compiler}"/>
   </target>
 
-  <target name="lib" depends="misc,io,text,config,mail,ant.tasks,-build.info"/>
+  <target name="lib" 
+          depends="misc,io,text,config,mail,cmdline,ant.tasks,-build.info"/>
 
   <target name="mail.testers" depends="-check.javamail,lib"
           if="javamail.exists"
