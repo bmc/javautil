@@ -8,8 +8,7 @@ import org.clapper.util.misc.*;
 
 /**
  * A <tt>ConfigurationException</tt> is thrown by the
- * {@link ConfigurationParser} class to signify errors in a configuration
- * file.
+ * {@link Configuration} class to signify errors in a configuration file.
  *
  * @see NestedException
  *
