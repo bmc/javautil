@@ -26,9 +26,14 @@
 
 package org.clapper.util.text;
 
-import java.util.StringTokenizer;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.StringTokenizer;
+
+import org.apache.oro.text.regex.PatternMatcher;
+import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.oro.text.regex.Pattern;
 
 /**
  * Static class containing miscellaneous text utility methods.
@@ -39,6 +44,21 @@ import java.util.Iterator;
  */
 public final class TextUtil
 {
+    /*----------------------------------------------------------------------*\
+                             Public Constants
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * Used with the regular expression-based versions of <tt>split()</tt>
+     * as a <tt>limit</tt> parameter that indicates no limit (i.e., split
+     * the entire string).
+     *
+     * @see #split(String,Pattern,int)
+     * @see #split(String,Pattern,Collectoin,int)
+     */
+    public static final int SPLIT_ALL =
+                                     org.apache.oro.text.regex.Util.SPLIT_ALL;
+
     /*----------------------------------------------------------------------*\
                                 Constructor
     \*----------------------------------------------------------------------*/
@@ -99,17 +119,35 @@ public final class TextUtil
     }
 
     /**
-     * Split a string on white space, into one or more strings. This method
-     * is intended to be reminiscent of the corresponding perl or awk
-     * <i>split()</i> function, though without regular expression support.
-     * This method uses a <tt>StringTokenizer</tt> to do the actual work.
+     * <p>Split a string on white space, into one or more strings. This
+     * method is intended to be reminiscent of the corresponding perl or
+     * awk <i>split()</i> function, though without regular expression
+     * support. This method uses a <tt>StringTokenizer</tt> to do the
+     * actual work.</p>
+     *
+     * <p>Note that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
+     * Similarly, the Jakarta ORO regular expression library contains
+     * a regular-expression based <tt>split()</tt> method, in
+     * <tt>org.apache.oro.text.regex.Util</tt>. See also this class's
+     * {@link #split(String,Pattern)}, {@link #split(String,Pattern,int)},
+     * {@link #split(String,Pattern,Collection,int)} and
+     * {@link #split(String,Pattern,Collection)} methods, which use the
+     * Jakarta ORO library.</p>
      *
      * @param s  the string to split
      *
      * @return an array of <tt>String</tt> objects
      *
      * @see #split(String,String)
+     * @see #split(String,char)
+     * @see #split(String,Collection)
      * @see #split(String,char,Collection)
+     * @see #split(String,String,Collection)
+     * @see #split(String,Pattern)
+     * @see #split(String,Pattern,int)
+     * @see #split(String,Pattern,Collection)
+     * @see #split(String,Pattern,Collection,int)
      */
     public static String[] split (String s)
     {
@@ -117,38 +155,73 @@ public final class TextUtil
     }
 
     /**
-     * Split a string on white space, into one or more strings. This method
-     * is intended to be reminiscent of the corresponding perl or awk
-     * <i>split()</i> function, though without regular expression support.
-     * This method uses a <tt>StringTokenizer</tt> to do the actual work.
+     * <p>Split a string on white space, into one or more strings. This
+     * method is intended to be reminiscent of the corresponding perl or
+     * awk <i>split()</i> function, though without regular expression
+     * support. This method uses a <tt>StringTokenizer</tt> to do the
+     * actual work.</p>
+     *
+     * <p>Note that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
+     * Similarly, the Jakarta ORO regular expression library contains
+     * a regular-expression based <tt>split()</tt> method, in
+     * <tt>org.apache.oro.text.regex.Util</tt>. See also this class's
+     * {@link #split(String,Pattern)}, {@link #split(String,Pattern,int)},
+     * {@link #split(String,Pattern,Collection,int)} and
+     * {@link #split(String,Pattern,Collection)} methods, which use the
+     * Jakarta ORO library.</p>
      *
      * @param s          the string to split
      * @param collection where to store the split strings
      *
      * @return the number of strings added to the collection
      *
+     * @see #split(String)
      * @see #split(String,String)
+     * @see #split(String,char)
      * @see #split(String,char,Collection)
+     * @see #split(String,String,Collection)
+     * @see #split(String,Pattern)
+     * @see #split(String,Pattern,int)
+     * @see #split(String,Pattern,Collection)
+     * @see #split(String,Pattern,Collection,int)
      */
     public static int split (String s, Collection collection)
     {
-        return split (s, null, collection);
+        return split (s, (String) null, collection);
     }
 
     /**
-     * Split a string into one or more strings, based on a delimiter. This
-     * method is intended to be reminiscent of the corresponding perl or
-     * awk <i>split()</i> function, though without regular expression
+     * <p>Split a string into one or more strings, based on a delimiter.
+     * This method is intended to be reminiscent of the corresponding perl
+     * or awk <i>split()</i> function, though without regular expression
      * support. This method uses a <tt>StringTokenizer</tt> to do the
-     * actual work.
+     * actual work.</p>
+     *
+     * <p>Note that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
+     * Similarly, the Jakarta ORO regular expression library contains
+     * a regular-expression based <tt>split()</tt> method, in
+     * <tt>org.apache.oro.text.regex.Util</tt>. See also this class's
+     * {@link #split(String,Pattern)}, {@link #split(String,Pattern,int)},
+     * {@link #split(String,Pattern,Collection,int)} and
+     * {@link #split(String,Pattern,Collection)} methods, which use the
+     * Jakarta ORO library.</p>
      *
      * @param s     the string to split
      * @param delim the delimiter
      *
      * @return an array of <tt>String</tt> objects
      *
+     * @see #split(String)
      * @see #split(String,String)
+     * @see #split(String,Collection)
      * @see #split(String,char,Collection)
+     * @see #split(String,String,Collection)
+     * @see #split(String,Pattern)
+     * @see #split(String,Pattern,int)
+     * @see #split(String,Pattern,Collection)
+     * @see #split(String,Pattern,Collection,int)
      */
     public static String[] split (String s, char delim)
     {
@@ -156,19 +229,36 @@ public final class TextUtil
     }
 
     /**
-     * Split a string into one or more strings, based on a set of
+     * <p>Split a string into one or more strings, based on a set of
      * delimiter. This method is intended to be reminiscent of the
      * corresponding perl or awk <i>split()</i> function, though without
      * regular expression support. This method uses a
-     * <tt>StringTokenizer</tt> to do the actual work.
+     * <tt>StringTokenizer</tt> to do the actual work.</p>
+     *
+     * <p>Note that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
+     * Similarly, the Jakarta ORO regular expression library contains
+     * a regular-expression based <tt>split()</tt> method, in
+     * <tt>org.apache.oro.text.regex.Util</tt>. See also this class's
+     * {@link #split(String,Pattern)}, {@link #split(String,Pattern,int)},
+     * {@link #split(String,Pattern,Collection,int)} and
+     * {@link #split(String,Pattern,Collection)} methods, which use the
+     * Jakarta ORO library.</p>
      *
      * @param s         the string to split
      * @param delimSet  set of delimiters, or null to use white space
      *
      * @return an array of <tt>String</tt> objects
      *
+     * @see #split(String)
      * @see #split(String,char)
+     * @see #split(String,Collection)
+     * @see #split(String,char,Collection)
      * @see #split(String,String,Collection)
+     * @see #split(String,Pattern)
+     * @see #split(String,Pattern,int)
+     * @see #split(String,Pattern,Collection)
+     * @see #split(String,Pattern,Collection,int)
      */
     public static String[] split (String s, String delimSet)
     {
@@ -189,11 +279,21 @@ public final class TextUtil
     }
 
     /**
-     * Split a string into one or more strings, based on a delimiter. This
+     * <p>Split a string into one or more strings, based on a delimiter. This
      * method is intended to be reminiscent of the corresponding perl or
      * awk <i>split()</i> function, though without regular expression
      * support. This method uses a <tt>StringTokenizer</tt> to do the
-     * actual work.
+     * actual work.</p>
+     *
+     * <p>Note that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
+     * Similarly, the Jakarta ORO regular expression library contains
+     * a regular-expression based <tt>split()</tt> method, in
+     * <tt>org.apache.oro.text.regex.Util</tt>. See also this class's
+     * {@link #split(String,Pattern)}, {@link #split(String,Pattern,int)},
+     * {@link #split(String,Pattern,Collection,int)} and
+     * {@link #split(String,Pattern,Collection)} methods, which use the
+     * Jakarta ORO library.</p>
      *
      * @param s          the string to split
      * @param delim      the delimiter
@@ -201,8 +301,15 @@ public final class TextUtil
      *
      * @return the number of <tt>String</tt> objects added to the collection
      *
+     * @see #split(String)
+     * @see #split(String,char)
+     * @see #split(String,Collection)
      * @see #split(String,String)
      * @see #split(String,String,Collection)
+     * @see #split(String,Pattern)
+     * @see #split(String,Pattern,int)
+     * @see #split(String,Pattern,Collection)
+     * @see #split(String,Pattern,Collection,int)
      */
     public static int split (String s, char delim, Collection collection)
     {
@@ -210,11 +317,23 @@ public final class TextUtil
     }
 
     /**
-     * Split a string into one or more strings, based on a set of
+     * <p>Split a string into one or more strings, based on a set of
      * delimiter. This method is intended to be reminiscent of the
      * corresponding perl or awk <i>split()</i> function, though without
      * regular expression support. This method uses a
-     * <tt>StringTokenizer</tt> to do the actual work.
+     * <tt>StringTokenizer</tt> to do the actual work.</p>
+     *
+     * <p>Note that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.</p>
+     * <p>Note that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
+     * Similarly, the Jakarta ORO regular expression library contains
+     * a regular-expression based <tt>split()</tt> method, in
+     * <tt>org.apache.oro.text.regex.Util</tt>. See also this class's
+     * {@link #split(String,Pattern)}, {@link #split(String,Pattern,int)},
+     * {@link #split(String,Pattern,Collection,int)} and
+     * {@link #split(String,Pattern,Collection)} methods, which use the
+     * Jakarta ORO library.</p>
      *
      * @param s          the string to split
      * @param delimSet   set of delimiters
@@ -222,8 +341,15 @@ public final class TextUtil
      *
      * @return the number of <tt>String</tt> objects added to the collection
      *
+     * @see #split(String)
      * @see #split(String,char)
+     * @see #split(String,Collection)
+     * @see #split(String,String)
      * @see #split(String,char,Collection)
+     * @see #split(String,Pattern)
+     * @see #split(String,Pattern,int)
+     * @see #split(String,Pattern,Collection)
+     * @see #split(String,Pattern,Collection,int)
      */
     public static int split (String s, String delimSet, Collection collection)
     {
@@ -233,6 +359,157 @@ public final class TextUtil
             collection.add (strs[i]);
 
         return strs.length;
+    }
+
+    /**
+     * <p>Split a string on a regular expression, into one or more strings.
+     * This method uses the Jakarta ORO regular expression library. Calling
+     * this method is equivalent to calling {@link #split(String,Pattern,int)}
+     * with a <tt>limit</tt> parameter of {@link #SPLIT_ALL}.</p>
+     *
+     * <p>Note that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.</p>
+     *
+     * @param s       string to split
+     * @param pattern the Jakarta ORO compiled regular expression to use
+     *                to split the string
+     *
+     * @return an array of <tt>String</tt> objects
+     *
+     * @see #split(String,Pattern,int)
+     * @see #split(String,Pattern,Collection)
+     * @see #split(String,Pattern,Collection,int)
+     * @see #split(String)
+     * @see #split(String,String)
+     * @see #split(String,char)
+     * @see #split(String,Collection)
+     * @see #split(String,char,Collection)
+     * @see #split(String,String,Collection)
+     */
+    public static String[] split (String s, Pattern pattern)
+    {
+        return split (s, pattern, SPLIT_ALL);
+    }
+
+    /**
+     * <p>Split a string on a regular expression, into one or more strings.
+     * This method uses the Jakarta ORO regular expression library. Calling
+     * this method is equivalent to calling
+     * {@link #split(String,Pattern,Collection,int)}
+     * with a <tt>limit</tt> parameter of {@link #SPLIT_ALL}.</p>
+     *
+     * <p>Note that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.</p>
+     *
+     * @param s          string to split
+     * @param pattern    the Jakarta ORO compiled regular expression to use
+     *                   to split the string
+     * @param collection where to store the resulting split strings
+     *
+     * @see #split(String,Pattern)
+     * @see #split(String,Pattern,int)
+     * @see #split(String,Pattern,Collection,int)
+     * @see #split(String)
+     * @see #split(String,String)
+     * @see #split(String,char)
+     * @see #split(String,Collection)
+     * @see #split(String,char,Collection)
+     * @see #split(String,String,Collection)
+     */
+    public static void split (String s, Pattern pattern, Collection collection)
+    {
+        split (s, pattern, collection, SPLIT_ALL);
+    }
+
+    /**
+     * <p>Split a string on a regular expression, into one or more strings.
+     * The <tt>limit<tt> parameter essentially says to split the string
+     * only on at most the first <tt>(limit - 1)</tt> number of pattern
+     * occurences.</p>
+     *
+     * <p>This method uses the Jakarta ORO regular expression library. Note
+     * that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.</p>
+     *
+     * @param s       string to split
+     * @param pattern the Jakarta ORO compiled regular expression to use
+     *                to split the string
+     * @param limit   The limit on the number of resulting split elements.
+     *                Values <= 0 produce the same behavior as using the
+     *                {@link #SPLIT_ALL} constant, which causes the limit to
+     *                be ignored and splits to be performed on all occurrences
+     *                of the pattern. You should use the <tt>SPLIT_ALL</tt>
+     *                constant to achieve this behavior, instead of relying
+     *                on the default behavior associated with non-positive
+     *                limit values.
+     *
+     * @return an array of <tt>String</tt> objects
+     *
+     * @see #split(String,Pattern)
+     * @see #split(String,Pattern,Collection)
+     * @see #split(String,Pattern,Collection,int)
+     * @see #split(String)
+     * @see #split(String,String)
+     * @see #split(String,char)
+     * @see #split(String,Collection)
+     * @see #split(String,char,Collection)
+     * @see #split(String,String,Collection)
+     */
+    public static String[] split (String s, Pattern pattern, int limit)
+    {
+        ArrayList collection = new ArrayList();
+
+        split (s, pattern, collection, limit);
+
+        String[] result = new String[collection.size()];
+
+        return (String[]) collection.toArray (result);
+    }
+
+    /**
+     * <p>Split a string on a regular expression, into one or more strings.
+     * The <tt>limit<tt> parameter essentially says to split the string
+     * only on at most the first <tt>(limit - 1)</tt> number of pattern
+     * occurences.</p>
+     *
+     * <p>This method uses the Jakarta ORO regular expression library. Note
+     * that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.</p>
+     *
+     * @param s          string to split
+     * @param pattern    the Jakarta ORO compiled regular expression to use
+     *                   to split the string
+     * @param collection where to store the split strings
+     * @param limit      The limit on the number of resulting split elements.
+     *                   Values <= 0 produce the same behavior as using the
+     *                   {@link #SPLIT_ALL} constant, which causes the
+     *                   limit to be ignored and splits to be performed on
+     *                   all occurrences of the pattern. You should use the
+     *                   <tt>SPLIT_ALL</tt> constant to achieve this
+     *                   behavior, instead of relying on the default
+     *                   behavior associated with non-positive limit
+     *                   values.
+     *
+     * @see #split(String,Pattern)
+     * @see #split(String,Pattern,int)
+     * @see #split(String,Pattern,Collection)
+     * @see #split(String)
+     * @see #split(String,String)
+     * @see #split(String,char)
+     * @see #split(String,Collection)
+     * @see #split(String,char,Collection)
+     * @see #split(String,String,Collection)
+     */
+    public static void split (String     s,
+                              Pattern    pattern,
+                              Collection collection,
+                              int        limit)
+    {
+        org.apache.oro.text.regex.Util.split (collection,
+                                              new Perl5Matcher(),
+                                              pattern,
+                                              s,
+                                              limit);
     }
 
     /**

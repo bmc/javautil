@@ -31,11 +31,11 @@ import org.clapper.util.text.*;
 import java.io.*;
 
 /**
- * <p>Test the <code>XStringBuffer</code> class's metacharacter conversion
+ * <p>Test the <tt>XStringBuffer</tt> class's metacharacter conversion
  * methods.</p>
  *
- * @see XStringBuffer#encodeMetacharConversions()
- * @see XStringBuffer#decodeMetacharConversions()
+ * @see XStringBuffer#encodeMetachars()
+ * @see XStringBuffer#decodeMetachars()
  *
  * @version <kbd>$Revision$</kbd>
  */
