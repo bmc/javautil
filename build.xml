@@ -237,7 +237,7 @@
     </javac>
   </target>
 
-  <target name="lib.testers" depends="lib"
+  <target name="lib.testers"
 	  description="compile the testers">
     <!-- Create the distribution directory -->
     <javac srcdir="${src.dir}" 
