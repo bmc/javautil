@@ -117,7 +117,7 @@ public class WordWrapWriter extends PrintWriter
     /**
      * The default line length.
      */
-    public static final int DEFAULT_LINE_LENGTH = 80;
+    public static final int DEFAULT_LINE_LENGTH = 79;
 
     /*----------------------------------------------------------------------*\
                              Private Constants
@@ -181,7 +181,7 @@ public class WordWrapWriter extends PrintWriter
     /**
      * Build an <code>WordWrapWriter</code> object that will write its
      * output to the specified <code>Writer</code> object, using the
-     * default line length.
+     * default line length of 79.
      *
      * @param output      Where the output goes.
      *
@@ -196,7 +196,7 @@ public class WordWrapWriter extends PrintWriter
     /**
      * Build an <code>WordWrapWriter</code> object that will write its
      * output to the specified <code>OutputStream</code> object, using the
-     * default line length.
+     * default line length of 79.
      *
      * @param output      Where the output goes.
      *
