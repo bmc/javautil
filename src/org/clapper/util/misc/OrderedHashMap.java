@@ -54,6 +54,15 @@ import java.io.Serializable;
 public class OrderedHashMap extends HashMap implements Cloneable, Serializable
 {
     /*----------------------------------------------------------------------*\
+                         Private Static Variables
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * See JDK 1.5 version of java.io.Serializable
+     */
+    private static final long serialVersionUID = 1L;
+
+    /*----------------------------------------------------------------------*\
                              Private Variables
     \*----------------------------------------------------------------------*/
 

@@ -404,7 +404,7 @@ public class MIMETypeUtil
     /**
      * Load the MIME type mappings into memory.
      */
-    private synchronized static void loadMappings()
+    private static synchronized void loadMappings()
     {
         if (mimeTypeToExtensionMap != null)
             return;

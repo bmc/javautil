@@ -40,6 +40,15 @@ package org.clapper.util.config;
 public class SectionExistsException extends ConfigurationException
 {
     /*----------------------------------------------------------------------*\
+                         Private Static Variables
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * See JDK 1.5 version of java.io.Serializable
+     */
+    private static final long serialVersionUID = 1L;
+
+    /*----------------------------------------------------------------------*\
                             Private Data Items
     \*----------------------------------------------------------------------*/
 

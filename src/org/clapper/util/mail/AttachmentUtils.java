@@ -72,7 +72,7 @@ class AttachmentUtils
      *
      * @return The name.
      */
-    protected synchronized static String generateAttachmentName()
+    protected static synchronized String generateAttachmentName()
     {
         Date now = new Date();
 

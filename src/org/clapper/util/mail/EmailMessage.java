@@ -184,6 +184,15 @@ import javax.mail.internet.MimeBodyPart;
 public class EmailMessage implements Serializable
 {
     /*----------------------------------------------------------------------*\
+                         Private Static Variables
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * See JDK 1.5 version of java.io.Serializable
+     */
+    private static final long serialVersionUID = 1L;
+
+    /*----------------------------------------------------------------------*\
                              Public Constants
     \*----------------------------------------------------------------------*/
 

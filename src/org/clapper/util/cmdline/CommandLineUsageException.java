@@ -37,6 +37,15 @@ package org.clapper.util.cmdline;
 public class CommandLineUsageException extends CommandLineException
 {
     /*----------------------------------------------------------------------*\
+                         Private Static Variables
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * See JDK 1.5 version of java.io.Serializable
+     */
+    private static final long serialVersionUID = 1L;
+
+    /*----------------------------------------------------------------------*\
                                Constructors
     \*----------------------------------------------------------------------*/
 

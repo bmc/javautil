@@ -55,6 +55,11 @@ public class TestFileHashMap
 
     private static class Entry implements Serializable
     {
+        /**
+         * See JDK 1.5 version of java.io.Serializable
+         */
+        private static final long serialVersionUID = 1L;
+
         private int paddingSize;
         private String value;
         private byte padding[];
