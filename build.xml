@@ -105,7 +105,7 @@
   ***************************************************************************
   -->
 
-  <target name="all" depends="init,lib,bundles,testers"/>
+  <target name="all" depends="init,lib,-build.info,bundles,testers"/>
 
   <target name="bundles">
     <copy todir="${build}">
@@ -121,6 +121,7 @@
   <target name="lib.unconditional" depends="init">
     <javac srcdir="${src.dir}" 
            sourcepath="${src.top}"
+	   source="1.4"
 	   debug="${javac.debug}"
 	   listfiles="${javac.listfiles}"
 	   deprecation="yes"
@@ -168,6 +169,7 @@
   <target name="mail" depends="-check.javamail" if="javamail.exists">
     <javac srcdir="${src.dir}" 
            sourcepath="${src.top}"
+	   source="1.4"
 	   debug="${javac.debug}"
 	   listfiles="${javac.listfiles}"
 	   destdir="${build}">
@@ -224,6 +226,7 @@
     <!-- Create the distribution directory -->
     <javac srcdir="${src.dir}" 
            sourcepath="${src.top}"
+	   source="1.4"
 	   debug="${javac.debug}"
 	   listfiles="${javac.listfiles}"
 	   destdir="${build}">
@@ -243,6 +246,7 @@
 	  description="compile the testers">
     <!-- Create the distribution directory -->
     <javac srcdir="${src.dir}" 
+	   source="1.4"
            sourcepath="${src.top}"
 	   debug="${javac.debug}"
 	   listfiles="${javac.listfiles}"
