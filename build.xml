@@ -298,13 +298,13 @@
 
   <target name="-set.version.properties" depends="-get.version">
     <property name="versioned_src_zipfile"
-              value="src-${API_VERSION}.zip"/>
+              value="src-${api.version}.zip"/>
 
     <property name="versioned_code_jar_file" 
-              value="${code_jar_name}-${API_VERSION}.jar"/>
+              value="${code_jar_name}-${api.version}.jar"/>
 
     <property name="versioned_docs_zipfile" 
-              value="javadocs-${API_VERSION}.zip"/>
+              value="javadocs-${api.version}.zip"/>
   </target>
 
   <target name="code.jar" depends="all"
