@@ -28,16 +28,23 @@ package org.clapper.util.mail.test;
 
 import org.clapper.util.mail.*;
 import org.clapper.util.io.WordWrapWriter;
-import org.clapper.util.misc.BadCommandLineException;
 import org.clapper.util.text.TextUtil;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.FileNotFoundException;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+import org.clapper.util.cmdline.CommandLineUtility;
+import org.clapper.util.cmdline.CommandLineException;
+import org.clapper.util.cmdline.CommandLineUsageException;
+import org.clapper.util.cmdline.UsageInfo;
 
 /**
  * Test driver for <tt>EmailMessage</tt> class. Invoke this class from
@@ -47,60 +54,26 @@ import java.util.Iterator;
  *
  * @see EmailMessage
  */
-public class Send
+public class Send extends CommandLineUtility
 {
     /*----------------------------------------------------------------------*\
-                            Private Data Items
+                            Instance Variables
     \*----------------------------------------------------------------------*/
+
+    private EmailMessage    msg = new EmailMessage();
+    private EmailTransport  transport = null;
+    private boolean         dumpTextPart = false;
+    private String          textMimeType = "text/plain";
+    private String          text = null;
+    private File            textFile = null;
+    private boolean         useInputStreams = false;
+    private boolean         debug = false;
+    private PrintWriter     out = new WordWrapWriter (System.out, 79);
+    private Collection      attachmentFiles = new ArrayList();
 
     /*----------------------------------------------------------------------*\
                                   Tester
     \*----------------------------------------------------------------------*/
-
-    private static void usage()
-    {
-        String   className = Send.class.getName();
-        String[] USAGE = new String[]
-        {
-"Usage: java " + className + " [options] smtphost recipient ...",
-"",
-"OPTIONS:",
-"-alt                  Send message as \"multipart/alternative\", instead of",
-"                      \"multipart/mixed\"",
-"-A file_attachment    Add the contents of the specified file as an",
-"                      attachment. May be specified multiple times",
-"-a string_attachment  Use the contents of the specified string as the",
-"                      attachment. A newline is automatically appended.",
-"                      May be specified multiple times.",
-"-bcc email_address    Bcc: the specified email address. May be specified",
-"                      multiple times.",
-"-cc email_address     Cc: the specified email address. May be specified",
-"                      multiple times.",
-"-d                    Enable debug.",
-"-dt                   Dump the text part, after adding it to the message.",
-"                      This is useful primarily for debugging",
-"-f from_address       The sender address. If not supplied, the sender",
-"                      address is built from the combination of the",
-"                      current user name and the SMTP host.\n",
-"-i                    For all files (attachments, text), use an InputStream",
-"                      instead of a File object. (Tests EmailMessage class's",
-"                      handling of InputStream)",
-"-m mimeType           Set the MIME type for the text part. Defaults to",
-"                      \"text/plain\" if not specified",
-"-s subject            Set the message's subject. By default, there's no",
-"                      subject.",
-"-t text_message       The text for the body of the message. By default,",
-"                      there is no text body.",
-"-T file               Use the contents of the specified file as the text of",
-"                      the message\n",
-"<smtphost> is the name of the host through which to send the message.",
-"<recipient> is a primary recipient's email address (i.e., someone whose",
-"address goes in the \"To:\" header. Multiple recipients are permitted."
-        };
-
-        for (int i = 0; i < USAGE.length; i++)
-            System.err.println (USAGE[i]);
-    }
 
     /**
      * Test driver for this class. Invoke with no parameters for a usage
@@ -110,210 +83,364 @@ public class Send
      */
     public static void main (String args[])
     {
-        int             rc = 0;
-        int             i = 0;
-        boolean         dumpTextPart = false;
-        String          textMimeType = "text/plain";
-        String          text = null;
-        File            textFile = null;
-        boolean         useInputStreams = false;
-        EmailMessage    msg = new EmailMessage();
-        Collection      attachmentFiles = new ArrayList();
-        Iterator        it;
-        EmailTransport  transport = null;
-        boolean         debug = false;
-        PrintWriter     out = new WordWrapWriter (System.out, 79);
+        Send tester = new Send();
 
         try
         {
-
-            // Parse the parameters.
-
-            while ( (i < args.length) && (args[i].startsWith ("-")) )
-            {
-                if (args[i].equals ("-alt"))
-                {
-                    msg.setMultipartSubtype (EmailMessage.MULTIPART_ALTERNATIVE);
-                }
-
-                else if (args[i].equals ("-a"))
-                {
-                    msg.addAttachment (args[++i]);
-                }
-
-                else if (args[i].equals ("-A"))
-                {
-                    // Save it. We don't know until we're done parsing the
-                    // options whether to add it as a File or an InputStream.
-
-                    attachmentFiles.add (new File (args[++i]));
-                }
-
-                else if (args[i].equals ("-f"))
-                {
-                    msg.setSender (new EmailAddress (args[++i]));
-                }
-
-                else if (args[i].equals ("-i"))
-                {
-                    useInputStreams = true;
-                }
-
-                else if (args[i].equals ("-s"))
-                {
-                    msg.setSubject (args[++i]);
-                }
-
-                else if (args[i].equals ("-t"))
-                {
-                    if (textFile != null)
-                    {
-                        throw new BadCommandLineException
-                            ("Can't specify both -t and -T");
-                    }
-
-                    text = args[++i];
-                }
-
-                else if (args[i].equals ("-T"))
-                {
-                    if (text != null)
-                    {
-                        throw new BadCommandLineException
-                            ("Can't specify both -t and -T");
-                    }
-
-                    textFile = new File (args[++i]);
-                }
-
-                else if (args[i].equals ("-m"))
-                {
-                    textMimeType = args[++i];
-                }
-
-                else if (args[i].equals ("-d"))
-                {
-                    debug = true;
-                }
-
-                else if (args[i].equals ("-dt"))
-                {
-                    dumpTextPart = true;
-                }
-
-                else if (args[i].equals ("-cc"))
-                {
-                    msg.addCc (args[++i]);
-                }
-
-                else if (args[i].equals ("-bcc"))
-                {
-                    msg.addBcc (args[++i]);
-                }
-
-                else
-                    throw new BadCommandLineException ( "Bad option: "
-                                                      + args[i]);
-                i++;
-            }
-
-            // Check that we have required remaining arguments.
-
-            int argsLeft = args.length - i;
-            if (argsLeft < 2)
-                throw new BadCommandLineException ("Missing parameter(s)");
-
-            // Initialize the EmailSender object
-
-            transport = new SMTPEmailTransport (args[i++]);
-            transport.setDebug (debug, System.out);
-
-            // Get the recipients
-
-            while (i < args.length)
-                msg.addTo (args[i++]);
-
-            // Add the text part.
-
-            if (text != null)
-                msg.setText (text, textMimeType);
-
-            else if (textFile != null)
-            {
-                if (useInputStreams)
-                    msg.setText (new FileInputStream (textFile), textMimeType);
-                else
-                    msg.setText (textFile);
-            }
-
-            // Add any attachments specified as files.
-
-            for (it = attachmentFiles.iterator(); it.hasNext(); )
-            {
-                File f = (File) it.next();
-                if (useInputStreams)
-                    msg.addAttachment (new FileInputStream (f));
-                else
-                    msg.addAttachment (f);
-            }
-
-            // Do any dumping...
-
-            if (dumpTextPart)
-            {
-                if ( (text = msg.getText()) != null )
-                {
-                    out.println ("------------------");
-                    out.println ("Text part follows:");
-                    out.println ("------------------");
-                    System.out.print (text);
-                    System.out.flush();
-                    out.println ("------------------");
-                    out.println ("End of Text part");
-                    out.println ("------------------");
-                }
-            }
-
-            // Send the message.
-
-            String sep;
-
-            out.println ("Sending message");
-            EmailAddress sender = msg.getSender();
-            out.println ("From: " + sender.toString());
-            out.println ("To: " + TextUtil.join (msg.getTo(), ", "));
-
-            if (msg.getCc().size() > 0)
-                out.println ("Cc: " + TextUtil.join (msg.getCc(), ", "));
-
-            if (msg.getBcc().size() > 0)
-                out.println ("Bcc: " + TextUtil.join (msg.getBcc(), ", "));
-
-            out.println ("Subject: " + msg.getSubject());
-
-            transport.send (msg);
+            tester.execute (args);
         }
 
-        catch (ArrayIndexOutOfBoundsException ex)
+        catch (CommandLineUsageException ex)
         {
-            System.err.println ("Missing parameter(s).");
-            usage();
-            rc++;
+            // Already reported
+
+            System.exit (1);
         }
 
-        catch (BadCommandLineException ex)
+        catch (CommandLineException ex)
         {
             System.err.println (ex.getMessage());
-            usage();
-            rc++;
+            ex.printStackTrace();
+            System.exit (1);
         }
 
         catch (Exception ex)
         {
-            ex.printStackTrace();
-            rc++;
+            ex.printStackTrace (System.err);
+            System.exit (1);
+        }
+    }
+
+    /*----------------------------------------------------------------------*\
+                                Constructor
+    \*----------------------------------------------------------------------*/
+
+    private Send()
+    {
+        super();
+    }
+
+    /*----------------------------------------------------------------------*\
+                             Protected Methods
+    \*----------------------------------------------------------------------*/
+
+    protected void runCommand()
+        throws CommandLineException
+    {
+        try
+        {
+            sendEmail();
         }
 
-        System.exit (rc);
+        catch (EmailException ex)
+        {
+            throw new CommandLineException (ex);
+        }
+
+        catch (IOException ex)
+        {
+            throw new CommandLineException (ex);
+        }
+    }
+
+    /**
+     * Called by <tt>parseParams()</tt> to handle any option it doesn't
+     * recognize. If the option takes any parameters, the overridden
+     * method must extract the parameter by advancing the supplied
+     * <tt>Iterator</tt> (which returns <tt>String</tt> objects). This
+     * default method simply throws an exception.
+     *
+     * @param shortOption  the short option character, or
+     *                     {@link UsageInfo#NO_SHORT_OPTION} if there isn't
+     *                     one (i.e., if this is a long-only option).
+     * @param longOption   the long option string, without any leading
+     *                     "-" characters, or null if this is a short-only
+     *                     option
+     * @param it           the <tt>Iterator</tt> for the remainder of the
+     *                     command line, for extracting parameters.
+     *
+     * @throws CommandLineUsageException  on error
+     * @throws NoSuchElementException     overran the iterator (i.e., missing
+     *                                    parameter) 
+     */
+    protected void parseCustomOption (char     shortOption,
+                                      String   longOption,
+                                      Iterator it)
+        throws CommandLineUsageException,
+               NoSuchElementException
+    {
+        try
+        {
+            if (longOption == null)
+                longOption = "";
+
+            if (longOption.equals ("alt"))
+                msg.setMultipartSubtype (EmailMessage.MULTIPART_ALTERNATIVE);
+
+            else if (longOption.equals ("dt"))
+                dumpTextPart = true;
+
+            else if (longOption.equals ("cc"))
+                msg.addCc ((String) it.next());
+
+            else if (longOption.equals ("bcc"))
+                msg.addBcc ((String) it.next());
+
+            else
+            {
+                switch (shortOption)
+                {
+                    case 'a':
+                        msg.addAttachment ((String) it.next());
+                        break;
+
+                    case 'A':
+                        // Save it. We don't know until we're done parsing
+                        // the options whether to add it as a File or an
+                        // InputStream.
+
+                        attachmentFiles.add (new File ((String) it.next()));
+                        break;
+
+                    case 'f':
+                        msg.setSender (new EmailAddress ((String) it.next()));
+                        break;
+
+                    case 'i':
+                        useInputStreams = true;
+                        break;
+
+                    case 's':
+                        msg.setSubject ((String) it.next());
+                        break;
+
+                    case 't':
+                        if (textFile != null)
+                        {
+                            throw new CommandLineUsageException
+                                ("Can't specify both -t and -T");
+                        }
+
+                        text = (String) it.next();
+                        break;
+
+                    case 'T':
+                        if (text != null)
+                        {
+                            throw new CommandLineUsageException
+                                ("Can't specify both -t and -T");
+                        }
+
+                        textFile = new File ((String) it.next());
+                        break;
+
+                    case 'm':
+                        textMimeType = (String) it.next();
+                        break;
+
+                    case 'd':
+                        debug = true;
+                        break;
+
+                    default:
+                        // Should not happen.
+                        throw new IllegalStateException ("(BUG) Bad option. "
+                                                         + "Why am I here?");
+                }
+            }
+        }
+
+        catch (EmailException ex)
+        {
+            throw new CommandLineUsageException (ex);
+        }
+    }
+
+    /**
+     * <p>Called by <tt>parseParams()</tt> once option parsing is complete,
+     * this method must handle any additional parameters on the command
+     * line. It's not necessary for the method to ensure that the iterator
+     * has the right number of strings left in it. If you attempt to pull
+     * too many parameters from the iterator, it'll throw a
+     * <tt>NoSuchElementException</tt>, which <tt>parseParams()</tt> traps
+     * and converts into a suitable error message. Similarly, if there are
+     * any parameters left in the iterator when this method returns,
+     * <tt>parseParams()</tt> throws an exception indicating that there are
+     * too many parameters on the command line.</p>
+     *
+     * <p>This method is called unconditionally, even if there are no
+     * parameters left on the command line, so it's a useful place to do
+     * post-option consistency checks, as well.</p>
+     *
+     * @param it   the <tt>Iterator</tt> for the remainder of the
+     *             command line
+     *
+     * @throws CommandLineUsageException  on error
+     * @throws NoSuchElementException     attempt to iterate past end of args;
+     *                                    <tt>parseParams()</tt> automatically
+     *                                    handles this exception, so it's
+     *                                    safe for subclass implementations of
+     *                                    this method not to handle it
+     */
+    protected void processPostOptionCommandLine (Iterator it)
+        throws CommandLineUsageException,
+               NoSuchElementException
+    {
+        try
+        {
+            transport = new SMTPEmailTransport ((String) it.next());
+            transport.setDebug (debug, System.out);
+
+            while (it.hasNext())
+                msg.addTo ((String) it.next());
+        }
+
+        catch (EmailException ex)
+        {
+            throw new CommandLineUsageException (ex);
+        }
+    }
+
+    /**
+     * Called by <tt>parseParams()</tt> to get the custom command-line
+     * options and parameters handled by the subclass. This list is used
+     * solely to build a usage message. The overridden method must fill the
+     * supplied <tt>UsageInfo</tt> object:
+     *
+     * <ul>
+     *   <li> Each parameter must be added to the object, via the
+     *        <tt>UsageInfo.addParameter()</tt> method. The first argument
+     *        to <tt>addParameter()</tt> is the parameter string (e.g.,
+     *        "<dbCfg>" or "input_file"). The second parameter is the
+     *        one-line description. The description may be of any length,
+     *        but it should be a single line.
+     *
+     *   <li> Each option must be added to the object, via the
+     *        <tt>UsageInfo.addOption()</tt> method. The first argument to
+     *        <tt>addOption()</tt> is the option string (e.g., "-x" or
+     *        "-version"). The second parameter is the one-line
+     *        description. The description may be of any length, but it
+     *        should be a single line.
+     * </ul>
+     *
+     * That information will be combined with the common options supported
+     * by the base class, and used to build a usage message.
+     *
+     * @param info   The <tt>UsageInfo</tt> object to fill.
+     */
+    protected void getCustomUsageInfo (UsageInfo info)
+    {
+        info.addOption (UsageInfo.NO_SHORT_OPTION, "alt",
+                        "Send message as \"multipart/atlernative\", instead "
+                      + "of \"multipart/mixed\".");
+        info.addOption ('A', null, "<file>",
+                        "Add the contents of <file> as an attachment. May be "
+                      + "specified multiple times");
+        info.addOption ('a', null, "<string>",
+                        "Add the <string> as an attachment. May be specified "
+                      + "multiple times");
+        info.addOption (UsageInfo.NO_SHORT_OPTION, "bcc", "<address>",
+                        "Bcc: the specified email address. May be specified "
+                       + "multiple times.");
+        info.addOption (UsageInfo.NO_SHORT_OPTION, "cc", "<address>",
+                        "Cc: the specified email address. May be specified "
+                       + "multiple times.");
+        info.addOption ('d', null, "Enable debug");
+        info.addOption (UsageInfo.NO_SHORT_OPTION, "dt",
+                        "Dump the text part, after adding it to the message."
+                      + "This is useful primarily for debugging");
+        info.addOption ('f', "from", "<address>",
+                        "Use the specified address as the sender");
+        info.addOption ('i', null,
+                        "For all files (attachments, text), use an "
+                      + "InputStream instead of a File object. (Tests "
+                      + "EmailMessage class's handling of InputStream)");
+        info.addOption ('m', "mime-type", "<mimeType>",
+                        "Set the MIME type for the text part.");
+        info.addOption ('s', "subject", "<string>",
+                        "Set the message subject.");
+        info.addOption ('t', "text", "<string>",
+                        "Use <string> as the text for the body of the "
+                      + "message");
+        info.addOption ('T', "text-file", "<file>",
+                        "Use the contents of <file> as the body of the "
+                      + "message.");
+
+        info.addParameter ("<smtphost>",
+                           "The SMTP host through which to send the message.",
+                           true);
+        info.addParameter ("<address> ...",
+                           "One or more email addresses to receive the "
+                         + "message",
+                           true);
+    }
+
+    /*----------------------------------------------------------------------*\
+                              Private Methods
+    \*----------------------------------------------------------------------*/
+
+    private void sendEmail()
+        throws EmailException,
+               IOException
+    {
+        // Add the text part.
+
+        if (text != null)
+            msg.setText (text, textMimeType);
+
+        else if (textFile != null)
+        {
+            if (useInputStreams)
+                msg.setText (new FileInputStream (textFile), textMimeType);
+            else
+                msg.setText (textFile);
+        }
+
+        // Add any attachments specified as files.
+
+        for (Iterator it = attachmentFiles.iterator(); it.hasNext(); )
+        {
+            File f = (File) it.next();
+            if (useInputStreams)
+                msg.addAttachment (new FileInputStream (f));
+            else
+                msg.addAttachment (f);
+        }
+
+        // Do any dumping...
+
+        if (dumpTextPart)
+        {
+            if ( (text = msg.getText()) != null )
+            {
+                out.println ("------------------");
+                out.println ("Text part follows:");
+                out.println ("------------------");
+                System.out.print (text);
+                System.out.flush();
+                out.println ("------------------");
+                out.println ("End of Text part");
+                out.println ("------------------");
+            }
+        }
+
+        // Send the message.
+
+        String sep;
+
+        out.println ("Sending message");
+        EmailAddress sender = msg.getSender();
+        out.println ("From: " + sender.toString());
+        out.println ("To: " + TextUtil.join (msg.getTo(), ", "));
+
+        if (msg.getCc().size() > 0)
+            out.println ("Cc: " + TextUtil.join (msg.getCc(), ", "));
+
+        if (msg.getBcc().size() > 0)
+            out.println ("Bcc: " + TextUtil.join (msg.getBcc(), ", "));
+
+        out.println ("Subject: " + msg.getSubject());
+
+        transport.send (msg);
     }
 }
