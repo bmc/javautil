@@ -51,7 +51,7 @@ public final class Version
     /**
      * The name of the resource bundle containing the build info.
      */
-    public static final String BUNDLE_NAME
+    public static final String BUILD_INFO_BUNDLE_NAME
         = "org.clapper.util.misc.BuildInfoBundle";
 
     /*----------------------------------------------------------------------*\
@@ -65,7 +65,7 @@ public final class Version
      */
     public static void main (String[] args)
     {
-        BuildInfo buildInfo = new BuildInfo (BUNDLE_NAME);
+        BuildInfo buildInfo = new BuildInfo (BUILD_INFO_BUNDLE_NAME);
 
         System.out.println ("org.clapper.util library, version " +
                             API_VERSION);
