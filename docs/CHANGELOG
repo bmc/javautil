@@ -4,6 +4,38 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
+Version 1.1.6 (...)
+
+- Added TextUtil.split() methods that permit preserving empty strings. By
+  default, the split() methods parse through adjacent empty tokens. e.g.,
+  Given the string "a:b::c" and delimiter ":", the split() methods used to
+  return the array ["a", "b", "c"], since the adjacent "::" delimiters were
+  treated as one delimiter. Now, that behavior can be controlled by passing
+  in a boolean, so that split() can return the array ["a", "b", "", "c"].
+
+- Modified RegexUtil.substitute() to properly handle substitutions of the
+  empty string. Strings like this were previously rejected as syntactically
+  incorrect:
+
+      s/foo//
+
+  They are now permitted and processed properly.
+
+- build.xml no longer hard-codes jikes compiler. To use jikes, either
+  pass 
+
+      -Dbuild.compiler=jikes 
+
+  to ant, or put that option in ANT_OPTS in your personal ant startup file
+  ($HOME/.antrc on Unix, or %HOME%\antrc_pre.bat on Windows).
+
+- build.xml corrected so it no longer unconditionally recompiles everything.
+
+- Serializable classes now provide their own serialVersionUID variable, per
+  recommendations in the JDK 1.5 java.io.Serializable docs and in jikes
+  1.22 warnings.
+
+
 Version 1.1.5 (02 December, 2004)
 
 - Added getOptionalCardinalValue() and getRequiredCardinalValue() utility
