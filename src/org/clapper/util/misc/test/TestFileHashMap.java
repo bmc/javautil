@@ -33,7 +33,10 @@ import java.text.DecimalFormat;
 public class TestFileHashMap
     extends CommandLineUtility
 {
-    private static final int       DEFAULT_ENTRY_PADDING = 1024;
+    private static final int           DEFAULT_ENTRY_PADDING = 1024;
+    private static final DecimalFormat KEY_FMT = new DecimalFormat ("#00000");
+    private static final DecimalFormat AVG_FMT = new DecimalFormat ("#0.000");
+
 
     private static String          filePrefix;
     private static long            startTime;
@@ -42,6 +45,9 @@ public class TestFileHashMap
     private static int             totalValues = 0;
     private static boolean         verbose = false;
     private static boolean         readOnly = false;
+    private static boolean         useDisk = true;
+    private static boolean         useMemory = true;
+    private static boolean         clearFirst = false;
     private static Logger          log = new Logger (TestFileHashMap.class);
 
     // What gets put into the hash tables. We want something larger than
@@ -124,8 +130,22 @@ public class TestFileHashMap
     {
         switch (shortOption)
         {
+            case 'c':
+                clearFirst = true;
+                break;
+
+            case 'd':
+                useMemory = false;
+                useDisk = true;
+                break;
+
             case 'g':
                 fileHashMapFlags |= FileHashMap.RECLAIM_FILE_GAPS;
+                break;
+
+            case 'm':
+                useMemory = true;
+                useDisk = false;
                 break;
 
             case 'n':
@@ -183,9 +203,18 @@ public class TestFileHashMap
 
     protected void getCustomUsageInfo (UsageInfo info)
     {
+        info.addOption ('c', "clear",
+                        "Clear the FileHashMap after loading it from disk "
+                      + "initially.");
+        info.addOption ('d', "disk-only",
+                        "Use a FileHashMap table only. Don't use an in-memory "
+                      + "hash table.");
         info.addOption ('g', "reuse-gaps",
                         "Pass the RECLAIM_FILE_GAPS flag to the FileHashMap "
                       + "constructor");
+        info.addOption ('m', "mem-only",
+                        "Use an in-memory hash table only. Don't use a "
+                      + "FileHashMap.");
         info.addOption ('n', "no-create",
                         "Pass the NO_CREATE flag to the FileHashMap "
                       + "constructor");
@@ -231,39 +260,59 @@ public class TestFileHashMap
             msgln ("Total entries to be inserted: " + totalValues);
             msgln ("Element padding size:         " + paddingSize +
                    " bytes");
-            msgln ("--------------------------------------------------");
-            msgln ("Creating in-memory hash table ...");
-            startTimer();
-            memoryHash = new HashMap();
-            ms = stopTimer();
-            msgln ("Done. Elapsed time: " + ms + " ms");
+            msgln ("----------------------------------------------");
 
-            msgln ("");
-            msgln ("--------------------------------------------------");
-            msgln ("Creating on-disk hash table ... ");
-            startTimer();
-
-            if ((fileHashMapFlags & FileHashMap.TRANSIENT) != 0)
+            if (useMemory)
             {
-                if (filePrefix == null)
-                    fileHash = new FileHashMap();
+                msgln ("Creating in-memory hash table ...");
+                startTimer();
+                memoryHash = new HashMap();
+                ms = stopTimer();
+                msgln ("Done. Elapsed time: " + ms + " ms");
+            }
+
+            if (useDisk)
+            {
+                msgln ("");
+                msgln ("----------------------------------------------");
+                msgln ("Creating on-disk hash table ... ");
+                startTimer();
+
+                if ((fileHashMapFlags & FileHashMap.TRANSIENT) != 0)
+                {
+                    if (filePrefix == null)
+                        fileHash = new FileHashMap();
+                    else
+                        fileHash = new FileHashMap (filePrefix);
+                }
+
                 else
-                    fileHash = new FileHashMap (filePrefix);
-            }
+                {
+                    fileHash = new FileHashMap (filePrefix, fileHashMapFlags);
+                }
 
-            else
-            {
-                fileHash = new FileHashMap (filePrefix, fileHashMapFlags);
-            }
+                ms = stopTimer();
+                msgln ("Done. Elapsed time: " + ms + " ms");
 
-            ms = stopTimer();
-            msgln ("Done. Elapsed time: " + ms + " ms");
+                if (fileHash.size() > 0)
+                {
+                    msgln ("----------------------------------------------");
 
-            if (fileHash.size() > 0)
-            {
-                msgln ("--------------------------------------------------");
-                msgln ("File hash isn't empty. Dumping it.");
-                dumpTableByKeySet (fileHash, "On-disk table");
+                    if (clearFirst)
+                    {
+                        msgln ("File hash isn't empty. Clearing it.");
+                        startTimer();
+                        fileHash.clear();
+                        ms = stopTimer();
+                        msgln ("Done. Elapsed time: " + ms + " ms");
+                    }
+
+                    else
+                    {
+                        msgln ("File hash isn't empty. Dumping it.");
+                        dumpTableByKeySet (fileHash, "On-disk table");
+                    }
+                }
             }
 
             if (! readOnly)
@@ -271,13 +320,16 @@ public class TestFileHashMap
 
             dumpTables (memoryHash, fileHash);
 
-            msgln ("");
-            msgln ("--------------------------------------------------");
-            msgln ("Closing on-disk hash table ... ");
-            startTimer();
-            fileHash.close();
-            ms = stopTimer();
-            msgln ("Done. Elapsed time: " + ms + " ms");
+            if (useDisk)
+            {
+                msgln ("");
+                msgln ("----------------------------------------------");
+                msgln ("Closing on-disk hash table ... ");
+                startTimer();
+                fileHash.close();
+                ms = stopTimer();
+                msgln ("Done. Elapsed time: " + ms + " ms");
+            }
         }
 
         finally
@@ -292,8 +344,11 @@ public class TestFileHashMap
 
     private void fillTables (Map memoryHash, Map fileHash)
     {
-        fillTable (memoryHash, "in-memory table");
-        fillTable (fileHash, "on-disk table");
+        if (memoryHash != null)
+            fillTable (memoryHash, "in-memory");
+
+        if (fileHash != null)
+            fillTable (fileHash, "on-disk");
     }
 
     private void fillTable (Map map, String mapName)
@@ -303,13 +358,11 @@ public class TestFileHashMap
 
         // Make keys at least five characters long.
 
-        DecimalFormat keyFormatter = new DecimalFormat ("#00000");
-
         msgln ("");
         msgln ("Filling " + mapName + " table ...");
         for (i = 1; i <= totalValues; i++)
         {
-            String key = keyFormatter.format (new Integer (i));
+            String key = KEY_FMT.format (new Integer (i));
             Object old;
             long   ms;
             Entry  value = new Entry (key, paddingSize);
@@ -335,34 +388,50 @@ public class TestFileHashMap
         msgln ("Total entries:             " + totalValues);
         msgln ("Total insert time:         " + msAccum + " ms");
         msgln ("Avg insert time per entry: "
-               + getAverage (msAccum, i) + " ms");
+             + getAverage (msAccum, i) + " ms");
     }
 
     private void dumpTables (Map memoryHash, Map fileHash)
     {
         msgln ("");
-        msgln ("--------------------------------------------------");
-        msgln ("Walking both hash tables using a key set.");
-        dumpTableByKeySet (memoryHash, "In-memory table");
-        dumpTableByKeySet (fileHash, "On-disk table");
+        msgln ("----------------------------------------------");
+        msgln ("Walking hash table(s) using a key set.");
+
+        if (memoryHash != null)
+            dumpTableByKeySet (memoryHash, "In-memory table");
+
+        if (fileHash != null)
+            dumpTableByKeySet (fileHash, "On-disk table");
 
         msgln ("");
-        msgln ("--------------------------------------------------");
-        msgln ("Walking both hash tables using a value set.");
-        dumpTableByValueSet (memoryHash, "In-memory table");
-        dumpTableByValueSet (fileHash, "On-disk table");
+        msgln ("----------------------------------------------");
+        msgln ("Walking hash table(s) using a value set.");
+
+        if (memoryHash != null)
+            dumpTableByValueSet (memoryHash, "In-memory table");
+
+        if (fileHash != null)
+            dumpTableByValueSet (fileHash, "On-disk table");
 
         msgln ("");
-        msgln ("--------------------------------------------------");
-        msgln ("Walking both hash tables using an entry set.");
-        dumpTableByEntrySet (memoryHash, "In-memory table");
-        dumpTableByEntrySet (fileHash, "On-disk table");
+        msgln ("----------------------------------------------");
+        msgln ("Walking hash table(s) using an entry set.");
+
+        if (memoryHash != null)
+            dumpTableByEntrySet (memoryHash, "In-memory table");
+
+        if (fileHash != null)
+            dumpTableByEntrySet (fileHash, "On-disk table");
 
         msgln ("");
-        msgln ("--------------------------------------------------");
-        msgln ("Walking both hash tables non-sequentially.");
-        dumpTableNonSequentially (memoryHash, "In-memory table");
-        dumpTableNonSequentially (fileHash, "On-disk table");
+        msgln ("----------------------------------------------");
+        msgln ("Walking hash table(s) non-sequentially.");
+
+        if (memoryHash != null)
+            dumpTableNonSequentially (memoryHash, "In-memory table");
+
+        if (fileHash != null)
+            dumpTableNonSequentially (fileHash, "On-disk table");
     }
 
     private void dumpTableByKeySet (Map map, String label)
@@ -394,7 +463,7 @@ public class TestFileHashMap
             msgln ("Total entries:             " + i);
             msgln ("Total access time:         " + ms + " ms");
             msgln ("Avg access time per entry: "
-                   + getAverage (ms, i) + " ms");
+                 + getAverage (ms, i) + " ms");
 
             if (map.size() != i)
             {
@@ -435,7 +504,7 @@ public class TestFileHashMap
             msgln ("Total entries:             " + i);
             msgln ("Total access time:         " + ms + " ms");
             msgln ("Avg access time per entry: "
-                   + getAverage (ms, i) + " ms");
+                 + getAverage (ms, i) + " ms");
 
             if (map.size() != i)
             {
@@ -478,7 +547,7 @@ public class TestFileHashMap
             msgln ("Total entries:             " + i);
             msgln ("Total access time:         " + ms + " ms");
             msgln ("Avg access time per entry: "
-                   + getAverage (ms, i) + " ms");
+                 + getAverage (ms, i) + " ms");
 
             if (map.size() != i)
             {
@@ -560,9 +629,8 @@ public class TestFileHashMap
             result.append ("0.0");
         else
         {
-            result.append (ms / total);
-            result.append (".");
-            result.append (ms % total);
+            float avg = ((float) ms) / ((float) total);
+            result.append (AVG_FMT.format (avg));
         }
 
         return result.toString();
