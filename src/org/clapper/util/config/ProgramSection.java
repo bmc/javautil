@@ -96,6 +96,7 @@ class ProgramSection extends Section
 
         // Handle the dynamic ones explicitly.
 
+        System.out.println ("*** " + varName);
         if (varName.startsWith (PROGRAM_NOW_VAR))
         {
             result = new Variable (varName, substituteDatetime (varName),
@@ -157,17 +158,26 @@ class ProgramSection extends Section
         {
             char delim = varName.charAt (PROGRAM_NOW_VAR.length());
             String[] tokens = TextUtil.split (varName, delim);
-
+            System.out.println ("*** \"" + varName + "\": tokens.length=" + tokens.length);
             if ((tokens.length != 2) && (tokens.length != 4))
             {
                 throw new ConfigurationException
-                    ("Incorrect number of fields in extended version of \""
-                   + PROGRAM_NOW_VAR
-                   + "\" variable: \""
-                   + varName
-                   + "\" in ["
-                   + this.getName()
-                   + "] section");
+                                     (Package.BUNDLE_NAME,
+                                      "ProgramSection.badNowFieldCount",
+                                      "Section \"{0}\", variable reference "
+                                    + "\"{1}\": Incorrect number of fields in "
+                                    + "extended version of \"{2}\" variable. "
+                                    + "Found {3} fields, expected either "
+                                    + "{4} or {5}.",
+                                      new Object[]
+                                      {
+                                          this.getName(),
+                                          varName,
+                                          PROGRAM_NOW_VAR,
+                                          String.valueOf (tokens.length),
+                                          "2",
+                                          "4"
+                                      });
             }
 
             Locale locale = null;

@@ -253,7 +253,7 @@ import org.clapper.util.io.FileUtil;
  *       <tt>now</tt> <i>delim</i> <i>fmt</i> [<i>delim</i> <i>lang delim country</i>]] 
  *     </td>
  *     <td align="left">
- *        The current date/time, formatted with the specified
+ *        <p>The current date/time, formatted with the specified
  *        <tt>java.text.SimpleDateFormat</tt> format string. If specified,
  *        the given locale and country code will be used; otherwise, the
  *        default system locale will be used. <i>lang</i> is a Java language
@@ -262,8 +262,23 @@ import org.clapper.util.io.FileUtil;
  *        delimiter that separates the variable name ("<tt>now</tt>") from the
  *        format and the optional locale fields. The delimiter can be anything
  *        that doesn't appear in the format string, the variable name, or
- *        the locale.
- *        </pre></blockquote>
+ *        the locale.</p>
+ *
+ *        <p>Note: <tt>SimpleDateFormat</tt> requires that literal strings
+ *        (i.e., strings that should not be processed as part of the format)
+ *        be enclosed in quotes. For instance:</p>
+ *
+ *        <blockquote><pre>yyyy.MM.dd 'at' hh:mm:ss z</pre></blockquote>
+ *
+ *        <p>Because single quotes are special characters in configuration
+ *        files, it's important to escape them if you use them inside date
+ *        formats. So, to include the above string in a configuration
+ *        file's <tt>${program:now}</tt> reference, use the following:</p>
+ *
+ *        <blockquote><pre>${program:now/yyyy.MM.dd \'at\' hh:mm:ss z}</pre></blockquote>
+ *
+ *        <p>See <a href="#RawValues">Suppressing Metacharacter Expansion
+ *        and Variable Substitution</a>, below, for more details.</p>
  *     </td>
  *     <td align="left">
  *        <blockquote><pre>
@@ -315,6 +330,9 @@ import org.clapper.util.io.FileUtil;
  * reference, you could use:</p>
  *
  * <blockquote><pre>abc: '${foo}'</pre></blockquote>
+ *
+ * <p>To include a literal single quote, you must escape it with a
+ * backslash.</p>
  *
  * <p>Note: It's also possible, though hairy, to escape the special meaning
  * of special characters via the backslash character. For instance, you can
@@ -789,13 +807,17 @@ public class Configuration
 
         catch (NumberFormatException ex)
         {
-            throw new ConfigurationException ("Bad numeric value \""
-                                            + sNum
-                                            + "\" for variable \""
-                                            + variableName
-                                            + "\" in section \""
-                                            + sectionName
-                                            + "\"");
+            throw new ConfigurationException (Package.BUNDLE_NAME,
+                                              "Configuration.badNumericValue",
+                                              "Bad numeric value \"{0}\" for "
+                                            + "variable \"{1}\" in section "
+                                            + "\"{2}\"",
+                                              new Object[]
+                                              {
+                                                  sNum,
+                                                  variableName,
+                                                  sectionName
+                                              });
         }
     }
 
@@ -858,13 +880,17 @@ public class Configuration
 
         catch (NumberFormatException ex)
         {
-            throw new ConfigurationException ("Bad floating point value \""
-                                            + sNum
-                                            + "\" for variable \""
-                                            + variableName
-                                            + "\" in section \""
-                                            + sectionName
-                                            + "\"");
+            throw new ConfigurationException (Package.BUNDLE_NAME,
+                                              "Configuration.badFloatValue",
+                                              "Bad floating point value "
+                                            + "\"{0}\" for variable \"{1}\" "
+                                            + "in section \"{2}\"",
+                                              new Object[]
+                                              {
+                                                  sNum,
+                                                  variableName,
+                                                  sectionName
+                                              });
         }
     }
 
@@ -992,7 +1018,7 @@ public class Configuration
      *
      * @throws VariableSubstitutionException  variable references itself
      */
-    public String getValue (String varName, Object context)
+    public String getVariableValue (String varName, Object context)
         throws VariableSubstitutionException
     {
         int                  i;
@@ -1003,14 +1029,25 @@ public class Configuration
         Section              variableParentSection;
         Variable             currentVariable;
 
-        currentVariable = substContext.currentVariable;
+        try
+        {
+            checkVariableName (varName);
+        }
 
+        catch (ConfigurationException ex)
+        {
+            throw new VariableSubstitutionException (ex);
+        }
+
+        currentVariable = substContext.currentVariable;
         if (currentVariable.getName().equals (varName))
         {
-            throw new VariableSubstitutionException ("Attempt to substitute "
-                                                   + "value for variable \""
-                                                   + varName
-                                                   + "\" within itself.");
+            throw new VariableSubstitutionException
+                                 (Package.BUNDLE_NAME,
+                                  "Configuration.recursiveSubst",
+                                  "Attempt to substitute value for variable "
+                                + "\"{0}\" within itself.",
+                                  new Object[] {varName});
         }
 
         variableParentSection = substContext.currentVariable.getSection();
@@ -1042,20 +1079,25 @@ public class Configuration
         {
             if (variableParentSection.getID() < section.getID())
             {
+                String parentSectionName = variableParentSection.getName();
+                String thisSectionName = section.getName();
+
                 throw new VariableSubstitutionException
-                    ("Variable \""
-                   + substContext.currentVariable.getName()
-                   + "\" in section \""
-                   + variableParentSection.getName()
-                   + "\" cannot substitute the value of variable \""
-                   + varName
-                   + "\" in section \""
-                   + section.getName()
-                   + "\", because section \""
-                   + section.getName()
-                   + "\" appears after section \""
-                   + variableParentSection.getName()
-                   + "\" in the configuration file.");
+                    (Package.BUNDLE_NAME,
+                     "Configuration.badSectionRef",
+                     "Variable \"{0}\" in section \"{1}\" cannot substitute "
+                   + "the value of variable \"{2}\" from section \"{3}\", "
+                   + "because section \"{3}\" appears after section \"{1}\" "
+                   + "in the configuration file.",
+                     new Object[]
+                     {
+                         substContext.currentVariable.getName(),
+                         parentSectionName,
+                         varName,
+                         thisSectionName,
+                         thisSectionName,
+                         parentSectionName
+                     });
             }
 
             Variable varToSubst;
@@ -1093,7 +1135,7 @@ public class Configuration
      */
     public boolean legalVariableCharacter (char c)
     {
-        return ((c != '$') && (c != '{') && (c != '}'));
+        return ! (UnixShellVariableSubstituter.isVariableMetacharacter (c));
     }
 
     /**
@@ -1362,10 +1404,16 @@ public class Configuration
         if (parseContext.openURLs.contains (sURL))
         {
             throw new ConfigurationException
-                            (getExceptionPrefix (line, url)
-                          + "Attempt to include \""
-                          + sURL
-                           + "\" from itself, either directly or indirectly.");
+                              (Package.BUNDLE_NAME,
+                               "Configuration.recursiveInclude",
+                               "{0}, line {1}: Attempt to include \"{2}\" "
+                             + "from itself, either directly or indirectly.",
+                               new Object[]
+                               {
+                                   url.toExternalForm(),
+                                   String.valueOf (line.number),
+                                   sURL
+                               });
         }
 
         parseContext.openURLs.add (sURL);
@@ -1397,9 +1445,15 @@ public class Configuration
                         if (parseContext.currentSection == null)
                         {
                             throw new ConfigurationException
-                                       (getExceptionPrefix (line, url)
-                                      + "Variable assignment before "
-                                      + "first section.");
+                                     (Package.BUNDLE_NAME,
+                                      "Configuration.varBeforeSection",
+                                      "{0}, line {1}: Variable assignment "
+                                    + "before first section.",
+                                      new Object[]
+                                      {
+                                          url.toExternalForm(),
+                                          String.valueOf (line.number)
+                                      });
                         }
 
                         handleVariable (line, url, parseContext);
@@ -1441,19 +1495,29 @@ public class Configuration
         if (s.charAt (0) != SECTION_START)
         {
             throw new ConfigurationException
-                (getExceptionPrefix (line, url)
-               + "Section does not begin with '"
-               + SECTION_START
-               + "'");
+                        (Package.BUNDLE_NAME,
+                         "Configuration.badSectionBegin",
+                         "{0}, line {1}: Section does not begin with \"{2}\"",
+                         new Object[]
+                         {
+                             url.toExternalForm(),
+                             String.valueOf (line.number),
+                             String.valueOf (SECTION_START)
+                         });
         }
 
         else if (s.charAt (s.length() - 1) != SECTION_END)
         {
             throw new ConfigurationException
-                (getExceptionPrefix (line, url)
-               + "Section does not end with '"
-               + SECTION_END
-               + "'");
+                        (Package.BUNDLE_NAME,
+                         "Configuration.badSectionEnd",
+                         "{0}, line {1}: Section does not end with \"{2}\"",
+                         new Object[]
+                         {
+                             url.toExternalForm(),
+                             String.valueOf (line.number),
+                             String.valueOf (SECTION_END)
+                         });
         }
 
         return makeNewSection (s.substring (1, s.length() - 1));
@@ -1484,16 +1548,30 @@ public class Configuration
 
         if (iSep == s.length)
         {
-            throw new ConfigurationException (getExceptionPrefix (line, url)
-                                            + "Missing '=' or ':' for "
-                                            + "variable definition.");
+            throw new ConfigurationException (Package.BUNDLE_NAME,
+                                              "Configuration.missingAssignOp",
+                                              "{0}, line {1}: Missing \"=\" "
+                                            + "or \":\" for variable "
+                                            + "definition.",
+                                              new Object[]
+                                              {
+                                                  url.toExternalForm(),
+                                                  String.valueOf (line.number)
+                                              });
         }
 
         if (iSep == 0)
         {
-            throw new ConfigurationException (getExceptionPrefix (line, url)
-                                            + "Missing variable name for "
-                                            + "variable definition.");
+            throw new ConfigurationException (Package.BUNDLE_NAME,
+                                              "Configuration.noVariablName",
+                                              "{0}, line {1}: Missing "
+                                            + "variable name for variable "
+                                            + "definition.",
+                                              new Object[]
+                                              {
+                                                  url.toExternalForm(),
+                                                  String.valueOf (line.number)
+                                              });
         }
 
         int i = 0;
@@ -1506,18 +1584,34 @@ public class Configuration
 
         if (i > j)
         {
-            throw new ConfigurationException (getExceptionPrefix (line, url)
-                                            + "Missing variable name for "
-                                            + "variable definition.");
+            throw new ConfigurationException (Package.BUNDLE_NAME,
+                                              "Configuration.noVariablName",
+                                              "{0}, line {1}: Missing "
+                                            + "variable name for variable "
+                                            + "definition.",
+                                              new Object[]
+                                              {
+                                                  url.toExternalForm(),
+                                                  String.valueOf (line.number)
+                                              });
         }
 
         String varName = new String (s, i, j - i + 1);
         if (varName.length() == 0)
         {
-            throw new ConfigurationException (getExceptionPrefix (line, url)
-                                            + "Missing variable name for "
-                                            + "variable definition.");
+            throw new ConfigurationException (Package.BUNDLE_NAME,
+                                              "Configuration.noVariablName",
+                                              "{0}, line {1}: Missing "
+                                            + "variable name for variable "
+                                            + "definition.",
+                                              new Object[]
+                                              {
+                                                  url.toExternalForm(),
+                                                  String.valueOf (line.number)
+                                              });
         }
+
+        checkVariableName (varName);
 
         i = skipWhitespace (s, iSep + 1);
         j = s.length - i;
@@ -1527,15 +1621,21 @@ public class Configuration
         Variable existing = currentSection.getVariable (varName);
         if (existing != null)
         {
-            throw new ConfigurationException (getExceptionPrefix (line, url)
-                                            + "Section \""
-                                            + currentSection.getName()
-                                            + "\": Duplicate definition of "
-                                            + "variable \""
-                                            + varName
-                                            + "\". First instance was defined "
-                                            + "on line "
-                                            + existing.lineWhereDefined());
+            throw new ConfigurationException
+                              (Package.BUNDLE_NAME,
+                               "Configuration.duplicateVar",
+                               "{0}, line {1}: Section \"{2}\" has a "
+                             + "duplicate definition for variable "
+                             + "\"{3}\". The first instance was defined "
+                             + "on line {4}.",
+                               new Object[]
+                               {
+                                   url.toExternalForm(),
+                                   String.valueOf (line.number),
+                                   currentSection.getName(),
+                                   varName,
+                                   String.valueOf (existing.lineWhereDefined())
+                               });
         }
 
         Variable newVar = currentSection.addVariable (varName,
@@ -1560,6 +1660,32 @@ public class Configuration
     }
 
     /**
+     * Determine whether a variable name is legal, throwing an exception if
+     * it isn't.
+     *
+     * @param varName the name to check
+     *
+     * @throws ConfigurationException bad variable name
+     */
+    private void checkVariableName (String varName)
+        throws ConfigurationException
+    {
+        char[] ch = varName.toCharArray();
+
+        for (int i = 0; i < ch.length; i++)
+        {
+            if (! legalVariableCharacter (ch[i]))
+            {
+                throw new ConfigurationException
+                                      (Package.BUNDLE_NAME,
+                                       "Configuration.badVariableName",
+                                       "\"{0}\" is an illegal variable name",
+                                       new Object[] {varName});
+            }
+        }
+    }
+
+    /**
      * Handle an include directive.
      *
      * @param line         line buffer
@@ -1577,11 +1703,17 @@ public class Configuration
     {
         if (parseContext.includeFileNestingLevel >= MAX_INCLUDE_NESTING_LEVEL)
         {
-            throw new ConfigurationException (getExceptionPrefix (line, url)
-                                            + "Exceeded maximum nested "
-                                            + "include level of "
-                                            + MAX_INCLUDE_NESTING_LEVEL
-                                            + ".");
+            throw new ConfigurationException
+                                (Package.BUNDLE_NAME,
+                                 "Configuration.maxNestedIncludeExceeded",
+                                 "{0}, line {1}: Exceeded maximum nested "
+                               + "include level of {2}.",
+                                 new Object[]
+                                 {
+                                     url.toExternalForm(),
+                                     String.valueOf (line.number),
+                                     String.valueOf (MAX_INCLUDE_NESTING_LEVEL)
+                                 });
         }
 
         parseContext.includeFileNestingLevel++;
@@ -1599,10 +1731,16 @@ public class Configuration
             (! includeTarget.startsWith ("\"")) ||
             (! includeTarget.endsWith ("\"")))
         {
-            throw new ConfigurationException (getExceptionPrefix (line, url)
-                                            + "Malformed "
-                                            + INCLUDE
-                                            + " directive.");
+            throw new ConfigurationException
+                                 (Package.BUNDLE_NAME,
+                                  "Configuration.malformedDirective",
+                                  "{0}, line {1}: Malformed \"{2}\" directive",
+                                  new Object[]
+                                  {
+                                      url.toExternalForm(),
+                                      String.valueOf (line.number),
+                                      INCLUDE
+                                  });
         }
 
         // Extract the file.
@@ -1610,10 +1748,17 @@ public class Configuration
         includeTarget = includeTarget.substring (1, len - 1);
         if (includeTarget.length() == 0)
         {
-            throw new ConfigurationException (getExceptionPrefix (line, url)
-                                            + "Missing file name or URL in "
-                                            + INCLUDE
-                                            + " directive.");
+            throw new ConfigurationException
+                                 (Package.BUNDLE_NAME,
+                                  "Configuration.includeMissingFile",
+                                  "{0}, line {1}: Missing file name or URL in "
+                                + "\"{2}\" directive",
+                                  new Object[]
+                                  {
+                                      url.toExternalForm(),
+                                      String.valueOf (line.number),
+                                      INCLUDE
+                                  });
         }
 
         // Process the include
