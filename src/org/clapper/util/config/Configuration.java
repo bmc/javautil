@@ -606,8 +606,6 @@ public class Configuration
 
     /**
      * Convenience method to get and convert a required integer parameter.
-     * The default value applies if the variable is missing or is there
-     * but has an empty value.
      *
      * @param sectionName   section name
      * @param variableName  variable name
@@ -634,6 +632,75 @@ public class Configuration
         catch (NumberFormatException ex)
         {
             throw new ConfigurationException ("Bad numeric value \""
+                                            + sNum
+                                            + "\" for variable \""
+                                            + variableName
+                                            + "\" in section \""
+                                            + sectionName
+                                            + "\"");
+        }
+    }
+
+    /**
+     * Convenience method to get and convert an optional floating point
+     * numeric parameter. The default value applies if the variable is
+     * missing or is there but has an empty value.
+     *
+     * @param sectionName   section name
+     * @param variableName  variable name
+     * @param defaultValue  default value if not found
+     *
+     * @return the value, or the default value if not found
+     *
+     * @throws NoSuchSectionException no such section
+     * @throws ConfigurationException bad numeric value
+     */
+    public double getOptionalDoubleValue (String sectionName,
+                                          String variableName,
+                                          double defaultValue)
+        throws NoSuchSectionException,
+               ConfigurationException
+    {
+        try
+        {
+            return getRequiredDoubleValue (sectionName, variableName);
+        }
+
+        catch (NoSuchVariableException ex)
+        {
+            return defaultValue;
+        }
+    }
+
+    /**
+     * Convenience method to get and convert a required floating point
+     * numeric parameter.
+     *
+     * @param sectionName   section name
+     * @param variableName  variable name
+     *
+     * @return the value
+     *
+     * @throws NoSuchSectionException  no such section
+     * @throws NoSuchVariableException no such variable
+     * @throws ConfigurationException  bad numeric value
+     */
+    public double getRequiredDoubleValue (String sectionName,
+                                          String variableName)
+        throws NoSuchSectionException,
+               NoSuchVariableException,
+               ConfigurationException
+    {
+        String sNum = getVariableValue (sectionName, variableName);
+
+        try
+        {
+            return Double.parseDouble (sNum);
+        }
+
+        catch (NumberFormatException ex)
+        {
+            throw new ConfigurationException ("Bad floating point value \""
                                             + sNum
                                             + "\" for variable \""
                                             + variableName
