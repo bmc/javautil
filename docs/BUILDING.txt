@@ -18,18 +18,22 @@ Before building this library, you'll need:
    This component is optional. See OPTIONAL COMPONENTS, below.
 
 
-BUILDING.
+BUILDING:
 ---------
 
 Type "ant dist" in the top-level directory. The code will be compiled to
 the "classes" subdirectory, and you'll get an "curn.jar" in "dist/lib".
 
-The ant "build.xml" file is set to use jikes as the Java compiler. If you
-don't have jikes, or you would rather use the javac compiler, remove or
-remove or comment out the following line in "build.xml":
+Note: The Ant build.xml file is configured to use the default Java compiler
+(usually "modern"). However, I usually build with Jikes
+(http://www-124.ibm.com/developerworks/oss/jikes/). To use Jikes, simply
+run Ant as follows:
 
-        <property name="build.compiler" value="jikes"/>
+	ant -Dbuild.compiler=jikes dist
 
+See the Ant manual entry for the <javac> task
+(http://ant.apache.org/manual/CoreTasks/javac.html) task for more
+information on the valid values for build.compiler.
 
 POSSIBLE BUILD ERRORS:
 
