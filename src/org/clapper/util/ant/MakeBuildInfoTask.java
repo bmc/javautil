@@ -35,8 +35,15 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
 /**
- * {@link <a href="http://ant.apache.org/">Ant</a>} task to create a build
- * info properties file.
+ * <p>{@link <a href="http://ant.apache.org/">Ant</a>} task to create a build
+ * info properties file. A build info properties file contains a series of
+ * properties containing information about the build time, build environment,
+ * etc. The file is actually created by the static
+ * {@link BuildInfo#makeBuildInfoBundle BuildInfo.makeBuildInfoBundle()}
+ * method. This Ant task is simply a thin wrapper around that method.</p>
+ *
+ * <p>The Ant build file logic necessary to define and invoke this task
+ * is:</p>
  *
  * <blockquote><pre>
  * &lt;taskdef name="make_build_info" 
@@ -48,7 +55,9 @@ import org.apache.tools.ant.Task;
  * /&gt;
  * </pre></blockquote>
  *
- * @version <tt>$Id$</tt>
+ * @version <tt>$Revision$</tt>
+ *
+ * @
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
