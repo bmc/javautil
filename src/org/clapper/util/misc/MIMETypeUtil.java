@@ -100,8 +100,8 @@ public class MIMETypeUtil
      * Default MIME type, when a MIME type cannot be determined from a file's
      * extension.
      *
-     * @see #MIMETYpeForFile
-     * @see #MIMETYpeForFileName
+     * @see #MIMETypeForFile
+     * @see #MIMETypeForFileName
      */
     public static final String DEFAULT_MIME_TYPE = "application/octet-stream";
 
@@ -261,12 +261,12 @@ public class MIMETypeUtil
      * but it applies a consistent default when <tt>getContentTypeFor()</tt>
      * returns null (which can happen).
      *
-     * @param file   the file
+     * @param fileName   the file name
      *
      * @return the MIME type to use
      *
-     * @see #MimeTypeForFile(File)
-     * @see #MimeTypeForFileName(String,String)
+     * @see #MIMETypeForFile(File)
+     * @see #MIMETypeForFileName(String,String)
      * @see #DEFAULT_MIME_TYPE
      */
     public static String MIMETypeForFileName (String fileName)
@@ -280,7 +280,7 @@ public class MIMETypeUtil
      * but it applies the supplied default when <tt>getContentTypeFor()</tt>
      * returns null (which can happen).
      *
-     * @param file            the file
+     * @param fileName        the file name
      * @param defaultMIMEType the default MIME type to use if one cannot
      *                        be determined from the file name, or null to
      *                        use {@link #DEFAULT_MIME_TYPE}
