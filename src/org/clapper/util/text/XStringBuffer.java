@@ -70,6 +70,15 @@ import org.clapper.util.text.TextUtil;
 public class XStringBuffer
 {
     /*----------------------------------------------------------------------*\
+                             Public Constants
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * The character that denotes the start of a metacharacter sequence.
+     */
+    public static final char METACHAR_SEQUENCE_START = '\\';
+
+    /*----------------------------------------------------------------------*\
                              Private Variables
     \*----------------------------------------------------------------------*/
 
@@ -519,7 +528,7 @@ public class XStringBuffer
                 if ((c = pb.read()) == -1)
                     break;
 
-                if (c == '\\')
+                if (c == METACHAR_SEQUENCE_START)
                 {
                     if ((c = pb.read()) == -1)
                     {
@@ -536,7 +545,7 @@ public class XStringBuffer
                             break;
 
                         if (c == -2) // Bad unicode sequence
-                            newBuf.append ('\\');
+                            newBuf.append (METACHAR_SEQUENCE_START);
                         else
                             newBuf.append ((char) c);
                     }
@@ -1189,10 +1198,16 @@ public class XStringBuffer
                 case Character.OTHER_PUNCTUATION:
                 case Character.START_PUNCTUATION:
                 case Character.END_PUNCTUATION:
-                    if (c == '\\')
-                        result.append ("\\\\");
+                    if (c == METACHAR_SEQUENCE_START)
+                    {
+                        result.append (METACHAR_SEQUENCE_START);
+                        result.append (METACHAR_SEQUENCE_START);
+                    }
+
                     else
+                    {
                         result.append (c);
+                    }
                     break;
 
                 case Character.CONNECTOR_PUNCTUATION:
@@ -1285,8 +1300,8 @@ public class XStringBuffer
                 c = '\r';
                 break;
 
-            case '\\':
-                c = '\\';
+            case METACHAR_SEQUENCE_START:
+                c = METACHAR_SEQUENCE_START;
                 break;
 
             case 'u':
@@ -1294,7 +1309,7 @@ public class XStringBuffer
                 if (c == -2)
                 {
                     pb.unread ('u');
-                    c = '\\';
+                    c = METACHAR_SEQUENCE_START;
                 }
                 break;
 
