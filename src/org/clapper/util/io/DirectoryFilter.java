@@ -26,6 +26,11 @@ public class DirectoryFilter implements FileFilter
                               Public Methods
     \*----------------------------------------------------------------------*/
 
+    /**
+     * Determine whether the specified file is a directory or not.
+     *
+     * @return <tt>true</tt> if the file is a directory, <tt>false</tt> if not
+     */
     public boolean accept (File f)
     {
         return f.isDirectory();
