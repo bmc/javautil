@@ -4,7 +4,9 @@
 
 package org.clapper.util.misc;
 
-import java.io.*;
+import java.io.StringWriter;
+import java.io.PrintWriter;
+import java.io.PrintStream;
 
 /**
  * <p><tt>NestedException</tt> defines a special <tt>Exception</tt> class
@@ -104,6 +106,31 @@ public class NestedException extends Exception
         }
 
         return buf.toString();
+    }
+
+    /**
+     * Get all the messages of all the nested exceptions, as one
+     * string, with each message on a separate line.
+     *
+     * @return the aggregated messages
+     */
+    public String getMessages()
+    {
+        StringWriter sw = new StringWriter();
+        PrintWriter  pw = new PrintWriter (sw);
+        Throwable    ex = this;
+
+        while (ex != null)
+        {
+            pw.println (ex.toString());
+
+            if (ex instanceof NestedException)
+                ex = ((NestedException) ex).getNestedException();
+            else
+                break;
+        }
+
+        return sw.getBuffer().toString();
     }
 
     /**
