@@ -120,11 +120,15 @@ public class FileUtil
      * @return total number of bytes copied
      *
      * @throws IOException  on error
+     *
+     * @see #copyStream(InputStream,OutputStream,int)
+     * @see #copyReader(Reader,Writer)
+     * @see #copyFile(File,File)
      */
     public static int copyStream (InputStream is, OutputStream os)
         throws IOException
     {
-        return copyStream (is, os, 8192);
+        return copyStream (is, os, -1);
     }
 
     /**
@@ -135,11 +139,15 @@ public class FileUtil
      *
      * @param src        the source <tt>InputStream</tt>
      * @param dst        the destination <tt>OutputStream</tt>
-     * @param bufferSize the buffer size to use
+     * @param bufferSize the buffer size to use, or -1 for a default
      *
      * @return total number of bytes copied
      *
      * @throws IOException  on error
+     *
+     * @see #copyReader(Reader,Writer,int)
+     * @see #copyStream(InputStream,OutputStream)
+     * @see #copyFile(File,File)
      */
     public static int copyStream (InputStream  src,
                                   OutputStream dst,
@@ -149,18 +157,27 @@ public class FileUtil
         int totalCopied = 0;
 
         if (! (src instanceof BufferedInputStream))
-            src = new BufferedInputStream (src);
+        {
+            if (bufferSize > 0)
+                src = new BufferedInputStream (src, bufferSize);
+            else
+                src = new BufferedInputStream (src);
+        }
 
         if (! (dst instanceof BufferedOutputStream))
-            dst = new BufferedOutputStream (dst);
-        
-        byte [] buf = new byte [bufferSize];
-        int nr = 0;
-
-        while ((nr = src.read (buf)) != -1)
         {
-            dst.write (buf, 0, nr);
-            totalCopied += nr;
+            if (bufferSize > 0)
+                dst = new BufferedOutputStream (dst, bufferSize);
+            else
+                dst = new BufferedOutputStream (dst);
+        }
+        
+        int b;
+
+        while ((b = src.read()) != -1)
+        {
+            dst.write (b);
+            totalCopied++;
         }
 
         dst.flush();
@@ -169,7 +186,85 @@ public class FileUtil
     }
 
     /**
-     * Copy one file to another.
+     * Copy characters from a reader to a writer. If the reader is not
+     * already buffered, then it's wrapped in a <tt>BufferedReader</tt>,
+     * using the specified buffer size. Similarly, buffered stream (i.e.,
+     * <tt>BufferedInputStream</tt> or If the writer is not already
+     * buffered, then it's wrapped in a <tt>BufferedWriter</tt>, using the
+     * specified buffer size.
+     *
+     * @param reader     where to read from
+     * @param writer     where to write to
+     * @param bufferSize buffer size to use, if reader and writer are not
+     *                   already buffered, or -1 to use a default size.
+     *
+     * @return total number of characters copied
+     *
+     * @throws IOException on error
+     *
+     * @see #copyReader(Reader,Writer)
+     * @see #copyStream(InputStream,OutputStream,int)
+     * @see #copyStream(InputStream,OutputStream)
+     * @see #copyFile(File,File)
+     */
+    public static int copyReader (Reader reader, Writer writer, int bufferSize)
+        throws IOException
+    {
+        if (! (reader instanceof BufferedReader))
+        {
+            if (bufferSize > 0)
+                reader = new BufferedReader (reader, bufferSize);
+            else
+                reader = new BufferedReader (reader);
+        }
+
+        if (! (writer instanceof BufferedWriter))
+        {
+            if (bufferSize > 0)
+                writer = new BufferedWriter (writer, bufferSize);
+            else
+                writer = new BufferedWriter (writer);
+        }
+
+        int ch;
+        int total = 0;
+
+        while ((ch = reader.read()) != -1)
+        {
+            writer.write (ch);
+            total++;
+        }
+
+        writer.flush();
+
+        return total;
+    }
+
+    /**
+     * Copy characters from a reader to a writer, using a default buffer size.
+     *
+     * @param reader  where to read from
+     * @param writer  where to write to
+     *
+     * @return total number of characters copied
+     *
+     * @throws IOException on error
+     *
+     * @see #copyReader(Reader,Writer)
+     * @see #copyStream(InputStream,OutputStream,int)
+     * @see #copyStream(InputStream,OutputStream)
+     * @see #copyFile(File,File)
+     */
+    public static int copyReader (Reader reader, Writer writer)
+        throws IOException
+    {
+        return copyReader (reader, writer, -1);
+    }
+
+    /**
+     * Copy one file to another. This method simply copies bytes and
+     * performs no character set conversion. If you want character set
+     * conversions, use {@link #copyTextFile(File,String,File,String)}.
      *
      * @param src  The file to copy
      * @param dst  Where to copy it. Can be a directory or a file.
@@ -177,6 +272,12 @@ public class FileUtil
      * @return total number of bytes copied
      *
      * @throws IOException on error
+     *
+     * @see #copyTextFile(File,String,File,String)
+     * @see #copyReader(Reader,Writer,int)
+     * @see #copyReader(Reader,Writer)
+     * @see #copyStream(InputStream,OutputStream,int)
+     * @see #copyStream(InputStream,OutputStream)
      */
     public static int copyFile (File src, File dst) throws IOException
     {
@@ -206,6 +307,71 @@ public class FileUtil
         }
 
         return totalCopied;
+    }
+
+    /**
+     * Copy one file to another, character by character, possibly doing
+     * character set conversions
+     *
+     * @param src         the file to copy
+     * @param srcEncoding the character set encoding for the source file,
+     *                    or null to assume the default
+     * @param dst         Where to copy it. Can be a directory or a file.
+     * @param dstEncoding the character set encoding for the destination file,
+     *                    or null to assume the default
+     *
+     * @return total number of characters copied
+     *
+     * @throws IOException on error
+     *
+     * @see #copyFile(File,File)
+     * @see #copyReader(Reader,Writer,int)
+     * @see #copyReader(Reader,Writer)
+     * @see #copyStream(InputStream,OutputStream,int)
+     * @see #copyStream(InputStream,OutputStream)
+     */
+    public static int copyTextFile (File   src,
+                                    String srcEncoding,
+                                    File   dst,
+                                    String dstEncoding)
+        throws IOException
+    {
+        int totalCopied = 0;
+
+        if (dst.isDirectory())
+            dst = new File (dst, src.getName());
+
+        Reader reader;
+        Writer writer;
+
+        if (srcEncoding != null)
+        {
+            reader = new InputStreamReader (new FileInputStream (src),
+                                            srcEncoding);
+        }
+
+        else
+        {
+            reader = new FileReader (src);
+        }
+
+        if (dstEncoding != null)
+        {
+            writer = new OutputStreamWriter (new FileOutputStream (dst),
+                                             dstEncoding);
+        }
+
+        else
+        {
+            writer = new FileWriter (dst);
+        }
+
+        int total = copyReader (reader, writer);
+
+        reader.close();
+        writer.close();
+
+        return total;
     }
 
     /**
