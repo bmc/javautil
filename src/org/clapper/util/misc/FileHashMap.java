@@ -247,6 +247,9 @@ import java.util.TreeSet;
  * <ul>
  *   <li>An object cannot be stored in a <tt>FileHashMap</tt> unless it
  *       implements <tt>java.io.Serializable</tt>.
+ *   <li>The maximum size of a serialized stored object is confined to
+ *       a 32-bit integer. This restriction is unlikely to cause anyone
+ *       problems, and it keeps the keyspace down.
  *   <li>To prevent multiple Java VMs from updating the file containing the
  *       serialized values, this class asserts an exclusive lock on the file
  *       for the entire time the file is open. It's currently not possible to
@@ -1184,22 +1187,18 @@ public class FileHashMap extends AbstractMap
 
         try
         {
-            dataFile.close();
-            dataFilePath.delete();
-            openDataFile (dataFilePath);
+            // Implement the clear operation by truncating the data file.
+
+            dataFile.getChannel().truncate (0);
             modified = true;
-
-            if ((flags & RECLAIM_FILE_GAPS) != 0)
-            {
-                // The entire file is now one big gap.
-
-                fileGaps.clear();
-                fileGaps.add (new FileHashMapEntry (0L, dataFile.length()));
-            }
         }
 
         catch (IOException ex)
         {
+            log.error ("Failed to truncate FileHashMap file \""
+                     + dataFilePath.getPath()
+                     + "\"",
+                       ex);
             valid = false;
         }
     }
@@ -1655,7 +1654,7 @@ public class FileHashMap extends AbstractMap
             // Handle the first one specially.
 
             long pos  = entries[0].getFilePosition();
-            long size = entries[0].getObjectSize();
+            int  size = entries[0].getObjectSize();
 
             if (pos > 0)
             {
@@ -1795,8 +1794,8 @@ public class FileHashMap extends AbstractMap
                ClassNotFoundException,
                IllegalStateException
     {
-        long               size      = entry.getObjectSize();
-        byte               byteBuf[] = new byte[(int) size];
+        int                size      = entry.getObjectSize();
+        byte               byteBuf[] = new byte[size];
         int                sizeRead;
         ObjectInputStream  objStream;
 
@@ -1872,7 +1871,7 @@ public class FileHashMap extends AbstractMap
             for (int i = 0; i < entries.length; i++)
             {
                 long pos  = entries[i].getFilePosition();
-                long size = entries[i].getObjectSize();
+                int  size = entries[i].getObjectSize();
 
                 log.debug ("    pos=" + pos + ", size=" + size);
             }
@@ -1951,7 +1950,7 @@ public class FileHashMap extends AbstractMap
         {
             FileHashMapEntry  gap  = (FileHashMapEntry) it.next();
             long              pos  = gap.getFilePosition();
-            long              size = gap.getObjectSize();
+            int               size = gap.getObjectSize();
 
             log.debug ("Gap: pos=" + pos + ", size=" + size);
             if (size >= objectSize)
