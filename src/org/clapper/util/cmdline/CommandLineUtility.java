@@ -133,6 +133,17 @@ import java.util.NoSuchElementException;
 public abstract class CommandLineUtility
 {
     /*----------------------------------------------------------------------*\
+                             Private Constants
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * Maximum length of option string (see usage()) that can be concatenated
+     * with first line of option's explanation. Strings longer than this are
+     * printed on a line by themselves.
+     */
+    private static final int MAX_OPTION_STRING_LENGTH = 35;
+
+    /*----------------------------------------------------------------------*\
                            Private Data Elements
     \*----------------------------------------------------------------------*/
 
@@ -228,7 +239,7 @@ public abstract class CommandLineUtility
             {
                 String arg = (String) it.next();
 
-                if (! (arg.charAt (0) == '-') )
+                if (! (arg.charAt (0) == UsageInfo.SHORT_OPTION_PREFIX) )
                 {
                     // Move iterator back, since we've already advanced
                     // past the last option and retrieved the first
@@ -246,14 +257,15 @@ public abstract class CommandLineUtility
                     optionInfo = usageInfo.getOptionInfo (arg.charAt (1));
                 else
                 {
-                    if (! arg.startsWith ("--"))
+                    if (! arg.startsWith (UsageInfo.LONG_OPTION_PREFIX))
                     {
                         throw new CommandLineUsageException
                             ("Option \""
                            + arg
                            + "\" is not a single character short option, but "
-                           + "doesn't start with \"--\", as long options "
-                           + "must.");
+                           + "doesn't start with \""
+                           + UsageInfo.LONG_OPTION_PREFIX
+                           + "\", as long options must.");
                     }
 
                     optionInfo = usageInfo.getOptionInfo (arg.substring (2));
@@ -492,7 +504,11 @@ public abstract class CommandLineUtility
                 }
 
                 if (opt.longOption != null)
-                    len += (sep.length() + 2 + opt.longOption.length());
+                {
+                    len += (sep.length()
+                         + UsageInfo.LONG_OPTION_PREFIX.length()
+                         + opt.longOption.length());
+                }
 
                 if (opt.argToken != null)
                     len += (opt.argToken.length() + 1);
@@ -500,6 +516,9 @@ public abstract class CommandLineUtility
                 maxOptionLength = Math.max (maxOptionLength, len + 1);
             }
         }
+
+        if (maxOptionLength > MAX_OPTION_STRING_LENGTH)
+            maxOptionLength = MAX_OPTION_STRING_LENGTH;
 
         // Now, print the options.
 
@@ -515,7 +534,7 @@ public abstract class CommandLineUtility
 
             if (opt.shortOption != UsageInfo.NO_SHORT_OPTION)
             {
-                optString.append ('-');
+                optString.append (UsageInfo.SHORT_OPTION_PREFIX);
                 optString.append (opt.shortOption);
                 sep = ", ";
             }
@@ -523,19 +542,30 @@ public abstract class CommandLineUtility
             if (opt.longOption != null)
             {
                 optString.append (sep);
-                optString.append ("--");
+                optString.append (UsageInfo.LONG_OPTION_PREFIX);
                 optString.append (opt.longOption);
-                if (opt.argToken != null)
-                {
-                    optString.append (' ');
-                    optString.append (opt.argToken);
-                }
-
-                out.setPrefix (padString (optString.toString(),
-                                          maxOptionLength));
-                out.println (opt.explanation);
             }
 
+            if (opt.argToken != null)
+            {
+                optString.append (' ');
+                optString.append (opt.argToken);
+            }
+
+            s = optString.toString();    
+            if (s.length() > maxOptionLength)
+            {
+                out.println (s);
+                out.setPrefix (padString (" ", maxOptionLength));
+            }
+
+            else
+            {
+                out.setPrefix (padString (optString.toString(),
+                                          maxOptionLength));
+            }
+
+            out.println (opt.explanation);
             out.setPrefix (null);
         }
 
