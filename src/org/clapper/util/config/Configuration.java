@@ -54,11 +54,17 @@ import org.clapper.util.io.*;
  * searchFailedMessage=Search failed, sorry.
  * </pre></blockquote>
  *
- * <p>At least one section is required. It is an error to have any variable
- * definitions before the first section header. Sections may be empty.
- * The section name "system" is reserved. It doesn't really exist, but it's
- * used during variable substitution (see below) to substitute from
- * <tt>System.properties</tt>.</p>
+ * <p>Notes and caveats:</p>
+ *
+ * <ul>
+ *   <li> At least one section is required.
+ *   <li> Sections may be empty.
+ *   <li> It is an error to have any variable definitions before the first
+ *        section header.
+ *   <li> The section name "system" is reserved. It doesn't really exist, but
+ *        it's used during variable substitution (see below) to substitute from
+ *        <tt>System.properties</tt>.
+ * </ul>
  *
  * <h4>Section Name Syntax</h4>
  *
@@ -161,6 +167,9 @@ import org.clapper.util.io.*;
  *   <li> Variable substitution is performed <i>after</i> metacharacter
  *        expansion (so don't include metacharacter sequences in your variable
  *        names).
+ *
+ *   <li> To include a literal "$" character in a variable value, escape
+ *        it with a backslash, e.g., "<tt>var=value with \$ dollar sign</tt>"
  * </ul>
  *
  * <h4>Includes</h4>
