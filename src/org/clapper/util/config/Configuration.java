@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -51,6 +52,8 @@ import java.util.StringTokenizer;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import java.text.SimpleDateFormat;
 
 import org.clapper.util.text.TextUtil;
 import org.clapper.util.text.UnixShellVariableSubstituter;
@@ -111,11 +114,12 @@ import org.clapper.util.io.FileUtil;
  * <p>Each section contains zero or more variable settings. Similar to a
  * <tt>Properties</tt> file, the variables are specified as name/value
  * pairs, separated by an equal sign ("=") or a colon (":"). Variable names
- * are case-sensitive and may contain alphanumerics and periods (".").
- * Variable values may contain anything at all. The parser ignores
- * whitespace on either side of the "=" or ":"; that is, leading whitespace
- * in the value is skipped. The way to include leading whitespace in a value is
- * escape the whitespace characters with backslashes. (See below).</p>
+ * are case-sensitive and may contain any printable character (including
+ * white space), other than '$', '{', and '}' Variable values may contain
+ * anything at all. The parser ignores whitespace on either side of the "="
+ * or ":"; that is, leading whitespace in the value is skipped. The way to
+ * include leading whitespace in a value is escape the whitespace
+ * characters with backslashes. (See below).</p>
  *
  * <h4>Continuation Lines</h4>
  *
@@ -187,24 +191,77 @@ import org.clapper.util.io.FileUtil;
  * special variables provided by the <tt>Configuration</tt> class. Those
  * variables are:</p>
  *
- * <ul>
- *   <li> <tt>cwd</tt>: the program's current working directory. Thus,
+ * <table border="0" align="left" width="100%">
+ *   <tr valign="top">
+ *     <th align="left">Variable</th>
+ *     <th align="left">Description</th>
+ *     <th align="left">Examples</th>
+ *   </tr>
+ *
+ *   <tr valign="top">
+ *     <td align="left"><tt>cwd</tt></td>
+ *     <td align="left">
+ *        the program's current working directory. Thus,
  *        <tt>${program:cwd}</tt> will substitute the working directory,
  *        with the appropriate system-specific file separator. On a Windows
  *        system, the file separator character (a backslash) will be doubled,
  *        to ensure that it is properly interpreted by the configuration file
  *        parsing logic.
- *   <li> <tt>cwd.url</tt>: the program's current working directory as a
- *        <tt>file</tt> URL, without the trailing "/". Useful when you need
- *        to create a URL reference to something relative to the current
- *        directory. This is especially useful on Windows, where
+ *     </td>
+ *     <td align="left"></td>
+ *   </tr>
+ *
+ *   <tr valign="top">
+ *     <td align="left"><tt>cwd.url</tt></td>
+ *     <td align="left">
+ *        the program's current working directory as a <tt>file</tt> URL,
+ *        without the trailing "/". Useful when you need to create a URL
+ *        reference to something relative to the current directory. This is
+ *        especially useful on Windows, where
  *        <blockquote><pre>file://${program:cwd}/something.txt</pre></blockquote>
  *         produces an invalid URL, with a mixture of backslashes and
  *         forward slashes.  By contrast,
  *         <blockquote><pre>${program:cwd.url}/something.txt</pre></blockquote>
  *         always produces a valid URL, regardless of the underlying host
  *         operating system.
- * </ul>
+ *     </td>
+ *     <td align="left"></td>
+ *   </tr>
+ *
+ *   <tr valign="top">
+ *     <td align="left"><tt>now</tt></td>
+ *     <td align="left">
+ *        the current time, formatted by calling
+ *        <tt>java.util.Date.toString()</tt> with the default locale.
+ *     </td>
+ *     <td align="left">Examples</td>
+ *   </tr>
+ *
+ *   <tr valign="top">
+ *     <td align="left" nowrap>
+ *       <tt>now</tt> <i>delim</i> <i>fmt</i> [<i>delim</i> <i>lang delim country</i>]] 
+ *     </td>
+ *     <td align="left">
+ *        The current date/time, formatted with the specified
+ *        <tt>java.text.SimpleDateFormat</tt> format string. If specified,
+ *        the given locale and country code will be used; otherwise, the
+ *        default system locale will be used. <i>lang</i> is a Java language
+ *        code, such as "en", "fr", etc. <i>country</i> is a 2-letter country
+ *        code, e.g., "UK", "US", "CA", etc. <i>delim</i> is a user-chosen
+ *        delimiter that separates the variable name ("<tt>now</tt>") from the
+ *        format and the optional locale fields. The delimiter can be anything
+ *        that doesn't appear in the format string, the variable name, or
+ *        the locale.
+ *        </pre></blockquote>
+ *     </td>
+ *     <td align="left">
+ *        <blockquote><pre>
+ *        ${program:now|yyyy.MM.dd 'at' hh:mm:ss z}
+ *        ${program:now|yyyy/MM/dd 'at' HH:mm:ss z|en|US}
+ *        ${program:now|dd MMM, yyyy hh:mm:ss z|fr|FR}
+ *     </td>
+ *   </tr>
+ * </table>
  *
  * <p>Notes and caveats:</p>
  *
@@ -283,6 +340,10 @@ public class Configuration
     private static final int    MAX_INCLUDE_NESTING_LEVEL  = 50;
     private static final String SYSTEM_SECTION_NAME        = "system";
     private static final String PROGRAM_SECTION_NAME       = "program";
+
+    private static final String PROGRAM_NOW_VAR            = "now";
+    private static final String PROGRAM_CWD_VAR            = "cwd";
+    private static final String PROGRAM_CWD_URL_VAR        = "cwd.url";
 
     /*----------------------------------------------------------------------*\
                                   Classes
@@ -1010,10 +1071,7 @@ public class Configuration
      */
     public boolean legalVariableCharacter (char c)
     {
-        return (Character.isLetterOrDigit (c) ||
-                (c == '_') ||
-                (c == '.') ||
-                (c == ':'));
+        return ((c != '$') && (c != '{') && (c != '}'));
     }
 
     /**
@@ -1477,7 +1535,7 @@ public class Configuration
         while (Character.isWhitespace (s[j]))
             j--;
 
-        if (i >= j)
+        if (i > j)
         {
             throw new ConfigurationException (getExceptionPrefix (line, url)
                                             + "Missing variable name for "
@@ -1899,14 +1957,14 @@ public class Configuration
 
         try
         {
-            if (varName.equals ("cwd"))
+            if (varName.equals (PROGRAM_CWD_VAR))
             {
                 File dir = new File (".");
 
                 value = dir.getCanonicalPath();
             }
 
-            else if (varName.equals ("cwd.url"))
+            else if (varName.equals (PROGRAM_CWD_URL_VAR))
             {
                 File dir = new File (".");
 
@@ -1914,11 +1972,76 @@ public class Configuration
                 if (value.charAt (value.length() - 1) == '/')
                     value = value.substring (0, value.length() - 1);
             }
+
+            else if (varName.startsWith (PROGRAM_NOW_VAR))
+            {
+                value = substituteDatetime (varName);
+            }
         }
 
         catch (IOException ex)
         {
             throw new VariableSubstitutionException (ex);
+        }
+
+        return value;
+    }
+
+    /**
+     * Handle substitution of a date variable in the [program] section.
+     *
+     * @param varName  the variable name
+     *
+     * @return the formatted date/time value
+     *
+     * @throws VariableSubstitutionException bad date format, or something
+     */
+    private String substituteDatetime (String varName)
+         throws VariableSubstitutionException
+    {
+        String value = "";
+        Date   now   = new Date();
+
+        if (varName.equals (PROGRAM_NOW_VAR))
+        {
+            value = now.toString();
+        }
+
+        else
+        {
+            char delim = varName.charAt (PROGRAM_NOW_VAR.length());
+            String[] tokens = TextUtil.split (varName, delim);
+
+            if ((tokens.length != 2) && (tokens.length != 4))
+            {
+                throw new VariableSubstitutionException
+                    ("Incorrect number of fields in extended version of \""
+                   + PROGRAM_NOW_VAR
+                   + "\" variable: \""
+                   + varName
+                   + "\" in ["
+                   + PROGRAM_SECTION_NAME
+                   + "] section");
+            }
+
+            Locale locale = null;
+
+            if (tokens.length == 2)
+                locale = Locale.getDefault();
+            else
+                locale = new Locale (tokens[2], tokens[3]);
+
+            try
+            {
+                SimpleDateFormat fmt = new SimpleDateFormat (tokens[1],
+                                                             locale);
+                value = fmt.format (now);
+            }
+
+            catch (IllegalArgumentException ex)
+            {
+                throw new VariableSubstitutionException (ex.toString());
+            }
         }
 
         return value;
