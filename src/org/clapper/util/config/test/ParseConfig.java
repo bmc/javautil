@@ -6,6 +6,7 @@ package org.clapper.util.config.test;
 
 import java.util.*;
 import org.clapper.util.text.*;
+import org.clapper.util.io.*;
 import org.clapper.util.config.*;
 import java.io.*;
 import java.net.*;
@@ -58,6 +59,12 @@ public class ParseConfig
             ParseConfig tester = new ParseConfig();
             tester.runTest (args[0], vars);
             System.exit (0);
+        }
+
+        catch (ConfigurationException ex)
+        {
+            new WordWrapWriter (System.err).println (ex.getMessage());
+            System.exit (1);
         }
 
         catch (Exception ex)

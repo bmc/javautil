@@ -39,14 +39,11 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -149,24 +146,38 @@ import org.clapper.util.io.FileUtil;
  * lines, comment lines (see below) and include directives (see below)
  * cannot span multiple lines.</p>
  *
- * <h4>Metacharacters</h4>
+ * <h4>Expansions of Variable Values</h4>
  *
- * <p>Within a variable's value, Java-style ASCII escape sequences
- * <tt>\t</tt>, <tt>\n</tt>, <tt>\r</tt>, <tt>\\</tt>, <tt>\"</tt>,
- * <tt>\'</tt>, <tt>\ </tt> (a backslash and a space), and
+ * <p>The configuration parser preprocesses each variable's value,
+ * replacing embedded metacharacter sequences and substituting variable
+ * references. You can use backslashes to escape the special characters
+ * that the parser uses to recognize metacharacter and variable sequences;
+ * you can also use single quotes. See <a href="#RawValues">Suppressing
+ * Metacharacter Expansion and Variable Substitution</a>, below, for more
+ * details.</p>
+ *
+ * <h5>Metacharacters</h5>
+ *
+ * <p>The parser recognizes Java-style ASCII escape sequences <tt>\t</tt>,
+ * <tt>\n</tt>, <tt>\r</tt>, <tt>\\</tt>, <tt>\"</tt>, <tt>\'</tt>,
+ * <tt>\&nbsp;</tt> (a backslash and a space), and
  * <tt>&#92;u</tt><i>xxxx</i> are recognized and converted to single
- * characters. Note that metacharacter expansion is performed <i>before</i>
+ * characters. Note that metacharacter expansion is performed <i>after</i>
  * variable substitution.</p>
  *
- * <h4>Variable Substitution</h4>
+ * <h5>Variable Substitution</h5>
  *
- * <p>A variable value can interpolate the values of other variables,
- * using a variable substitution syntax. The general form of a variable
- * reference is <tt>${sectionName:varName}</tt>. <tt>sectionName</tt> is
- * the name of the section containing the variable to substitute; if
- * omitted, it defaults to the current section. <tt>varName</tt> is the
- * name of the variable to substitute. If the variable doesn't exist, or
- * has no value, an empty string is substituted.</p>
+ * <p>A variable value can interpolate the values of other variables, using
+ * a variable substitution syntax. The general form of a variable reference
+ * is <tt>${sectionName:varName}</tt>. <tt>sectionName</tt> is the name of
+ * the section containing the variable to substitute; if omitted, it
+ * defaults to the current section. <tt>varName</tt> is the name of the
+ * variable to substitute. If the variable has an empty value, an empty
+ * string is substituted. If the variable (or the referenced section) does
+ * not exist, the configuration parser throws an exception. If a variable
+ * reference specifies a section name, the referenced section must precede
+ * the current section. It is not possible to substitute the value of a
+ * variable in a section that occurs later in the file.</p>
  *
  * <p>The special section "system" is reserved. It doesn't actually
  * exist in the configuration; however, you can refer to it during variable
@@ -286,6 +297,42 @@ import org.clapper.util.io.FileUtil;
  *        it with a backslash, e.g., "<tt>var=value with \$ dollar sign</tt>"
  * </ul>
  *
+ * <h5><a name="RawValues">Suppressing Metacharacter Expansion and Variable
+ * Substitution</a></h5>
+ *
+ * <p>To prevent the parser from interpreting metacharacter sequences,
+ * variable substitutions and other special characters, enclose part or
+ * all of the value in single quotes.
+ * <p>For example, suppose you want to set variable "prompt" to the
+ * literal value "Enter value. To specify a newline, use \n." The following
+ * configuration file line will do the trick:</p>
+ *
+ * <blockquote><pre>prompt: 'Enter value. To specify a newline, use \n'
+ * </pre></blockquote>
+ *
+ * <p>Similarly, to set variable "abc" to the literal string "${foo}"
+ * suppressing the parser's attempts to expand "${foo}" as a variable
+ * reference, you could use:</p>
+ *
+ * <blockquote><pre>abc: '${foo}'</pre></blockquote>
+ *
+ * <p>Note: It's also possible, though hairy, to escape the special meaning
+ * of special characters via the backslash character. For instance, you can
+ * Escape the variable substitution lead-in character, '$', with a
+ * backslash. e.g., "\$". This technique is not recommended, however,
+ * because you have to double-escape any backslash characters that you want
+ * to be preserved literally. For instance, to get "\t", you must specify
+ * "\\\\t". To get a literal backslash, specify "\\\\". This
+ * double-escaping is regrettable, but necessary because the configuration
+ * file parser makes two separate passes over the value (one for
+ * metacharacter expansion and another for variable expansion). Each of
+ * those passes honors and processes backslash escapes. This problem would
+ * go away if the configuration file parser did its own parsing, in one
+ * pass, inline. It doesn't currently do that, because I wanted to make use
+ * of the existing {@link XStringBuffer#decodeMetacharacters()} method and the
+ * {@link UnixShellVariableSubstituter} class. In generally, you're better off
+ * just sticking with single quotes.</p>
+ *
  * <h4>Includes</h4>
  *
  * <p>A special include directive permits inline inclusion of another
@@ -341,10 +388,6 @@ public class Configuration
     private static final String SYSTEM_SECTION_NAME        = "system";
     private static final String PROGRAM_SECTION_NAME       = "program";
 
-    private static final String PROGRAM_NOW_VAR            = "now";
-    private static final String PROGRAM_CWD_VAR            = "cwd";
-    private static final String PROGRAM_CWD_URL_VAR        = "cwd.url";
-
     /*----------------------------------------------------------------------*\
                                   Classes
     \*----------------------------------------------------------------------*/
@@ -352,7 +395,7 @@ public class Configuration
     /**
      * Contains one logical input line.
      */
-    private class Line
+    class Line
     {
         static final int COMMENT  = 0;
         static final int INCLUDE  = 1;
@@ -360,9 +403,9 @@ public class Configuration
         static final int VARIABLE = 3;
         static final int BLANK    = 4;
 
-        int           number = 0;
-        int           type   = COMMENT;
-        StringBuffer  buffer = new StringBuffer();
+        int            number = 0;
+        int            type   = COMMENT;
+        XStringBuffer  buffer = new XStringBuffer();
 
         Line()
         {
@@ -375,96 +418,23 @@ public class Configuration
     }
 
     /**
-     * Contents of a variable. Mostly exists to make replacing a variable
-     * value easier while looping over a section.
+     * Context for variable substitution
      */
-    private class Variable
+    private class SubstitutionContext
     {
-        String name;
-        String cookedValue;
-        String rawValue;
-        int    lineWhereDefined = 0; // 0 means unknown
+        Variable currentVariable;
+        int totalSubstitutions = 0;
 
-        Variable (String name, String value, int lineWhereDefined)
+        SubstitutionContext (Variable v)
         {
-            this.name = name;
-            this.lineWhereDefined = lineWhereDefined;
-            setValue (value);
-        }
-
-        Variable (String name, String value)
-        {
-            this.name = name;
-            setValue (value);
-        }
-
-        void setValue (String value)
-        {
-            this.rawValue = value;
-            this.cookedValue = value;            
-        }
-
-        int lineWhereDefined()
-        {
-            return this.lineWhereDefined;
-        }
-
-        void setLineWhereDefined (int lineNumber)
-        {
-            this.lineWhereDefined = lineNumber;
-        }
-    }
-
-    /**
-     * Contents of a section
-     */
-    private class Section
-    {
-        /**
-         * Name of section
-         */
-        String name;
-
-        /**
-         * Names of variables, in order encountered. Contains strings.
-         */
-        List variableNames = new ArrayList();
-
-        /**
-         * List of Variable objects, indexed by variable name
-         */
-        Map valueMap = new HashMap();
-
-        Section (String name)
-        {
-            this.name = name;
-        }
-
-        Variable getVariable (String varName)
-        {
-            return (Variable) valueMap.get (varName);
-        }
-
-        Variable addVariable (String varName, String value)
-        {
-            Variable variable = new Variable (varName, value);
-            valueMap.put (varName, variable);
-            variableNames.add (varName);
-            return variable;
-        }
-
-        Variable addVariable (String varName, String value, int lineDefined)
-        {
-            Variable variable = addVariable (varName, value);
-            variable.setLineWhereDefined (lineDefined);
-            return variable;
+            currentVariable = v;
         }
     }
 
     /**
      * Container for data used only during parsing.
      */
-    private class ParseData
+    private class ParseContext
     {
         /**
          * Current section. Only set during parsing.
@@ -478,13 +448,6 @@ public class Configuration
         private Variable currentVariable = null;
 
         /**
-         * Total number of variable substitutions performed on the current
-         * variable's value during one substitution round. Used during the
-         * variable substitution parsing phase.
-         */
-        private int totalSubstitutions = 0;
-
-        /**
          * Current include file nesting level. Used as a fail-safe during
          * parsing.
          */
@@ -496,7 +459,7 @@ public class Configuration
          */
         private Set openURLs = new HashSet();
 
-        ParseData()
+        ParseContext()
         {
         }
     }
@@ -525,12 +488,17 @@ public class Configuration
     /**
      * Special section for System.properties
      */
-    private Section systemSection;
+    private static Section systemSection;
 
     /**
-     * Data used during parsing. Null when parsing isn't being done.
+     * Special section for program properties
      */
-    private ParseData parseData = null;
+    private Section programSection;
+
+    /**
+     * Section ID values.
+     */
+    private int nextSectionID = 1;
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -689,7 +657,7 @@ public class Configuration
     public Collection getSectionNames (Collection collection)
     {
         for (Iterator it = sectionsInOrder.iterator(); it.hasNext(); )
-            collection.add (((Section) it.next()).name);
+            collection.add (((Section) it.next()).getName());
 
         return collection;
     }
@@ -720,7 +688,7 @@ public class Configuration
         if (section == null)
             throw new NoSuchSectionException (sectionName);
 
-        collection.addAll (section.variableNames);
+        collection.addAll (section.getVariableNames());
 
         return collection;
     }
@@ -744,11 +712,21 @@ public class Configuration
         if (section == null)
             throw new NoSuchSectionException (sectionName);
 
-        Variable variable = (Variable) section.getVariable (variableName);
+        Variable variable = null;
+
+        try
+        {
+            variable = section.getVariable (variableName);
+        }
+
+        catch (ConfigurationException ex)
+        {
+        }
+
         if (variable == null)
             throw new NoSuchVariableException (sectionName, variableName);
 
-        return variable.cookedValue;
+        return variable.getCookedValue();
     }
 
     /**
@@ -1001,6 +979,10 @@ public class Configuration
      *
      * @param varName  The name of the variable for which the value is
      *                 desired.
+     * @param context  a context object, passed through from the caller
+     *                 to the dereferencer, or null if there isn't one.
+     *                 For this class, the context object is a
+     *                 SubstitutionContext variable.
      *
      * @return The variable's value. If the variable has no value, this
      *         method must return the empty string (""). It is important
@@ -1008,10 +990,20 @@ public class Configuration
      *
      * @throws VariableSubstitutionException  variable references itself
      */
-    public String getValue (String varName)
+    public String getValue (String varName, Object context)
         throws VariableSubstitutionException
     {
-        if (parseData.currentVariable.name.equals (varName))
+        int                  i;
+        Section              section = null;
+        String               sectionName;
+        String               value = null;
+        SubstitutionContext  substContext = (SubstitutionContext) context;
+        Section              variableParentSection;
+        Variable             currentVariable;
+
+        currentVariable = substContext.currentVariable;
+
+        if (currentVariable.getName().equals (varName))
         {
             throw new VariableSubstitutionException ("Attempt to substitute "
                                                    + "value for variable \""
@@ -1019,15 +1011,14 @@ public class Configuration
                                                    + "\" within itself.");
         }
 
-        int      i;
-        Section  section = null;
-        String   sectionName;
-        String   value = null;
-
+        variableParentSection = substContext.currentVariable.getSection();
         i = varName.indexOf (':');
         if (i == -1)
         {
-            section = parseData.currentSection;
+            // No section in the variable reference. Use the variable's
+            // context.
+
+            section = variableParentSection;
         }
 
         else
@@ -1039,7 +1030,7 @@ public class Configuration
                 section = systemSection;
 
             else if (sectionName.equals (PROGRAM_SECTION_NAME))
-                value = getProgramSectionValue (varName);
+                section = programSection;
 
             else
                 section = (Section) sectionsByName.get (sectionName);
@@ -1047,12 +1038,41 @@ public class Configuration
 
         if (section != null)
         {
-            Variable var = (Variable) section.getVariable (varName);
-            if (var != null)
-                value = var.cookedValue;
+            if (variableParentSection.getID() < section.getID())
+            {
+                throw new VariableSubstitutionException
+                    ("Variable \""
+                   + substContext.currentVariable.getName()
+                   + "\" in section \""
+                   + variableParentSection.getName()
+                   + "\" cannot substitute the value of variable \""
+                   + varName
+                   + "\" in section \""
+                   + section.getName()
+                   + "\", because section \""
+                   + section.getName()
+                   + "\" appears after section \""
+                   + variableParentSection.getName()
+                   + "\" in the configuration file.");
+            }
+
+            Variable varToSubst;
+
+            try
+            {
+                varToSubst = section.getVariable (varName);
+            }
+
+            catch (ConfigurationException ex)
+            {
+                throw new VariableSubstitutionException (ex.getMessage());
+            }
+
+            if (varToSubst != null)
+                value = varToSubst.getCookedValue();
         }
 
-        parseData.totalSubstitutions++;
+        substContext.totalSubstitutions++;
 
         return (value == null) ? "" : value;
     }
@@ -1177,7 +1197,18 @@ public class Configuration
         if (section == null)
             throw new NoSuchSectionException (sectionName);
 
-        Variable variable = (Variable) section.getVariable (variableName);
+        Variable variable = null;
+
+        try
+        {
+            variable = section.getVariable (variableName);
+        }
+
+        catch (ConfigurationException ex)
+        {
+            throw new VariableSubstitutionException (ex.getMessage());
+        }
+
         if (variable != null)
             variable.setValue (value);
         else
@@ -1187,19 +1218,14 @@ public class Configuration
         {
             try
             {
-                // substituteVariables() requires that the parseData
-                // instance variable be non-null and have valid values for
-                // currentSection and currentVariable.
-
-                parseData = new ParseData();
-                parseData.currentSection  = section;
                 substituteVariables (variable,
-                                     new UnixShellVariableSubstituter());
+                                     new UnixShellVariableSubstituter(),
+                                     true);
             }
 
-            finally
+            catch (ConfigurationException ex)
             {
-                parseData = null;
+                throw new VariableSubstitutionException (ex.getMessage());
             }
         }
     }
@@ -1214,9 +1240,12 @@ public class Configuration
      *
      * @param out  where to write the configuration data
      *
+     * @throws ConfigurationException on error
+     *
      * @see XStringBuffer#encodeMetacharacters()
      */
     public void write (PrintWriter out)
+        throws ConfigurationException
     {
         Iterator       itSect;
         Iterator       itVar;
@@ -1241,16 +1270,16 @@ public class Configuration
             if (! firstSection)
                 out.println();
 
-            out.println (SECTION_START + section.name + SECTION_END);
+            out.println (SECTION_START + section.getName() + SECTION_END);
             firstSection = false;
 
-            for (itVar = section.variableNames.iterator(); itVar.hasNext(); )
+            for (itVar = section.getVariableNames().iterator();
+                 itVar.hasNext(); )
             {
                 varName = (String) itVar.next();
-                var     = (Variable) section.getVariable (varName);
-
+                var = section.getVariable (varName);
                 value.setLength (0);
-                value.append (var.cookedValue);
+                value.append (var.getCookedValue());
                 value.encodeMetacharacters();
 
                 out.println (varName + ": " + value.toString());
@@ -1268,9 +1297,12 @@ public class Configuration
      *
      * @param out  where to write the configuration data
      *
+     * @throws ConfigurationException on error
+     *
      * @see XStringBuffer#encodeMetacharacters()
      */
     public void write (PrintStream out)
+        throws ConfigurationException
     {
         PrintWriter w = new PrintWriter (out);
         write (w);
@@ -1292,18 +1324,7 @@ public class Configuration
     private synchronized void parse (InputStream in, URL url)
         throws ConfigurationException
     {
-        parseData = new ParseData();
-
-        try
-        {
-            loadConfiguration (in, url);
-            postProcessParsedData();
-        }
-
-        finally
-        {
-            parseData = null;
-        }
+        loadConfiguration (in, url, new ParseContext());
     }
 
     /**
@@ -1311,20 +1332,32 @@ public class Configuration
      * metacharacters or variable substitution. Includes are processed,
      * though.
      *
-     * @param in    the input stream
-     * @param url   the URL associated with the stream, or null if not known
+     * @param in           input stream
+     * @param url          URL associated with the stream, or null if not known
+     * @param parseContext current parsing context
      *
      * @throws IOException            read error
      * @throws ConfigurationException parse error
      */
-    private void loadConfiguration (InputStream in, URL url)
+    private void loadConfiguration (InputStream  in,
+                                    URL          url,
+                                    ParseContext parseContext)
         throws ConfigurationException
     {
-        BufferedReader r    = new BufferedReader (new InputStreamReader (in));
+        BufferedReader r;
         Line           line = new Line();
         String         sURL = url.toExternalForm();
 
-        if (parseData.openURLs.contains (sURL))
+        // Now, create the phantom program and system sections. These MUST
+        // be created first, or other sections won't be able to substitute
+        // from them. (i.e., They must have the lowest IDs.)
+
+        programSection = new ProgramSection (PROGRAM_SECTION_NAME,
+                                             nextSectionID());
+        systemSection  = new SystemSection (SYSTEM_SECTION_NAME,
+                                            nextSectionID());
+
+        if (parseContext.openURLs.contains (sURL))
         {
             throw new ConfigurationException
                             (getExceptionPrefix (line, url)
@@ -1333,11 +1366,12 @@ public class Configuration
                            + "\" from itself, either directly or indirectly.");
         }
 
-        parseData.openURLs.add (sURL);
+        parseContext.openURLs.add (sURL);
 
         // Parse the entire file into memory before doing variable
         // substitution and metacharacter expansion.
 
+        r = new BufferedReader (new InputStreamReader (in));
         while (readLogicalLine (r, line))
         {
             try
@@ -1349,16 +1383,16 @@ public class Configuration
                         break;
 
                     case Line.INCLUDE:
-                        handleInclude (line, url);
+                        handleInclude (line, url, parseContext);
                         break;
 
                     case Line.SECTION:
-                        parseData.currentSection = handleNewSection (line,
-                                                                     url);
+                        parseContext.currentSection = handleNewSection (line,
+                                                                        url);
                         break;
 
                     case Line.VARIABLE:
-                        if (parseData.currentSection == null)
+                        if (parseContext.currentSection == null)
                         {
                             throw new ConfigurationException
                                        (getExceptionPrefix (line, url)
@@ -1366,7 +1400,7 @@ public class Configuration
                                       + "first section.");
                         }
 
-                        handleVariable (line, url);
+                        handleVariable (line, url, parseContext);
                         break;
 
                     default:
@@ -1383,77 +1417,7 @@ public class Configuration
             }
         }
 
-        parseData.openURLs.remove (sURL);
-
-        // Now, create the phantom system section.
-
-        loadSystemSection();
-    }
-
-    /**
-     * Post-process the loaded configuration, doing variable substitution
-     * and metacharacter expansion.
-     *
-     * @throws ConfigurationException  configuration error
-     */
-    private void postProcessParsedData()
-        throws ConfigurationException
-    {
-        VariableSubstituter  substituter;
-        Iterator             itSect;
-        Iterator             itVar;
-        String               varName;
-        Section              section;
-        XStringBuffer        buf = new XStringBuffer();
-
-        // First, expand the the metacharacter sequences.
-
-        for (itSect = sectionsInOrder.iterator(); itSect.hasNext(); )
-        {
-            parseData.currentSection = (Section) itSect.next();
-
-            for (itVar = parseData.currentSection.variableNames.iterator();
-                 itVar.hasNext(); )
-            {
-                varName = (String) itVar.next();
-                section = parseData.currentSection;
-                parseData.currentVariable = section.getVariable (varName);
-
-                buf.setLength (0);
-                buf.append (parseData.currentVariable.cookedValue);
-                buf.decodeMetacharacters();
-                parseData.currentVariable.cookedValue = buf.toString();
-            }
-        }
-
-        // Now, do variable substitution.
-
-        parseData.currentSection = null;
-        substituter = new UnixShellVariableSubstituter();
-
-        for (itSect = sectionsInOrder.iterator(); itSect.hasNext(); )
-        {
-            parseData.currentSection = (Section) itSect.next();
-
-            for (itVar = parseData.currentSection.variableNames.iterator();
-                 itVar.hasNext(); )
-            {
-                varName = (String) itVar.next();
-                section = parseData.currentSection;
-                parseData.currentVariable = section.getVariable (varName);
-
-                try
-                {
-                    substituteVariables (parseData.currentVariable,
-                                         substituter);
-                }
-
-                catch (VariableSubstitutionException ex)
-                {
-                    throw new ConfigurationException (ex);
-                }
-            }
-        }
+        parseContext.openURLs.remove (sURL);
     }
 
     /**
@@ -1496,12 +1460,15 @@ public class Configuration
     /**
      * Handle a new variable during parsing.
      *
-     * @param line  line buffer
-     * @param url   URL currently being processed, or null if unknown
+     * @param line         line buffer
+     * @param url          URL currently being processed, or null if unknown
+     * @param parseContext current parsing context
      *
      * @throws ConfigurationException  configuration error
      */
-    private void handleVariable (Line line, URL url)
+    private void handleVariable (Line         line,
+                                 URL          url,
+                                 ParseContext parseContext)
         throws ConfigurationException
     {
         char[] s = line.buffer.toString().toCharArray();
@@ -1552,13 +1519,15 @@ public class Configuration
 
         i = skipWhitespace (s, iSep + 1);
         j = s.length - i;
+
+        Section currentSection = parseContext.currentSection;
         String value = new String (s, i, j);
-        Variable existing = parseData.currentSection.getVariable (varName);
+        Variable existing = currentSection.getVariable (varName);
         if (existing != null)
         {
             throw new ConfigurationException (getExceptionPrefix (line, url)
                                             + "Section \""
-                                            + parseData.currentSection.name
+                                            + currentSection.getName()
                                             + "\": Duplicate definition of "
                                             + "variable \""
                                             + varName
@@ -1567,23 +1536,44 @@ public class Configuration
                                             + existing.lineWhereDefined());
         }
 
-        parseData.currentSection.addVariable (varName, value, line.number);
+        Variable newVar = currentSection.addVariable (varName,
+                                                      value,
+                                                      line.number);
+
+        // Expand the metacharacters and variable references in the variable.
+
+        try
+        {
+            newVar.segmentValue();
+            VariableSubstituter sub = new UnixShellVariableSubstituter();
+            substituteVariables (newVar, sub, false);
+            decodeMetacharacters (newVar);
+            newVar.reassembleCookedValueFromSegments();
+        }
+
+        catch (VariableSubstitutionException ex)
+        {
+            throw new ConfigurationException (ex.getMessage());
+        }
     }
 
     /**
      * Handle an include directive.
      *
-     * @param line  line buffer
-     * @param url   URL currently being processed, or null if unknown
+     * @param line         line buffer
+     * @param url          URL currently being processed, or null if unknown
+     * @param parseContext current parsing context
      *
      * @throws IOException             I/O error opening or reading include
      * @throws ConfigurationException  configuration error
      */
-    private void handleInclude (Line line, URL url)
+    private void handleInclude (Line         line,
+                                URL          url,
+                                ParseContext parseContext)
         throws IOException,
                ConfigurationException
     {
-        if (parseData.includeFileNestingLevel >= MAX_INCLUDE_NESTING_LEVEL)
+        if (parseContext.includeFileNestingLevel >= MAX_INCLUDE_NESTING_LEVEL)
         {
             throw new ConfigurationException (getExceptionPrefix (line, url)
                                             + "Exceeded maximum nested "
@@ -1592,7 +1582,7 @@ public class Configuration
                                             + ".");
         }
 
-        parseData.includeFileNestingLevel++;
+        parseContext.includeFileNestingLevel++;
 
         String s = line.buffer.toString();
 
@@ -1628,7 +1618,7 @@ public class Configuration
 
         try
         {
-            loadInclude (new URL (includeTarget));
+            loadInclude (new URL (includeTarget), parseContext);
         }
 
         catch (MalformedURLException ex)
@@ -1642,7 +1632,8 @@ public class Configuration
                 loadInclude (new URL (url.getProtocol(),
                                       url.getHost(),
                                       url.getPort(),
-                                      includeTarget));
+                                      includeTarget),
+                             parseContext);
             }
 
             else
@@ -1653,7 +1644,8 @@ public class Configuration
 
                 if (url == null)
                 {
-                    loadInclude (new File (includeTarget).toURL());
+                    loadInclude (new File (includeTarget).toURL(),
+                                 parseContext);
                 }
 
                 else
@@ -1666,45 +1658,30 @@ public class Configuration
                     loadInclude (new URL (url.getProtocol(),
                                           url.getHost(),
                                           url.getPort(),
-                                          parent + "/" + includeTarget));
+                                          parent + "/" + includeTarget),
+                                 parseContext);
                 }
             }
         }
 
-        parseData.includeFileNestingLevel--;
-    }
-
-    /**
-     * Load the phantom "system" section from System.properties.
-     */
-    private void loadSystemSection()
-    {
-        Properties systemProperties = System.getProperties();
-
-        systemSection = new Section (SYSTEM_SECTION_NAME);
-        for (Enumeration e = systemProperties.propertyNames();
-             e.hasMoreElements(); )
-        {
-            String name = (String) e.nextElement();
-            systemSection.addVariable (name,
-                                       systemProperties.getProperty (name));
-        }
+        parseContext.includeFileNestingLevel--;
     }
 
     /**
      * Actually attempts to load an include reference. This is basically just
      * a simplified front-end to loadConfiguration().
      *
-     * @param url  the URL to be included
+     * @param url          the URL to be included
+     * @param parseContext current parsing context
      *
      * @throws IOException  I/O error
      * @throws ConfigurationException configuration error
      */
-    private void loadInclude (URL url)
+    private void loadInclude (URL url, ParseContext parseContext)
         throws IOException,
                ConfigurationException
     {
-        loadConfiguration (url.openStream(), url);
+        loadConfiguration (url.openStream(), url, parseContext);
     }
 
     /**
@@ -1737,7 +1714,7 @@ public class Configuration
 
             catch (IOException ex)
             {
-                throw new ConfigurationException (ex);
+                throw new ConfigurationException (ex.toString());
             }
 
             if (s == null)
@@ -1860,35 +1837,77 @@ public class Configuration
     }
 
     /**
-     * Handle variable substitution for a variable value. NOTE: Requires
-     * that the "parseData" instance be non-null, and its "currentSection"
-     * item be appropriately set. (This method sets "currentVariable".)
+     * Handle metacharacter substitution for a variable value.
      *
-     * @param var         The variable to expand
-     * @param substituter VariableSubstituter to use
+     * @param var The current variable being processed
      *
      * @return the expanded result
      *
      * @throws VariableSubstitutionException variable substitution error
+     * @throws ConfigurationException        some other configuration error
+     */
+    private void decodeMetacharacters (Variable var)
+        throws VariableSubstitutionException,
+               ConfigurationException
+    {
+        ValueSegment[] segments = var.getCookedSegments();
+
+        for (int i = 0; i < segments.length; i++)
+        {
+            ValueSegment segment = segments[i];
+            if (segment.isLiteral)
+                continue;
+
+            segment.segmentBuf.decodeMetacharacters();
+        }
+    }
+
+    /**
+     * Handle variable substitution for a variable value.
+     *
+     * @param var            The current variable being processed
+     * @param substituter    VariableSubstituter to use
+     * @param concatSegments Re-concatenate the segments
+     *
+     * @return the expanded result
+     *
+     * @throws VariableSubstitutionException variable substitution error
+     * @throws ConfigurationException        some other configuration error
      */
     private void substituteVariables (Variable            var,
-                                      VariableSubstituter substituter)
-        throws VariableSubstitutionException
+                                      VariableSubstituter substituter,
+                                      boolean             concatSegments)
+        throws VariableSubstitutionException,
+               ConfigurationException
     {
-        // Keep substituting the current variable's value until there no
-        // more substitutions are performed. This handles the case where a
-        // dereferenced variable value contains its own variable
-        // references.
+        ValueSegment[] segments = var.getCookedSegments();
+        SubstitutionContext context = new SubstitutionContext (var);
 
-        parseData.currentVariable = var;
-        do
+        for (int i = 0; i < segments.length; i++)
         {
-            parseData.totalSubstitutions = 0;
-            var.cookedValue = substituter.substitute (var.cookedValue,
-                                                      this,
-                                                      this);
+            // Keep substituting the current variable's value until there
+            // no more substitutions are performed. This handles the case
+            // where a dereferenced variable value contains its own
+            // variable references.
+
+            ValueSegment segment = segments[i];
+            if (segment.isLiteral)
+                continue;
+
+            String s = segment.segmentBuf.toString();
+            do
+            {
+                context.totalSubstitutions = 0;
+                s = substituter.substitute (s, this, this, context);
+            }
+            while (context.totalSubstitutions > 0);
+
+            segment.segmentBuf.setLength (0);
+            segment.segmentBuf.append (s);
         }
-        while (parseData.totalSubstitutions > 0);
+
+        if (concatSegments)
+            var.reassembleCookedValueFromSegments();
     }
 
     /**
@@ -1934,7 +1953,9 @@ public class Configuration
      */
     private Section makeNewSection (String sectionName)
     {
-        Section section = new Section (sectionName);
+        int id = nextSectionID();
+
+        Section section = new Section (sectionName, id);
         sectionsInOrder.add (section);
         sectionsByName.put (sectionName, section);
 
@@ -1942,108 +1963,12 @@ public class Configuration
     }
 
     /**
-     * Get a value from the phantom "program" section.
+     * Get the next section ID
      *
-     * @param varName the variable name
-     *
-     * @return the value, or "" if not available or nonexistent variable
-     *
-     * @throws VariableSubstitutionException error getting value
+     * @return the ID
      */
-    private String getProgramSectionValue (String varName)
-        throws VariableSubstitutionException
+    private synchronized int nextSectionID()
     {
-        String value = "";
-
-        try
-        {
-            if (varName.equals (PROGRAM_CWD_VAR))
-            {
-                File dir = new File (".");
-
-                value = dir.getCanonicalPath();
-            }
-
-            else if (varName.equals (PROGRAM_CWD_URL_VAR))
-            {
-                File dir = new File (".");
-
-                value = dir.getCanonicalFile().toURL().toString();
-                if (value.charAt (value.length() - 1) == '/')
-                    value = value.substring (0, value.length() - 1);
-            }
-
-            else if (varName.startsWith (PROGRAM_NOW_VAR))
-            {
-                value = substituteDatetime (varName);
-            }
-        }
-
-        catch (IOException ex)
-        {
-            throw new VariableSubstitutionException (ex);
-        }
-
-        return value;
-    }
-
-    /**
-     * Handle substitution of a date variable in the [program] section.
-     *
-     * @param varName  the variable name
-     *
-     * @return the formatted date/time value
-     *
-     * @throws VariableSubstitutionException bad date format, or something
-     */
-    private String substituteDatetime (String varName)
-         throws VariableSubstitutionException
-    {
-        String value = "";
-        Date   now   = new Date();
-
-        if (varName.equals (PROGRAM_NOW_VAR))
-        {
-            value = now.toString();
-        }
-
-        else
-        {
-            char delim = varName.charAt (PROGRAM_NOW_VAR.length());
-            String[] tokens = TextUtil.split (varName, delim);
-
-            if ((tokens.length != 2) && (tokens.length != 4))
-            {
-                throw new VariableSubstitutionException
-                    ("Incorrect number of fields in extended version of \""
-                   + PROGRAM_NOW_VAR
-                   + "\" variable: \""
-                   + varName
-                   + "\" in ["
-                   + PROGRAM_SECTION_NAME
-                   + "] section");
-            }
-
-            Locale locale = null;
-
-            if (tokens.length == 2)
-                locale = Locale.getDefault();
-            else
-                locale = new Locale (tokens[2], tokens[3]);
-
-            try
-            {
-                SimpleDateFormat fmt = new SimpleDateFormat (tokens[1],
-                                                             locale);
-                value = fmt.format (now);
-            }
-
-            catch (IllegalArgumentException ex)
-            {
-                throw new VariableSubstitutionException (ex.toString());
-            }
-        }
-
-        return value;
+        return ++nextSectionID;
     }
 }
