@@ -37,7 +37,7 @@ public class TextUtils
      *
      * @throws IllegalArgumentException  string isn't a boolean
      */
-    public static boolean booleanToString (String s)
+    public static boolean booleanFromString (String s)
         throws IllegalArgumentException
     {
         boolean result;
