@@ -31,6 +31,8 @@ package org.clapper.util.cmdline;
  * command.
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 public class CommandLineUsageException extends CommandLineException
 {

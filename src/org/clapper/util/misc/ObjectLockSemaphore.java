@@ -148,6 +148,8 @@ import java.util.Date;
  * </blockquote>
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 public class ObjectLockSemaphore implements Semaphore
 {

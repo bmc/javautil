@@ -31,6 +31,8 @@ package org.clapper.util.misc;
  * to exist.
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 public class ObjectExistsException extends NestedException
 {

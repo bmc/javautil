@@ -159,6 +159,8 @@ import java.util.NoSuchElementException;
  * </blockquote>
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 public abstract class CommandLineUtility
 {

@@ -43,6 +43,8 @@ import java.util.NoSuchElementException;
  * @see java.util.Enumeration
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 public class EnumerationIterator implements Iterator
 {

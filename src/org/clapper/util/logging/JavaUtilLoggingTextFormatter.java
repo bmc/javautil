@@ -44,6 +44,8 @@ import java.io.StringWriter;
  * <tt>PatternLayout</tt> class, with a format of "%d %-5p (%c{1}): %m%n".
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 public class JavaUtilLoggingTextFormatter extends Formatter
 {

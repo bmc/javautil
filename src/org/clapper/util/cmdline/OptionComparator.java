@@ -37,6 +37,8 @@ import java.util.Comparator;
  *
  * @see UsageInfo
  * @see OptionInfo
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 final class OptionComparator implements Comparator
 {

@@ -48,6 +48,8 @@ import java.util.NoSuchElementException;
  * @see java.util.Collection
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 public class MultiIterator implements Iterator
 {

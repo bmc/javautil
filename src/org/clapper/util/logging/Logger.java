@@ -119,9 +119,45 @@ import java.util.logging.Level;
  * @see <a href="http://jakarta.apache.org/commons/logging/index.html">Jakarta Commons Logging API</a>
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 public class Logger
 {
+    /*----------------------------------------------------------------------*\
+                             Public Constants
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * Level parameter to the {@link #message} method.
+     */
+    public static LogLevel LEVEL_DEBUG = new LogLevel (Level.FINE);
+
+    /**
+     * Level parameter to the {@link #message} method.
+     */
+    public static LogLevel LEVEL_ERROR = new LogLevel (Level.SEVERE);
+
+    /**
+     * Level parameter to the {@link #message} method.
+     */
+    public static LogLevel LEVEL_FATAL = new LogLevel (Level.SEVERE);
+
+    /**
+     * Level parameter to the {@link #message} method.
+     */
+    public static LogLevel LEVEL_INFO = new LogLevel (Level.INFO);
+
+    /**
+     * Level parameter to the {@link #message} method.
+     */
+    public static LogLevel LEVEL_TRACE = new LogLevel (Level.FINEST);
+
+    /**
+     * Level parameter to the {@link #message} method.
+     */
+    public static LogLevel LEVEL_WARNING = new LogLevel (Level.WARNING);
+
     /*----------------------------------------------------------------------*\
                              Private Constants
     \*----------------------------------------------------------------------*/
@@ -131,6 +167,16 @@ public class Logger
      */
     private static final String LOG_FACTORY_CLASS_NAME =
                                      "org.apache.commons.logging.LogFactory";
+
+    /**
+     * Convenience of reference
+     */
+    private static Level DEBUG   = LEVEL_DEBUG.getLevel();
+    private static Level ERROR   = LEVEL_ERROR.getLevel();
+    private static Level FATAL   = LEVEL_FATAL.getLevel();
+    private static Level INFO    = LEVEL_INFO.getLevel();
+    private static Level TRACE   = LEVEL_TRACE.getLevel();
+    private static Level WARNING = LEVEL_WARNING.getLevel();
 
     /*----------------------------------------------------------------------*\
                            Private Instance Data
@@ -227,7 +273,7 @@ public class Logger
     public void debug (Object message)
     {
         if (realLogger != null)
-            realLogger.log (Level.FINE, message.toString());
+            realLogger.log (DEBUG, message.toString());
     }
 
     /**
@@ -240,7 +286,7 @@ public class Logger
     public void debug (Object message, Throwable ex)
     {
         if (realLogger != null)
-            realLogger.log (Level.FINE, message.toString(), ex);
+            realLogger.log (DEBUG, message.toString(), ex);
     }
 
     /**
@@ -251,7 +297,7 @@ public class Logger
     public void error (Object message)
     {
         if (realLogger != null)
-            realLogger.log (Level.SEVERE, message.toString());
+            realLogger.log (ERROR, message.toString());
     }
 
     /**
@@ -264,7 +310,7 @@ public class Logger
     public void error (Object message, Throwable ex)
     {
         if (realLogger != null)
-            realLogger.log (Level.SEVERE, message.toString(), ex);
+            realLogger.log (ERROR, message.toString(), ex);
     }
 
     /**
@@ -275,7 +321,7 @@ public class Logger
     public void fatal (Object message)
     {
         if (realLogger != null)
-            realLogger.log (Level.SEVERE, message.toString());
+            realLogger.log (FATAL, message.toString());
     }
 
     /**
@@ -288,7 +334,7 @@ public class Logger
     public void fatal (Object message, Throwable ex)
     {
         if (realLogger != null)
-            realLogger.log (Level.SEVERE, message.toString(), ex);
+            realLogger.log (FATAL, message.toString(), ex);
     }
 
     /**
@@ -299,7 +345,7 @@ public class Logger
     public void info (Object message)
     {
         if (realLogger != null)
-            realLogger.log (Level.INFO, message.toString());
+            realLogger.log (INFO, message.toString());
     }
 
     /**
@@ -312,7 +358,32 @@ public class Logger
     public void info (Object message, Throwable ex)
     {
         if (realLogger != null)
-            realLogger.log (Level.INFO, message.toString(), ex);
+            realLogger.log (INFO, message.toString(), ex);
+    }
+
+    /**
+     * Log a message at a specified log level.
+     *
+     * @param level   the log level
+     * @param message the message
+     */
+    public void message (LogLevel level, Object message)
+    {
+        if (realLogger != null)
+            realLogger.log (level.getLevel(), message.toString());
+    }
+
+    /**
+     * Log a message at a specified log level.
+     *
+     * @param level   the log level
+     * @param message the message
+     * @param ex       The exception to log with the message
+     */
+    public void message (LogLevel level, Object message, Throwable ex)
+    {
+        if (realLogger != null)
+            realLogger.log (level.getLevel(), message.toString(), ex);
     }
 
     /**
@@ -323,7 +394,7 @@ public class Logger
     public void trace (Object message)
     {
         if (realLogger != null)
-            realLogger.log (Level.FINEST, message.toString());
+            realLogger.log (TRACE, message.toString());
     }
 
     /**
@@ -336,7 +407,7 @@ public class Logger
     public void trace (Object message, Throwable ex)
     {
         if (realLogger != null)
-            realLogger.log (Level.FINEST, message.toString(), ex);
+            realLogger.log (TRACE, message.toString(), ex);
     }
 
     /**
@@ -347,7 +418,7 @@ public class Logger
     public void warn (Object message)
     {
         if (realLogger != null)
-            realLogger.log (Level.WARNING, message.toString());
+            realLogger.log (WARNING, message.toString());
     }
 
     /**
@@ -360,7 +431,7 @@ public class Logger
     public void warn (Object message, Throwable ex)
     {
         if (realLogger != null)
-            realLogger.log (Level.WARNING, message.toString(), ex);
+            realLogger.log (WARNING, message.toString(), ex);
     }
 
     /**
@@ -372,7 +443,7 @@ public class Logger
     public boolean isDebugEnabled()
     {
         return (realLogger == null) ? false
-                                    : realLogger.isLoggable (Level.FINE);
+                                    : realLogger.isLoggable (DEBUG);
     }
 
     /**
@@ -384,7 +455,7 @@ public class Logger
     public boolean isErrorEnabled()
     {
         return (realLogger == null) ? false
-                                    : realLogger.isLoggable (Level.SEVERE);
+                                    : realLogger.isLoggable (ERROR);
     }
 
     /**
@@ -396,7 +467,7 @@ public class Logger
     public boolean isFatalEnabled()
     {
         return (realLogger == null) ? false
-                                    : realLogger.isLoggable (Level.SEVERE);
+                                    : realLogger.isLoggable (FATAL);
     }
 
     /**
@@ -408,7 +479,7 @@ public class Logger
     public boolean isInfoEnabled()
     {
         return (realLogger == null) ? false
-                                    : realLogger.isLoggable (Level.INFO);
+                                    : realLogger.isLoggable (INFO);
     }
 
     /**
@@ -420,7 +491,7 @@ public class Logger
     public boolean isTraceEnabled()
     {
         return (realLogger == null) ? false
-                                    : realLogger.isLoggable (Level.FINEST);
+                                    : realLogger.isLoggable (TRACE);
     }
 
     /**
@@ -429,10 +500,10 @@ public class Logger
      * @return <tt>true</tt> if warn logging is enabled,
      *         <tt>false</tt> otherwise
      */
-    public boolean isWarnEnabled()
+    public boolean isWarningEnabled()
     {
         return (realLogger == null) ? false
-                                    : realLogger.isLoggable (Level.WARNING);
+                                    : realLogger.isLoggable (WARNING);
     }
 
     /*----------------------------------------------------------------------*\

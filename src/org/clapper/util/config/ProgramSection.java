@@ -42,6 +42,8 @@ import java.io.IOException;
  * @version <tt>$Revision$</tt>
  *
  * @see Section
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 class ProgramSection extends Section
 {

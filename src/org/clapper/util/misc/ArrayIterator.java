@@ -39,6 +39,8 @@ import java.util.NoSuchElementException;
  * @see java.util.Iterator
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 public class ArrayIterator implements Iterator
 {

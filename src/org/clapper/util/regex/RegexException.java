@@ -33,6 +33,8 @@ import org.clapper.util.misc.NestedException;
  * expression-based errors.
  *
  * @version <tt>$Revision$
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 public class RegexException extends NestedException
 {

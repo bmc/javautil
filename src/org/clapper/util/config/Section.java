@@ -37,6 +37,8 @@ import java.util.Map;
  * Contains the contents of a section.
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 class Section
 {

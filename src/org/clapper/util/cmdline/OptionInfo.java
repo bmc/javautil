@@ -33,6 +33,8 @@ package org.clapper.util.cmdline;
  * @version <tt>$Revision$</tt>
  *
  * @see UsageInfo
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 final class OptionInfo
 {

@@ -33,6 +33,8 @@ import org.clapper.util.misc.NestedException;
  * command.
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 public class CommandLineException extends NestedException
 {

@@ -30,6 +30,8 @@ package org.clapper.util.misc;
  * Thrown by version-sensitive classes to indicate a fatal version mismatch.
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 public class VersionMismatchException extends NestedException
 {

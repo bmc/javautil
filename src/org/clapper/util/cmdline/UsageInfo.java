@@ -46,6 +46,8 @@ import java.util.Iterator;
  *
  * @see CommandLineUtility
  * @see CommandLineUtility#getCustomUsageInfo(UsageInfo)
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 public final class UsageInfo
 {
