@@ -1,7 +1,7 @@
 <!--
-   Ant build file for clapper.org Java utility library
+  Ant build file for clapper.org Java utility library
 
-   $Id$
+  $Id$
   ===========================================================================
   This software is released under a Berkeley-style license:
 
@@ -43,14 +43,14 @@
   <property name="build.compiler.emacs" value="true"/>
   <property name="compile.listfiles" value="no"/>
   <property name="build.info.file" 
-            value="${build}/org/clapper/util/misc/BuildInfo.properties"/>
+            value="${build}/org/clapper/util/misc/BuildInfoBundle.properties"/>
   <property name="code_jar_name" value="ocutil"/>
   <property name="code_jar_file" value="${code_jar_name}.jar"/>
   <property name="code_jar_path" value="${dist}/lib/${code_jar_file}"/>
   <property name="docs_top_dir" value="${dist}/docs"/>
   <property name="docs_api_dir" value="${docs_top_dir}/api"/>
   <property name="zip_dir_prefix" value="org/clapper/util/"/>
-  <property name="bundled_dir" value="${dist}/bundled"/>
+  <property name="release_dir" value="${dist}/release"/>
 
   <!--
   ***************************************************************************
@@ -100,8 +100,6 @@
 			       Code Targets
   ***************************************************************************
   -->
-
-  <target name="props"><echoproperties/></target>
 
   <target name="all" depends="lib,testers"/>
 
@@ -222,8 +220,8 @@
   <target name="-build.info" depends="-get.version"
           description="Create build info properties file">
 
-    <taskdef name="host" 
-             classname="org.clapper.util.ant.AntHostnameTask"
+    <taskdef name="make_build_info" 
+             classname="org.clapper.util.ant.MakeBuildInfoTask"
              classpath="${build}"/>
 
     <condition property="compiler" value="${build.compiler}">
@@ -236,16 +234,9 @@
       </not>
     </condition>
 
-    <host property="build.host"/>
-    <echo file="${build.info.file}" append="false">
-# Automatically generated; do not edit.
-${BUILD_VM_KEY}: ${java.vm.name} ${java.vm.version} ${java.vm.vendor}
-${BUILD_COMPILER_KEY}: ${compiler}
-${BUILD_OS_KEY}: ${os.name} ${os.version} ${os.arch}
-${BUILD_DATE_KEY}: ${build.date}
-${BUILT_BY_KEY}: ${user.name} on ${build.host}
-${BUILD_ANT_VERSION_KEY}: ${ant.version}
-    </echo>
+    <make_build_info file="${build.info.file}" 
+                     antversion="${ant.version}"
+                     compiler="${compiler}"/>
   </target>
 
   <target name="lib" depends="misc,io,text,config,mail,ant.tasks,-build.info"/>
@@ -310,7 +301,7 @@ ${BUILD_ANT_VERSION_KEY}: ${ant.version}
   ***************************************************************************
   -->
 
-  <target name="-set.version.based.properties" depends="-get.version">
+  <target name="-set.version.properties" depends="-get.version">
     <property name="versioned_src_zipfile"
               value="src-${API_VERSION}.zip"/>
 
@@ -330,8 +321,8 @@ ${BUILD_ANT_VERSION_KEY}: ${ant.version}
 
   <target name="-doczip" depends="doc"
           description="Builds the javadocs zip file">
-    <mkdir dir="${bundled_dir}"/>
-    <zip destfile="${bundled_dir}/${versioned_docs_zipfile}">
+    <mkdir dir="${release_dir}"/>
+    <zip destfile="${release_dir}/${versioned_docs_zipfile}">
       <zipfileset dir="${docs_top_dir}"
                   prefix="${zip_dir_prefix}"/>
     </zip>
@@ -339,8 +330,8 @@ ${BUILD_ANT_VERSION_KEY}: ${ant.version}
 
   <target name="-srczip" depends=""
           description="Generate the source zip">
-    <mkdir dir="${bundled_dir}"/>
-    <zip destfile="${bundled_dir}/${versioned_src_zipfile}">
+    <mkdir dir="${release_dir}"/>
+    <zip destfile="${release_dir}/${versioned_src_zipfile}">
       <zipfileset dir="." 
                   prefix="${zip_dir_prefix}" casesensitive="yes">
         <exclude name="${dist}/**"/>
@@ -355,10 +346,10 @@ ${BUILD_ANT_VERSION_KEY}: ${ant.version}
   </target>
 
   <target name="fulldist" 
-          depends="dist,-set.version.based.properties,-srczip,-doczip"
+          depends="dist,-set.version.properties,-srczip,-doczip"
           description="Generate the distribution and source jars">
     <copy file="${code_jar_path}" 
-          tofile="${bundled_dir}/${versioned_code_jar_file}"/>
+          tofile="${release_dir}/${versioned_code_jar_file}"/>
   </target>
 
   <!--

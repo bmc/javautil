@@ -49,131 +49,39 @@ public final class Version
     public static final String API_VERSION = "0.5";
 
     /**
-     * The build ID key within the bundle.
-     */
-    public static final String BUILD_ID_KEY = "build.id";
-
-    /**
-     * The key to retrieve the operating system where the build occurred.
-     */
-    public static final String BUILD_OS_KEY = "build.os";
-
-    /**
-     * The key to retrieve the VM used for the build.
-     */
-    public static final String BUILD_VM_KEY = "build.vm";
-
-    /**
-     * The key to retrieve the compiler used for the build.
-     */
-    public static final String BUILD_COMPILER_KEY = "build.compiler";
-
-    /**
-     * The key to retrieve the version of Ant used for the build.
-     */
-    public static final String BUILD_ANT_VERSION_KEY = "build.ant.version";
-
-    /**
-     * The build date, in "raw" (internal, numeric) form.
-     */
-    public static final String BUILD_DATE_KEY = "build.date";
-
-    /**
-     * The user and host where the build occurred.
-     */
-    public static final String BUILT_BY_KEY = "built.by";
-
-    /**
      * The name of the resource bundle containing the build info.
      */
-    public static final String BUNDLE_NAME = "org.clapper.util.misc.BuildInfo";
-
-    /*----------------------------------------------------------------------*\
-                                Data Items
-    \*----------------------------------------------------------------------*/
-
-    private static ResourceBundle buildInfoBundle = null;
+    public static final String BUNDLE_NAME
+        = "org.clapper.util.misc.BuildInfoBundle";
 
     /*----------------------------------------------------------------------*\
                                Main Program
     \*----------------------------------------------------------------------*/
 
     /**
-     * Display the API name and version on standard output.
+     * Display the build information
      *
      * @param args  command-line parameters (ignored)
      */
     public static void main (String[] args)
     {
-        ResourceBundle bundle = getBuildInfoBundle();
+        BuildInfo buildInfo = new BuildInfo (BUNDLE_NAME);
 
         System.out.println ("org.clapper.util library, version " +
                             API_VERSION);
         System.out.println ();
         System.out.println ("Build date:     " +
-                            getBundleString (BUILD_DATE_KEY));
+                            buildInfo.getBuildDate());
         System.out.println ("Built by:       " +
-                            getBundleString (BUILT_BY_KEY));
+                            buildInfo.getBuildUserID());
         System.out.println ("Built on:       " +
-                            getBundleString (BUILD_OS_KEY));
+                            buildInfo.getBuildOperatingSystem());
         System.out.println ("Build Java VM:  " +
-                            getBundleString (BUILD_VM_KEY));
+                            buildInfo.getBuildJavaVM());
         System.out.println ("Build compiler: " +
-                            getBundleString (BUILD_COMPILER_KEY));
+                            buildInfo.getBuildJavaCompiler());
         System.out.println ("Ant version:    " +
-                            getBundleString (BUILD_ANT_VERSION_KEY));
+                            buildInfo.getBuildAntVersion());
         System.exit (0);
-    }
-
-    /*----------------------------------------------------------------------*\
-                              Private Methods
-    \*----------------------------------------------------------------------*/
-
-    /**
-     * Attempts to get the resource bundle, if an attempt hasn't already
-     * been made.
-     *
-     * @return the bundle, or null if it could not be found.
-     */
-    private synchronized static ResourceBundle getBuildInfoBundle()
-    {
-        if (buildInfoBundle == null)
-        {
-            try
-            {
-                buildInfoBundle = ResourceBundle.getBundle (BUNDLE_NAME);
-            }
-
-            catch (MissingResourceException ex)
-            {
-            }
-        }
-
-        return buildInfoBundle;
-    }
-
-    /**
-     * Get a string from the bundle.
-     *
-     * @param key   The key for the string to be retrieved.
-     *
-     * @return  The string, or null if unavailable
-     */
-    private static String getBundleString (String key)
-    {
-        String result = null;
-
-        try
-        {
-            ResourceBundle bundle = getBuildInfoBundle();
-            if (bundle != null)
-                result = bundle.getString (key);
-        }
-
-        catch (MissingResourceException ex)
-        {
-        }
-
-        return result;
     }
 }
