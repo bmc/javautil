@@ -96,7 +96,7 @@ import javax.mail.internet.MimeMessage;
  *     <td>Intended for use when the body parts (i.e., the text and the
  *         attachments) are independent and intended to be displayed serially.
  *         For example, to send a text message with an attached image, you
- *         would use a "multipart/mixed" message.
+ *         would use a "multipart/mixed" message.</td>
  *   </tr>
  *
  *   <tr valign="top">
