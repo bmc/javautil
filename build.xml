@@ -96,7 +96,6 @@
   <target name="testers" depends="lib"
 	  description="compile the testers">
     <!-- Create the distribution directory -->
-    <mkdir dir="${dist}/lib"/>
     <javac srcdir="." 
 	   depend="true"
 	   listfiles="${compile.listfiles}"
@@ -111,6 +110,7 @@
   <target name="dist" depends="all"
           description="Generate the distribution">
     <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+    <mkdir dir="${dist}/lib"/>
     <jar jarfile="${dist}/lib/util.jar" basedir="${build}"/>
   </target>
 
