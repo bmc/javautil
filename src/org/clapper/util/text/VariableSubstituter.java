@@ -146,6 +146,6 @@ public interface VariableSubstituter
      */
     public String substitute (String               s,
                               VariableDereferencer deref,
-                              VariableNameChecker  checker)
+                              VariableNameChecker  nameChecker)
         throws VariableSubstitutionException;
 }

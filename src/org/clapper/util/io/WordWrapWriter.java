@@ -371,10 +371,10 @@ public class WordWrapWriter extends PrintWriter
     /**
      * Set the indentation value for wrapped lines.
      *
-     * @param indentSpaces The indentation setting, a count that
-     *                     indicates how many leading spaces will be emitted
-     *                     on wrapped lines. A value of 0 disables the
-     *                     feature.
+     * @param newIndentation The indentation setting, a count that
+     *                       indicates how many leading spaces will be emitted
+     *                       on wrapped lines. A value of 0 disables the
+     *                       feature.
      *
      * @throws IndexOutOfBoundsException the value is negative
      */

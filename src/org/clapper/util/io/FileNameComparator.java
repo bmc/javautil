@@ -30,11 +30,11 @@ import java.io.File;
 import java.util.Comparator;
 
 /**
- * <tt>FileNameComparator</tt> implements a <tt>Comparator</tt> class
+ * <p><tt>FileNameComparator</tt> implements a <tt>Comparator</tt> class
  * that compares file names (expressed either as <tt>String</tt> or
  * <tt>File</tt> objects) for sorting. The comparison can be case-sensitive
  * or case-insensitive, and can apply to the entire path (if available) or
- * just the file name part.
+ * just the file name part.</p>
  *
  * @version <tt>$Revision$</tt>
  *
@@ -116,8 +116,8 @@ public class FileNameComparator implements Comparator
     }
 
     /**
-     * Indicates whether some other object is "equal to" this
-     * <tt>Comparator.</tt>
+     * <p>Indicates whether some other object is "equal to" this
+     * <tt>Comparator</tt>.</p>
      *
      * @param o  the object to compare
      *

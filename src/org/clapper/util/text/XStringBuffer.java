@@ -241,7 +241,7 @@ public class XStringBuffer
      * as much of the string as will fit without causing the buffer to
      * exceed its maximum length.
      *
-     * @param chars  The characters to append.
+     * @param s  The string to append.
      */
     public void append (String s)
     {

@@ -114,11 +114,11 @@ public class StringDataSource implements DataSource
 
     /**
      * According to the documentation for the <tt>DataSource</tt>
-     * interface, this method "returns an OutputStream where the data can
-     * be written and throws the appropriate exception if it can not do
-     * so." Since there's no output destination associated with a string,
-     * this implementation of <tt>getOutputStream()</tt> automatically
-     * throws an exception.
+     * interface, this method returns an OutputStream where the data can be
+     * written and throws the appropriate exception if it can not do so.
+     * Since there's no output destination associated with a string, this
+     * implementation of <tt>getOutputStream()</tt> automatically throws an
+     * exception.
      *
      * @return Nothing.
      *

@@ -114,8 +114,8 @@ public class FileUtils
      *
      * <blockquote><pre>copyStream (src, dst, 8192);</pre></blockquote>
      *
-     * @param src     the source <tt>InputStream</tt>
-     * @param dst     the destination <tt>OutputStream</tt>
+     * @param is    the source <tt>InputStream</tt>
+     * @param os    the destination <tt>OutputStream</tt>
      *
      * @throws IOException  on error
      */

@@ -61,16 +61,17 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 
 /**
+ * <p>The <tt>EmailMessage</tt> class is a simplified front-end to a
+ * portion of Sun's Java Mail API.
+ *
  * <h3>Overview</h3>
  *
- * <p>The <tt>EmailMessage</tt> class is a simplified front-end to a
- * portion of Sun's Java Mail API. It provides an easy-to-use API for
- * composing and sending an email message, including simple single-part and
- * more complicated multipart email messages. Using an
- * <tt>EmailMessage</tt> object, a caller can compose and send a message
- * consisting of an optional text part and zero or more MIME-encoded
- * attachments. The message can have any number of recipients. The
- * recipients can be</p>
+ * <p>This class and package provides an easy-to-use API for composing and
+ * sending an email message, including simple single-part and more
+ * complicated multipart email messages. Using an <tt>EmailMessage</tt>
+ * object, a caller can compose and send a message consisting of an
+ * optional text part and zero or more MIME-encoded attachments. The
+ * message can have any number of recipients. The recipients can be</p>
  *
  * <ul>
  *   <li> primary ("To:") recipients
