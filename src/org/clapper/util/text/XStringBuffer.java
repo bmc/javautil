@@ -974,7 +974,7 @@ public class XStringBuffer
      *
      * @return an array of <tt>String</tt> objects
      *
-     * @see #split(String,String)
+     * @see #split(String)
      * @see TextUtils#split(String,char)
      */
     public String[] split (char delim)
@@ -991,7 +991,7 @@ public class XStringBuffer
      *
      * @return an array of <tt>String</tt> objects
      *
-     * @see #split(String,char)
+     * @see #split(char)
      * @see TextUtils#split(String,String)
      */
     public String[] split (String delimSet)
@@ -1010,7 +1010,8 @@ public class XStringBuffer
      *
      * @return the number of strings added to the collection
      *
-     * @see #split(String,String)
+     * @see #split(String,Collection)
+     * @see #split(char)
      * @see TextUtils#split(String,char)
      * @see TextUtils#split(String,String,Collection)
      */
@@ -1030,7 +1031,8 @@ public class XStringBuffer
      *
      * @return the number of strings added to the collection
      *
-     * @see #split(String,String)
+     * @see #split(char,Collection)
+     * @see #split(String)
      * @see TextUtils#split(String,String)
      * @see TextUtils#split(String,char,Collection)
      */

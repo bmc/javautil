@@ -162,7 +162,6 @@ public class EmailAddress implements Cloneable, Comparable
      *
      * @return the email address string. This method will never return null
      *
-     * @see #getInternetAddress()
      * @see #getPersonalName()
      */
     public String getAddress()

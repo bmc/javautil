@@ -80,8 +80,7 @@ public class SMTPEmailTransport implements EmailTransport
      *
      * @throws EmailException  unable to initialize
      *
-     * @see #setSender(String)
-     * @see #send(String)
+     * @see #send(EmailMessage)
      */
     public SMTPEmailTransport (String smtpHost)
         throws EmailException

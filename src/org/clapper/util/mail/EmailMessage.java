@@ -57,7 +57,7 @@ import javax.mail.internet.MimeMessage;
  *
  * <p>Once created and filled, an <tt>EmailMessage</tt> can be sent
  * multiple times, through different SMTP servers if desired. To send
- * an <tt>EmailMessage</tt>, use an <tt>EmailSender</tt> object.</p>
+ * an <tt>EmailMessage</tt>, use an <tt>EmailTransport</tt> object.</p>
  *
  * <p>The <tt>EmailMessage</tt> class supports both the MIME
  * "multipart/mixed" and "multipart/alternative" message types. According to
@@ -127,8 +127,8 @@ import javax.mail.internet.MimeMessage;
  *
  * @version <tt>$Revision$</tt>
  *
- * @see EmailSender
- * @see SMTPEmailSender
+ * @see EmailTransport
+ * @see SMTPEmailTransport
  * @see <a href="http://java.sun.com/javamail/">The Java Mail API home page</a>
  */
 public class EmailMessage
@@ -140,7 +140,7 @@ public class EmailMessage
     /**
      * Denotes a "multipart/mixed" message. This is the default.
      *
-     * @see #setMultipartSubtype(EmailMessage.MultipartSubtype)
+     * @see #setMultipartSubtype(MultipartSubtype)
      */
     public static final MultipartSubtype MULTIPART_MIXED =
         new MultipartSubtype ("mixed");
@@ -148,7 +148,7 @@ public class EmailMessage
     /**
      * Denotes a "multipart/alternative" message.
      *
-     * @see #setMultipartSubtype(EmailMessage.MultipartSubtype)
+     * @see #setMultipartSubtype(MultipartSubtype)
      */
     public static final MultipartSubtype MULTIPART_ALTERNATIVE =
         new MultipartSubtype ("alternative");
@@ -255,7 +255,7 @@ public class EmailMessage
      * @throws EmailException  improperly formed email address
      *
      * @see #setSender(String)
-     * @see #send(String)
+     * @see EmailTransport#send(EmailMessage)
      */
     public EmailMessage (String sender)
         throws EmailException

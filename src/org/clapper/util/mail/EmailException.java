@@ -7,8 +7,8 @@ package org.clapper.util.mail;
 import org.clapper.util.misc.NestedException;
 
 /**
- * A <tt>EmailException</tt> is thrown by the
- * {@link Email} class to signify errors in a configuration file.
+ * A <tt>EmailException</tt> is thrown by the various email classes
+ * to signify errors in a configuration file.
  *
  * @see NestedException
  *
