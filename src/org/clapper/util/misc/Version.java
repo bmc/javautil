@@ -44,8 +44,6 @@ public final class Version
                              Public Constants
     \*----------------------------------------------------------------------*/
 
-    public static final String API_VERSION = "1.1";
-
     /**
      * The name of the resource bundle containing the build info.
      */
@@ -56,13 +54,23 @@ public final class Version
                                 Constructor
     \*----------------------------------------------------------------------*/
 
-    private Version()
+    public Version()
     {
     }
 
     /*----------------------------------------------------------------------*\
                                Main Program
     \*----------------------------------------------------------------------*/
+
+    /**
+     * Get the version number of the API.
+     *
+     * @return the version number
+     */
+    public static String getVersion()
+    {
+        return BundleUtil.getString (Package.BUNDLE_NAME, "api.version", "?");
+    }
 
     /**
      * Display the build information
@@ -74,7 +82,7 @@ public final class Version
         BuildInfo buildInfo = new BuildInfo (BUILD_INFO_BUNDLE_NAME);
 
         System.out.println ("org.clapper.util library, version " +
-                            API_VERSION);
+                            getVersion());
         System.out.println ();
         System.out.println ("Build date:     " +
                             buildInfo.getBuildDate());

@@ -105,7 +105,7 @@
   ***************************************************************************
   -->
 
-  <target name="all" depends="init,lib,-build.info,bundles,testers"/>
+  <target name="all" depends="init,lib,bundles,-build.info,testers"/>
 
   <target name="bundles">
     <copy todir="${build}">
@@ -187,13 +187,8 @@
   <!-- Load the API version from the org.clapper.util.misc.Version class -->
 
   <target name="-get.version" description="Get the version stamp">
-    <loadproperties srcfile="${build}/org/clapper/util/misc/Version.class">
-      <filterchain>
-        <classconstants/>
-      </filterchain>
-    </loadproperties>
-
-    <echo>API Version: ${API_VERSION}</echo>
+    <property file="${build}/org/clapper/util/misc/Bundle.properties"/>
+    <echo>API Version: ${api.version}</echo>
   </target>
 
   <target name="version" depends="-get.version"/>

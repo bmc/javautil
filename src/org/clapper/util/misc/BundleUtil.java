@@ -53,6 +53,22 @@ public final class BundleUtil
     \*----------------------------------------------------------------------*/
 
     /**
+     * Get a string from a bundle, using the default locale.
+     *
+     * @param bundleName the bundle name
+     * @param key        the key to look up
+     * @param defaultMsg the default value, or null
+     *
+     * @return the value for the key, or the default value
+     */
+    public static final String getString (String bundleName,
+                                          String key,
+                                          String defaultMsg)
+    {
+        return getMessage (bundleName, null, key, defaultMsg);
+    }
+
+    /**
      * Get a localized message from a bundle.
      *
      * @param bundleName the name of the resource bundle
