@@ -52,7 +52,7 @@ class FileHashMapEntry implements Serializable, Comparable
     /**
      * The length of the stored, serialized object
      */
-    private long objectSize = -1;
+    private int objectSize = -1;
 
     /**
      * The caller's key (i.e., the key the caller of FileHashMap.put()
@@ -83,7 +83,7 @@ class FileHashMapEntry implements Serializable, Comparable
      * @see #setObjectSize
      * @see FileHashMap#put
      */
-    FileHashMapEntry (long pos, long size, Object key)
+    FileHashMapEntry (long pos, int size, Object key)
     {
         this.filePosition = pos;
         this.objectSize   = size;
@@ -102,7 +102,7 @@ class FileHashMapEntry implements Serializable, Comparable
      * @see #getObjectSize
      * @see #setObjectSize
      */
-    FileHashMapEntry (long pos, long size)
+    FileHashMapEntry (long pos, int size)
     {
         this (pos, size, null);
     }
@@ -207,7 +207,7 @@ class FileHashMapEntry implements Serializable, Comparable
      *
      * @see #setObjectSize
      */
-    long getObjectSize()
+    int getObjectSize()
         throws IllegalStateException
     {
         assert (this.objectSize > 0) : "No object stored yet";
@@ -222,7 +222,7 @@ class FileHashMapEntry implements Serializable, Comparable
      *
      * @see #getObjectSize
      */
-    void setObjectSize (long size)
+    void setObjectSize (int size)
     {
         this.objectSize = size;
     }
