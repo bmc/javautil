@@ -13,11 +13,12 @@ import java.util.NoSuchElementException;
  * <tt>java.util.Enumeration</tt> object look and behave like a
  * <tt>java.util.Iterator</tt> objects. The <tt>EnumerationIterator</tt>
  * class implements the <tt>Iterator</tt> interface and wraps an existing
- * <tt>Enumeration</tt> object.
+ * <tt>Enumeration</tt> object. This class is the conceptual opposite of
+ * the <tt>Collections.enumeration()</tt> method in the <tt>java.util</tt>
+ * package.
  *
  * @see java.util.Iterator
  * @see java.util.Enumeration
- * @see IteratorEnumeration
  *
  * @version <tt>$Revision$</tt>
  */

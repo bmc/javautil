@@ -149,7 +149,7 @@ public class MultiIterator implements Iterator
      *         <tt>nextElement()</tt> will return an element,
      *         <tt>false</tt> otherwise.
      *
-     * @see #nextElement()
+     * @see #next
      */
     public boolean hasNext()
     {
@@ -169,7 +169,6 @@ public class MultiIterator implements Iterator
      *
      * @throws NoSuchElementException No more elements exist
      *
-     * @see #previous()
      * @see java.util.Iterator#next
      */
     public Object next() throws NoSuchElementException
