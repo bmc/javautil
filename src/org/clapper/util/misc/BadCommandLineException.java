@@ -26,8 +26,6 @@
 
 package org.clapper.util.misc;
 
-import java.io.*;
-
 /**
  * <p><tt>BadCommandLineException</tt> is thrown by a command-line utility
  * when it encounters a bad or missing command-line parameter.</p>
