@@ -9,8 +9,76 @@ import java.util.*;
 import java.text.*;
 
 /**
- * Defines a Writer object that does automatic word-wrapping on line
- * boundaries.
+ * <p>The <tt>WordWrapWriter</tt> class is a filter class. A
+ * <WordWrapWriter</tt> object wraps a <tt>Writer</tt> or
+ * <tt>OutputStream</tt> object, filtering output to the wrapped object so
+ * that output lines are broken on word boundaries and fit nicely within
+ * the proscribed output width. Messages may be written with prefixes or
+ * without them, depending upon various settings in the
+ * <tt>WordWrapWriter</tt> object; the columnar width of the output object
+ * can be controlled, as well.</p>
+ *
+ * <p>For example, the long message</p>
+ *
+ * <blockquote><pre>Unable to open file /usr/local/etc/wombat: No such file or directory</pre></blockquote>
+ *
+ * <p>might appear like this without a prefix:</p>
+ *
+ * <blockquote><pre>
+ * Unable to open file /usr/local/etc/wombat: No such file or
+ * directory
+ * </pre></blockquote>
+ *
+ * <p>and like this if the prefix is "myprog:"</p>
+ *
+ * <blockquote><pre>
+ * myprog: Unable to open file /usr/local/etc/wombat: No such
+ *         file or directory
+ * </pre></blockquote>
+ *
+ * <p>Alternatively, if the output width is shortened, the same message
+ * can be made to wrap something like this:</p>
+ *
+ * <blockquote><pre>
+ * myprog: Unable to open file
+ *         /usr/local/etc/wombat:
+ *         No such file or
+ *         directory
+ * </pre></blockquote>
+ *
+ * <p>Note how the <tt>WordWrapWriter</tt> output's logic will "tab" past the
+ * prefix on wrapped lines.</p>
+ *
+ * <p><tt>WordWrapWriter</tt> objects also support the notion of an
+ * indentation level, which is independent of the prefix. A non-zero
+ * indentation level causes each line, including the first line, to be
+ * indented that many characters. Thus, calling
+ * {@link #setIndentation(int) setIndentation()} with a value of
+ * 4 will cause each output line to be preceded by 4 blanks. (It's also
+ * possible to change the indentation character from a blank to any other
+ * character. See {@link #setIndentationChar(char) setIndentationChar()}
+ * for details.)</p>
+ *
+ * <p>The logic is predicated on the notion of a `message'; that is, a
+ * <tt>WordWrapWriter</tt> object has to know where a message begins and
+ * ends, so it can tell when to write the prefix, reset its internal column
+ * count, etc. The class's notion of a message is straightforward: A
+ * message consists of all characters written to the object via one of the
+ * <tt>write()</tt> methods, up to and including either an embedded newline
+ * or a call to the {@link #flush()} method. The <tt>println()</tt> methods
+ * implicitly call <tt>flush()</tt>, as does any <tt>write()</tt> method
+ * that encounters an embedded newline. Thus, it's rarely necessary to call
+ * <tt>flush()</tt> manually.</p>
+ *
+ * <p><b>Notes</b></b>
+ *
+ * <ol>
+ *   <li> The class does not do any special processing of tab characters.
+ *        Embedded tab characters can have surprising (and unwanted) effects
+ *        on the rendered output.
+ *   <li> Wrapping another <tt>WordWrapWriter</tt> object is an invitation to
+ *        trouble.
+ * </ol>
  *
  * @see java.io.Writer
  *
