@@ -345,4 +345,162 @@ public final class TextUtil
     {
         return ((s == null) || (s.trim().length() == 0));
     }
+
+    /**
+     * Right justify a string in a fixed-width field, using blanks for
+     * padding. If the string is already longer than the field width, it is
+     * returned unchanged.
+     *
+     * @param s      the string
+     * @param width  the desired field width
+     *
+     * @return a right-justified version of the string
+     *
+     * @see #rightJustifyString(String,int,char)
+     * @see #leftJustifyString(String,int)
+     * @see #centerString(String,int)
+     */
+    public static String rightJustifyString (String s, int width)
+    {
+        return rightJustifyString (s, width, ' ');
+    }
+
+    /**
+     * Right justify a string in a fixed-width field, using the specified
+     * character for padding. If the string is already longer than the
+     * field width, it is returned unchanged.
+     *
+     * @param s      the string
+     * @param width  the desired field width
+     * @param c      the pad character
+     *
+     * @return a right-justified version of the string
+     *
+     * @see #rightJustifyString(String,int)
+     * @see #leftJustifyString(String,int,char)
+     * @see #centerString(String,int,char)
+     */
+    public static String rightJustifyString (String s, int width, char c)
+    {
+        StringBuffer  paddedString = new StringBuffer (width);
+        int           paddingNeeded;
+        int           len = s.length();
+
+        paddingNeeded = (width < len) ? 0 : (width - len);
+
+        for (int i = 0; i < paddingNeeded; i++)
+            paddedString.append (c);
+
+        paddedString.append (s);
+
+        return paddedString.toString();
+    }
+
+    /**
+     * Left justify a string in a fixed-width field, using blanks for
+     * padding. If the string is already longer than the field width, it is
+     * returned unchanged.
+     *
+     * @param s      the string
+     * @param width  the desired field width
+     *
+     * @return a left-justified version of the string
+     *
+     * @see #leftJustifyString(String,int,char)
+     * @see #rightJustifyString(String,int)
+     * @see #centerString(String,int)
+     */
+    public static String leftJustifyString (String s, int width)
+    {
+        return leftJustifyString (s, width, ' ');
+    }
+
+    /**
+     * Left justify a string in a fixed-width field, using the specified
+     * character for padding. If the string is already longer than the
+     * field width, it is returned unchanged.
+     *
+     * @param s      the string
+     * @param width  the desired field width
+     * @param c      the pad character
+     *
+     * @return a left-justified version of the string
+     *
+     * @see #leftJustifyString(String,int)
+     * @see #rightJustifyString(String,int,char)
+     * @see #centerString(String,int,char)
+     */
+    public static String leftJustifyString (String s, int width, char c)
+    {
+        StringBuffer  paddedString = new StringBuffer (width);
+        int           paddingNeeded;
+        int           len = s.length();
+
+        paddingNeeded = (width < len) ? 0 : (width - len);
+        paddedString.append (s);
+
+        for (int i = 0; i < paddingNeeded; i++)
+            paddedString.append (c);
+
+        return paddedString.toString();
+    }
+
+    /**
+     * Center a string in a fixed-width field, using blanks for padding. If
+     * the string is already longer than the field width, it is returned
+     * unchanged.
+     *
+     * @param s      the string
+     * @param width  the desired field width
+     *
+     * @return a centered version of the string
+     *
+     * @see #centerString(String,int,char)
+     * @see #rightJustifyString(String,int)
+     * @see #leftJustifyString(String,int)
+     */
+    public static String centerString (String s, int width)
+    {
+        return centerString (s, width, ' ');
+    }
+
+    /**
+     * Right justify a string in a fixed-width field, using the specified
+     * character for padding. If the string is already longer than the
+     * field width, it is returned unchanged.
+     *
+     * @param s      the string
+     * @param width  the desired field width
+     * @param c      the pad character
+     *
+     * @return a right-justified version of the string
+     *
+     * @see #centerString(String,int,char)
+     * @see #leftJustifyString(String,int,char)
+     * @see #rightString(String,int,char)
+     */
+    public static String centerString (String s, int width, char c)
+    {
+        StringBuffer  paddedString = new StringBuffer (width);
+        int           paddingNeeded;
+        int           len = s.length();
+        int           frontPadding;
+        int           tailPadding;
+        int           i;
+
+        paddingNeeded = (width < len) ? 0 : (width - len);
+        i = paddingNeeded / 2;
+        frontPadding = i;
+        tailPadding  = i + (paddingNeeded % 2);
+
+        for (i = 0; i < frontPadding; i++)
+            paddedString.append (c);
+
+        paddedString.append (s);
+
+        for (i = 0; i < tailPadding; i++)
+            paddedString.append (c);
+
+        return paddedString.toString();
+    }
 }
