@@ -1383,25 +1383,45 @@ public class Configuration
     private void handleVariable (Line line, URL url)
         throws ConfigurationException
     {
-        String s = line.buffer.toString();
-        int    i;
+        char[] s = line.buffer.toString().toCharArray();
+        int    iSep;
 
-        if ( ((i = s.indexOf ('=')) == -1) &&
-             ((i = s.indexOf (':')) == -1) )
+        for (iSep = 0; iSep < s.length; iSep++)
+        {
+            if ((s[iSep] == ':') || (s[iSep] == '='))
+                break;
+        }
+
+        if (iSep == s.length)
         {
             throw new ConfigurationException (getExceptionPrefix (line, url)
                                             + "Missing '=' or ':' for "
                                             + "variable definition.");
         }
 
-        if (i == 0)
+        if (iSep == 0)
         {
             throw new ConfigurationException (getExceptionPrefix (line, url)
                                             + "Missing variable name for "
                                             + "variable definition.");
         }
 
-        String varName = s.substring (0, i).trim();
+        int i = 0;
+        int j = iSep - 1;
+        while (Character.isWhitespace (s[i]))
+            i++;
+
+        while (Character.isWhitespace (s[j]))
+            j--;
+
+        if (i >= j)
+        {
+            throw new ConfigurationException (getExceptionPrefix (line, url)
+                                            + "Missing variable name for "
+                                            + "variable definition.");
+        }
+
+        String varName = new String (s, i, j - i + 1);
         if (varName.length() == 0)
         {
             throw new ConfigurationException (getExceptionPrefix (line, url)
@@ -1409,7 +1429,9 @@ public class Configuration
                                             + "variable definition.");
         }
 
-        String value = s.substring (skipWhitespace (s, i + 1));
+        i = skipWhitespace (s, iSep + 1);
+        j = s.length - i;
+        String value = new String (s, i, j);
         Variable existing = parseData.currentSection.getVariable (varName);
         if (existing != null)
         {
