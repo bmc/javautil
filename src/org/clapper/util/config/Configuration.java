@@ -201,11 +201,12 @@ import org.clapper.util.io.*;
  * <p>Note: Attempting to include a file from itself, either directly or
  * indirectly, will cause the parser to throw an exception.</p>
  * 
- * <h4>Comments</h4>
+ * <h4>Comments and Blank Lines</h4>
  *
  * <p>A comment line is a one whose first non-whitespace character is a "#"
  * or a "!". This comment syntax is identical to the one supported by a
- * Java properties file.</p>
+ * Java properties file. A blank line is a line containing no content, or
+ * one containing only whitespace. Blank lines and comments are ignored.</p>
  *
  * @version <tt>$Revision$</tt>
  *
