@@ -9,19 +9,30 @@ Version 1.1 (...):
   * I wanted to use the new assertion capabilities of 1.4
 
   * The regular expression classes that come with 1.4 are more extensible
-    than the Jakarta ORO classes, in that they work with anything that
-    implements the CharSequence interface, not just with Strings. Plus,
-    using java.util.regexp, instead of Jakarta ORO, removes a third-party
-    library dependency.
+    than the Jakarta ORO classes; they work with anything that implements
+    the CharSequence interface, not just with Strings. Plus, using
+    java.util.regexp, instead of Jakarta ORO, removes a third-party library
+    dependency.
 
   * The JDK 1.4 version of String introduces a split() method, obviating
     the need to provide those methods in TextUtil.
 
-- Converted code that used Jakarta ORO to use the 1.4 java.util.regexp
-  classes.
+- Converted code that used Jakarta ORO to use the JDK 1.4 java.util.regexp
+  classes. Includes introduction of new org.clapper.util.regex.RegexUtil
+  class, which provides a substitute() method that takes the place of
+  org.apache.oro.text.perl.Perl5Util's substitute() method.
 
-- Removed TextUtil.split() methods. JDK 1.4's String class has its own
-  methods.
+- Added new org.clapper.util.misc.LRUMap class, which implements a simple
+  least recently used map.
+
+- org.clapper.util.misc.NestedException is now implemented in terms of the
+  built-in exception chaining in the 1.4 JDK. NestedException is retained
+  for backward compatibility and because it provides support for localizing
+  exception messages.
+
+- Added parseIntParameter(), parseIntOptionArgument(), parseFloatParameter(),
+  parseFloatOptionArgument(), etc., parameter parsing helper methods to
+  CommandLineUtility class.
 
 - Overhauled build.xml to make compilations more efficient. Requires a
   newer version of Jikes (if compiling with Jikes).
