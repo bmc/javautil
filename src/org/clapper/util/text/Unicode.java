@@ -111,18 +111,30 @@ public final class Unicode
      * Zero-width non-joiner.
      */
     public static final char ZERO_WIDTH_NON_JOINER = '\u200c';
+
+    /**
+     * Synonym for {@link #ZERO_WIDTH_NON_JOINER}
+     */
     public static final char ZWNJ = ZERO_WIDTH_NON_JOINER;
 
     /**
      * Zero-width joiner.
      */
     public static final char ZERO_WIDTH_JOINER = '\u200d';
+
+    /**
+     * Synonym for {@link #ZERO_WIDTH_JOINER}
+     */
     public static final char ZWJ = ZERO_WIDTH_JOINER;
 
     /**
      * Hyphen (normal encoding, i.e., hyphen-minus)
      */
     public static final char HYPHEN = '\u002d';
+
+    /**
+     * Synonym for {@link #HYPHEN}
+     */
     public static final char HYPHEN_MINUS = HYPHEN;
 
     /**
