@@ -122,14 +122,14 @@ public final class HTMLUtil
     /**
      * Converts all inline HTML character entities (c.f.,
      * <a href="http://www.w3.org/TR/REC-html40/sgml/entities.html">http://www.w3.org/TR/REC-html40/sgml/entities.html</a>)
-     * to their Unicode character counterparts, if possible. Unrecognized
-     * entity strings are left untouched.
+     * to their Unicode character counterparts, if possible.
      *
-     * @param s  the string to convert
+     * @param s the string to convert
      *
      * @return the resulting, possibly modified, string
      *
      * @see #stripHTMLTags
+     * @see #XMLUtil#convertCharacterEntities
      */
     public static String convertCharacterEntities (String s)
     {
@@ -157,85 +157,81 @@ public final class HTMLUtil
 
         ResourceBundle bundle = getResourceBundle();
         XStringBuffer buf = new XStringBuffer();
-        boolean foundMatch = true;
+        Matcher matcher = null;
 
-        while (foundMatch)
+        synchronized (HTMLUtil.class)
+        {
+            matcher = entityPattern.matcher (s);
+        }
+
+        for (;;)
         {
             String match = null;
             String preMatch = null;
             String postMatch = null;
-            int cursor = 0;
 
-            synchronized (HTMLUtil.class)
+            if (! matcher.find())
+                break;
+
+            match = matcher.group (1);
+            preMatch = s.substring (0, matcher.start (1) - 1);
+            postMatch = s.substring (matcher.end (1) + 1);
+
+            if (preMatch != null)
+                buf.append (preMatch);
+
+            if (match.charAt (0) == '#')
             {
-                Matcher matcher = entityPattern.matcher (s);
-                if (matcher.find (cursor))
-                {
-                    match = matcher.group (1);
-                    preMatch = s.substring (cursor, matcher.start (1) - 1);
-                    postMatch = s.substring (matcher.end (1) + 1);
-                }
+                if (match.length() == 1)
+                    buf.append ('#');
 
                 else
                 {
-                    foundMatch = false;
-                }
-            }
-
-            if (foundMatch)
-            {
-                if (preMatch != null)
-                    buf.append (preMatch);
-
-                if (match.charAt (0) == '#')
-                {
-                    if (match.length() == 1)
-                        buf.append ('#');
-
-                    else
-                    {
-                        // It might be a numeric entity code. Try to parse it
-                        // as a number. If the parse fails, just put the whole
-                        // string in the result, as is.
-
-                        try
-                        {
-                            int cc = Integer.parseInt (match.substring (1));
-
-                            // It parsed. Is it a valid Unicode character?
-                            
-                            if (Character.isDefined ((char) cc))
-                                buf.append ((char) cc);
-                            else
-                                buf.append ("&#" + match + ";");
-                        }
-
-                        catch (NumberFormatException ex)
-                        {
-                            buf.append ("&#" + match + ";");
-                        }
-                    }
-                }
-
-                else
-                {
-                    // Not a numeric entity. Try to find a matching symbolic
-                    // entity.
+                    // It might be a numeric entity code. Try to parse it
+                    // as a number. If the parse fails, just put the whole
+                    // string in the result, as is.
 
                     try
                     {
-                        String rep = bundle.getString ("html_" + match);
-                        buf.append (rep);
+                        int cc = Integer.parseInt (match.substring (1));
+
+                        // It parsed. Is it a valid Unicode character?
+                            
+                        if (Character.isDefined ((char) cc))
+                            buf.append ((char) cc);
+                        else
+                            buf.append ("&#" + match + ";");
                     }
 
-                    catch (MissingResourceException ex)
+                    catch (NumberFormatException ex)
                     {
-                        buf.append ("&" + match + ";");
+                        buf.append ("&#" + match + ";");
                     }
                 }
-
-                s = (postMatch == null) ? "" : postMatch;
             }
+
+            else
+            {
+                // Not a numeric entity. Try to find a matching symbolic
+                // entity.
+
+                try
+                {
+                    String rep = bundle.getString ("html_" + match);
+                    buf.append (rep);
+                }
+
+                catch (MissingResourceException ex)
+                {
+                    buf.append ("&" + match + ";");
+                }
+            }
+
+            if (postMatch == null)
+                break;
+
+            s = postMatch;
+            matcher.reset (s);
         }
 
         if (s.length() > 0)
