@@ -85,4 +85,16 @@ public class ConfigurationException extends NestedException
     {
 	super (message, exception);
     }
+
+    /**
+     * Constructs an exception containing a configuration file section name
+     * and a message.
+     *
+     * @param sectionName the section name
+     * @param message     the message to associate with this exception
+     */
+    public ConfigurationException (String sectionName, String message)
+    {
+	super ("Section [" + sectionName + "]: " + message);
+    }
 }
