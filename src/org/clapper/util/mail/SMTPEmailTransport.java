@@ -185,7 +185,7 @@ public class SMTPEmailTransport implements EmailTransport
 
             // Set the subject.
 
-            message.setSubject (message.getSubject());
+            javamailMessage.setSubject (message.getSubject());
 
             // Note: The Java Mail API wants *some* content. If the text
             // part is null and there are no attachments, build an empty
