@@ -1163,8 +1163,7 @@ public class XStringBuffer
                 break;
 
             default:
-                pb.unread (c);
-                c = '\\';
+                // An escaped "regular" character is just the character.
                 break;
         }
 

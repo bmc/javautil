@@ -36,6 +36,9 @@ public interface VariableDereferencer
      * @return The variable's value. If the variable has no value, this
      *         method must return the empty string (""). It is important
      *         <b>not</b> to return null.
+     *
+     * @throws VariableSubstitutionException  substitution error
      */
-    public String getValue (String varName);
+    public String getValue (String varName)
+        throws VariableSubstitutionException;
 }

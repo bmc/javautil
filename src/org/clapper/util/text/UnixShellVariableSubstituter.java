@@ -93,11 +93,14 @@ public class UnixShellVariableSubstituter
      *
      * @return The (possibly) expanded string.
      *
+     * @throws VariableSubstitutionException  substitution error
+     *
      * @see #substitute(String,VariableDereferencer,VariableNameChecker)
      * @see VariableDereferencer#getValue(String)
      */
     public String substitute (String               s,
                               VariableDereferencer deref)
+        throws VariableSubstitutionException
     {
         return substitute (s, deref, null);
     }
@@ -126,12 +129,15 @@ public class UnixShellVariableSubstituter
      *
      * @return The (possibly) expanded string.
      *
+     * @throws VariableSubstitutionException  substitution error
+     *
      * @see #substitute(String,VariableDereferencer)
      * @see VariableDereferencer#getValue(String)
      */
     public String substitute (String               s,
                               VariableDereferencer deref,
                               VariableNameChecker  nameChecker)
+        throws VariableSubstitutionException
     {
         StringBuffer  result        = new StringBuffer();
         int           len           = s.length();

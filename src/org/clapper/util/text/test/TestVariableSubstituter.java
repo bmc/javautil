@@ -105,7 +105,8 @@ public class TestVariableSubstituter
     private void runTest (String              propertiesFile,
                           Collection          strings)
         throws FileNotFoundException,
-               IOException
+               IOException,
+               VariableSubstitutionException
     {
         InputStream  in         = new FileInputStream (propertiesFile);
         Properties   properties = new Properties();

@@ -83,11 +83,14 @@ public interface VariableSubstituter
      *
      * @return The (possibly) expanded string.
      *
+     * @throws VariableSubstitutionException  substitution error
+     *
      * @see #substitute(String,VariableDereferencer,VariableNameChecker)
      * @see VariableDereferencer#getValue(String)
      */
     public String substitute (String               s,
-                              VariableDereferencer deref);
+                              VariableDereferencer deref)
+        throws VariableSubstitutionException;
 
     /**
      * <p>Substitute all variable references in the supplied string,
@@ -112,10 +115,13 @@ public interface VariableSubstituter
      *
      * @return The (possibly) expanded string.
      *
+     * @throws VariableSubstitutionException  substitution error
+     *
      * @see #substitute(String,VariableDereferencer)
      * @see VariableDereferencer#getValue(String)
      */
     public String substitute (String               s,
                               VariableDereferencer deref,
-                              VariableNameChecker  checker);
+                              VariableNameChecker  checker)
+        throws VariableSubstitutionException;
 }
