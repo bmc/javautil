@@ -81,17 +81,10 @@
              version="true"
 	     splitindex="true"
              use="true"
-	     packagenames="org.clapper.util.io.*,org.clapper.util.text.*"
 	     excludepackagenames="org.clapper.util.*.test"
+	     packagenames="org.clapper.util.*"
 	     classpathref="project.class.path"
              windowtitle="clapper.org Utility API">
-<!--
-      <fileset dir="." defaultexcludes="yes">
-        <exclude name="**/test/**" />
-        <include name="**/*.java"/>
-      </fileset>
--->
-
       <doctitle><![CDATA[<h1>clapper.org Utility API Documentation</h1>]]></doctitle>
       <bottom><![CDATA[<i>Copyright &#169; 2004 Brian M. Clapper. All Rights Reserved.</i>]]></bottom>
     </javadoc>
