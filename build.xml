@@ -276,8 +276,10 @@
     <javadoc 
              destdir="dist/docs/api"
 	     sourcepath="${src.top}"
+	     source="1.4"
              author="true"
              version="true"
+	     breakiterator="true"
 	     splitindex="true"
              use="true"
 	     overview="overview.html"
