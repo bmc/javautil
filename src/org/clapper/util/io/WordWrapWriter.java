@@ -325,7 +325,7 @@ public class WordWrapWriter extends PrintWriter
         if ( (buffer != null) && (buffer.length() > 0) )
         {
             flushBuffer (buffer);
-            buffer = null;
+            buffer.setLength (0);
         }
     }
 
@@ -780,138 +780,70 @@ public class WordWrapWriter extends PrintWriter
      */
     private void flushBuffer (StringBuffer buf)
     {
-        int           currentLength = 0;
-        int           length        = buf.length();
-        int           tokenLength;
-        char          contents[];
-        StringBuffer  currentWord   = new StringBuffer();
-        boolean       lastWasNewline= true;
-        int           lines = 0;
-        int           tokensOnLine  = 0;
+        // Ask the StringTokenizer to return the delimiters, too. That way,
+        // empty lines are not skipped. Otherwise, the StringTokenizer will
+        // parse through multiple adjacent delimiters, causing empty lines
+        // to be swallowed.
 
-        if (prefix != null)
+        StringTokenizer lineTok = new StringTokenizer (buf.toString(),
+                                                       "" + NEWLINE_MARKER,
+                                                       true);
+        String localPrefix = (prefix == null) ? "" : prefix;
+        int currentLength = 0;
+        boolean lastWasNewline = true;
+
+        while (lineTok.hasMoreTokens())
         {
-            // Emit the prefix, unless the line is empty.
-            if ( (length > 1) || (buf.charAt(0) != NEWLINE_MARKER) )
-            {
-                // Non empty line. We want the prefix.
+            String line = lineTok.nextToken();
 
-                if (emittedPrefix)
+            if ((line.length() == 1) && (line.charAt (0) == NEWLINE_MARKER))
+            {
+                // Newline. Process and go back for more.
+
+                writer.println();
+                lastWasNewline = true;
+                currentLength = 0;
+                continue;
+            }
+
+            StringTokenizer wordTok = new StringTokenizer (line);
+
+            // Process this line's worth of tokens.
+
+            while (wordTok.hasMoreTokens())
+            {
+                String word = wordTok.nextToken();
+                int wordLength = word.length();
+
+                // If the word (plus a delimiting space) exceeds the line
+                // length, wrap now.
+
+                if ((wordLength + currentLength + 1) > this.lineLength)
                 {
-                    for (int i = 0; i < prefix.length(); i++)
-                        writer.print (' ');
+                    writer.println();
+                    currentLength = 0;
+                    lastWasNewline = true;
+                }
+
+                if (lastWasNewline)
+                {
+                    // indent() handles both the prefix and the indentation.
+                    currentLength += indent();
+                    lastWasNewline = false;
                 }
 
                 else
                 {
-                    writer.print (prefix);
+                    writer.print (' ');
+                    currentLength += 1;
                 }
 
-                // We've emitted a prefix, which by definition is at the
-                // beginning of a line. Pretend we've emitted a newline.
-
-                currentLength += prefix.length();
-                lastWasNewline = false;
-                emittedPrefix = true;
+                writer.print (word);
+                currentLength += wordLength;
             }
         }
 
-        contents = buf.toString().toCharArray();
-        for (int i = 0; i < length; i++)
-        {
-            char c = contents[i];
-            if ( (c == NEWLINE_MARKER) || (Character.isSpaceChar (c)))
-            {
-                // Words are delimited by white space, so if there's a
-                // current word, we have to emit it at this point, before
-                // handling the white space character.
-                    
-                if ( (tokenLength = currentWord.length()) > 0 )
-                {
-                    // We have a word buffered up. Emit it.
-
-                    if ( ((currentLength + tokenLength) > lineLength) &&
-                         (tokensOnLine > 0) )
-                    {
-                        // Token would overflow the line AND we're not at
-                        // the beginning of a new line. Wrap first. (If we
-                        // were at the beginning of a new line, forcing a
-                        // "wrap" would introduce a spurious newline.)
-
-                        writer.println();
-                        lines++;
-                        lastWasNewline = true;
-                        currentLength = 0;
-                        tokensOnLine = 0;
-                    }
-
-                    if (lastWasNewline && (lines > 0))
-                        currentLength += indent();
-
-                    writer.print (currentWord.toString());
-                    lastWasNewline = false;
-                    currentLength += tokenLength;
-                    currentWord.setLength (0);
-                    tokensOnLine++;
-                }
-
-                // Now emit the white space character, wrapping the line if
-                // necessary first.
-
-                if ((c == NEWLINE_MARKER) || (currentLength >= lineLength))
-                {
-                    writer.println();
-                    lines++;
-                    currentLength = 0;
-                    tokensOnLine = 0;
-                    lastWasNewline = true;
-                }
-
-                if (c != NEWLINE_MARKER)
-                {
-                    if (lastWasNewline)
-                        currentLength += indent();
-                    else
-                    {
-                        writer.print (c);
-                        currentLength++;
-                    }
-
-                    lastWasNewline = false;
-                }
-            }
-
-            else
-            {
-                // Not a white space character. Add it to the current word.
-
-                currentWord.append (c);
-            }
-        } // end for
-
-        if ( (tokenLength = currentWord.length()) > 0 )
-        {
-            // Leftover word. Put it out, too.
-
-            if ( (! lastWasNewline) &&
-                 ((currentLength + tokenLength) > lineLength) )
-            {
-                writer.println();
-                lines++;
-                lastWasNewline = true;
-                tokensOnLine = 0;
-            }
-
-            if (lastWasNewline)
-                currentLength += indent();
-
-            writer.print (currentWord.toString());
-            lastWasNewline = false;
-        }
-
-        // Issue a final newline and flush the output stream.
-
-        if (! lastWasNewline)
+        if (currentLength > 0)
             writer.println();
 
         writer.flush();
@@ -929,13 +861,15 @@ public class WordWrapWriter extends PrintWriter
 
         if (prefix != null)
         {
-            for (i = 0; i < prefix.length(); i++)
-                writer.write (indentChar);
+            writer.write (prefix);
             result += prefix.length();
         }
 
         for (i = 0; i < indentation; i++)
+        {
             writer.write (indentChar);
+            result++;
+        }
 
         return result;
     }
