@@ -53,9 +53,8 @@ import org.clapper.util.io.*;
  * are case-sensitive and may contain alphanumerics and periods (".").
  * Variable values may contain anything at all. The parser ignores
  * whitespace on either side of the "=" or ":"; that is, leading whitespace
- * in the value is skipped. Values may be single- or double-quoted; the
- * quotes are stripped. The way to include leading whitespace in a value is
- * to quote the value or escape the whitespace (see below).</p>
+ * in the value is skipped. The way to include leading whitespace in a value is
+ * escape the whitespace characters with backslashes. (see below).</p>
  *
  * <h4>Continuation Lines</h4>
  *
@@ -1285,7 +1284,7 @@ public class Configuration
                                             + "variable definition.");
         }
 
-        String value   = s.substring (skipWhitespace (s, i + 1));
+        String value = s.substring (skipWhitespace (s, i + 1));
 
         if (parseData.currentSection.getVariable (varName) != null)
         {
