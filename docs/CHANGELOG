@@ -1,5 +1,19 @@
+---------------------------------------------------------------------------
+CHANGELOG: org.clapper.util Java API
+
 $Id$
 ---------------------------------------------------------------------------
+
+Version 1.1.1 (12 October, 2004)
+
+- Added org.clapper.util.misc.JDK14TextLogFormatter class, a simple
+  text log formatter for the 1.4 JDK java.util.logging infrastructure.
+
+- Simplified loading of API version, in build.xml. Instead of loading
+  version from Version.class, it now loads the version from a properties
+  file. The Version class uses the same properties file, as a resource
+  bundle.
+
 
 Version 1.1 (07 October, 2004):
 
