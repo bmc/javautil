@@ -9,11 +9,11 @@
     Build file for "util" Java classes
   </description>
   <!-- set global properties for this build -->
-  <property name="build" location="build"/>
+  <property name="build" location="classes"/>
   <property name="dist"  location="dist"/>
   <property name="build.compiler" value="jikes"/>
   <property name="build.compiler.emacs" value="true"/>
-  <property name="compile.listfiles" value="yes"/>
+  <property name="compile.listfiles" value="no"/>
 
   <path id="project.class.path">
     <pathelement location="lib/"/>
@@ -66,10 +66,39 @@
   <target name="all" depends="lib,testers"/>
 
   <target name="dist" depends="all"
-        description="generate the distribution">
+          description="Generate the distribution">
     <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
     <jar jarfile="${dist}/lib/util.jar" basedir="${build}"/>
   </target>
+
+  <target name="doc"
+          description="Generate API Javadocs">
+    <mkdir dir="dist/docs/api"/>
+    <javadoc 
+             destdir="dist/docs/api"
+	     sourcepath="../../.."
+             author="true"
+             version="true"
+	     splitindex="true"
+             use="true"
+	     packagenames="org.clapper.util.io.*,org.clapper.util.text.*"
+	     excludepackagenames="org.clapper.util.*.test"
+	     classpathref="project.class.path"
+             windowtitle="clapper.org Utility API">
+<!--
+      <fileset dir="." defaultexcludes="yes">
+        <exclude name="**/test/**" />
+        <include name="**/*.java"/>
+      </fileset>
+-->
+
+      <doctitle><![CDATA[<h1>clapper.org Utility API Documentation</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright &#169; 2004 Brian M. Clapper. All Rights Reserved.</i>]]></bottom>
+    </javadoc>
+  </target>
+
+  <target name="docs" depends="doc"/>
+  <target name="javadocs" depends="doc"/>
 
   <target name="clean"
         description="clean up" >
