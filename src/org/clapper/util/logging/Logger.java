@@ -40,8 +40,7 @@ import java.util.logging.Level;
  * (or unless) a thread explicitly calls the {@link #enableLogging} method.
  * The first call to <tt>enableLogging()</tt> traverses the list of
  * instantiated <tt>org.clapper.util.Logger</tt> objects and creates
- * underlying <tt>java.util.logging.Logger</tt> objects for each one.
- * Commons Logging <tt>Log</tt> objects for each <tt>Logger</tt>. Any
+ * underlying <tt>java.util.logging.Logger</tt> objects for each one. Any
  * <tt>Logger</tt> objects created after <tt>enableLogging()</tt> is called
  * are automatically enabled.</p>
  *
