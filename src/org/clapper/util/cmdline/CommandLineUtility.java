@@ -494,6 +494,9 @@ public abstract class CommandLineUtility
                 if (opt.longOption != null)
                     len += (sep.length() + 2 + opt.longOption.length());
 
+                if (opt.argToken != null)
+                    len += (opt.argToken.length() + 1);
+
                 maxOptionLength = Math.max (maxOptionLength, len + 1);
             }
         }
