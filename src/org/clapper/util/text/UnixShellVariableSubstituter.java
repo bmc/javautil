@@ -110,7 +110,7 @@ public class UnixShellVariableSubstituter
      * the variable references are silently ignored. Variables that have no
      * value are substituted as the empty string. If the
      * <tt>nameChecker</tt> parameter is not null, this method calls its
-     * {@link VariableNameChecker#legalVariableCharacter()} method to
+     * {@link VariableNameChecker#legalVariableCharacter(char)} method to
      * determine whether a given character is a legal part of a variable
      * name. If <tt>nameChecker</tt> is null, then this method assumes that
      * variable names may consist solely of alphanumeric characters,
