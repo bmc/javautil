@@ -35,7 +35,7 @@ import java.util.EventListener;
  * store.</p>
  *
  * @see ObjectRemovalEvent
- * @see LRUMap#addObjectRemovalListener
+ * @see LRUMap#addRemovalListener
  *
  * @version <tt>$Revision$</tt>
  *

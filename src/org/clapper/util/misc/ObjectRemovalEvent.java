@@ -32,10 +32,10 @@ import java.util.EventObject;
  * <p>An <tt>ObjectRemovalEvent</tt> is an event that is propagated to
  * certain event listeners when an object is removed from some kind of
  * a store or data structure. For instance, the {@link LRUMap} class supports
- * this event through its {@link LRUMap#addObjectRemovalListener} method.</p>
+ * this event through its {@link LRUMap#addRemovalListener} method.</p>
  *
  * @see ObjectRemovalListener
- * @see LRUMap#addObjectRemovalListener
+ * @see LRUMap#addRemovalListener
  *
  * @version <tt>$Revision$</tt>
  *
