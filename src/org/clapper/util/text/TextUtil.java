@@ -332,4 +332,17 @@ public class TextUtils
     {
         return join (objects, "" + delim);
     }
+
+    /**
+     * Determine whether a given string is empty. A string is empty if it
+     * is null, zero-length, or comprised entirely of white space.
+     *
+     * @param s  the string to test
+     *
+     * @return <tt>true</tt> if it's empty, <tt>false</tt> if not.
+     */
+    public static boolean stringIsEmpty (String s)
+    {
+        return ((s == null) || (s.trim().length() == 0));
+    }
 }
