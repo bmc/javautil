@@ -106,12 +106,62 @@ public class FileUtils
     }
 
     /**
+     * Copy an <tt>InputStream</tt> to an <tt>OutputStream</tt>. If either
+     * stream is not already buffered, then it's wrapped in the corresponding
+     * buffered stream (i.e., <tt>BufferedInputStream</tt> or
+     * <tt>BufferedOutputStream</tt>) before copying. Calling this method
+     * is equivalent to:
+     *
+     * <blockquote><pre>copyStream (src, dst, 8192);</pre></blockquote>
+     *
+     * @param src     the source <tt>InputStream</tt>
+     * @param dst     the destination <tt>OutputStream</tt>
+     *
+     * @throws IOException  on error
+     */
+    public static void copyStream (InputStream is, OutputStream os)
+        throws IOException
+    {
+        copyStream (is, os, 8192);
+    }
+
+    /**
+     * Copy an <tt>InputStream</tt> to an <tt>OutputStream</tt>. If either
+     * stream is not already buffered, then it's wrapped in the corresponding
+     * buffered stream (i.e., <tt>BufferedInputStream</tt> or
+     * <tt>BufferedOutputStream</tt>) before copying.
+     *
+     * @param src        the source <tt>InputStream</tt>
+     * @param dst        the destination <tt>OutputStream</tt>
+     * @param bufferSize the buffer size to use
+     *
+     * @throws IOException  on error
+     */
+    public static void copyStream (InputStream  src,
+                                   OutputStream dst,
+                                   int          bufferSize)
+        throws IOException
+    {
+        if (! (src instanceof BufferedInputStream))
+            src = new BufferedInputStream (src);
+
+        if (! (dst instanceof BufferedOutputStream))
+            dst = new BufferedOutputStream (dst);
+        
+        byte [] buf = new byte [bufferSize];
+        int nr = 0;
+
+        while ((nr = src.read (buf)) != -1)
+            dst.write (buf, 0, nr); 
+            
+    }
+    /**
      * Copy one file to another.
      *
      * @param src  The file to copy
      * @param dst  Where to copy it. Can be a directory or a file.
      *
-     * @throws IOException on error.
+     * @throws IOException on error
      */
     public static void copyFile (File src, File dst) throws IOException
     {
@@ -123,23 +173,10 @@ public class FileUtils
 
         try
         {
-            from = new BufferedInputStream (new FileInputStream (src));
-            to   = new BufferedOutputStream (new FileOutputStream (dst));
+            from = new FileInputStream (src);
+            to   = new FileOutputStream (dst);
 
-            byte [] buf = new byte [1024];
-            int nr = 0;
-            
-            while ((nr = from.read (buf)) != -1)
-            {
-                to.write (buf, 0, nr); 
-            }
-            
-            to.flush();
-        }
-
-        catch (IOException ex)
-        {
-            throw ex;
+            copyStream (from, to);
         }
 
         finally
