@@ -26,39 +26,41 @@
 
 package org.clapper.util.ant;
 
-import java.net.InetAddress;
+import java.io.File;
+import java.io.IOException;
+
+import org.clapper.util.misc.BuildInfo;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
 /**
- * {@link <a href="http://ant.apache.org/">Ant</a>} task to retrieve the
- * name of the host on which the build is running, storing the name in a
- * property. Example:
+ * {@link <a href="http://ant.apache.org/">Ant</a>} task to create a build
+ * info properties file.
  *
  * <blockquote><pre>
- * &lt;taskdef name="host" 
- *          classname="org.clapper.util.ant.HostnameTask"
+ * &lt;taskdef name="make_build_info" 
+ *          classname="org.clapper.util.ant.MakeBuildInfoTask"
  *          classpath="${build}"/&gt;
- * &lt;host property="build.host"/&gt;
+ * &lt;make_build_info file="${build}/org/example/BuildInfoBundle.properties
+ *                  antversion="${ant.version}"
+ *                  compiler="${build.compiler}"
+ * /&gt;
  * </pre></blockquote>
- *
- * The specified property is always set to something. If the task cannot
- * retrieve the current host name, it displays a message to standard error
- * and sets the property to "localhost".
  *
  * @version <tt>$Id$</tt>
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
-public class HostnameTask extends Task
+public class MakeBuildInfoTask extends Task
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private String host = null;
-    private String propertyName = null;
+    private File    file          = null;
+    private String  antVersion    = null;
+    private String  buildCompiler = null;
 
     /*----------------------------------------------------------------------*\
                               Public Methods
@@ -72,34 +74,51 @@ public class HostnameTask extends Task
      */
     public void execute() throws BuildException
     {
-        if (propertyName == null)
-            throw new BuildException ("property attribute not set.");
+        if (file == null)
+            throw new BuildException ("file attribute not set.");
 
-        if (host == null)
+        try
         {
-            try
-            {
-                InetAddress localhost = InetAddress.getLocalHost();
-                host = localhost.getHostName();
-            }
-
-            catch (Exception ex)
-            {
-                host = "localhost";
-            }
+            BuildInfo.makeBuildInfoBundle (file, buildCompiler, antVersion);
         }
 
-        addProperty (propertyName, host);
+        catch (IOException ex)
+        {
+            throw new BuildException ("Can't create build info file \""
+                                    + file.getPath()
+                                    + "\": "
+                                    + ex.toString());
+        }
     }
 
     /**
-     * Called by Ant to set the "property" attribute.
+     * Called by Ant to set the "file" attribute.
      *
-     * @param prop  the name of the property to be set to the host name
+     * @param file  the file
      */
-    public void setProperty (String prop)
+    public void setFile (File file)
     {
-        this.propertyName = prop;
+        this.file = file;
+    }
+
+    /**
+     * Called by Ant to set the "antversion" attribute.
+     *
+     * @param s  the version string
+     */
+    public void setAntversion (String s)
+    {
+        this.antVersion = s;
+    }
+
+    /**
+     * Called by Ant to set the "compiler" attribute.
+     *
+     * @param s the compiler string
+     */
+    public void setCompiler (String s)
+    {
+        this.buildCompiler = s;
     }
 
     /*----------------------------------------------------------------------*\
