@@ -42,7 +42,7 @@ import java.util.NoSuchElementException;
  *
  * <ul>
  *   <li>Parameter-parsing logic, with call-outs for custom parameters
- *   <li>Built-in support a --logging parameter, which enables logging
+ *   <li>Built-in support for a --logging parameter, which enables logging
  *       via the Jakarta Commons Logging API, by calling
  *       {@link org.clapper.util.misc.Logger#enableLogging()}
  *   <li>Automatic generation of a usage message, with a call-out that
@@ -52,20 +52,25 @@ import java.util.NoSuchElementException;
  *
  * To use this class, subclass it, and have the subclass's <tt>main()</tt>
  * method instantiate the subclass, and then call the resulting object's
- * {@link #execute(String[])}
- * method. The <tt>execute()</tt> method (which resides in this base class)
- * will:</p>
+ * {@link #execute(String[]) execute()} method. The <tt>execute()</tt> method
+ * (which resides in this base class) will:</p>
  *
  * <ul>
  *   <li>parse the parameters
  *   <li>call the {@link #runCommand()} method, which must be provided by
- *       the subclass, to initiate processing.
+ *       the subclass, to initiate processing
  * </ul>
  *
- * <p>Here's a sample subclass. It takes the usual -logging parameter, plus
- * a "-v" (verbose) flag, a numeric count ("-n") and a file name. (Exactly
- * what it does with those parameters is left as an exercise for the
- * reader.)</p>
+ * <p>Note that this class does <b>not</b> parse options the way GNU
+ * <i>getopt()</i> (or even traditional <i>getopt()</tt>) does. In particular,
+ * it does not permit combining multiple single-character options into one
+ * command-line parameter. <tt>CommandLineUtility</tt> may be extended to
+ * support that capability in the future; however, it doesn't do that yet.</p>
+ *
+ * <p>Here's a sample subclass. It takes the usual <tt>--logging</tt>
+ * parameter, plus a <tt>-v</tt> (verbose) flag, a numeric count
+ * (<tt>-n</tt>) and a file name. (Exactly what it does with those
+ * parameters is left as an exercise for the reader.)</p>
  *
  * <blockquote>
  * <pre>
