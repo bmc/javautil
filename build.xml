@@ -18,7 +18,7 @@
   <path id="project.class.path">
     <pathelement location="lib/"/>
     <pathelement path="${java.class.path}/"/>
-    <pathelement path="build/"/>
+    <pathelement path="classes/"/>
   </path>
 
   <target name="init">
@@ -38,16 +38,59 @@
      <include name="**/test/*.java"/>
    </patternset>
 
-  <target name="lib" depends="init"
-        description="compile the source, but not the testers">
+  <target name="misc" depends="init">
     <!-- Compile the java code from . into ${build} -->
     <javac srcdir="." 
 	   depend="true"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
       <classpath refid="project.class.path"/>
-      <patternset refid="lib.sources"/>
+      <patternset>
+        <include name="misc/*.java"/>
+      </patternset>
     </javac>
+  </target>
+
+  <target name="io" depends="misc">
+    <!-- Compile the java code from . into ${build} -->
+    <javac srcdir="." 
+	   depend="true"
+	   listfiles="${compile.listfiles}"
+	   destdir="${build}">
+      <classpath refid="project.class.path"/>
+      <patternset>
+        <include name="io/*.java"/>
+      </patternset>
+    </javac>
+  </target>
+
+  <target name="text" depends="io">
+    <!-- Compile the java code from . into ${build} -->
+    <javac srcdir="." 
+	   depend="true"
+	   listfiles="${compile.listfiles}"
+	   destdir="${build}">
+      <classpath refid="project.class.path"/>
+      <patternset>
+        <include name="text/*.java"/>
+      </patternset>
+    </javac>
+  </target>
+
+  <target name="config" depends="text">
+    <!-- Compile the java code from . into ${build} -->
+    <javac srcdir="." 
+	   depend="true"
+	   listfiles="${compile.listfiles}"
+	   destdir="${build}">
+      <classpath refid="project.class.path"/>
+      <patternset>
+        <include name="config/*.java"/>
+      </patternset>
+    </javac>
+  </target>
+
+  <target name="lib" depends="config">
   </target>
 
   <target name="testers" depends="lib"
