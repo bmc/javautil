@@ -1237,7 +1237,7 @@ public class FileHashMap extends AbstractMap
      * closing it, deleting it, and reopening it. If an I/O error occurs at
      * any point, this object will be closed and marked invalid.</p>
      */
-    public void clear()
+    public synchronized void clear()
     {
         checkValidity();
         indexMap.clear();
@@ -1270,7 +1270,7 @@ public class FileHashMap extends AbstractMap
      *
      * @see #save
      */
-    public void close()
+    public synchronized void close()
         throws NotSerializableException,
                IOException
     {
@@ -1845,15 +1845,18 @@ public class FileHashMap extends AbstractMap
 
         // Load the serialized object into memory.
 
-        this.valuesDB.file.seek (entry.getFilePosition());
-        if ( (sizeRead = this.valuesDB.file.read (byteBuf)) != size )
+        synchronized (this)
         {
-            throw new IOException ("Expected to read "
-                                 + size
-                                 + "-byte serialized object from on-disk "
-                                 + "data file. Got only "
-                                 + sizeRead
-                                 + " bytes.");
+            this.valuesDB.file.seek (entry.getFilePosition());
+            if ( (sizeRead = this.valuesDB.file.read (byteBuf)) != size )
+            {
+                throw new IOException ("Expected to read "
+                                     + size
+                                     + "-byte serialized object from on-disk "
+                                     + "data file. Got only "
+                                     + sizeRead
+                                     + " bytes.");
+            }
         }
 
         // Use a ByteArrayInputStream and an ObjectInputStream to read
@@ -1896,7 +1899,7 @@ public class FileHashMap extends AbstractMap
      *
      * @throws IOException  on error
      */
-    private void saveIndex()
+    private synchronized void saveIndex()
         throws IOException
     {
         ObjectOutputStream objStream;
@@ -1940,7 +1943,7 @@ public class FileHashMap extends AbstractMap
      * @see #getFilePosition
      * @see #readValue
      */
-    private FileHashMapEntry writeValue (Object key, Object obj)
+    private synchronized FileHashMapEntry writeValue (Object key, Object obj)
         throws IOException,
                NotSerializableException
     {
