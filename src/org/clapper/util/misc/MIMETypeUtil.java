@@ -301,6 +301,8 @@ public class MIMETypeUtil
 
         // Check ours first.
 
+        loadMappings();
+
         String extension = FileUtil.getFileNameExtension (fileName);
         mimeType = (String) extensionToMIMETypeMap.get (extension);
 
