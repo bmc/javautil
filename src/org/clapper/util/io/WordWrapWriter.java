@@ -81,7 +81,7 @@ import java.text.*;
  * character. See {@link #setIndentationChar(char) setIndentationChar()}
  * for details.)</p>
  *
- * <p>The logic is predicated on the notion of a `message'; that is, a
+ * <p>The logic is predicated on the notion of a "message"; that is, a
  * <tt>WordWrapWriter</tt> object has to know where a message begins and
  * ends, so it can tell when to write the prefix, reset its internal column
  * count, etc. The class's notion of a message is straightforward: A
@@ -100,9 +100,19 @@ import java.text.*;
  *        on the rendered output.
  *   <li> Wrapping another <tt>WordWrapWriter</tt> object is an invitation to
  *        trouble.
+ *   <li> Technically, this class probably ought to extend the
+ *        <tt>java.io.FilterWriter</tt> class, since performs filtering
+ *        of output written to another underlying <tt>Writer</tt> or
+ *        <tt>OutputStream</tt>. However, I wanted <tt>WordWrapWriter</tt>
+ *        to be polymorphically compatible with <tt>java.io.PrintWriter</tt>,
+ *        so it could be passed to methods expecting a <tt>PrintWriter</tt>
+ *        object; there are more methods that expect a <tt>PrintWriter</tt>
+ *        than there are methods that expect a <tt>FilterWriter</tt>.
  * </ol>
  *
  * @see java.io.Writer
+ * @see java.io.PrintWriter
+ * @see java.io.FilterWriter
  *
  * @version $Revision$
  *
