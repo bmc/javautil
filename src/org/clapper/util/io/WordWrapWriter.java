@@ -32,12 +32,12 @@ public class WordWrapWriter extends PrintWriter
     \*----------------------------------------------------------------------*/
 
     /**
-     * Character used to denote an instream newline. Since we're inserting
-     * this character ourselves, in response to a println() call, it doesn't
-     * really matter what we use, as long as it doesn't match something else
-     * we care about.
+     * Character that denotes an instream newline. Since we're inserting
+     * this character ourselves, in response to a println() call, it
+     * doesn't really matter what we use, as long as it doesn't match
+     * something else we *do* care about.
      */
-    private static final char MAGIC_NEWLINE_MARKER = '\n';
+    private static final char NEWLINE_MARKER = '\n';
 
     /*----------------------------------------------------------------------*\
                             Private Data Items
@@ -476,7 +476,7 @@ public class WordWrapWriter extends PrintWriter
      */
     public void println()
     {
-        write (MAGIC_NEWLINE_MARKER);
+        write (NEWLINE_MARKER);
     }
 
     /**
@@ -605,7 +605,7 @@ public class WordWrapWriter extends PrintWriter
             buffer = new StringBuffer (lineLength * 2);
 
         buffer.append ((char) c);
-        if (c == MAGIC_NEWLINE_MARKER)
+        if (c == NEWLINE_MARKER)
             flush();
     }
 
@@ -688,7 +688,7 @@ public class WordWrapWriter extends PrintWriter
         if (prefix != null)
         {
             // Emit the prefix, unless the line is empty.
-            if ( (length > 1) || (buf.charAt(0) != MAGIC_NEWLINE_MARKER) )
+            if ( (length > 1) || (buf.charAt(0) != NEWLINE_MARKER) )
             {
                 // Non empty line. We want the prefix.
 
@@ -713,7 +713,7 @@ public class WordWrapWriter extends PrintWriter
         for (int i = 0; i < length; i++)
         {
             char c = contents[i];
-            if ( (c == MAGIC_NEWLINE_MARKER) || (Character.isSpaceChar (c)))
+            if ( (c == NEWLINE_MARKER) || (Character.isSpaceChar (c)))
             {
                 // Words are delimited by white space, so if there's a
                 // current word, we have to emit it at this point, before
@@ -749,7 +749,7 @@ public class WordWrapWriter extends PrintWriter
                 // Now emit the white space character, wrapping the line if
                 // necessary first.
 
-                if ( (c == MAGIC_NEWLINE_MARKER) ||
+                if ( (c == NEWLINE_MARKER) ||
                      (currentLength >= lineLength) )
                 {
                     out.println();
@@ -758,7 +758,7 @@ public class WordWrapWriter extends PrintWriter
                     lastWasNewline = true;
                 }
 
-                if (c != MAGIC_NEWLINE_MARKER)
+                if (c != NEWLINE_MARKER)
                 {
                     if (lastWasNewline)
                         currentLength += indent();
