@@ -337,19 +337,25 @@ ${BUILD_ANT_VERSION_KEY}: ${ant.version}
     </zip>
   </target>
 
-  <target name="-srczip" depends="clean"
-          description="Generate the source jar">
+  <target name="-srczip" depends=""
+          description="Generate the source zip">
     <mkdir dir="${bundled_dir}"/>
     <zip destfile="${bundled_dir}/${versioned_src_zipfile}">
       <zipfileset dir="." 
-                  includes="**/*.java,**/*.html,**/*.xml"
-                  excludes="**/CVS,${dist}/**,${build}/*"
-                  prefix="${zip_dir_prefix}"/>
+                  prefix="${zip_dir_prefix}" casesensitive="yes">
+        <exclude name="${dist}/**"/>
+        <exclude name="${build}"/>
+        <exclude name="**/CVS"/>
+        <include name="**/*.java"/>
+        <include name="**/package.html"/>
+        <include name="overview.html"/>
+        <include name="**/*.xml"/>
+      </zipfileset>
     </zip>
   </target>
 
   <target name="fulldist" 
-          depends="lib,-set.version.based.properties,-srczip,-doczip,dist"
+          depends="dist,-set.version.based.properties,-srczip,-doczip"
           description="Generate the distribution and source jars">
     <copy file="${code_jar_path}" 
           tofile="${bundled_dir}/${versioned_code_jar_file}"/>
