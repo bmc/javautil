@@ -62,7 +62,7 @@ import java.util.NoSuchElementException;
  * </ul>
  *
  * <p>Note that this class does <b>not</b> parse options the way GNU
- * <i>getopt()</i> (or even traditional <i>getopt()</tt>) does. In particular,
+ * <i>getopt()</i> (or even traditional <i>getopt()</i>) does. In particular,
  * it does not permit combining multiple single-character options into one
  * command-line parameter. <tt>CommandLineUtility</tt> may be extended to
  * support that capability in the future; however, it doesn't do that yet.</p>
