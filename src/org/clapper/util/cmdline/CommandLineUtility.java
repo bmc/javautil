@@ -32,6 +32,8 @@ import org.clapper.util.misc.ArrayIterator;
 import org.clapper.util.misc.BundleUtil;
 import org.clapper.util.misc.Logger;
 
+import org.clapper.util.text.TextUtil;
+
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.NoSuchElementException;
@@ -243,119 +245,6 @@ public abstract class CommandLineUtility
     \*----------------------------------------------------------------------*/
 
     /**
-     * Parse the command-line parameters. This method parses the common
-     * options; any other option is passed to the
-     * <tt>parseCustomOption()</tt> method, which should throw an exception
-     * if the option isn't recognized. When the options have all been
-     * satisfied, this method then invokes
-     * <tt>processPostOptionCommandLine()</tt>.
-     *
-     * @param args  the command line parameters
-     *
-     * @throws CommandLineUsageException command line error
-     *
-     * @see #processPostOptionCommandLine
-     * @see #parseCustomOption
-     */
-    protected final void parseParams (String args[])
-        throws CommandLineUsageException
-    {
-        ArrayIterator it = new ArrayIterator (args);
-
-        try
-        {
-            while (it.hasNext())
-            {
-                String arg = (String) it.next();
-
-                if (! (arg.charAt (0) == UsageInfo.SHORT_OPTION_PREFIX) )
-                {
-                    // Move iterator back, since we've already advanced
-                    // past the last option and retrieved the first
-                    // non-option.
-
-                    it.previous();
-                    break;
-                }
-
-                // First, verify that the option is legal.
-
-                OptionInfo optionInfo = null;
-
-                if (arg.length() == 2)
-                    optionInfo = usageInfo.getOptionInfo (arg.charAt (1));
-                else
-                {
-                    if (! arg.startsWith (UsageInfo.LONG_OPTION_PREFIX))
-                    {
-                        throw new CommandLineUsageException
-                            (Package.BUNDLE_NAME,
-                             "CommandLineUtility.badLongOption",
-                             "Option \"{0}\" is not a single-character short "
-                           + "option, but it does not start with \"{1}\", as "
-                           + "long options must.",
-                             new Object[] {arg, UsageInfo.LONG_OPTION_PREFIX});
-                    }
-
-                    optionInfo = usageInfo.getOptionInfo (arg.substring (2));
-                }
-
-                if (optionInfo == null)
-                {
-                    throw new CommandLineUsageException
-                            (Package.BUNDLE_NAME,
-                             "CommandLineUtility.unknownOption",
-                             "Unknown option: \"{0}\"",
-                             new Object[] {arg});
-                }
-
-                // Okay, now handle our options.
-
-                if ((optionInfo.longOption != null) &&
-                    (optionInfo.longOption.equals ("logging")))
-                {
-                    Logger.enableLogging();
-                }
-
-                else
-                {
-                    parseCustomOption (optionInfo.shortOption,
-                                       optionInfo.longOption,
-                                       it);
-                }
-            }
-
-            processPostOptionCommandLine (it);
-
-            // Should be no parameters left now.
-
-            if (it.hasNext())
-            {
-                throw new CommandLineUsageException
-                             (Package.BUNDLE_NAME,
-                              "CommandLineUtility.tooManyParams",
-                              "Too many parameters.");
-            }
-        }
-
-        catch (NoSuchElementException ex)
-        {
-            throw new CommandLineUsageException
-                             (Package.BUNDLE_NAME,
-                              "CommandLineUtility.missingParams",
-                              "Missing command line parameter(s).");
-        }
-
-        catch (ArrayIndexOutOfBoundsException ex)
-        {
-            throw new CommandLineUsageException
-                             (Package.BUNDLE_NAME,
-                              "CommandLineUtility.missingParams",
-                              "Missing command line parameter(s).");
-        }
-    }
-
-    /**
      * Called by <tt>parseParams()</tt> to handle any option it doesn't
      * recognize. If the option takes any parameters, the overridden
      * method must extract the parameter by advancing the supplied
@@ -465,12 +354,719 @@ public abstract class CommandLineUtility
     protected abstract void runCommand() throws CommandLineException;
 
     /**
+     * Convenience method that parses an integer value, throwing a
+     * <tt>CommandLineUsageException</tt>, not a <tt>NumberFormatException<tt>,
+     * on error.
+     *
+     * @param value the string value to parse
+     *
+     * @return the numeric value
+     *
+     * @throws CommandLineUsageException bad numeric value
+     *
+     * @see #parseIntParameter(String,int,int)
+     * @see #parseIntOptionArgument(char,String,String)
+     * @see #parseDoubleParameter(String)
+     * @see #parseFloatParameter(String)
+     */
+    protected int parseIntParameter (String value)
+        throws CommandLineUsageException
+    {
+        try
+        {
+            return Integer.parseInt (value);
+        }
+
+        catch (NumberFormatException ex)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.badIntegerParam",
+                             "Bad integer command line parameter \"{0}\"",
+                             new Object[] {value});
+        }
+    }
+
+    /**
+     * Convenience method that parses an integer value, throwing a
+     * <tt>CommandLineUsageException</tt>, not a <tt>NumberFormatException<tt>,
+     * on error. This version of the method also does range checking.
+     *
+     * @param value the string value to parse
+     * @param min   the minimum legal value for the result
+     * @param max   the maximum legal value for the result
+     *
+     * @return the numeric value
+     *
+     * @throws CommandLineUsageException bad numeric value
+     *
+     * @see #parseIntParameter(String)
+     * @see #parseIntOptionArgument(char,String,String,int,int)
+     * @see #parseDoubleParameter(String,int,int)
+     * @see #parseFloatParameter(String,int,int)
+     */
+    protected int parseIntParameter (String value, int min, int max)
+        throws CommandLineUsageException
+    {
+        int result = parseIntParameter (value);
+
+        if (result < min)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.numericParamTooSmall",
+                             "Numeric parameter {0} is less than the "
+                           + "minimum legal value of {1}",
+                             new Object[]
+                             {
+                                 value,
+                                 String.valueOf (min)
+                             });
+        }
+
+        if (result > max)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.numericParamTooLarge",
+                             "Numeric parameter {0} is greater than the "
+                           + "maximum legal value of {1}",
+                             new Object[]
+                             {
+                                 value,
+                                 String.valueOf (max)
+                             });
+        }
+
+        return result;
+    }
+
+    /**
+     * Convenience method that parses an integer option argument, throwing a
+     * <tt>CommandLineUsageException</tt>, not a <tt>NumberFormatException<tt>,
+     * on error.
+     *
+     * @param shortOption short option, as passed to {@link #parseCustomOption}
+     * @param longOption  long option, as passed to {@link #parseCustomOption}
+     * @param value       the string value to parse
+     *
+     * @return the numeric value
+     *
+     * @throws CommandLineUsageException bad numeric value
+     *
+     * @see #parseIntOptionArgument(char,String,String,int,int)
+     * @see #parseDoubleOptionArgument(char,String,String)
+     * @see #parseFloatOptionArgument(char,String,String)
+     */
+    protected int parseIntOptionArgument (char   shortOption,
+                                          String longOption,
+                                          String value)
+        throws CommandLineUsageException
+    {
+        try
+        {
+            return Integer.parseInt (value);
+        }
+
+        catch (NumberFormatException ex)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.badIntegerOption",
+                             "Bad integer command line parameter \"{0}\" for "
+                           + "option {1}",
+                             new Object[]
+                             {
+                                 value,
+                                 getOptionStringForError (shortOption,
+                                                          longOption)
+                             });
+        }
+    }
+
+    /**
+     * Convenience method that parses an integer option argument, throwing a
+     * <tt>CommandLineUsageException</tt>, not a <tt>NumberFormatException<tt>,
+     * on error. This version of the method also does range checking.
+     *
+     * @param shortOption short option, as passed to {@link #parseCustomOption}
+     * @param longOption  long option, as passed to {@link #parseCustomOption}
+     * @param value       the string value to parse
+     * @param min         the minimum legal value for the result
+     * @param max         the maximum legal value for the result
+     *
+     * @return the numeric value
+     *
+     * @throws CommandLineUsageException bad numeric value
+     *
+     * @see #parseIntOptionArgument(char,String,String,int,int)
+     * @see #parseDoubleOptionArgument(char,String,String)
+     * @see #parseFloatOptionArgument(char,String,String)
+     */
+    protected int parseIntOptionArgument (char   shortOption,
+                                          String longOption,
+                                          String value,
+                                          int    min,
+                                          int    max)
+        throws CommandLineUsageException
+    {
+        int result = parseIntOptionArgument (shortOption, longOption, value);
+
+        if (result < min)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.numericOptionParamTooSmall",
+                             "Numeric parameter {0} for option {1} is less "
+                           + "than the minimum legal value of {2}",
+                             new Object[]
+                             {
+                                 value,
+                                 getOptionStringForError (shortOption,
+                                                          longOption),
+                                 String.valueOf (min)
+                             });
+        }
+
+        if (result > max)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.numericOptionParamTooLarge",
+                             "Numeric parameter {0} for option {1} is greater "
+                           + "than the maximum legal value of {2}",
+                             new Object[]
+                             {
+                                 value,
+                                 getOptionStringForError (shortOption,
+                                                          longOption),
+                                 String.valueOf (max)
+                             });
+        }
+
+        return result;
+    }
+
+    /**
+     * Convenience method that parses a floating point value, throwing a
+     * <tt>CommandLineUsageException</tt>, not a <tt>NumberFormatException<tt>,
+     * on error.
+     *
+     * @param value the string value to parse
+     *
+     * @return the numeric value
+     *
+     * @throws CommandLineUsageException bad numeric value
+     *
+     * @see #parseFloatParameter(String,int,int)
+     * @see #parseFloatOptionArgument(char,String,String)
+     * @see #parseDoubleParameter(String)
+     * @see #parseIntParameter(String)
+     */
+    protected float parseFloatParameter (String value)
+        throws CommandLineUsageException
+    {
+        try
+        {
+            return Float.parseFloat (value);
+        }
+
+        catch (NumberFormatException ex)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.badFloatParam",
+                             "Bad floating point command line parameter "
+                           + "\"{0}\"",
+                             new Object[] {value});
+        }
+    }
+
+    /**
+     * Convenience method that parses a floating point value, throwing a
+     * <tt>CommandLineUsageException</tt>, not a <tt>NumberFormatException<tt>,
+     * on error. This version of the method also does range checking.
+     *
+     * @param value the string value to parse
+     * @param min   the minimum legal value for the result
+     * @param max   the maximum legal value for the result
+     *
+     * @return the numeric value
+     *
+     * @throws CommandLineUsageException bad numeric value
+     *
+     * @see #parseFloatParameter(String)
+     * @see #parseFloatOptionArgument(char,String,String,int,int)
+     * @see #parseDoubleParameter(String,int,int)
+     * @see #parseIntParameter(String,int,int)
+     */
+    protected float parseFloatParameter (String value, int min, int max)
+        throws CommandLineUsageException
+    {
+        float result = parseFloatParameter (value);
+
+        if (result < min)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.numericParamTooSmall",
+                             "Numeric parameter {0} is less than the "
+                           + "minimum legal value of {1}",
+                             new Object[]
+                             {
+                                 value,
+                                 String.valueOf (min)
+                             });
+        }
+
+        if (result > max)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.numericParamTooLarge",
+                             "Numeric parameter {0} is greater than the "
+                           + "maximum legal value of {1}",
+                             new Object[]
+                             {
+                                 value,
+                                 String.valueOf (max)
+                             });
+        }
+
+        return result;
+    }
+
+    /**
+     * Convenience method that parses a float point option argument,
+     * throwing a <tt>CommandLineUsageException</tt>, not a
+     * <tt>NumberFormatException<tt>, on error.
+     *
+     * @param shortOption short option, as passed to {@link #parseCustomOption}
+     * @param longOption  long option, as passed to {@link #parseCustomOption}
+     * @param value       the string value to parse
+     *
+     * @return the numeric value
+     *
+     * @throws CommandLineUsageException bad numeric value
+     *
+     * @see #parseFloatOptionArgument(char,String,String,int,int)
+     * @see #parseDoubleOptionArgument(char,String,String)
+     * @see #parseIntOptionArgument(char,String,String)
+     */
+    protected float parseFloatOptionArgument (char   shortOption,
+                                              String longOption,
+                                              String value)
+        throws CommandLineUsageException
+    {
+        try
+        {
+            return Integer.parseInt (value);
+        }
+
+        catch (NumberFormatException ex)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.badFloatParam",
+                             "Bad floating point command line parameter "
+                           + "\"{0}\" for option {1}",
+                             new Object[]
+                             {
+                                 value,
+                                 getOptionStringForError (shortOption,
+                                                          longOption)
+                             });
+        }
+    }
+
+    /**
+     * Convenience method that parses a floating point option argument,
+     * throwing a <tt>CommandLineUsageException</tt>, not a
+     * <tt>NumberFormatException<tt>, on error. This version of the method
+     * also does range checking.
+     *
+     * @param shortOption short option, as passed to {@link #parseCustomOption}
+     * @param longOption  long option, as passed to {@link #parseCustomOption}
+     * @param value       the string value to parse
+     * @param min         the minimum legal value for the result
+     * @param max         the maximum legal value for the result
+     *
+     * @return the numeric value
+     *
+     * @throws CommandLineUsageException bad numeric value
+     *
+     * @see #parseFloatOptionArgument(char,String,String,int,int)
+     * @see #parseDoubleOptionArgument(char,String,String)
+     * @see #parseIntOptionArgument(char,String,String)
+     */
+    protected float parseFloatOptionArgument (char   shortOption,
+                                              String longOption,
+                                              String value,
+                                              float  min,
+                                              float  max)
+        throws CommandLineUsageException
+    {
+        float result = parseFloatOptionArgument (shortOption,
+                                                 longOption,
+                                                 value);
+
+        if (result < min)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.numericOptionParamTooSmall",
+                             "Numeric parameter {0} for option {1} is less "
+                           + "than the minimum legal value of {2}",
+                             new Object[]
+                             {
+                                 value,
+                                 getOptionStringForError (shortOption,
+                                                          longOption),
+                                 String.valueOf (min)
+                             });
+        }
+
+        if (result > max)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.numericOptionParamTooLarge",
+                             "Numeric parameter {0} for option {1} is greater "
+                           + "than the maximum legal value of {2}",
+                             new Object[]
+                             {
+                                 value,
+                                 getOptionStringForError (shortOption,
+                                                          longOption),
+                                 String.valueOf (max)
+                             });
+        }
+
+        return result;
+    }
+
+    /**
+     * Convenience method that parses a double value, throwing a
+     * <tt>CommandLineUsageException</tt>, not a
+     * <tt>NumberFormatException<tt>, on error.
+     *
+     * @param value the string value to parse
+     *
+     * @return the numeric value
+     *
+     * @throws CommandLineUsageException bad numeric value
+     *
+     * @see #parseDoubleParameter(String,int,int)
+     * @see #parseDoubleOptionArgument(char,String,String)
+     * @see #parseFloatParameter(String)
+     * @see #parseIntParameter(String)
+     */
+    protected double parseDoubleParameter (String value)
+        throws CommandLineUsageException
+    {
+        try
+        {
+            return Double.parseDouble (value);
+        }
+
+        catch (NumberFormatException ex)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.badDoubleParam",
+                             "Bad double floating point command line "
+                           + "parameter \"{0}\"",
+                             new Object[] {value});
+        }
+    }
+
+    /**
+     * Convenience method that parses a double value, throwing a
+     * <tt>CommandLineUsageException</tt>, not a <tt>NumberFormatException<tt>,
+     * on error. This version of the method also does range checking.
+     *
+     * @param value the string value to parse
+     * @param min   the minimum legal value for the result
+     * @param max   the maximum legal value for the result
+     *
+     * @return the numeric value
+     *
+     * @throws CommandLineUsageException bad numeric value
+     *
+     * @see #parseDoubleParameter(String)
+     * @see #parseDoubleOptionArgument(char,String,String,int,int)
+     * @see #parseFloatParameter(String,int,int)
+     * @see #parseIntParameter(String,int,int)
+     */
+    protected double parseDoubleParameter (String value, int min, int max)
+        throws CommandLineUsageException
+    {
+        double result = parseDoubleParameter (value);
+
+        if (result < min)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.numericParamTooSmall",
+                             "Numeric parameter {0} is less than the "
+                           + "minimum legal value of {1}",
+                             new Object[]
+                             {
+                                 value,
+                                 String.valueOf (min)
+                             });
+        }
+
+        if (result > max)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.numericParamTooLarge",
+                             "Numeric parameter {0} is greater than the "
+                           + "maximum legal value of {1}",
+                             new Object[]
+                             {
+                                 value,
+                                 String.valueOf (max)
+                             });
+        }
+
+        return result;
+    }
+
+    /**
+     * Convenience method that parses a double option argument, throwing a
+     * <tt>CommandLineUsageException</tt>, not a <tt>NumberFormatException<tt>,
+     * on error.
+     *
+     * @param shortOption short option, as passed to {@link #parseCustomOption}
+     * @param longOption  long option, as passed to {@link #parseCustomOption}
+     * @param value       the string value to parse
+     *
+     * @return the numeric value
+     *
+     * @throws CommandLineUsageException bad numeric value
+     *
+     * @see #parseDoubleOptionArgument(char,String,String,int,int)
+     * @see #parseDoubleOptionArgument(char,String,String)
+     * @see #parseIntOptionArgument(char,String,String)
+     */
+    protected double parseDoubleOptionArgument (char   shortOption,
+                                                String longOption,
+                                                String value)
+        throws CommandLineUsageException
+    {
+        try
+        {
+            return Double.parseDouble (value);
+        }
+
+        catch (NumberFormatException ex)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.badDoubleOption",
+                             "Bad double command line parameter "
+                           + "\"{0}\" for option {1}",
+                             new Object[]
+                             {
+                                 value,
+                                 getOptionStringForError (shortOption,
+                                                          longOption)
+                             });
+        }
+    }
+
+    /**
+     * Convenience method that parses a double floating point option
+     * argument, throwing a <tt>CommandLineUsageException</tt>, not a
+     * <tt>NumberFormatException<tt>, on error. This version of the method
+     * also does range checking.
+     *
+     * @param shortOption short option, as passed to {@link #parseCustomOption}
+     * @param longOption  long option, as passed to {@link #parseCustomOption}
+     * @param value       the string value to parse
+     * @param min         the minimum legal value for the result
+     * @param max         the maximum legal value for the result
+     *
+     * @return the numeric value
+     *
+     * @throws CommandLineUsageException bad numeric value
+     *
+     * @see #parseDoubleOptionArgument(char,String,String,int,int)
+     * @see #parseDoubleOptionArgument(char,String,String)
+     * @see #parseIntOptionArgument(char,String,String)
+     */
+    protected double parseDoubleOptionArgument (char   shortOption,
+                                                String longOption,
+                                                String value,
+                                                double  min,
+                                                double  max)
+        throws CommandLineUsageException
+    {
+        double result = parseDoubleOptionArgument (shortOption,
+                                                   longOption,
+                                                   value);
+
+        if (result < min)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.numericOptionParamTooSmall",
+                             "Numeric parameter {0} for option {1} is less "
+                           + "than the minimum legal value of {2}",
+                             new Object[]
+                             {
+                                 value,
+                                 getOptionStringForError (shortOption,
+                                                          longOption),
+                                 String.valueOf (min)
+                             });
+        }
+
+        if (result > max)
+        {
+            throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.numericOptionParamTooSmall",
+                             "Numeric parameter {0} for option {1} is greater "
+                           + "than the maximum legal value of {2}",
+                             new Object[]
+                             {
+                                 value,
+                                 getOptionStringForError (shortOption,
+                                                          longOption),
+                                 String.valueOf (max)
+                             });
+        }
+
+        return result;
+    }
+
+    /*----------------------------------------------------------------------*\
+                              Private Methods
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * Parse the command-line parameters. This method parses the common
+     * options; any other option is passed to the
+     * <tt>parseCustomOption()</tt> method, which should throw an exception
+     * if the option isn't recognized. When the options have all been
+     * satisfied, this method then invokes
+     * <tt>processPostOptionCommandLine()</tt>.
+     *
+     * @param args  the command line parameters
+     *
+     * @throws CommandLineUsageException command line error
+     *
+     * @see #processPostOptionCommandLine
+     * @see #parseCustomOption
+     */
+    private void parseParams (String args[])
+        throws CommandLineUsageException
+    {
+        ArrayIterator it = new ArrayIterator (args);
+
+        try
+        {
+            while (it.hasNext())
+            {
+                String arg = (String) it.next();
+
+                if (! (arg.charAt (0) == UsageInfo.SHORT_OPTION_PREFIX) )
+                {
+                    // Move iterator back, since we've already advanced
+                    // past the last option and retrieved the first
+                    // non-option.
+
+                    it.previous();
+                    break;
+                }
+
+                // First, verify that the option is legal.
+
+                OptionInfo optionInfo = null;
+
+                if (arg.length() == 2)
+                    optionInfo = usageInfo.getOptionInfo (arg.charAt (1));
+                else
+                {
+                    if (! arg.startsWith (UsageInfo.LONG_OPTION_PREFIX))
+                    {
+                        throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.badLongOption",
+                             "Option \"{0}\" is not a single-character short "
+                           + "option, but it does not start with \"{1}\", as "
+                           + "long options must.",
+                             new Object[] {arg, UsageInfo.LONG_OPTION_PREFIX});
+                    }
+
+                    optionInfo = usageInfo.getOptionInfo (arg.substring (2));
+                }
+
+                if (optionInfo == null)
+                {
+                    throw new CommandLineUsageException
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.unknownOption",
+                             "Unknown option: \"{0}\"",
+                             new Object[] {arg});
+                }
+
+                // Okay, now handle our options.
+
+                if ((optionInfo.longOption != null) &&
+                    (optionInfo.longOption.equals ("logging")))
+                {
+                    Logger.enableLogging();
+                }
+
+                else
+                {
+                    parseCustomOption (optionInfo.shortOption,
+                                       optionInfo.longOption,
+                                       it);
+                }
+            }
+
+            processPostOptionCommandLine (it);
+
+            // Should be no parameters left now.
+
+            if (it.hasNext())
+            {
+                throw new CommandLineUsageException
+                             (Package.BUNDLE_NAME,
+                              "CommandLineUtility.tooManyParams",
+                              "Too many parameters.");
+            }
+        }
+
+        catch (NoSuchElementException ex)
+        {
+            throw new CommandLineUsageException
+                             (Package.BUNDLE_NAME,
+                              "CommandLineUtility.missingParams",
+                              "Missing command line parameter(s).");
+        }
+
+        catch (ArrayIndexOutOfBoundsException ex)
+        {
+            throw new CommandLineUsageException
+                             (Package.BUNDLE_NAME,
+                              "CommandLineUtility.missingParams",
+                              "Missing command line parameter(s).");
+        }
+    }
+
+    /**
      * Print a usage message.
      *
      * @param prefixMsg  a prefix message to display before dumping the
      *                   usage, or null
      */
-    protected final void usage (String prefixMsg)
+    private void usage (String prefixMsg)
     {
         WordWrapWriter  out = new WordWrapWriter (System.err);
         String[]        strings;
@@ -495,6 +1091,7 @@ public abstract class CommandLineUtility
 
         usageLine.append ("java ");
         usageLine.append (getClass().getName());
+        usageLine.append (' ');
         usageLine.append (BundleUtil.getMessage (Package.BUNDLE_NAME,
                                                  locale,
                                                  "CommandLineUtility.options1",
@@ -660,18 +1257,9 @@ public abstract class CommandLineUtility
         out.flush();
     }
 
-    /*----------------------------------------------------------------------*\
-                              Private Methods
-    \*----------------------------------------------------------------------*/
-
     private String padString (String s, int toLength)
     {
-        StringBuffer buf = new StringBuffer (s);
-
-        while (buf.length() < toLength)
-            buf.append (' ');
-
-        return buf.toString();
+        return TextUtil.leftJustifyString (s, toLength);
     }
 
     private UsageInfo getUsageInfo()
@@ -689,5 +1277,34 @@ public abstract class CommandLineUtility
                                              + "Commons Logging API."));
 
         return info;
+    }
+
+    private String getOptionStringForError (char   shortOption,
+                                            String longOption)
+    {
+        StringBuffer buf = new StringBuffer();
+        boolean      paren = false;
+
+        if (longOption != null)
+        {
+            buf.append ("--");
+            buf.append (longOption);
+            paren = true;
+        }
+
+        if (shortOption != UsageInfo.NO_SHORT_OPTION)
+        {
+            if (paren)
+                buf.append (" (");
+
+            buf.append ('-');
+            buf.append (shortOption);
+
+            if (paren)
+                buf.append (')');
+        }
+
+        assert (buf.length() > 0);
+        return buf.toString();
     }
 }
