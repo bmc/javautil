@@ -104,7 +104,15 @@
   ***************************************************************************
   -->
 
-  <target name="all" depends="lib,testers"/>
+  <target name="all" depends="lib,bundles,testers"/>
+
+  <target name="bundles">
+    <copy todir="${build}">
+      <fileset dir="${src.top}">
+        <include name="**/*.properties"/>
+      </fileset>
+    </copy>
+  </target>
 
   <target name="testers" depends="lib,lib.testers,mail.testers"/>
 
