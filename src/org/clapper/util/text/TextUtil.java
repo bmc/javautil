@@ -54,7 +54,7 @@ public final class TextUtil
      * the entire string).
      *
      * @see #split(String,Pattern,int)
-     * @see #split(String,Pattern,Collectoin,int)
+     * @see #split(String,Pattern,Collection,int)
      */
     public static final int SPLIT_ALL =
                                      org.apache.oro.text.regex.Util.SPLIT_ALL;
