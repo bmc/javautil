@@ -88,8 +88,8 @@ public class CommandLineException extends NestedException
      * Constructs an exception containing a resource bundle name, a message
      * key, and a default message (in case the resource bundle can't be
      * found). Using this constructor is equivalent to calling the
-     * {@link #CommandLineException(String,String,Object[])} constructor,
-     * with a null pointer for the <tt>Object[]</tt> parameter.
+     * {@link #CommandLineException(String,String,String,Object[])}
+     * constructor, with a null pointer for the <tt>Object[]</tt> parameter.
      * Calls to {@link NestedException#getMessage(Locale)} will attempt to
      * retrieve the top-most message (i.e., the message from this exception,
      * not from nested exceptions) by querying the named resource bundle.
@@ -103,7 +103,7 @@ public class CommandLineException extends NestedException
      * @param messageKey  the key to the message to find in the bundle
      * @param defaultMsg  the default message
      *
-     * @see #CommandLineException(String,String,Object[])
+     * @see #CommandLineException(String,String,String,Object[])
      * @see NestedException#getMessage(Locale)
      */
     public CommandLineException (String bundleName,
@@ -117,8 +117,8 @@ public class CommandLineException extends NestedException
      * Constructs an exception containing a resource bundle name, a message
      * key, and a default message (in case the resource bundle can't be
      * found). Using this constructor is equivalent to calling the
-     * {@link #CommandLineException(String,String,Object[])} constructor,
-     * with a null pointer for the <tt>Object[]</tt> parameter.
+     * {@link #CommandLineException(String,String,String,Object[])}
+     * constructor, with a null pointer for the <tt>Object[]</tt> parameter.
      * Calls to {@link NestedException#getMessage(Locale)} will attempt to
      * retrieve the top-most message (i.e., the message from this exception,
      * not from nested exceptions) by querying the named resource bundle.
@@ -133,7 +133,7 @@ public class CommandLineException extends NestedException
      * @param defaultMsg  the default message
      * @param msgParams   parameters to the message, if any, or null
      *
-     * @see #CommandLineException(String,String,Object[])
+     * @see #CommandLineException(String,String,String,Object[])
      * @see NestedException#getMessage(Locale)
      */
     public CommandLineException (String   bundleName,
@@ -148,7 +148,7 @@ public class CommandLineException extends NestedException
      * Constructs an exception containing a resource bundle name, a message
      * key, a default message (in case the resource bundle can't be found),
      * and another exception. Using this constructor is equivalent to
-     * calling the {@link #CommandLineException(String,String,Object[])}
+     * calling the {@link #CommandLineException(String,String,String,Object[])}
      * constructor, with a null pointer for the <tt>Object[]</tt>
      * parameter. Calls to {@link #getMessage(Locale)} will attempt to
      * retrieve the top-most message (i.e., the message from this
@@ -165,7 +165,7 @@ public class CommandLineException extends NestedException
      * @param defaultMsg  the default message
      * @param exception   the exception to nest
      *
-     * @see #CommandLineException(String,String,Object[])
+     * @see #CommandLineException(String,String,String,Object[])
      * @see NestedException#getMessage(Locale)
      */
     public CommandLineException (String    bundleName,
@@ -196,7 +196,7 @@ public class CommandLineException extends NestedException
      * @param msgParams   parameters to the message, if any, or null
      * @param ex          exception to be nested
      *
-     * @see #CommandLineException(String,String,Object[])
+     * @see #CommandLineException(String,String,String,Object[])
      * @see NestedException#getMessage(Locale)
      */
     public CommandLineException (String    bundleName,

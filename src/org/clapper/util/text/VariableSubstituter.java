@@ -66,7 +66,7 @@ import java.io.*;
  * does.</p>
  *
  * <p>A <tt>VariableSubstituter</tt> object dereferences a variable's
- * value by calling the <tt>getValue()</tt> method in a
+ * value by calling the <tt>getVariableValue()</tt> method in a
  * <tt>VariableDereferencer</tt> object. One such object might choose
  * to dereference variables by looking them up in a <tt>Properties</tt>
  * object. Another might resolve variables via hard-coded method calls. Yet
@@ -106,7 +106,7 @@ public interface VariableSubstituter
      *                to use to resolve the variables' values.
      * @param context an optional context object, passed through unmodified
      *                to the <tt>deref</tt> object's
-     *                {@link VariableDereferencer#getValue getValue()} method.
+     *                {@link VariableDereferencer#getVariableValue} method.
      *                This object can be anything at all (and, in fact, may
      *                be null if you don't care.) It's primarily useful
      *                for passing context information from the caller to
@@ -117,7 +117,7 @@ public interface VariableSubstituter
      * @throws VariableSubstitutionException  substitution error
      *
      * @see #substitute(String,VariableDereferencer,VariableNameChecker,Object)
-     * @see VariableDereferencer#getValue(String,Object)
+     * @see VariableDereferencer#getVariableValue(String,Object)
      */
     public String substitute (String               s,
                               VariableDereferencer deref,
@@ -146,7 +146,7 @@ public interface VariableSubstituter
      *                     or null
      * @param context      an optional context object, passed through
      *                     unmodified to the <tt>deref</tt> object's
-     *                     {@link VariableDereferencer#getValue getValue()}
+     *                     {@link VariableDereferencer#getVariableValue}
      *                     method. This object can be anything at all (and,
      *                     in fact, may be null if you don't care.) It's
      *                     primarily useful for passing context information
@@ -158,7 +158,7 @@ public interface VariableSubstituter
      * @throws VariableSubstitutionException  substitution error
      *
      * @see #substitute(String,VariableDereferencer,Object)
-     * @see VariableDereferencer#getValue(String,Object)
+     * @see VariableDereferencer#getVariableValue(String,Object)
      */
     public String substitute (String               s,
                               VariableDereferencer deref,

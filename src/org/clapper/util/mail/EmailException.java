@@ -90,7 +90,7 @@ public class EmailException extends NestedException
      * Constructs an exception containing a resource bundle name, a message
      * key, and a default message (in case the resource bundle can't be
      * found). Using this constructor is equivalent to calling the
-     * {@link #EmailException(String,String,Object[])} constructor,
+     * {@link #EmailException(String,String,String,Object[])} constructor,
      * with a null pointer for the <tt>Object[]</tt> parameter.
      * Calls to {@link NestedException#getMessage(Locale)} will attempt to
      * retrieve the top-most message (i.e., the message from this exception,
@@ -105,7 +105,7 @@ public class EmailException extends NestedException
      * @param messageKey  the key to the message to find in the bundle
      * @param defaultMsg  the default message
      *
-     * @see #EmailException(String,String,Object[])
+     * @see #EmailException(String,String,String,Object[])
      * @see NestedException#getLocalizedMessage
      */
     public EmailException (String bundleName,
@@ -119,7 +119,7 @@ public class EmailException extends NestedException
      * Constructs an exception containing a resource bundle name, a message
      * key, and a default message (in case the resource bundle can't be
      * found). Using this constructor is equivalent to calling the
-     * {@link #EmailException(String,String,Object[])} constructor,
+     * {@link #EmailException(String,String,String,Object[])} constructor,
      * with a null pointer for the <tt>Object[]</tt> parameter.
      * Calls to {@link NestedException#getMessage(Locale)} will attempt to
      * retrieve the top-most message (i.e., the message from this exception,
@@ -135,7 +135,7 @@ public class EmailException extends NestedException
      * @param defaultMsg  the default message
      * @param msgParams   parameters to the message, if any, or null
      *
-     * @see #EmailException(String,String,Object[])
+     * @see #EmailException(String,String,String,Object[])
      * @see NestedException#getLocalizedMessage
      */
     public EmailException (String   bundleName,
@@ -150,7 +150,7 @@ public class EmailException extends NestedException
      * Constructs an exception containing a resource bundle name, a message
      * key, a default message (in case the resource bundle can't be found),
      * and another exception. Using this constructor is equivalent to
-     * calling the {@link #EmailException(String,String,Object[])}
+     * calling the {@link #EmailException(String,String,String,Object[])}
      * constructor, with a null pointer for the <tt>Object[]</tt>
      * parameter. Calls to {@link #getMessage(Locale)} will attempt to
      * retrieve the top-most message (i.e., the message from this
@@ -167,7 +167,7 @@ public class EmailException extends NestedException
      * @param defaultMsg  the default message
      * @param exception   the exception to nest
      *
-     * @see #EmailException(String,String,Object[])
+     * @see #EmailException(String,String,String,Object[])
      * @see NestedException#getMessage(Locale)
      */
     public EmailException (String    bundleName,
@@ -198,7 +198,7 @@ public class EmailException extends NestedException
      * @param msgParams   parameters to the message, if any, or null
      * @param ex          exception to be nested
      *
-     * @see #EmailException(String,String,Object[])
+     * @see #EmailException(String,String,String,Object[])
      * @see NestedException#getMessage(Locale)
      */
     public EmailException (String    bundleName,

@@ -88,8 +88,8 @@ public class CommandLineUsageException extends CommandLineException
      * Constructs an exception containing a resource bundle name, a message
      * key, and a default message (in case the resource bundle can't be
      * found). Using this constructor is equivalent to calling the
-     * {@link #CommandLineUsageException(String,String,Object[])} constructor,
-     * with a null pointer for the <tt>Object[]</tt> parameter.
+     * {@link #CommandLineUsageException(String,String,String,Object[])}
+     * constructor, with a null pointer for the <tt>Object[]</tt> parameter.
      * Calls to {@link NestedException#getMessage(Locale)} will attempt to
      * retrieve the top-most message (i.e., the message from this exception,
      * not from nested exceptions) by querying the named resource bundle.
@@ -103,7 +103,7 @@ public class CommandLineUsageException extends CommandLineException
      * @param messageKey  the key to the message to find in the bundle
      * @param defaultMsg  the default message
      *
-     * @see #CommandLineUsageException(String,String,Object[])
+     * @see #CommandLineUsageException(String,String,String,Object[])
      * @see NestedException#getMessage(Locale)
      */
     public CommandLineUsageException (String bundleName,
@@ -117,8 +117,8 @@ public class CommandLineUsageException extends CommandLineException
      * Constructs an exception containing a resource bundle name, a message
      * key, and a default message (in case the resource bundle can't be
      * found). Using this constructor is equivalent to calling the
-     * {@link #CommandLineUsageException(String,String,Object[])} constructor,
-     * with a null pointer for the <tt>Object[]</tt> parameter.
+     * {@link #CommandLineUsageException(String,String,String,Object[])}
+     * constructor, with a null pointer for the <tt>Object[]</tt> parameter.
      * Calls to {@link NestedException#getMessage(Locale)} will attempt to
      * retrieve the top-most message (i.e., the message from this exception,
      * not from nested exceptions) by querying the named resource bundle.
@@ -133,7 +133,7 @@ public class CommandLineUsageException extends CommandLineException
      * @param defaultMsg  the default message
      * @param msgParams   parameters to the message, if any, or null
      *
-     * @see #CommandLineUsageException(String,String,Object[])
+     * @see #CommandLineUsageException(String,String,String,Object[])
      * @see NestedException#getMessage(Locale)
      */
     public CommandLineUsageException (String   bundleName,
@@ -147,8 +147,8 @@ public class CommandLineUsageException extends CommandLineException
     /**
      * Constructs an exception containing a resource bundle name, a message
      * key, a default message (in case the resource bundle can't be found),
-     * and another exception. Using this constructor is equivalent to
-     * calling the {@link #CommandLineUsageException(String,String,Object[])}
+     * and another exception. Using this constructor is equivalent to calling
+     * the {@link #CommandLineUsageException(String,String,String,Object[])}
      * constructor, with a null pointer for the <tt>Object[]</tt>
      * parameter. Calls to {@link #getMessage(Locale)} will attempt to
      * retrieve the top-most message (i.e., the message from this
@@ -165,7 +165,7 @@ public class CommandLineUsageException extends CommandLineException
      * @param defaultMsg  the default message
      * @param exception   the exception to nest
      *
-     * @see #CommandLineUsageException(String,String,Object[])
+     * @see #CommandLineUsageException(String,String,String,Object[])
      * @see NestedException#getMessage(Locale)
      */
     public CommandLineUsageException (String    bundleName,
@@ -196,7 +196,7 @@ public class CommandLineUsageException extends CommandLineException
      * @param msgParams   parameters to the message, if any, or null
      * @param ex          exception to be nested
      *
-     * @see #CommandLineUsageException(String,String,Object[])
+     * @see #CommandLineUsageException(String,String,String,Object[])
      * @see NestedException#getMessage(Locale)
      */
     public CommandLineUsageException (String    bundleName,

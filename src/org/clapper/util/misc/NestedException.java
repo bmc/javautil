@@ -112,7 +112,7 @@ public class NestedException extends Exception
      * Constructs an exception containing a resource bundle name, a message
      * key, and a default message (in case the resource bundle can't be
      * found). Using this constructor is equivalent to calling the
-     * {@link #NestedException(String,String,Object[])} constructor,
+     * {@link #NestedException(String,String,String,Object[])} constructor,
      * with a null pointer for the <tt>Object[]</tt> parameter.
      * Calls to {@link #getMessage(Locale)} will attempt to retrieve
      * the top-most message (i.e., the message from this exception, not
@@ -127,7 +127,7 @@ public class NestedException extends Exception
      * @param messageKey  the key to the message to find in the bundle
      * @param defaultMsg  the default message
      *
-     * @see #NestedException(String,String,Object[])
+     * @see #NestedException(String,String,String,Object[])
      * @see #getMessage(Locale)
      */
     public NestedException (String bundleName,
@@ -155,7 +155,7 @@ public class NestedException extends Exception
      * @param defaultMsg  the default message
      * @param msgParams   parameters to the message, if any, or null
      *
-     * @see #NestedException(String,String,Object[])
+     * @see #NestedException(String,String,String,Object[])
      * @see #getMessage(Locale)
      */
     public NestedException (String   bundleName,
@@ -170,7 +170,7 @@ public class NestedException extends Exception
      * Constructs an exception containing a resource bundle name, a message
      * key, a default message (in case the resource bundle can't be found),
      * and another exception. Using this constructor is equivalent to
-     * calling the {@link #NestedException(String,String,Object[])}
+     * calling the {@link #NestedException(String,String,String,Object[])}
      * constructor, with a null pointer for the <tt>Object[]</tt>
      * parameter. Calls to {@link #getMessage(Locale)} will attempt to
      * retrieve the top-most message (i.e., the message from this
@@ -187,7 +187,7 @@ public class NestedException extends Exception
      * @param defaultMsg  the default message
      * @param exception   the exception to nest
      *
-     * @see #NestedException(String,String,Object[])
+     * @see #NestedException(String,String,String,Object[])
      * @see #getMessage(Locale)
      */
     public NestedException (String    bundleName,
@@ -218,7 +218,7 @@ public class NestedException extends Exception
      * @param msgParams   parameters to the message, if any, or null
      * @param ex          exception to be nested
      *
-     * @see #NestedException(String,String,Object[])
+     * @see #NestedException(String,String,String,Object[])
      * @see #getMessage(Locale)
      */
     public NestedException (String    bundleName,
