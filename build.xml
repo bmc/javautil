@@ -20,7 +20,7 @@
   <property name="build.compiler" value="jikes"/>
   <property name="build.compiler.emacs" value="true"/>
   <property name="compile.listfiles" value="no"/>
-  <property name="code_jarfile" value="util.jar"/>
+  <property name="code_jarfile" value="org-clapper-util.jar"/>
   <property name="docs_zipfile" value="javadocs.zip"/>
   <property name="docs_top_dir" value="${dist}/docs"/>
   <property name="docs_api_dir" value="${docs_top_dir}/api"/>
