@@ -54,7 +54,7 @@ public final class Version
                                 Constructor
     \*----------------------------------------------------------------------*/
 
-    public Version()
+    private Version()
     {
     }
 
