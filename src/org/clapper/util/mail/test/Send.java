@@ -28,6 +28,7 @@ package org.clapper.util.mail.test;
 
 import org.clapper.util.mail.*;
 import org.clapper.util.io.WordWrapWriter;
+import org.clapper.util.misc.MIMETypeUtil;
 import org.clapper.util.text.TextUtil;
 
 import java.io.File;
@@ -385,14 +386,21 @@ public class Send extends CommandLineUtility
         // Add the text part.
 
         if (text != null)
-            msg.setText (text, textMimeType);
+            msg.setText (text, null, textMimeType);
 
         else if (textFile != null)
         {
             if (useInputStreams)
-                msg.setText (new FileInputStream (textFile), textMimeType);
+            {
+                msg.setText (new FileInputStream (textFile),
+                             null,
+                             textMimeType);
+            }
+
             else
+            {
                 msg.setText (textFile);
+            }
         }
 
         // Add any attachments specified as files.
@@ -401,9 +409,15 @@ public class Send extends CommandLineUtility
         {
             File f = (File) it.next();
             if (useInputStreams)
-                msg.addAttachment (new FileInputStream (f));
+            {
+                msg.addAttachment (new FileInputStream (f),
+                                   null,
+                                   MIMETypeUtil.MIMETypeForFile (f));
+            }
             else
+            {
                 msg.addAttachment (f);
+            }
         }
 
         // Do any dumping...
