@@ -96,18 +96,7 @@ import java.util.logging.Level;
  *     <td><tt>warn()</tt></td>
  *     <td><tt>WARNING</tt></td>
  *   </tr>
- *
- *
- *   <tr valign="top">
- *     <td><tt>debug()</tt></td>
- *     <td><tt>FINE</tt></td>
- *   </tr>
- *
- *
- *   <tr valign="top">
- *     <td><tt>debug()</tt></td>
- *     <td><tt>FINE</tt></td>
- *   </tr>
+ * </table>
  *
  * <p>This approach begs the obvious question, "Why not just use Jakarta
  * Commons Logging?" Good point. After all, Commons Logging exists to
