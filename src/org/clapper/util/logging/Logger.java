@@ -131,52 +131,46 @@ public class Logger
     /**
      * Level parameter to the {@link #message} method.
      */
-    public static LogLevel LEVEL_DEBUG = new LogLevel (Level.FINE);
+    public static final LogLevel LEVEL_DEBUG = new LogLevel (Level.FINE);
 
     /**
      * Level parameter to the {@link #message} method.
      */
-    public static LogLevel LEVEL_ERROR = new LogLevel (Level.SEVERE);
+    public static final LogLevel LEVEL_ERROR = new LogLevel (Level.SEVERE);
 
     /**
      * Level parameter to the {@link #message} method.
      */
-    public static LogLevel LEVEL_FATAL = new LogLevel (Level.SEVERE);
+    public static final LogLevel LEVEL_FATAL = new LogLevel (Level.SEVERE);
 
     /**
      * Level parameter to the {@link #message} method.
      */
-    public static LogLevel LEVEL_INFO = new LogLevel (Level.INFO);
+    public static final LogLevel LEVEL_INFO = new LogLevel (Level.INFO);
 
     /**
      * Level parameter to the {@link #message} method.
      */
-    public static LogLevel LEVEL_TRACE = new LogLevel (Level.FINEST);
+    public static final LogLevel LEVEL_TRACE = new LogLevel (Level.FINEST);
 
     /**
      * Level parameter to the {@link #message} method.
      */
-    public static LogLevel LEVEL_WARNING = new LogLevel (Level.WARNING);
+    public static final LogLevel LEVEL_WARNING = new LogLevel (Level.WARNING);
 
     /*----------------------------------------------------------------------*\
                              Private Constants
     \*----------------------------------------------------------------------*/
 
     /**
-     * Fully-qualified name of Commons Logging API's LogFactory class.
-     */
-    private static final String LOG_FACTORY_CLASS_NAME =
-                                     "org.apache.commons.logging.LogFactory";
-
-    /**
      * Convenience of reference
      */
-    private static Level DEBUG   = LEVEL_DEBUG.getLevel();
-    private static Level ERROR   = LEVEL_ERROR.getLevel();
-    private static Level FATAL   = LEVEL_FATAL.getLevel();
-    private static Level INFO    = LEVEL_INFO.getLevel();
-    private static Level TRACE   = LEVEL_TRACE.getLevel();
-    private static Level WARNING = LEVEL_WARNING.getLevel();
+    private static final Level DEBUG   = LEVEL_DEBUG.getLevel();
+    private static final Level ERROR   = LEVEL_ERROR.getLevel();
+    private static final Level FATAL   = LEVEL_FATAL.getLevel();
+    private static final Level INFO    = LEVEL_INFO.getLevel();
+    private static final Level TRACE   = LEVEL_TRACE.getLevel();
+    private static final Level WARNING = LEVEL_WARNING.getLevel();
 
     /*----------------------------------------------------------------------*\
                            Private Instance Data
