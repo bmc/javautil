@@ -154,7 +154,7 @@ public class FileNameComparator implements Comparator
             name = (String) o;
 
         if (! entirePath)
-            name = FileUtils.basename (name);
+            name = FileUtil.basename (name);
 
         return name;
     }

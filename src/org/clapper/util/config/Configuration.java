@@ -26,11 +26,41 @@
 
 package org.clapper.util.config;
 
-import java.io.*;
-import java.util.*;
-import java.net.*;
-import org.clapper.util.text.*;
-import org.clapper.util.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.clapper.util.text.TextUtil;
+import org.clapper.util.text.UnixShellVariableSubstituter;
+import org.clapper.util.text.VariableDereferencer;
+import org.clapper.util.text.VariableNameChecker;
+import org.clapper.util.text.VariableSubstitutionException;
+import org.clapper.util.text.VariableSubstituter;
+import org.clapper.util.text.XStringBuffer;
+
+import org.clapper.util.io.FileUtil;
 
 /**
  * <p><tt>Configuration</tt> implements a parser, generator and in-memory
@@ -826,7 +856,7 @@ public class Configuration
             if (s.trim().length() == 0)
                 result = defaultValue;
             else
-                result = TextUtils.booleanFromString (s);
+                result = TextUtil.booleanFromString (s);
         }
 
         catch (NoSuchVariableException ex)
@@ -1549,7 +1579,7 @@ public class Configuration
             // directory information or not. If not, try to use the
             // parent's directory information.
 
-            if (FileUtils.isAbsolutePath (includeTarget))
+            if (FileUtil.isAbsolutePath (includeTarget))
             {
                 loadInclude (new URL (url.getProtocol(),
                                       url.getHost(),

@@ -34,7 +34,7 @@ import java.io.StringReader;
 import java.io.PushbackReader;
 import java.io.IOException;
 
-import org.clapper.util.text.TextUtils;
+import org.clapper.util.text.TextUtil;
 
 /**
  * An <tt>XStringBuffer</tt> objects wraps a standard Java
@@ -1009,57 +1009,57 @@ public class XStringBuffer
     /**
      * Split the contents of a buffer on white space, and return the
      * resulting strings. This method is a convenient front-end to
-     * {@link TextUtils#split(String)}.
+     * {@link TextUtil#split(String)}.
      *
      * @return an array of <tt>String</tt> objects
      *
      * @see #split(String)
-     * @see TextUtils#split(String,char)
+     * @see TextUtil#split(String,char)
      */
     public String[] split()
     {
-        return TextUtils.split (this.toString());
+        return TextUtil.split (this.toString());
     }
 
     /**
      * Split the contents of a buffer on a delimiter, and return the
      * resulting strings. This method is a convenient front-end to
-     * {@link TextUtils#split(String,char)}.
+     * {@link TextUtil#split(String,char)}.
      *
      * @param delim the delimiter
      *
      * @return an array of <tt>String</tt> objects
      *
      * @see #split(String)
-     * @see TextUtils#split(String,char)
+     * @see TextUtil#split(String,char)
      */
     public String[] split (char delim)
     {
-        return TextUtils.split (this.toString(), delim);
+        return TextUtil.split (this.toString(), delim);
     }
 
     /**
      * Split the contents of a buffer on a delimiter, and return the
      * resulting strings. This method is a convenient front-end to
-     * {@link TextUtils#split(String,String)}
+     * {@link TextUtil#split(String,String)}
      *
      * @param delimSet the delimiter set
      *
      * @return an array of <tt>String</tt> objects
      *
      * @see #split(char)
-     * @see TextUtils#split(String,String)
+     * @see TextUtil#split(String,String)
      */
     public String[] split (String delimSet)
     {
-        return TextUtils.split (this.toString(), delimSet);
+        return TextUtil.split (this.toString(), delimSet);
     }
 
     /**
      * Split the contents of a buffer on a delimiter, and store the
      * resulting strings in a specified <tt>Collection</tt>. This method
      * is a convenient front-end for
-     * {@link TextUtils#split(String,char,Collection)}.
+     * {@link TextUtil#split(String,char,Collection)}.
      *
      * @param delim      the delimiter
      * @param collection where to store the resulting strings
@@ -1068,19 +1068,19 @@ public class XStringBuffer
      *
      * @see #split(String,Collection)
      * @see #split(char)
-     * @see TextUtils#split(String,char)
-     * @see TextUtils#split(String,String,Collection)
+     * @see TextUtil#split(String,char)
+     * @see TextUtil#split(String,String,Collection)
      */
     public int split (char delim, Collection collection)
     {
-        return TextUtils.split (this.toString(), delim, collection);
+        return TextUtil.split (this.toString(), delim, collection);
     }
 
     /**
      * Split the contents of a buffer on a delimiter, and store the
      * resulting strings in a specified <tt>Collection</tt>. This method
      * is a convenient front-end for
-     * {@link TextUtils#split(String,char,Collection)}.
+     * {@link TextUtil#split(String,char,Collection)}.
      *
      * @param delimSet   the set of delimiters
      * @param collection where to store the resulting strings
@@ -1089,12 +1089,12 @@ public class XStringBuffer
      *
      * @see #split(char,Collection)
      * @see #split(String)
-     * @see TextUtils#split(String,String)
-     * @see TextUtils#split(String,char,Collection)
+     * @see TextUtil#split(String,String)
+     * @see TextUtil#split(String,char,Collection)
      */
     public int split (String delimSet, Collection collection)
     {
-        return TextUtils.split (this.toString(), delimSet, collection);
+        return TextUtil.split (this.toString(), delimSet, collection);
     }
 
     /**

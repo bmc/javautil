@@ -35,13 +35,13 @@ import java.io.*;
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
-public class FileUtils
+public class FileUtil
 {
     /*----------------------------------------------------------------------*\
                                 Constructor
     \*----------------------------------------------------------------------*/
 
-    private FileUtils()
+    private FileUtil()
     {
     }
 

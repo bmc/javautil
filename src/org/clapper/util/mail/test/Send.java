@@ -7,7 +7,7 @@ package org.clapper.util.mail.test;
 import org.clapper.util.mail.*;
 import org.clapper.util.io.WordWrapWriter;
 import org.clapper.util.misc.BadCommandLineException;
-import org.clapper.util.text.TextUtils;
+import org.clapper.util.text.TextUtil;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -259,13 +259,13 @@ public class Send
             out.println ("Sending message");
             EmailAddress sender = msg.getSender();
             out.println ("From: " + sender.toString());
-            out.println ("To: " + TextUtils.join (msg.getTo(), ", "));
+            out.println ("To: " + TextUtil.join (msg.getTo(), ", "));
 
             if (msg.getCc().size() > 0)
-                out.println ("Cc: " + TextUtils.join (msg.getCc(), ", "));
+                out.println ("Cc: " + TextUtil.join (msg.getCc(), ", "));
 
             if (msg.getBcc().size() > 0)
-                out.println ("Bcc: " + TextUtils.join (msg.getBcc(), ", "));
+                out.println ("Bcc: " + TextUtil.join (msg.getBcc(), ", "));
 
             out.println ("Subject: " + msg.getSubject());
 

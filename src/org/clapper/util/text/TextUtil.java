@@ -37,13 +37,13 @@ import java.util.Iterator;
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
-public class TextUtils
+public final class TextUtil
 {
     /*----------------------------------------------------------------------*\
                                 Constructor
     \*----------------------------------------------------------------------*/
 
-    private TextUtils()
+    private TextUtil()
     {
     }
 
