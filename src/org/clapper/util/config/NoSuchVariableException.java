@@ -60,11 +60,11 @@ public class NoSuchVariableException extends ConfigurationException
      */
     public NoSuchVariableException (String sectionName, String variableName)
     {
-        super (NoSuchVariableException.class.getName()
-             + ": section "
-             + sectionName
-             + ", variable "
-             + variableName);
+        super (Package.BUNDLE_NAME,
+               "noSuchVariable",
+               "Variable \"{0}\" does not exist in configuration section "
+             + "\"{1}\"",
+               new Object[] {sectionName, variableName});
 
         this.sectionName  = sectionName;
         this.variableName = variableName;

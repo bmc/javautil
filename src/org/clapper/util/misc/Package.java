@@ -24,59 +24,23 @@
   a pointer to or a copy of the original.
 \*---------------------------------------------------------------------------*/
 
-package org.clapper.util.config;
-
-import java.util.*;
+package org.clapper.util.misc;
 
 /**
- * A <tt>NoSuchSectionException</tt> is thrown by the
- * {@link Configuration} class to signify that a requested configuration
- * section does not exist.
- *
- * @see ConfigurationException
+ * Package-specific shared utility methods. Used only within this package.
  *
  * @version <tt>$Revision$</tt>
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
-public class NoSuchSectionException extends ConfigurationException
+public final class Package
 {
     /*----------------------------------------------------------------------*\
-                            Private Data Items
-    \*----------------------------------------------------------------------*/
-
-    private String sectionName = null;
-
-    /*----------------------------------------------------------------------*\
-                                Constructor
+                             Public Constants
     \*----------------------------------------------------------------------*/
 
     /**
-     * Constructs an exception.
-     *
-     * @param sectionName  the section name to which the exception pertains
+     * The name of the resource bundle for this package.
      */
-    public NoSuchSectionException (String sectionName)
-    {
-        super (Package.BUNDLE_NAME,
-               "noSuchSection",
-               "Configuration section \"{0}\" does not exist",
-               new Object[] {sectionName});
-
-        this.sectionName = sectionName;
-    }
-
-    /*----------------------------------------------------------------------*\
-                              Public Methods
-    \*----------------------------------------------------------------------*/
-
-    /**
-     * Gets the section name associated with this exception.
-     *
-     * @return the section name
-     */
-    public String getSectionName()
-    {
-        return sectionName;
-    }
+    public static final String BUNDLE_NAME = "org.clapper.util.misc.Bundle";
 }

@@ -28,10 +28,12 @@ package org.clapper.util.cmdline;
 
 import org.clapper.util.io.WordWrapWriter;
 
-import org.clapper.util.misc.Logger;
 import org.clapper.util.misc.ArrayIterator;
+import org.clapper.util.misc.BundleUtil;
+import org.clapper.util.misc.Logger;
 
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
 /**
@@ -282,12 +284,12 @@ public abstract class CommandLineUtility
                     if (! arg.startsWith (UsageInfo.LONG_OPTION_PREFIX))
                     {
                         throw new CommandLineUsageException
-                            ("Option \""
-                           + arg
-                           + "\" is not a single character short option, but "
-                           + "doesn't start with \""
-                           + UsageInfo.LONG_OPTION_PREFIX
-                           + "\", as long options must.");
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.badLongOption",
+                             "Option \"{0}\" is not a single-character short "
+                           + "option, but it does not start with \"{1}\", as "
+                           + "long options must.",
+                             new Object[] {arg, UsageInfo.LONG_OPTION_PREFIX});
                     }
 
                     optionInfo = usageInfo.getOptionInfo (arg.substring (2));
@@ -296,7 +298,10 @@ public abstract class CommandLineUtility
                 if (optionInfo == null)
                 {
                     throw new CommandLineUsageException
-                        ("Unknown option: \"" + arg + "\".");
+                            (Package.BUNDLE_NAME,
+                             "CommandLineUtility.unknownOption",
+                             "Unknown option: \"{0}\"",
+                             new Object[] {arg});
                 }
 
                 // Okay, now handle our options.
@@ -320,17 +325,28 @@ public abstract class CommandLineUtility
             // Should be no parameters left now.
 
             if (it.hasNext())
-                throw new CommandLineUsageException ("Too many parameters.");
+            {
+                throw new CommandLineUsageException
+                             (Package.BUNDLE_NAME,
+                              "CommandLineUtility.tooManyParams",
+                              "Too many parameters.");
+            }
         }
 
         catch (NoSuchElementException ex)
         {
-            throw new CommandLineUsageException ("Missing parameter(s)");
+            throw new CommandLineUsageException
+                             (Package.BUNDLE_NAME,
+                              "CommandLineUtility.missingParams",
+                              "Missing command line parameter(s).");
         }
 
         catch (ArrayIndexOutOfBoundsException ex)
         {
-            throw new CommandLineUsageException ("Missing parameter(s)");
+            throw new CommandLineUsageException
+                             (Package.BUNDLE_NAME,
+                              "CommandLineUtility.missingParams",
+                              "Missing command line parameter(s).");
         }
     }
 
@@ -360,10 +376,12 @@ public abstract class CommandLineUtility
         throws CommandLineUsageException,
                NoSuchElementException
     {
-        throw new CommandLineUsageException ("(BUG) custom option found, but "
-                                           + this.getClass().getName()
-                                           + " class provides no "
-                                           + "parseCustomOption() method.");
+        throw new CommandLineUsageException
+                                   (Package.BUNDLE_NAME,
+                                    "CommandLineUtility.parseCustomOption",
+                                    "(BUG) custom option found, but class {0} "
+                                  + "provides no parseCustomOption method.",
+                                    new Object[] {this.getClass().getName()});
     }
 
     /**
@@ -397,7 +415,9 @@ public abstract class CommandLineUtility
                NoSuchElementException
     {
         throw new CommandLineUsageException
-                                          ("Extra command line parameter(s)");
+                             (Package.BUNDLE_NAME,
+                              "CommandLineUtility.extraParams",
+                              "Extra command line parameter(s).");
     }
 
     /**
@@ -457,7 +477,7 @@ public abstract class CommandLineUtility
         StringBuffer    usageLine = new StringBuffer();
         OptionInfo[]    options;
         OptionInfo      opt;
-
+        Locale          locale = Locale.getDefault();
 
         if (prefixMsg != null)
         {
@@ -470,7 +490,11 @@ public abstract class CommandLineUtility
 
         usageLine.append ("java ");
         usageLine.append (getClass().getName());
-        usageLine.append (" [options]");
+        usageLine.append (BundleUtil.getMessage (Package.BUNDLE_NAME,
+                                                 locale,
+                                                 "CommandLineUtility.options1",
+                                                 "[options]"));
+        usageLine.append (" ");
 
         // Add the parameter placeholders. We'll also calculate the maximum
         // parameter name length in this loop, to save an iteration later.
@@ -499,14 +523,21 @@ public abstract class CommandLineUtility
         if ( (s = usageInfo.getUsagePrologue()) != null)
             out.println (s);
 
-        out.setPrefix ("Usage: ");
+        s = BundleUtil.getMessage (Package.BUNDLE_NAME,
+                                   locale,
+                                   "CommandLineUtility.usage",
+                                   "Usage:");
+        out.setPrefix (s + " ");
         out.println (usageLine.toString());
         out.setPrefix (null);
         out.println ();
 
         // Find the largest option name.
 
-        out.println ("OPTIONS:");
+        out.println (BundleUtil.getMessage (Package.BUNDLE_NAME,
+                                            locale,
+                                            "CommandLineUtility.options2",
+                                            "OPTIONS:"));
         out.println ();
 
         maxOptionLength = 2;
@@ -602,7 +633,10 @@ public abstract class CommandLineUtility
         if (strings.length > 0)
         {
             out.println ();
-            out.println ("PARAMETERS:");
+            out.println (BundleUtil.getMessage (Package.BUNDLE_NAME,
+                                                locale,
+                                                "CommandLineUtility.params",
+                                                "PARAMETERS:"));
             out.println ();
 
             // Now, print the parameters.
@@ -643,7 +677,11 @@ public abstract class CommandLineUtility
 
         info.addOption (UsageInfo.NO_SHORT_OPTION,
                         "logging",
-                        "Enable logging via Jakarta Commons Logging API.");
+                        BundleUtil.getMessage (Package.BUNDLE_NAME,
+                                               Locale.getDefault(),
+                                               "CommandLineUtility.logging",
+                                               "Enable logging via Jakarta "
+                                             + "Commons Logging API."));
 
         return info;
     }
