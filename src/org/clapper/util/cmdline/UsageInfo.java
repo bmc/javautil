@@ -38,6 +38,12 @@ public final class UsageInfo
      */
     public static final char NO_SHORT_OPTION = '\u0000';
 
+    /**
+     * The option prefix strings used at the command line.
+     */
+    public static final char SHORT_OPTION_PREFIX = '-';
+    public static final String LONG_OPTION_PREFIX = "--";
+
     /*----------------------------------------------------------------------*\
                            Private Data Elements
     \*----------------------------------------------------------------------*/
