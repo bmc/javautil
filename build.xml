@@ -44,6 +44,7 @@
   <property name="dist"  location="dist"/>
   <property name="build.compiler" value="jikes"/>
   <property name="build.compiler.emacs" value="true"/>
+  <property name="javac.debug" value="true"/>
   <property name="compile.listfiles" value="no"/>
   <property name="build.info.file" 
             value="${build}/org/clapper/util/misc/BuildInfoBundle.properties"/>
@@ -119,6 +120,7 @@
   <target name="misc" depends="init">
     <javac srcdir="${src.dir}" 
 	   depend="true"
+	   debug="${javac.debug}"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
       <classpath refid="project.class.path"/>
@@ -128,9 +130,10 @@
     </javac>
   </target>
 
-  <target name="io" depends="misc">
+  <target name="io" depends="misc,text">
     <javac srcdir="${src.dir}" 
 	   depend="true"
+	   debug="${javac.debug}"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
       <classpath refid="project.class.path"/>
@@ -140,9 +143,10 @@
     </javac>
   </target>
 
-  <target name="text" depends="io">
+  <target name="text" depends="misc">
     <javac srcdir="${src.dir}" 
 	   depend="true"
+	   debug="${javac.debug}"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
       <classpath refid="project.class.path"/>
@@ -155,6 +159,7 @@
   <target name="config" depends="text">
     <javac srcdir="${src.dir}" 
 	   depend="true"
+	   debug="${javac.debug}"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
       <classpath refid="project.class.path"/>
@@ -193,6 +198,7 @@
   <target name="mail" depends="-check.javamail,text" if="javamail.exists">
     <javac srcdir="${src.dir}" 
 	   depend="true"
+	   debug="${javac.debug}"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
       <classpath refid="project.class.path"/>
@@ -205,6 +211,7 @@
   <target name="cmdline">
     <javac srcdir="${src.dir}" 
 	   depend="true"
+	   debug="${javac.debug}"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
       <classpath refid="project.class.path"/>
@@ -217,6 +224,7 @@
   <target name="ant.tasks">
     <javac srcdir="${src.dir}" 
 	   depend="true"
+	   debug="${javac.debug}"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
       <classpath refid="project.class.path"/>
@@ -271,6 +279,7 @@
     <!-- Create the distribution directory -->
     <javac srcdir="${src.dir}" 
 	   depend="true"
+	   debug="${javac.debug}"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
       <classpath refid="project.class.path"/>
@@ -283,6 +292,7 @@
     <!-- Create the distribution directory -->
     <javac srcdir="${src.dir}" 
 	   depend="true"
+	   debug="${javac.debug}"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
       <classpath refid="project.class.path"/>
