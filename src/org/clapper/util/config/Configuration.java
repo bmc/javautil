@@ -424,7 +424,7 @@ public class Configuration
      *
      * @param iStream  the <tt>InputStream</tt>
      *
-     * @throws IOException             can't open or read URL
+     * @throws IOException             can't read from <tt>InputStream</tt>
      * @throws ConfigurationException  error in configuration data
      */
     public Configuration (InputStream iStream)
