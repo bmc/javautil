@@ -201,9 +201,9 @@ public class NestedException extends Exception
     public NestedException (String    bundleName,
                             String    messageKey,
                             String    defaultMsg,
-                            Throwable ex)
+                            Throwable exception)
     {
-        this (bundleName, messageKey, defaultMsg, null, ex);
+        this (bundleName, messageKey, defaultMsg, null, exception);
     }
 
     /**
@@ -224,7 +224,7 @@ public class NestedException extends Exception
      * @param messageKey  the key to the message to find in the bundle
      * @param defaultMsg  the default message
      * @param msgParams   parameters to the message, if any, or null
-     * @param ex          exception to be nested
+     * @param exception   exception to be nested
      *
      * @see #NestedException(String,String,String,Object[])
      * @see #getMessage(Locale)
@@ -233,10 +233,10 @@ public class NestedException extends Exception
                             String    messageKey,
                             String    defaultMsg,
                             Object[]  msgParams,
-                            Throwable ex)
+                            Throwable exception)
     {
         super();
-        initCause (ex);
+        initCause (exception);
         this.resourceBundleName = bundleName;
         this.bundleMessageKey   = messageKey;
         this.defaultMessage     = defaultMsg;

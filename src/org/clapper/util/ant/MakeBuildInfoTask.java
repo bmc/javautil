@@ -57,8 +57,6 @@ import org.apache.tools.ant.Task;
  *
  * @version <tt>$Revision$</tt>
  *
- * @
- *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
 public class MakeBuildInfoTask extends Task

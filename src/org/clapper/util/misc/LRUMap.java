@@ -768,8 +768,6 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
      * mappings replace any mappings that this map had for any of the keys.
      *
      * @param map  the map whose mappings are to be copied
-     *
-     * @see #putAll(LRUMap)
      */
     public void putAll (Map map)
     {
@@ -809,7 +807,7 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
     }
 
     /**
-     * Set or change the maximum capacity of this <tt>LRUMap.</tt> If the
+     * Set or change the maximum capacity of this <tt>LRUMap</tt>. If the
      * maximum capacity is reduced to less than the map's current size,
      * then the map is reduced in size by discarding the oldest entries.
      *

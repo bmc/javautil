@@ -171,9 +171,9 @@ public class EmailException extends NestedException
     public EmailException (String    bundleName,
                            String    messageKey,
                            String    defaultMsg,
-                           Throwable ex)
+                           Throwable exception)
     {
-        this (bundleName, messageKey, defaultMsg, null, ex);
+        this (bundleName, messageKey, defaultMsg, null, exception);
     }
 
     /**
@@ -194,7 +194,7 @@ public class EmailException extends NestedException
      * @param messageKey  the key to the message to find in the bundle
      * @param defaultMsg  the default message
      * @param msgParams   parameters to the message, if any, or null
-     * @param ex          exception to be nested
+     * @param exception   exception to be nested
      *
      * @see #EmailException(String,String,String,Object[])
      * @see NestedException#getMessage(Locale)
@@ -203,8 +203,8 @@ public class EmailException extends NestedException
                            String    messageKey,
                            String    defaultMsg,
                            Object[]  msgParams,
-                           Throwable ex)
+                           Throwable exception)
     {
-        super (bundleName, messageKey, defaultMsg, msgParams, ex);
+        super (bundleName, messageKey, defaultMsg, msgParams, exception);
     }
 }

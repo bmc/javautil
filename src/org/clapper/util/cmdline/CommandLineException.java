@@ -169,9 +169,9 @@ public class CommandLineException extends NestedException
     public CommandLineException (String    bundleName,
                                  String    messageKey,
                                  String    defaultMsg,
-                                 Throwable ex)
+                                 Throwable exception)
     {
-        this (bundleName, messageKey, defaultMsg, null, ex);
+        this (bundleName, messageKey, defaultMsg, null, exception);
     }
 
     /**

@@ -402,8 +402,8 @@ public abstract class CommandLineUtility
      *
      * @see #parseIntParameter(String)
      * @see #parseIntOptionArgument(char,String,String,int,int)
-     * @see #parseDoubleParameter(String,int,int)
-     * @see #parseFloatParameter(String,int,int)
+     * @see #parseDoubleParameter(String,double,double)
+     * @see #parseFloatParameter(String,float,float)
      */
     protected int parseIntParameter (String value, int min, int max)
         throws CommandLineUsageException
@@ -558,7 +558,7 @@ public abstract class CommandLineUtility
      *
      * @throws CommandLineUsageException bad numeric value
      *
-     * @see #parseFloatParameter(String,int,int)
+     * @see #parseFloatParameter(String,float,float)
      * @see #parseFloatOptionArgument(char,String,String)
      * @see #parseDoubleParameter(String)
      * @see #parseIntParameter(String)
@@ -596,11 +596,11 @@ public abstract class CommandLineUtility
      * @throws CommandLineUsageException bad numeric value
      *
      * @see #parseFloatParameter(String)
-     * @see #parseFloatOptionArgument(char,String,String,int,int)
-     * @see #parseDoubleParameter(String,int,int)
+     * @see #parseFloatOptionArgument(char,String,String,float,float)
+     * @see #parseDoubleParameter(String,double,double)
      * @see #parseIntParameter(String,int,int)
      */
-    protected float parseFloatParameter (String value, int min, int max)
+    protected float parseFloatParameter (String value, float min, float max)
         throws CommandLineUsageException
     {
         float result = parseFloatParameter (value);
@@ -649,7 +649,7 @@ public abstract class CommandLineUtility
      *
      * @throws CommandLineUsageException bad numeric value
      *
-     * @see #parseFloatOptionArgument(char,String,String,int,int)
+     * @see #parseFloatOptionArgument(char,String,String,float,float)
      * @see #parseDoubleOptionArgument(char,String,String)
      * @see #parseIntOptionArgument(char,String,String)
      */
@@ -695,7 +695,7 @@ public abstract class CommandLineUtility
      *
      * @throws CommandLineUsageException bad numeric value
      *
-     * @see #parseFloatOptionArgument(char,String,String,int,int)
+     * @see #parseFloatOptionArgument(char,String,String,float,float)
      * @see #parseDoubleOptionArgument(char,String,String)
      * @see #parseIntOptionArgument(char,String,String)
      */
@@ -756,7 +756,7 @@ public abstract class CommandLineUtility
      *
      * @throws CommandLineUsageException bad numeric value
      *
-     * @see #parseDoubleParameter(String,int,int)
+     * @see #parseDoubleParameter(String,double,double)
      * @see #parseDoubleOptionArgument(char,String,String)
      * @see #parseFloatParameter(String)
      * @see #parseIntParameter(String)
@@ -794,11 +794,13 @@ public abstract class CommandLineUtility
      * @throws CommandLineUsageException bad numeric value
      *
      * @see #parseDoubleParameter(String)
-     * @see #parseDoubleOptionArgument(char,String,String,int,int)
-     * @see #parseFloatParameter(String,int,int)
+     * @see #parseDoubleOptionArgument(char,String,String,double,double)
+     * @see #parseFloatParameter(String,float,float)
      * @see #parseIntParameter(String,int,int)
      */
-    protected double parseDoubleParameter (String value, int min, int max)
+    protected double parseDoubleParameter (String value,
+                                           double  min,
+                                           double  max)
         throws CommandLineUsageException
     {
         double result = parseDoubleParameter (value);
@@ -847,7 +849,7 @@ public abstract class CommandLineUtility
      *
      * @throws CommandLineUsageException bad numeric value
      *
-     * @see #parseDoubleOptionArgument(char,String,String,int,int)
+     * @see #parseDoubleOptionArgument(char,String,String,double,double)
      * @see #parseDoubleOptionArgument(char,String,String)
      * @see #parseIntOptionArgument(char,String,String)
      */
@@ -893,7 +895,7 @@ public abstract class CommandLineUtility
      *
      * @throws CommandLineUsageException bad numeric value
      *
-     * @see #parseDoubleOptionArgument(char,String,String,int,int)
+     * @see #parseDoubleOptionArgument(char,String,String,double,double)
      * @see #parseDoubleOptionArgument(char,String,String)
      * @see #parseIntOptionArgument(char,String,String)
      */

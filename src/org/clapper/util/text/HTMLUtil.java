@@ -129,7 +129,6 @@ public final class HTMLUtil
      * @return the resulting, possibly modified, string
      *
      * @see #stripHTMLTags
-     * @see #XMLUtil#convertCharacterEntities
      */
     public static String convertCharacterEntities (String s)
     {

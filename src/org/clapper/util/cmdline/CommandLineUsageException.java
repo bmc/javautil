@@ -86,10 +86,12 @@ public class CommandLineUsageException extends CommandLineException
      * found). Using this constructor is equivalent to calling the
      * {@link #CommandLineUsageException(String,String,String,Object[])}
      * constructor, with a null pointer for the <tt>Object[]</tt> parameter.
-     * Calls to {@link NestedException#getMessage(Locale)} will attempt to
-     * retrieve the top-most message (i.e., the message from this exception,
-     * not from nested exceptions) by querying the named resource bundle.
-     * Calls to {@link NestedException#printStackTrace(PrintWriter,Locale)}
+     * Calls to
+     * {@link org.clapper.util.misc.NestedException#getMessage(java.util.Locale)}
+     * will attempt to retrieve the top-most message (i.e., the message
+     * from this exception, not from nested exceptions) by querying the
+     * named resource bundle. Calls to
+     * {@link org.clapper.util.misc.NestedException#printStackTrace(PrintWriter,java.util.Locale)}
      * will do the same, where applicable. The message is not retrieved
      * until one of those methods is called, because the desired locale is
      * passed into <tt>getMessage()</tt> and <tt>printStackTrace()</tt>,
@@ -100,7 +102,7 @@ public class CommandLineUsageException extends CommandLineException
      * @param defaultMsg  the default message
      *
      * @see #CommandLineUsageException(String,String,String,Object[])
-     * @see NestedException#getMessage(Locale)
+     * @see org.clapper.util.misc.NestedException#getMessage(java.util.Locale)
      */
     public CommandLineUsageException (String bundleName,
                                       String messageKey,
@@ -115,10 +117,12 @@ public class CommandLineUsageException extends CommandLineException
      * found). Using this constructor is equivalent to calling the
      * {@link #CommandLineUsageException(String,String,String,Object[],Throwable)}
      * constructor, with a null pointer for the <tt>Throwable</tt> parameter.
-     * Calls to {@link NestedException#getMessage(Locale)} will attempt to
-     * retrieve the top-most message (i.e., the message from this exception,
-     * not from nested exceptions) by querying the named resource bundle.
-     * Calls to {@link NestedException#printStackTrace(PrintWriter,Locale)}
+     * Calls to
+     * {@link org.clapper.util.misc.NestedException#getMessage(java.util.Locale)}
+     * will attempt to retrieve the top-most message (i.e., the message
+     * from this exception, not from nested exceptions) by querying the
+     * named resource bundle. Calls to
+     * {@link org.clapper.util.misc.NestedException#printStackTrace(PrintWriter,java.util.Locale)}
      * will do the same, where applicable. The message is not retrieved
      * until one of those methods is called, because the desired locale is
      * passed into <tt>getMessage()</tt> and <tt>printStackTrace()</tt>,
@@ -130,7 +134,7 @@ public class CommandLineUsageException extends CommandLineException
      * @param msgParams   parameters to the message, if any, or null
      *
      * @see #CommandLineUsageException(String,String,String,Object[])
-     * @see NestedException#getMessage(Locale)
+     * @see org.clapper.util.misc.NestedException#getMessage(java.util.Locale)
      */
     public CommandLineUsageException (String   bundleName,
                                       String   messageKey,
@@ -146,13 +150,13 @@ public class CommandLineUsageException extends CommandLineException
      * another exception. Using this constructor is equivalent to calling the
      * {@link #CommandLineUsageException(String,String,String,Object[],Throwable)}
      * constructor, with a null pointer for the <tt>Object[]</tt>
-     * parameter. Calls to {@link #getMessage(Locale)} will attempt to
-     * retrieve the top-most message (i.e., the message from this
+     * parameter. Calls to {@link #getMessage(java.util.Locale)} will attempt
+     * to retrieve the top-most message (i.e., the message from this
      * exception, not from nested exceptions) by querying the named
      * resource bundle. Calls to
-     * {@link #printStackTrace(PrintWriter,Locale)} will do the same, where
-     * applicable. The message is not retrieved until one of those methods
-     * is called, because the desired locale is passed into
+     * {@link org.clapper.util.misc.NestedException#printStackTrace(PrintWriter,java.util.Locale)} will do the same,
+     * where applicable. The message is not retrieved until one of those
+     * methods is called, because the desired locale is passed into
      * <tt>getMessage()</tt> and <tt>printStackTrace()</tt>, not this
      * constructor.
      *
@@ -162,14 +166,14 @@ public class CommandLineUsageException extends CommandLineException
      * @param exception   the exception to nest
      *
      * @see #CommandLineUsageException(String,String,String,Object[])
-     * @see NestedException#getMessage(Locale)
+     * @see org.clapper.util.misc.NestedException#getMessage(java.util.Locale)
      */
     public CommandLineUsageException (String    bundleName,
                                       String    messageKey,
                                       String    defaultMsg,
-                                      Throwable ex)
+                                      Throwable exception)
     {
-        this (bundleName, messageKey, defaultMsg, null, ex);
+        this (bundleName, messageKey, defaultMsg, null, exception);
     }
 
     /**
@@ -177,12 +181,14 @@ public class CommandLineUsageException extends CommandLineException
      * key, a default message format (in case the resource bundle can't be
      * found), arguments to be incorporated in the message via
      * <tt>java.text.MessageFormat</tt>, and another exception.
-     * Calls to {@link #getMessage(Locale)} will attempt to retrieve the
-     * top-most message (i.e., the message from this exception, not from
+     * Calls to
+     * {@link org.clapper.util.misc.NestedException#getMessage(java.util.Locale)} will attempt to retrieve
+     * the top-most message (i.e., the message from this exception, not from
      * nested exceptions) by querying the named resource bundle. Calls to
-     * {@link #printStackTrace(PrintWriter,Locale)} will do the same, where
-     * applicable. The message is not retrieved until one of those methods
-     * is called, because the desired locale is passed into
+     * {@link org.clapper.util.misc.NestedException#printStackTrace(PrintWriter,java.util.Locale)}
+     * will do the same,
+     * where applicable. The message is not retrieved until one of those
+     * methods is called, because the desired locale is passed into
      * <tt>getMessage()</tt> and <tt>printStackTrace()</tt>, not this
      * constructor.
      *
@@ -190,17 +196,17 @@ public class CommandLineUsageException extends CommandLineException
      * @param messageKey  the key to the message to find in the bundle
      * @param defaultMsg  the default message
      * @param msgParams   parameters to the message, if any, or null
-     * @param ex          exception to be nested
+     * @param exception   exception to be nested
      *
      * @see #CommandLineUsageException(String,String,String,Object[])
-     * @see NestedException#getMessage(Locale)
+     * @see org.clapper.util.misc.NestedException#getMessage(java.util.Locale)
      */
     public CommandLineUsageException (String    bundleName,
                                       String    messageKey,
                                       String    defaultMsg,
                                       Object[]  msgParams,
-                                      Throwable ex)
+                                      Throwable exception)
     {
-        super (bundleName, messageKey, defaultMsg, msgParams, ex);
+        super (bundleName, messageKey, defaultMsg, msgParams, exception);
     }
 }
