@@ -1,0 +1,17 @@
+$Id$
+---------------------------------------------------------------------------
+
+Version 1.0.1:
+
+- New methods (copyTextFile, copyReader, etc.) in org.clapper.util.io.FileUtil.
+  copyTextFile() explicitly handles character set conversion.
+
+- FileUtil copy methods no longer do their own buffering. They use the
+  appropriate java.io.Buffered* classes, instead.
+
+- Miscellaneous javadocs enhancements.
+
+
+Version 1.0:
+
+- First version of curn posted to the web.
