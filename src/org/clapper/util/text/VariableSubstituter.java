@@ -101,19 +101,27 @@ public interface VariableSubstituter
      * over the legal characters, use the second <tt>substitute</tt>
      * method.</p>
      *
-     * @param s      the string containing possible variable references
-     * @param deref  the <tt>VariableDereferencer</tt> object
-     *               to use to resolve the variables' values.
+     * @param s       the string containing possible variable references
+     * @param deref   the <tt>VariableDereferencer</tt> object
+     *                to use to resolve the variables' values.
+     * @param context an optional context object, passed through unmodified
+     *                to the <tt>deref</tt> object's
+     *                {@link VariableDereferencer#getValue getValue()} method.
+     *                This object can be anything at all (and, in fact, may
+     *                be null if you don't care.) It's primarily useful
+     *                for passing context information from the caller to
+     *                the (custom) <tt>VariableDereferencer</tt>.
      *
      * @return The (possibly) expanded string.
      *
      * @throws VariableSubstitutionException  substitution error
      *
-     * @see #substitute(String,VariableDereferencer,VariableNameChecker)
-     * @see VariableDereferencer#getValue(String)
+     * @see #substitute(String,VariableDereferencer,VariableNameChecker,Object)
+     * @see VariableDereferencer#getValue(String,Object)
      */
     public String substitute (String               s,
-                              VariableDereferencer deref)
+                              VariableDereferencer deref,
+                              Object               context)
         throws VariableSubstitutionException;
 
     /**
@@ -136,16 +144,25 @@ public interface VariableSubstituter
      * @param nameChecker  the <tt>VariableNameChecker</tt> object to be
      *                     used to check for legal variable name characters,
      *                     or null
+     * @param context      an optional context object, passed through
+     *                     unmodified to the <tt>deref</tt> object's
+     *                     {@link VariableDereferencer#getValue getValue()}
+     *                     method. This object can be anything at all (and,
+     *                     in fact, may be null if you don't care.) It's
+     *                     primarily useful for passing context information
+     *                     from the caller to the
+     *                     <tt>VariableDereferencer</tt>.
      *
      * @return The (possibly) expanded string.
      *
      * @throws VariableSubstitutionException  substitution error
      *
-     * @see #substitute(String,VariableDereferencer)
-     * @see VariableDereferencer#getValue(String)
+     * @see #substitute(String,VariableDereferencer,Object)
+     * @see VariableDereferencer#getValue(String,Object)
      */
     public String substitute (String               s,
                               VariableDereferencer deref,
-                              VariableNameChecker  nameChecker)
+                              VariableNameChecker  nameChecker,
+                              Object               context)
         throws VariableSubstitutionException;
 }

@@ -56,6 +56,8 @@ public interface VariableDereferencer
      *
      * @param varName  The name of the variable for which the value is
      *                 desired.
+     * @param context  a context object, passed through from the caller
+     *                 to the dereferencer, or null if there isn't one.
      *
      * @return The variable's value. If the variable has no value, this
      *         method must return the empty string (""). It is important
@@ -63,6 +65,6 @@ public interface VariableDereferencer
      *
      * @throws VariableSubstitutionException  substitution error
      */
-    public String getValue (String varName)
+    public String getValue (String varName, Object context)
         throws VariableSubstitutionException;
 }

@@ -91,12 +91,15 @@ public class MapVariableDereferencer implements VariableDereferencer
      *
      * @param varName  The name of the variable for which the value is
      *                 desired.
+     * @param context  a context object, passed through from the caller
+     *                 to the dereferencer, or null if there isn't one.
+     *                 Ignored here.
      *
      * @return The variable's value. If the variable has no value, this
      *         method must return the empty string (""). It is important
      *         <b>not</b> to return null.
      */
-    public String getValue (String varName)
+    public String getValue (String varName, Object context)
     {
         Object result = map.get (varName);
 

@@ -122,7 +122,7 @@ public class TestVariableSubstituter
         for (Iterator it = strings.iterator(); it.hasNext(); )
         {
             String s  = (String) it.next();
-            String s2 = vsub.substitute (s, vderef);
+            String s2 = vsub.substitute (s, vderef, null);
 
             System.out.println();
             System.out.println ("BEFORE: \"" + s + "\"");
