@@ -28,13 +28,19 @@ package org.clapper.util.text.test;
 
 import org.clapper.util.text.*;
 import java.util.regex.*;
+import java.util.*;
+
+import org.clapper.util.cmdline.CommandLineUtility;
+import org.clapper.util.cmdline.CommandLineUsageException;
+import org.clapper.util.cmdline.CommandLineException;
+import org.clapper.util.cmdline.UsageInfo;
 
 /**
  * <p>Test the <tt>TextUtil</tt> class's <tt>split()</tt> methods.</p>
  *
  * @version <kbd>$Revision$</kbd>
  */
-public class SplitString
+public class SplitString extends CommandLineUtility
 {
     /*----------------------------------------------------------------------*\
                              Private Variables
@@ -44,6 +50,7 @@ public class SplitString
     private boolean useRegexp = false;
     private int limit = 0;
     private String[] strings = null;
+    private boolean preserveEmpty = false;
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -54,6 +61,7 @@ public class SplitString
      */
     private SplitString()
     {
+        super();
     }
 
     /*----------------------------------------------------------------------*\
@@ -67,21 +75,27 @@ public class SplitString
      */
     public static void main (String args[])
     {
+        SplitString tester = new SplitString();
         try
         {
-            SplitString tester = new SplitString();
-            tester.runTest (args);
-            System.exit (0);
+            tester.execute (args);
         }
 
-        catch (IllegalArgumentException ex)
+        catch (CommandLineUsageException ex)
         {
-            System.err.println (ex.getMessage());
-            usage();
+            // Already reported
+
             System.exit (1);
         }
 
-        catch (Throwable ex)
+        catch (CommandLineException ex)
+        {
+            System.err.println (ex.getMessage());
+            ex.printStackTrace();
+            System.exit (1);
+        }
+
+        catch (Exception ex)
         {
             ex.printStackTrace (System.err);
             System.exit (1);
@@ -89,98 +103,103 @@ public class SplitString
     }
 
     /*----------------------------------------------------------------------*\
-                              Private Methods
+                             Protected Methods
     \*----------------------------------------------------------------------*/
 
-    private static void usage()
-    {
-        final String[] USAGE = new String[]
-        {
-"Usage: java " + SplitString.class.getName() + " [OPTIONS] string ...",
-"",
-"OPTIONS",
-"",
-"-l <n>             Set the split limit to <n>. If not specified, all ",
-"                   instances of the pattern are used. Only applicable when ",
-"                   -r is used.",
-"-r <regexp>        Regular expression to use to split the strings. If ",
-"                   neither -r nor -s is specified, white space is used.",
-"-s <delimset>      Set of delimiters to use to split the strings. If ",
-"                   neither -s nor -r is specified, white space is used.",
-        };
-
-        for (int i = 0; i < USAGE.length; i++)
-            System.err.println (USAGE[i]);
-    }
-
-    private void parseParams (String[] args)
-        throws IllegalArgumentException
+    protected void runCommand()
+        throws CommandLineException
     {
         try
         {
-            int i = 0;
-
-            while ((i < args.length) && (args[i].startsWith ("-")))
-            {
-                if (args[i].equals ("-l"))
-                {
-                    try
-                    {
-                        limit = Integer.parseInt (args[++i]);
-                    }
-
-                    catch (NumberFormatException ex)
-                    {
-                        throw new IllegalArgumentException ("Bad numeric "
-                                                          + "parameter: \""
-                                                          + args[i]
-                                                          + "\"");
-                    }
-                }
-
-                else if (args[i].equals ("-r"))
-                {
-                    delims = args[++i];
-                    useRegexp = true;
-                }
-
-                else if (args[i].equals ("-s"))
-                {
-                    delims = args[++i];
-                    useRegexp = false;
-                }
-
-                else
-                {
-                    throw new IllegalArgumentException ("Unknown option: "
-                                                      + args[i]);
-                }
-
-                i++;
-            }
-
-            int totalStrings = args.length - i;
-
-            if (totalStrings == 0)
-                throw new ArrayIndexOutOfBoundsException();
-
-            strings = new String[totalStrings];
-
-            for (int j = 0; j < strings.length; j++)
-                strings[j] = args[i++];
+            runTest();
         }
 
-        catch (ArrayIndexOutOfBoundsException ex)
+        catch (Exception ex)
         {
-            throw new IllegalArgumentException ("Missing parameters(s)");
+            throw new CommandLineException (ex);
         }
     }
 
-    private void runTest (String[] args)
+    protected void parseCustomOption (char     shortOption,
+                                      String   longOption,
+                                      Iterator it)
+        throws CommandLineUsageException,
+               NoSuchElementException
+    {
+        switch (shortOption)
+        {
+            case 'l':
+                limit = parseIntOptionArgument (shortOption,
+                                                longOption,
+                                                (String) it.next());
+                break;
+
+            case 'r':
+                delims = (String) it.next();
+                useRegexp = true;
+                break;
+
+            case 'd':
+                delims = (String) it.next();
+                useRegexp = false;
+                break;
+
+            case 'p':
+                preserveEmpty = true;
+                break;
+
+            default:
+                throw new CommandLineUsageException ("Unrecognized option");
+        }
+    }
+    
+    protected void processPostOptionCommandLine (Iterator it)
+        throws CommandLineUsageException,
+               NoSuchElementException
+    {
+        Collection temp = new ArrayList();
+
+        do
+        {
+            temp.add (it.next());
+        }
+        while (it.hasNext());
+
+        strings = new String[temp.size()];
+        temp.toArray (strings);
+    }
+
+    protected void getCustomUsageInfo (UsageInfo info)
+    {
+        info.addOption ('l', "limit", "n",
+                        "Set the split limit to <n>. If not specified, all "
+                      + "instances of the pattern are used. Only applicable "
+                      + "when -r is used.");
+        info.addOption ('r', "regexp", "regexp",
+                        "Regular expression to use to split the string. "
+                      + "If neither -r nor -s is specified, white space "
+                      + "is used.");
+        info.addOption ('p', "preserve",
+                        "Preserve empty strings (i.e., don't parse through "
+                      + "adjacent delimiters). Defaults to off.");
+        info.addOption ('d', "delims", "delims",
+                        "Set of delimiters to use to split the strings. "
+                      + "If neither -r nor -s is specified, white space "
+                      + "is used.");
+
+        info.addParameter ("string ...",
+                           "String to split. May be specified more than once.",
+                           true);
+    }
+
+
+    /*----------------------------------------------------------------------*\
+                              Private Methods
+    \*----------------------------------------------------------------------*/
+
+    private void runTest()
         throws PatternSyntaxException
     {
-        parseParams (args);
-
         XStringBuffer printableDelims = new XStringBuffer();
         if (delims == null)
             printableDelims.append ("white space");
@@ -197,10 +216,22 @@ public class SplitString
 
             if (useRegexp)
                 splitStrings = strings[i].split(delims, limit);
-            else if (delims == null)
-                splitStrings = TextUtil.split (strings[i]);
+
             else
-                splitStrings = TextUtil.split (strings[i], delims);
+            {
+                if (delims == null)
+                    delims = " \t\n\r";
+
+                // Explicitly call the other methods, to test them.
+
+                if (preserveEmpty)
+                    splitStrings = TextUtil.split (strings[i],
+                                                   delims,
+                                                   preserveEmpty);
+                else
+                    splitStrings = TextUtil.split (strings[i],
+                                                   delims);
+            }
 
             System.out.println ();
             System.out.println ("String:   \""
@@ -222,7 +253,7 @@ public class SplitString
             else
             {
                 for (int j = 0; j < splitStrings.length; j++)
-                    System.out.println ("    " + splitStrings[j]);
+                    System.out.println ("    \"" + splitStrings[j] + "\"");
             }
         }
     }

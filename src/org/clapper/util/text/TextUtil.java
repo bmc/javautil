@@ -26,6 +26,7 @@
 
 package org.clapper.util.text;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -106,8 +107,13 @@ public final class TextUtil
      * <p>Split a string on white space, into one or more strings. This
      * method is intended to be reminiscent of the corresponding perl or
      * awk <i>split()</i> function, though without regular expression
-     * support. This method uses a <tt>StringTokenizer</tt> to do the
-     * actual work.</p>
+     * support. This version of <tt>split()</tt> does not preserve
+     * empty strings. That is, the string "a:b::c", when split with a
+     * ":" delimiter, yields three fields ("a", "b", "c"), since the
+     * two adjacent ":" characters are treated as one delimiter. To
+     * preserve empty strings, pass <tt>true</tt> as the
+     * <tt>preserveEmptyFields</tt> parameter to the
+     * {@link #split(String,boolean)} method.</p>
      *
      * <p>Note that the 1.4 JDK introduces a regular expression-based
      * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
@@ -117,6 +123,7 @@ public final class TextUtil
      *
      * @return an array of <tt>String</tt> objects
      *
+     * @see #split(String,boolean)
      * @see #split(String,String)
      * @see #split(String,char)
      * @see #split(String,Collection)
@@ -132,8 +139,50 @@ public final class TextUtil
      * <p>Split a string on white space, into one or more strings. This
      * method is intended to be reminiscent of the corresponding perl or
      * awk <i>split()</i> function, though without regular expression
-     * support. This method uses a <tt>StringTokenizer</tt> to do the
-     * actual work.</p>
+     * support.</p>
+     *
+     * <p>Note that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
+     * This method does not use regular expressions.</p>
+     *
+     * @param s                   the string to split
+     * @param preserveEmptyFields Whether to parse through empty tokens or
+     *                            preserve them. For example, given the string
+     *                            string "a:b::c" and a delimiter of ":",
+     *                            if <tt>preserveEmptyStrings</tt> is
+     *                            <tt>true</tt>, then this method will return
+     *                            four strings, "a", "b", "", "c". If
+     *                            <tt>preserveEmptyStrings</tt> is
+     *                            <tt>false</tt>, then this method will return
+     *                            three strings, "a", "b", "c" (since the
+     *                            two adjacent ":" characters are treated as
+     *                            one delimiter.)
+     *
+     * @return an array of <tt>String</tt> objects
+     *
+     * @see #split(String)
+     * @see #split(String,String)
+     * @see #split(String,char)
+     * @see #split(String,Collection)
+     * @see #split(String,char,Collection)
+     * @see #split(String,String,Collection)
+     */
+    public static String[] split (String s, boolean preserveEmptyFields)
+    {
+        return split (s, (String) null, preserveEmptyFields);
+    }
+
+    /**
+     * <p>Split a string on white space, into one or more strings. This
+     * method is intended to be reminiscent of the corresponding perl or
+     * awk <i>split()</i> function, though without regular expression
+     * support. This version of <tt>split()</tt> does not preserve
+     * empty strings. That is, the string "a:b::c", when split with a
+     * ":" delimiter, yields three fields ("a", "b", "c"), since the
+     * two adjacent ":" characters are treated as one delimiter. To
+     * preserve empty strings, pass <tt>true</tt> as the
+     * <tt>preserveEmptyFields</tt> parameter to the
+     * {@link #split(String,Collection,boolean)} method.</p>
      *
      * <p>Note that the 1.4 JDK introduces a regular expression-based
      * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
@@ -144,6 +193,7 @@ public final class TextUtil
      *
      * @return the number of strings added to the collection
      *
+     * @see #split(String,Collection,boolean)
      * @see #split(String)
      * @see #split(String,String)
      * @see #split(String,char)
@@ -152,15 +202,60 @@ public final class TextUtil
      */
     public static int split (String s, Collection collection)
     {
-        return split (s, (String) null, collection);
+        return split (s, collection, false);
+    }
+
+    /**
+     * <p>Split a string on white space, into one or more strings. This
+     * method is intended to be reminiscent of the corresponding perl or
+     * awk <i>split()</i> function, though without regular expression
+     * support.</p>
+     *
+     * <p>Note that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
+     * This method does not use regular expressions.</p>
+     *
+     * @param s                   the string to split
+     * @param collection          where to store the split strings
+     * @param preserveEmptyFields Whether to parse through empty tokens or
+     *                            preserve them. For example, given the string
+     *                            string "a:b::c" and a delimiter of ":",
+     *                            if <tt>preserveEmptyStrings</tt> is
+     *                            <tt>true</tt>, then this method will return
+     *                            four strings, "a", "b", "", "c". If
+     *                            <tt>preserveEmptyStrings</tt> is
+     *                            <tt>false</tt>, then this method will return
+     *                            three strings, "a", "b", "c" (since the
+     *                            two adjacent ":" characters are treated as
+     *                            one delimiter.)
+     *
+     * @return the number of strings added to the collection
+     *
+     * @see #split(String,Collection)
+     * @see #split(String)
+     * @see #split(String,String)
+     * @see #split(String,char)
+     * @see #split(String,char,Collection)
+     * @see #split(String,String,Collection)
+     */
+    public static int split (String     s,
+                             Collection collection,
+                             boolean    preserveEmptyFields)
+    {
+        return split (s, (String) null, collection, preserveEmptyFields);
     }
 
     /**
      * <p>Split a string into one or more strings, based on a delimiter.
      * This method is intended to be reminiscent of the corresponding perl
      * or awk <i>split()</i> function, though without regular expression
-     * support. This method uses a <tt>StringTokenizer</tt> to do the
-     * actual work.</p>
+     * support. This version of <tt>split()</tt> does not preserve empty
+     * strings. That is, the string "a:b::c", when split with a ":"
+     * delimiter, yields three fields ("a", "b", "c"), since the two
+     * adjacent ":" characters are treated as one delimiter. To preserve
+     * empty strings, pass <tt>true</tt> as the
+     * <tt>preserveEmptyFields</tt> parameter to the
+     * {@link #split(String,char,boolean)} method.</p>
      *
      * <p>Note that the 1.4 JDK introduces a regular expression-based
      * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
@@ -171,6 +266,7 @@ public final class TextUtil
      *
      * @return an array of <tt>String</tt> objects
      *
+     * @see #split(String,char,boolean)
      * @see #split(String)
      * @see #split(String,String)
      * @see #split(String,Collection)
@@ -179,15 +275,60 @@ public final class TextUtil
      */
     public static String[] split (String s, char delim)
     {
-        return split (s, "" + delim);
+        return split (s, "" + delim, false);
+    }
+
+    /**
+     * <p>Split a string into one or more strings, based on a delimiter.
+     * This method is intended to be reminiscent of the corresponding perl
+     * or awk <i>split()</i> function, though without regular expression
+     * support.</p>
+     *
+     * <p>Note that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
+     * This method does not use regular expressions.</p>
+     *
+     * @param s                   the string to split
+     * @param delim               the delimiter
+     * @param preserveEmptyFields Whether to parse through empty tokens or
+     *                            preserve them. For example, given the string
+     *                            string "a:b::c" and a delimiter of ":",
+     *                            if <tt>preserveEmptyStrings</tt> is
+     *                            <tt>true</tt>, then this method will return
+     *                            four strings, "a", "b", "", "c". If
+     *                            <tt>preserveEmptyStrings</tt> is
+     *                            <tt>false</tt>, then this method will return
+     *                            three strings, "a", "b", "c" (since the
+     *                            two adjacent ":" characters are treated as
+     *                            one delimiter.)
+     *
+     * @return an array of <tt>String</tt> objects
+     *
+     * @see #split(String,char)
+     * @see #split(String)
+     * @see #split(String,String)
+     * @see #split(String,Collection)
+     * @see #split(String,char,Collection)
+     * @see #split(String,String,Collection)
+     */
+    public static String[] split (String  s,
+                                  char    delim,
+                                  boolean preserveEmptyFields)
+    {
+        return split (s, String.valueOf (delim), preserveEmptyFields);
     }
 
     /**
      * <p>Split a string into one or more strings, based on a set of
      * delimiter. This method is intended to be reminiscent of the
      * corresponding perl or awk <i>split()</i> function, though without
-     * regular expression support. This method uses a
-     * <tt>StringTokenizer</tt> to do the actual work.</p>
+     * regular expression support. This version of <tt>split()</tt> does
+     * not preserve empty strings. That is, the string "a:b::c", when split
+     * with a ":" delimiter, yields three fields ("a", "b", "c"), since the
+     * two adjacent ":" characters are treated as one delimiter. To
+     * preserve empty strings, pass <tt>true</tt> as the
+     * <tt>preserveEmptyFields</tt> parameter to the
+     * {@link #split(String,String,boolean)} method.</p>
      *
      * <p>Note that the 1.4 JDK introduces a regular expression-based
      * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
@@ -198,6 +339,7 @@ public final class TextUtil
      *
      * @return an array of <tt>String</tt> objects
      *
+     * @see #split(String,String,boolean)
      * @see #split(String)
      * @see #split(String,char)
      * @see #split(String,Collection)
@@ -206,28 +348,100 @@ public final class TextUtil
      */
     public static String[] split (String s, String delimSet)
     {
+        return split (s, delimSet, false);
+    }
+
+    /**
+     * <p>Split a string into one or more strings, based on a set of
+     * delimiter. This method is intended to be reminiscent of the
+     * corresponding perl or awk <i>split()</i> function, though without
+     * regular expression support.</p>
+     *
+     * <p>Note that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
+     * This method does not use regular expressions.</p>
+     *
+     * @param s                   the string to split
+     * @param delimSet            set of delimiters, or null to use white space
+     * @param preserveEmptyFields Whether to parse through empty tokens or
+     *                            preserve them. For example, given the string
+     *                            string "a:b::c" and a delimiter of ":",
+     *                            if <tt>preserveEmptyStrings</tt> is
+     *                            <tt>true</tt>, then this method will return
+     *                            four strings, "a", "b", "", "c". If
+     *                            <tt>preserveEmptyStrings</tt> is
+     *                            <tt>false</tt>, then this method will return
+     *                            three strings, "a", "b", "c" (since the
+     *                            two adjacent ":" characters are treated as
+     *                            one delimiter.)
+     *
+     * @return an array of <tt>String</tt> objects
+     *
+     * @see #split(String,String)
+     * @see #split(String)
+     * @see #split(String,char)
+     * @see #split(String,Collection)
+     * @see #split(String,char,Collection)
+     * @see #split(String,String,Collection)
+     */
+    public static String[] split (String  s,
+                                  String  delimSet,
+                                  boolean preserveEmptyFields)
+    {
         String[]        result = null;
         StringTokenizer tok;
+        Collection      temp = new ArrayList();
 
-        if (delimSet != null)
-            tok = new StringTokenizer (s, delimSet);
-        else
-            tok = new StringTokenizer (s);
+        if (delimSet == null)
+            delimSet = " \t\n\r";
 
-        result = new String[tok.countTokens()];
+        tok = new StringTokenizer (s, delimSet, preserveEmptyFields);
 
-        for (int i = 0; i < result.length; i++)
-            result[i] = tok.nextToken();
+        // Assume we'll never see the delimiter unless preserveEmptyFields is
+        // set.
 
+        boolean lastWasDelim = true;
+        while (tok.hasMoreTokens())
+        {
+            String token = tok.nextToken();
+
+            if (preserveEmptyFields &&
+                (token.length() == 1) &&
+                (delimSet.indexOf (token.charAt (0)) != -1))
+            {
+                if (lastWasDelim)
+                    token = "";
+                else
+                {
+                    lastWasDelim = true;
+                    continue;
+                }
+            }
+
+            else
+            {
+                lastWasDelim = false;
+            }
+
+            temp.add (token);
+        }
+
+        result = new String[temp.size()];
+        temp.toArray (result);
         return result;
     }
 
     /**
-     * <p>Split a string into one or more strings, based on a delimiter. This
-     * method is intended to be reminiscent of the corresponding perl or
-     * awk <i>split()</i> function, though without regular expression
-     * support. This method uses a <tt>StringTokenizer</tt> to do the
-     * actual work.</p>
+     * <p>Split a string into one or more strings, based on a delimiter.
+     * This method is intended to be reminiscent of the corresponding perl
+     * or awk <i>split()</i> function, though without regular expression
+     * support. This version of <tt>split()</tt> does not preserve empty
+     * strings. That is, the string "a:b::c", when split with a ":"
+     * delimiter, yields three fields ("a", "b", "c"), since the two
+     * adjacent ":" characters are treated as one delimiter. To preserve
+     * empty strings, pass <tt>true</tt> as the
+     * <tt>preserveEmptyFields</tt> parameter to the
+     * {@link #split(String,char,Collection,boolean)} method.</p>
      *
      * <p>Note that the 1.4 JDK introduces a regular expression-based
      * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
@@ -239,6 +453,7 @@ public final class TextUtil
      *
      * @return the number of <tt>String</tt> objects added to the collection
      *
+     * @see #split(String,char,Collection,boolean)
      * @see #split(String)
      * @see #split(String,char)
      * @see #split(String,Collection)
@@ -247,7 +462,92 @@ public final class TextUtil
      */
     public static int split (String s, char delim, Collection collection)
     {
-        return split (s, "" + delim, collection);
+        return split (s, String.valueOf (delim), collection);
+    }
+
+    /**
+     * <p>Split a string into one or more strings, based on a delimiter.
+     * This method is intended to be reminiscent of the corresponding perl
+     * or awk <i>split()</i> function, though without regular expression
+     * support.</p>
+     *
+     * <p>Note that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
+     * This method does not use regular expressions.</p>
+     *
+     * @param s                   the string to split
+     * @param delim               the delimiter
+     * @param collection          where to store the split strings
+     * @param preserveEmptyFields Whether to parse through empty tokens or
+     *                            preserve them. For example, given the string
+     *                            string "a:b::c" and a delimiter of ":",
+     *                            if <tt>preserveEmptyStrings</tt> is
+     *                            <tt>true</tt>, then this method will return
+     *                            four strings, "a", "b", "", "c". If
+     *                            <tt>preserveEmptyStrings</tt> is
+     *                            <tt>false</tt>, then this method will return
+     *                            three strings, "a", "b", "c" (since the
+     *                            two adjacent ":" characters are treated as
+     *                            one delimiter.)
+     *
+     * @return the number of <tt>String</tt> objects added to the collection
+     *
+     * @see #split(String,char,Collection)
+     * @see #split(String)
+     * @see #split(String,char)
+     * @see #split(String,Collection)
+     * @see #split(String,String)
+     * @see #split(String,String,Collection)
+     */
+    public static int split (String     s,
+                             char       delim,
+                             Collection collection,
+                             boolean    preserveEmptyFields)
+    {
+        return split (s,
+                      String.valueOf (delim),
+                      collection,
+                      preserveEmptyFields);
+    }
+
+    /**
+     * <p>Split a string into one or more strings, based on a set of
+     * delimiter. This method is intended to be reminiscent of the
+     * corresponding perl or awk <i>split()</i> function, though without
+     * regular expression support. This version of <tt>split()</tt> does
+     * not preserve empty strings. That is, the string "a:b::c", when split
+     * with a ":" delimiter, yields three fields ("a", "b", "c"), since the
+     * two adjacent ":" characters are treated as one delimiter. To
+     * preserve empty strings, pass <tt>true</tt> as the
+     * <tt>preserveEmptyFields</tt> parameter to the
+     * {@link #split(String,String,Collection,boolean)} method.</p>
+     *
+     * <p>Note that the 1.4 JDK introduces a regular expression-based
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class. This
+     * method does not use regular expressions.</p> This version of
+     * <tt>split()</tt> does not preserve empty strings. That is, the
+     * string "a:b::c", when split with a ":" delimiter, yields three
+     * fields ("a", "b", "c"), since the two adjacent ":" characters are
+     * treated as one delimiter. To preserve empty strings, pass
+     * <tt>true</tt> as the <tt>preserveEmptyFields</tt> parameter to the
+     * {@link #split(String,String,Collection,boolean)} method.</p>
+     *
+     * @param s          the string to split
+     * @param delimSet   set of delimiters
+     * @param collection where to store the split strings
+     *
+     * @return the number of <tt>String</tt> objects added to the collection
+     *
+     * @see #split(String,String,Collection,boolean)
+     * @see #split(String)
+     * @see #split(String,char)
+     * @see #split(String,Collection)
+     * @see #split(String,String)
+     * @see #split(String,char,Collection)
+     */
+    public static int split (String s, String delimSet, Collection collection)
+    {
+        return split (s, delimSet, collection, false);
     }
 
     /**
@@ -258,26 +558,45 @@ public final class TextUtil
      * <tt>StringTokenizer</tt> to do the actual work.</p>
      *
      * <p>Note that the 1.4 JDK introduces a regular expression-based
-     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.</p>
-     * <p>Note that the 1.4 JDK introduces a regular expression-based
-     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class.
-     * This method does not use regular expressions.</p>
+     * <tt>split()</tt> method in the <tt>java.lang.String</tt> class. This
+     * method does not use regular expressions.</p> This version of
+     * <tt>split()</tt> does not preserve empty strings. That is, the
+     * string "a:b::c", when split with a ":" delimiter, yields three
+     * fields ("a", "b", "c"), since the two adjacent ":" characters are
+     * treated as one delimiter. To preserve empty strings, pass
+     * <tt>true</tt> as the <tt>preserveEmptyFields</tt> parameter to the
+     * {@link #split(String,String,Collection,boolean)} method.</p>
      *
-     * @param s          the string to split
-     * @param delimSet   set of delimiters
-     * @param collection where to store the split strings
+     * @param s                   the string to split
+     * @param delimSet            set of delimiters
+     * @param collection          where to store the split strings
+     * @param preserveEmptyFields Whether to parse through empty tokens or
+     *                            preserve them. For example, given the string
+     *                            string "a:b::c" and a delimiter of ":",
+     *                            if <tt>preserveEmptyStrings</tt> is
+     *                            <tt>true</tt>, then this method will return
+     *                            four strings, "a", "b", "", "c". If
+     *                            <tt>preserveEmptyStrings</tt> is
+     *                            <tt>false</tt>, then this method will return
+     *                            three strings, "a", "b", "c" (since the
+     *                            two adjacent ":" characters are treated as
+     *                            one delimiter.)
      *
      * @return the number of <tt>String</tt> objects added to the collection
      *
+     * @see #split(String,String,Collection)
      * @see #split(String)
      * @see #split(String,char)
      * @see #split(String,Collection)
      * @see #split(String,String)
      * @see #split(String,char,Collection)
      */
-    public static int split (String s, String delimSet, Collection collection)
+    public static int split (String     s,
+                             String     delimSet,
+                             Collection collection,
+                             boolean    preserveEmptyFields)
     {
-        String[] strs = split (s, delimSet);
+        String[] strs = split (s, delimSet, preserveEmptyFields);
 
         for (int i = 0; i < strs.length; i++)
             collection.add (strs[i]);
