@@ -41,6 +41,8 @@ import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.io.Serializable;
 
+import java.nio.channels.FileLock;
+
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
@@ -351,6 +353,61 @@ public class FileHashMap extends AbstractMap
     \*----------------------------------------------------------------------*/
 
     /**
+     * Wraps the values data file and other administrative references related
+     * to it.
+     */
+    private class ValuesFile
+    {
+        RandomAccessFile file;
+        FileLock         lock;
+
+        ValuesFile (File f)
+            throws IOException
+        {
+            file = new RandomAccessFile (f, "rw");
+
+            // Assert a file-wide lock, to prevent anyone else from
+            // modifying the file at the same time.
+
+            try
+            {
+                log.debug ("Asserting lock on file \"" + f.getPath() + "\"");
+                lock = file.getChannel().tryLock();
+                if (lock == null)
+                    throw new IOException ("File already locked.");
+            }
+
+            catch (IOException ex)
+            {
+                try
+                {
+                    file.close();
+                }
+
+                catch (IOException ex2)
+                {
+                    log.error ("Can't close \"" + f.getPath() + "\"", ex2);
+                }
+
+                file = null;
+                IOException ex3 = new IOException ("Unable to assert file "
+                                                 + "lock on file \""
+                                                 + f.getPath()
+                                                 + "\"");
+                ex3.initCause (ex);
+                throw ex3;
+            }
+        }
+
+        void close()
+            throws IOException
+        {
+            // Lock is implicitly released on close.
+            file.close();
+        }
+    }
+
+    /**
      * Comparator for FileHashMapEntry objects. Sorts by natural order,
      * which is file position.
      */
@@ -484,7 +541,7 @@ public class FileHashMap extends AbstractMap
      */
     private class ValueSet extends AbstractSet
     {
-        RandomAccessFile  dataFile = FileHashMap.this.dataFile;
+        ValuesFile valuesDB = FileHashMap.this.valuesDB;
 
         ValueSet()
         {
@@ -589,7 +646,7 @@ public class FileHashMap extends AbstractMap
         {
             try
             {
-                dataFile.seek (pos);
+                valuesDB.file.seek (pos);
             }
 
             catch (IOException ex)
@@ -907,14 +964,14 @@ public class FileHashMap extends AbstractMap
     private File indexFilePath = null;
 
     /**
-     * The hash (data) file.
+     * The values file.
      */
-    private File dataFilePath = null;
+    private File valuesDBPath = null;
 
     /**
-     * The open hash (data) file.
+     * The open values database.
      */
-    private RandomAccessFile dataFile = null;
+    private ValuesFile valuesDB = null;
 
     /**
      * The flags specified to the constructor.
@@ -1010,10 +1067,10 @@ public class FileHashMap extends AbstractMap
         if (filePrefix == null)
             filePrefix = "fmh";
 
-        this.dataFilePath = File.createTempFile (filePrefix, DATA_FILE_SUFFIX);
-        this.dataFilePath.deleteOnExit();
+        this.valuesDBPath = File.createTempFile (filePrefix, DATA_FILE_SUFFIX);
+        this.valuesDBPath.deleteOnExit();
 
-        createNewMap (this.dataFilePath);
+        createNewMap (this.valuesDBPath);
     }
 
     /**
@@ -1091,13 +1148,13 @@ public class FileHashMap extends AbstractMap
         this.filePrefix = pathPrefix;
         this.flags      = flags;
 
-        dataFilePath    = new File (pathPrefix + DATA_FILE_SUFFIX);
+        valuesDBPath    = new File (pathPrefix + DATA_FILE_SUFFIX);
         indexFilePath   = new File (pathPrefix + INDEX_FILE_SUFFIX);
 
         if ((flags & TRANSIENT) != 0)
             flags &= (~NO_CREATE);
 
-        if (dataFilePath.exists())
+        if (valuesDBPath.exists())
             filesFound++;
         if (indexFilePath.exists())
             filesFound++;
@@ -1115,7 +1172,7 @@ public class FileHashMap extends AbstractMap
                              + "was not set.",
                                new Object[]
                                {
-                                   dataFilePath.getName(),
+                                   valuesDBPath.getName(),
                                    indexFilePath.getName()
                                });
             }
@@ -1123,7 +1180,7 @@ public class FileHashMap extends AbstractMap
             // FORCE_OVERWRITE is set. Wipe out the files, and reset the
             // existence count.
 
-            dataFilePath.delete();
+            valuesDBPath.delete();
             indexFilePath.delete();
             filesFound = 0;
         }
@@ -1142,7 +1199,7 @@ public class FileHashMap extends AbstractMap
                                  + "FileHashMap.NO_CREATE flag was set.");
                 }
 
-                createNewMap (this.dataFilePath);
+                createNewMap (this.valuesDBPath);
                 break;
 
             case 1:
@@ -1154,12 +1211,12 @@ public class FileHashMap extends AbstractMap
                              + "not.",
                                new Object[]
                                {
-                                   dataFilePath.getName(),
+                                   valuesDBPath.getName(),
                                    indexFilePath.getName()
                                });
 
             case 2:
-                dataFile = openDataFile (dataFilePath);
+                valuesDB = new ValuesFile (valuesDBPath);
                 loadIndex();
                 break;
 
@@ -1189,14 +1246,14 @@ public class FileHashMap extends AbstractMap
         {
             // Implement the clear operation by truncating the data file.
 
-            dataFile.getChannel().truncate (0);
+            valuesDB.file.getChannel().truncate (0);
             modified = true;
         }
 
         catch (IOException ex)
         {
             log.error ("Failed to truncate FileHashMap file \""
-                     + dataFilePath.getPath()
+                     + valuesDBPath.getPath()
                      + "\"",
                        ex);
             valid = false;
@@ -1223,16 +1280,16 @@ public class FileHashMap extends AbstractMap
             {
                 // Be sure to remove the data files.
                 
-                if (dataFile != null)
+                if (valuesDB != null)
                 {
-                    dataFile.close();
-                    dataFile = null;
+                    valuesDB.close();
+                    valuesDB = null;
                 }
 
-                if (dataFilePath != null)
+                if (valuesDBPath != null)
                 {
-                    dataFilePath.delete();
-                    dataFilePath = null;
+                    valuesDBPath.delete();
+                    valuesDBPath = null;
                 }
 
                 if (indexFilePath != null)
@@ -1622,14 +1679,14 @@ public class FileHashMap extends AbstractMap
      * Initialize a new index and data file for a hash map being created.
      * Used only by the constructors.
      *
-     * @param dataFilePath  path to the data file
+     * @param valuesDBPath  path to the data file
      *
      * @throws IOException I/O error
      */
-    private void createNewMap (File dataFilePath)
+    private void createNewMap (File valuesDBPath)
         throws IOException
     {
-        this.dataFile  = openDataFile (dataFilePath);
+        this.valuesDB = new ValuesFile (valuesDBPath);
         this.indexMap = new HashMap();
     }
 
@@ -1760,19 +1817,6 @@ public class FileHashMap extends AbstractMap
     }
 
     /**
-     * Opens and validates a data file. File doesn't have to exist.
-     *
-     * @param f   The file to open
-     *
-     * @throws IOException on error
-     */
-    private RandomAccessFile openDataFile (File f)
-        throws IOException
-    {
-        return new RandomAccessFile (f, "rw");
-    }
-
-    /**
      * Read an object from a specific location in the random access file
      * data file.
      *
@@ -1801,8 +1845,8 @@ public class FileHashMap extends AbstractMap
 
         // Load the serialized object into memory.
 
-        this.dataFile.seek (entry.getFilePosition());
-        if ( (sizeRead = this.dataFile.read (byteBuf)) != size )
+        this.valuesDB.file.seek (entry.getFilePosition());
+        if ( (sizeRead = this.valuesDB.file.read (byteBuf)) != size )
         {
             throw new IOException ("Expected to read "
                                  + size
@@ -1919,13 +1963,13 @@ public class FileHashMap extends AbstractMap
             filePos = findBestFitGap (size);
 
         if (filePos == -1)
-            filePos = this.dataFile.length();
+            filePos = this.valuesDB.file.length();
 
-        this.dataFile.seek (filePos);
+        this.valuesDB.file.seek (filePos);
 
         // Write the bytes of the serialized object.
 
-        this.dataFile.write (byteStream.toByteArray());
+        this.valuesDB.file.write (byteStream.toByteArray());
 
         // Return the entry.
 
