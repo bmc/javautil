@@ -184,6 +184,7 @@
              version="true"
 	     splitindex="true"
              use="true"
+	     overview="overview.html"
 	     excludepackagenames="org.clapper.util.*.test"
 	     packagenames="org.clapper.util.*"
 	     classpathref="project.class.path"
