@@ -61,7 +61,7 @@ import java.util.logging.Level;
  * by Commons Logging. (e.g.,, a "debug" message uses the same level as
  * a Commons Logging "debug" message.) Those mappings are:</p>
  *
- * <table border="0">
+ * <table border="1">
  *   <tr valign="top">
  *     <th><tt>org.clapper.util.logging.Logger</tt> method</th>
  *     <th>Corresponding <tt>java.util.logging.Level</tt> value</th>
