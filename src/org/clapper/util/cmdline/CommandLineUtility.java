@@ -58,14 +58,20 @@ import java.util.NoSuchElementException;
  *             Foo foo = new Foo();
  *             foo.execute (args);
  *         }
- *    
- *         catch (CommandLineUtilityException ex)
+ * 
+ *         catch (CommandLineUsageException ex)
  *         {
  *             // Already reported
- *    
+ * 
  *             System.exit (1);
  *         }
- *    
+ * 
+ *         catch (CommandLineException ex)
+ *         {
+ *             System.err.println (ex.getMessage());
+ *             System.exit (1);
+ *         }
+ * 
  *         System.exit (0);
  *     }
  *
@@ -222,7 +228,7 @@ public abstract class CommandLineUtility
                 if (! (arg.charAt (0) == '-') )
                     break;
 
-                if (arg.equals ("-logging"))
+                if (arg.equals ("--logging"))
                     Logger.enableLogging();
                 else
                     parseCustomOption (arg, it);
