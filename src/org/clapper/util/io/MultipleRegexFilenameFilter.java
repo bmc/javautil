@@ -26,12 +26,19 @@
 
 package org.clapper.util.io;
 
-import java.io.*;
-import java.util.*;
-import java.text.*;
-import org.apache.oro.io.*;
-import org.apache.oro.text.*;
-import org.apache.oro.text.regex.*;
+import java.io.FilenameFilter;
+import java.io.File;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
+import org.apache.oro.text.regex.PatternCompiler;
+import org.apache.oro.text.regex.Perl5Compiler;
+import org.apache.oro.text.regex.PatternMatcher;
+import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.oro.text.regex.MalformedPatternException;
+import org.apache.oro.text.regex.Pattern;
 
 /**
  * <p><tt>MultipleRegexFilenameFilter</tt> implements a
