@@ -40,7 +40,9 @@ import java.io.Serializable;
  * additional property: It maintains a list of the map's keys in the order
  * they were added to the map. This additional capability imposes a small
  * amount of extra overhead on insertion and a larger amount of overhead on
- * key removal, but absolutely no additional key lookup overhead.</p>
+ * key removal, but absolutely no additional key lookup overhead. This
+ * class is conceptually similar to (though less feature-rich than) the
+ * <tt>java.util.LinkedHashMap</tt> class added in JDK 1.4.</p>
  *
  * @version <tt>$Revision$</tt>
  *

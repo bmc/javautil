@@ -60,6 +60,9 @@ import org.apache.oro.text.regex.Pattern;
  * {@link <a href="http://jakarta.apache.org/oro/">Jakarta ORO</a>}
  * regular expression classes.</p>
  *
+ * @see CombinationFilenameFilter
+ * @see CombinationFileFilter
+ *
  * @version <tt>$Revision$</tt>
  *
  * @author Copyright &copy; 2004 Brian M. Clapper

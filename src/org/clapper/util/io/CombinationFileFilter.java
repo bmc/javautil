@@ -48,7 +48,8 @@ import java.io.File;
  * the <tt>CombinationFileFilter</tt> object.</p>
  *
  * @see FileFilter
- * @see CombinationFileFilter
+ * @see CombinationFilenameFilter
+ * @see MultipleRegexFilenameFilter
  *
  * @version <tt>$Revision$</tt>
  *
