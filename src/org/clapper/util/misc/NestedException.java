@@ -27,10 +27,12 @@
 package org.clapper.util.misc;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.LineNumberReader;
-import java.io.StringWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+
 import java.util.Locale;
 
 /**
@@ -63,7 +65,6 @@ public class NestedException extends Exception
     private String    bundleMessageKey   = null;
     private String    defaultMessage     = null;
     private Object[]  messageParams      = null;
-    private Locale    messageLocale      = null;
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -258,9 +259,7 @@ public class NestedException extends Exception
      */
     public String getMessage()
     {
-        // messageLocale is only set if printStackTrace() is called with a
-        // locale.
-        return getMessage (messageLocale);
+        return getMessage (Locale.getDefault());
     }
 
     /**
@@ -418,7 +417,7 @@ public class NestedException extends Exception
 
             pw.print (s);
 
-            ex = getCause();
+            ex = ex.getCause();
             if (ex != null)
             {
                 if (elideNewlines)
@@ -465,5 +464,101 @@ public class NestedException extends Exception
 	String s = getClass().getName();
 	String message = getMessage();
 	return (message != null) ? (s + ": " + message) : s;
+    }
+
+    /**
+     * Print a stack trace to standard error.
+     *
+     * @see #printStackTrace(Locale)
+     * @see #printStackTrace(PrintWriter)
+     * @see #printStackTrace(PrintStream)
+     */
+    public void printStackTrace()
+    {
+        this.printStackTrace (System.err);
+    }
+
+    /**
+     * Print a stack trace to standard error, using the specified locale.
+     *
+     * @param locale  the locale to use, or null for the default
+     *
+     * @see #printStackTrace(Locale)
+     * @see #printStackTrace(PrintWriter)
+     * @see #printStackTrace(PrintStream)
+     */
+    public void printStackTrace (Locale locale)
+    {
+        this.printStackTrace (System.err, locale);
+    }
+
+    /**
+     * Print a stack trace.
+     *
+     * @param out  where to dump the stack trace
+     *
+     * @see #printStackTrace()
+     * @see #printStackTrace(PrintWriter,Locale)
+     * @see #printStackTrace(PrintStream)
+     */
+    public void printStackTrace (PrintWriter out)
+    {
+        super.printStackTrace (out);
+    }
+
+    /**
+     * Print a stack trace, using a specific locale for the output.
+     *
+     * @param out     where to dump the stack trace
+     * @param locale  the locale to use, or null for the default
+     *
+     * @see #printStackTrace()
+     * @see #printStackTrace(PrintWriter)
+     * @see #printStackTrace(PrintStream,Locale)
+     */
+    public void printStackTrace (PrintWriter out, Locale locale)
+    {
+        if (locale == null)
+            super.printStackTrace (out);
+
+        else
+        {
+            Locale oldLocale = Locale.getDefault();
+            Locale.setDefault (locale);
+
+            super.printStackTrace (out);
+            out.flush();
+
+            Locale.setDefault (oldLocale);
+        }
+    }
+
+    /**
+     * Print a stack trace.
+     *
+     * @param out  where to dump the stack trace
+     *
+     * @see #printStackTrace()
+     * @see #printStackTrace(PrintStream,Locale)
+     * @see #printStackTrace(PrintWriter)
+     */
+    public void printStackTrace (PrintStream out)
+    {
+        super.printStackTrace (out);
+    }
+
+    /**
+     * Print a stack trace, using a specific locale for the output.
+     *
+     * @param out     where to dump the stack trace
+     * @param locale  the locale to use, or null for the default
+     *
+     * @see #printStackTrace()
+     * @see #printStackTrace(PrintStream)
+     * @see #printStackTrace(PrintWriter,Locale)
+     */
+    public void printStackTrace (PrintStream out, Locale locale)
+    {
+        this.printStackTrace (new PrintWriter (out), locale);
     }
 }
