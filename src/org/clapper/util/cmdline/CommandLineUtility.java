@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
  *   <li>Parameter-parsing logic, with call-outs for custom parameters
  *   <li>Built-in support a --logging parameter, which enables logging
  *       via the Jakarta Commons Logging API, by calling
- *       {@link org.clapper.util.misc.Logging#enableLogging()}
+ *       {@link org.clapper.util.misc.Logger#enableLogging()}
  *   <li>Automatic generation of a usage message, with a call-out that
  *       permits subclasses to add subclass-specific usage information.
  *   <li>Automatic reporting of exceptions

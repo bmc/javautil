@@ -82,7 +82,7 @@ public final class UsageInfo
      * its explanation to the usage information at the end of the list of
      * positional parameters.
      *
-     * @param option       The parameter placeholder string
+     * @param param         The parameter placeholder string
      * @param explanation  A one-line explanation for the parameter. The line
      *                     can be as long as you want, and can contain multiple
      *                     sentences, but it must not contain a newline.
