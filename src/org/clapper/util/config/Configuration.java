@@ -329,6 +329,11 @@ public class Configuration
     \*----------------------------------------------------------------------*/
 
     /**
+     * The URL of the configuration file, if available
+     */
+    private URL configURL = null;
+
+    /**
      * List of sections, in order encountered. Each element is a reference to
      * a Section object.
      */
@@ -461,6 +466,7 @@ public class Configuration
     {
         sectionsInOrder.clear();
         sectionsByName.clear();
+        configURL = null;
     }
 
     /**
@@ -477,6 +483,17 @@ public class Configuration
     public boolean containsSection (String sectionName)
     {
         return (sectionsByName.get (sectionName) != null);
+    }
+
+    /**
+     * Get the URL of the configuration file, if available.
+     *
+     * @return the URL of the configuration file, or null if the file
+     *         was parsed from an <tt>InputStream</tt>
+     */
+    public URL getConfigurationFileURL()
+    {
+        return configURL;
     }
 
     /**
@@ -821,12 +838,14 @@ public class Configuration
      * @throws IOException            read error
      * @throws ConfigurationException parse error
      */
-    private void load (File file)
+    public void load (File file)
         throws IOException,
                ConfigurationException
     {
         clear();
-        parse (new FileInputStream (file), file.toURL());
+        URL url = file.toURL();
+        parse (new FileInputStream (file), url);
+        this.configURL = url;
     }
 
     /**
@@ -839,13 +858,15 @@ public class Configuration
      * @throws IOException             can't open or read file
      * @throws ConfigurationException  error in configuration data
      */
-    private void load (String path)
+    public void load (String path)
         throws FileNotFoundException,
                IOException,
                ConfigurationException
     {
         clear();
-        parse (new FileInputStream (path), new File (path).toURL());
+        URL url = new File (path).toURL();
+        parse (new FileInputStream (path), url);
+        this.configURL = url;
     }
 
     /**
@@ -856,12 +877,13 @@ public class Configuration
      * @throws IOException            read error
      * @throws ConfigurationException parse error
      */
-    private void load (URL url)
+    public void load (URL url)
         throws IOException,
                ConfigurationException
     {
         clear();
         parse (url.openStream(), url);
+        this.configURL = url;
     }
 
     /**
