@@ -8,7 +8,10 @@
   <description>
     Build file for "util" Java classes
   </description>
+
   <!-- set global properties for this build -->
+
+  <property name="jarname" value="org-clapper-util.jar"/>
   <property name="build" location="classes"/>
   <property name="dist"  location="dist"/>
   <property name="build.compiler" value="jikes"/>
@@ -111,7 +114,7 @@
           description="Generate the distribution">
     <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
     <mkdir dir="${dist}/lib"/>
-    <jar jarfile="${dist}/lib/util.jar" basedir="${build}"/>
+    <jar jarfile="${dist}/lib/${jarname}" basedir="${build}"/>
   </target>
 
   <target name="doc"
