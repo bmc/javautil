@@ -42,12 +42,15 @@
   <property name="build.compiler" value="jikes"/>
   <property name="build.compiler.emacs" value="true"/>
   <property name="compile.listfiles" value="no"/>
-  <property name="code_jarfile" value="org-clapper-util.jar"/>
-  <property name="docs_zipfile" value="javadocs.zip"/>
+  <property name="build.info.file" 
+            value="${build}/org/clapper/util/misc/BuildInfo.properties"/>
+  <property name="code_jar_name" value="ocutil"/>
+  <property name="code_jar_file" value="${code_jar_name}.jar"/>
+  <property name="code_jar_path" value="${dist}/lib/${code_jar_file}"/>
   <property name="docs_top_dir" value="${dist}/docs"/>
   <property name="docs_api_dir" value="${docs_top_dir}/api"/>
-  <property name="src_zipfile" value="src.zip"/>
   <property name="zip_dir_prefix" value="org/clapper/util/"/>
+  <property name="bundled_dir" value="${dist}/bundled"/>
 
   <!--
   ***************************************************************************
@@ -83,7 +86,10 @@
 
   <target name="init">
     <!-- Create the time stamp -->
-    <tstamp/>
+    <tstamp>
+      <format property="build.date" pattern="dd MMMM, yyyy HH:mm:ss z"
+              locale="en"/>
+    </tstamp>
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build}"/>
     <depend srcdir="." destdir="${build}"/>
@@ -95,8 +101,11 @@
   ***************************************************************************
   -->
 
-  <target name="testers" depends="lib,lib.testers,mail.testers"/>
+  <target name="props"><echoproperties/></target>
+
   <target name="all" depends="lib,testers"/>
+
+  <target name="testers" depends="lib,lib.testers,mail.testers"/>
 
   <target name="misc" depends="init">
     <javac srcdir="." 
@@ -151,16 +160,13 @@
   the Java Activation Framework are both in the CLASSPATH
   -->
 
-  <target name="-check.jaf.exists">
-    <available classname="javax.activation.DataSource" 
-	       property="jaf.exists" value="true"/>
-  </target>
-
-  <target name="-check.javamail.exists" 
-	  depends="-check.jaf.exists"
-	  if="jaf.exists">
-    <available classname="javax.mail.Session" 
-	       property="javamail.exists" value="true"/>
+  <target name="-check.javamail.exists">
+    <condition property="javamail.exists">
+      <and>
+        <available classname="javax.activation.DataHandler"/>
+        <available classname="javax.mail.Transport"/>
+      </and>
+    </condition>
   </target>
 
   <target name="-check.javamail" 
@@ -187,8 +193,62 @@
     </javac>
   </target>
 
-  <target name="lib" depends="misc,io,text,config,mail">
+  <target name="ant.tasks">
+    <javac srcdir="." 
+	   depend="true"
+	   listfiles="${compile.listfiles}"
+	   destdir="${build}">
+      <classpath refid="project.class.path"/>
+      <patternset>
+        <include name="ant/*.java"/>
+      </patternset>
+    </javac>
   </target>
+
+  <!-- Load the API version from the org.clapper.util.misc.Version class -->
+
+  <target name="-get.version" description="Get the version stamp">
+    <loadproperties srcfile="${build}/org/clapper/util/misc/Version.class">
+      <filterchain>
+        <classconstants/>
+      </filterchain>
+    </loadproperties>
+
+    <echo>API Version: ${API_VERSION}</echo>
+  </target>
+
+  <target name="version" depends="-get.version"/>
+
+  <target name="-build.info" depends="-get.version"
+          description="Create build info properties file">
+
+    <taskdef name="host" 
+             classname="org.clapper.util.ant.AntHostnameTask"
+             classpath="${build}"/>
+
+    <condition property="compiler" value="${build.compiler}">
+      <isset property="build.compiler"/>
+    </condition>
+
+    <condition property="compiler" value="javac">
+      <not>
+        <isset property="build.compiler"/>
+      </not>
+    </condition>
+
+    <host property="build.host"/>
+    <echo file="${build.info.file}" append="false">
+# Automatically generated; do not edit.
+${BUILD_VM_KEY}: ${java.vm.name} ${java.vm.version} ${java.vm.vendor}
+${BUILD_COMPILER_KEY}: ${compiler}
+${BUILD_OS_KEY}: ${os.name} ${os.version} ${os.arch}
+${BUILD_DATE_KEY}: ${build.date}
+${BUILT_BY_KEY}: ${user.name} on ${build.host}
+${BUILD_ANT_VERSION_KEY}: ${ant.version}
+    </echo>
+  </target>
+
+  <target name="lib" depends="misc,io,text,config,mail,ant.tasks,-build.info"/>
 
   <target name="mail.testers" depends="-check.javamail,lib"
           if="javamail.exists"
@@ -250,26 +310,37 @@
   ***************************************************************************
   -->
 
-  <target name="dist" depends="all"
-          description="Generate the distribution">
-    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
-    <mkdir dir="${dist}/lib"/>
-    <jar jarfile="${dist}/lib/${code_jarfile}" basedir="${build}"/>
+  <target name="-set.version.based.properties" depends="-get.version">
+    <property name="versioned_src_zipfile"
+              value="src-${API_VERSION}.zip"/>
+
+    <property name="versioned_code_jar_file" 
+              value="${code_jar_name}-${API_VERSION}.jar"/>
+
+    <property name="versioned_docs_zipfile" 
+              value="javadocs-${API_VERSION}.zip"/>
   </target>
 
-  <target name="doczip" depends="doc"
+  <target name="code.jar" depends="all"
+          description="Generate the distribution">
+    <mkdir dir="${dist}/lib"/>
+    <jar jarfile="${code_jar_path}" basedir="${build}"/>
+  </target>
+  <target name="dist" depends="code.jar"/>
+
+  <target name="-doczip" depends="doc"
           description="Builds the javadocs zip file">
-    <mkdir dir="${dist}"/>
-    <zip destfile="${dist}/${docs_zipfile}">
+    <mkdir dir="${bundled_dir}"/>
+    <zip destfile="${bundled_dir}/${versioned_docs_zipfile}">
       <zipfileset dir="${docs_top_dir}"
                   prefix="${zip_dir_prefix}"/>
     </zip>
   </target>
 
-  <target name="srczip" depends="clean"
+  <target name="-srczip" depends="clean"
           description="Generate the source jar">
-    <mkdir dir="${dist}"/>
-    <zip destfile="${dist}/${src_zipfile}">
+    <mkdir dir="${bundled_dir}"/>
+    <zip destfile="${bundled_dir}/${versioned_src_zipfile}">
       <zipfileset dir="." 
                   includes="**/*.java,**/*.html,**/*.xml"
                   excludes="**/CVS,${dist}/**,${build}/*"
@@ -277,8 +348,12 @@
     </zip>
   </target>
 
-  <target name="fulldist" depends="srczip,doczip,dist"
-          description="Generate the distribution and source jars"/>
+  <target name="fulldist" 
+          depends="lib,-set.version.based.properties,-srczip,-doczip,dist"
+          description="Generate the distribution and source jars">
+    <copy file="${code_jar_path}" 
+          tofile="${bundled_dir}/${versioned_code_jar_file}"/>
+  </target>
 
   <!--
   ***************************************************************************
