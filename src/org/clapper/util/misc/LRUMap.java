@@ -45,7 +45,7 @@ import java.io.Serializable;
  * <p>Note:</p>
  *
  * <ul>
- *   <li>The <tt>get()</tt> method "touches" (or "refreshes") an object,
+ *   <li>The <tt>put()</tt> method "touches" (or "refreshes") an object,
  *       making it "new" again, even if it simply replaces the value for
  *       an existing key.
  *   <li>The <tt>get()</tt> method also refreshes the retrieved object,
