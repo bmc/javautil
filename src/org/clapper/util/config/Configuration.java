@@ -760,6 +760,9 @@ public class Configuration
      *
      * @throws NoSuchSectionException no such section
      * @throws ConfigurationException bad numeric value
+     *
+     * @see #getOptionalCardinalValue
+     * @see #getRequiredIntegerValue
      */
     public int getOptionalIntegerValue (String sectionName,
                                         String variableName,
@@ -789,6 +792,9 @@ public class Configuration
      * @throws NoSuchSectionException  no such section
      * @throws NoSuchVariableException no such variable
      * @throws ConfigurationException  bad numeric value
+     *
+     * @see #getRequiredCardinalValue
+     * @see #getOptionalIntegerValue
      */
     public int getRequiredIntegerValue (String sectionName,
                                         String variableName)
@@ -817,6 +823,86 @@ public class Configuration
                                                   sectionName
                                               });
         }
+    }
+
+    /**
+     * Convenience method to get and convert an optional non-negative integer
+     * parameter. The default value applies if the variable is missing or
+     * is there but has an empty value. (The term "cardinal" is borrowed from
+     * the
+     * {@link <a href="http://www.research.compaq.com/SRC/m3defn/html/ordinal.html">Modula-3</a>}
+     * language.)
+     *
+     * @param sectionName   section name
+     * @param variableName  variable name
+     * @param defaultValue  default value if not found. Must be non-negative.
+     *
+     * @return the value, or the default value if not found
+     *
+     * @throws NoSuchSectionException no such section
+     * @throws ConfigurationException bad numeric value
+     *
+     * @see #getOptionalIntegerValue
+     * @see #getRequiredCardinalValue
+     */
+    public int getOptionalCardinalValue (String sectionName,
+                                         String variableName,
+                                         int    defaultValue)
+        throws NoSuchSectionException,
+               ConfigurationException
+    {
+        assert (defaultValue >= 0);
+
+        try
+        {
+            return getRequiredCardinalValue (sectionName, variableName);
+        }
+
+        catch (NoSuchVariableException ex)
+        {
+            return defaultValue;
+        }
+    }
+
+    /**
+     * Convenience method to get and convert a required integer parameter.
+     *
+     * @param sectionName   section name
+     * @param variableName  variable name
+     *
+     * @return the value
+     *
+     * @throws NoSuchSectionException  no such section
+     * @throws NoSuchVariableException no such variable
+     * @throws ConfigurationException  bad numeric value
+     *
+     * @see #getOptionalCardinalValue
+     * @see #getRequiredIntegerValue
+     */
+    public int getRequiredCardinalValue (String sectionName,
+                                         String variableName)
+        throws NoSuchSectionException,
+               NoSuchVariableException,
+               ConfigurationException
+    {
+        String sNum = getConfigurationValue (sectionName, variableName);
+        int i = getRequiredIntegerValue (sectionName, variableName);
+        if (i < 0)
+        {
+            throw new ConfigurationException
+                               (Package.BUNDLE_NAME,
+                                "Configuration.negativeCardinalValue",
+                                "Bad netaive numeric value \"{0}\" "
+                              + "for variable \"{1}\" in section \"{2}\"",
+                                new Object[]
+                                {
+                                    sNum,
+                                    variableName,
+                                    sectionName
+                                });
+        }
+
+        return i;
     }
 
     /**
