@@ -1,0 +1,80 @@
+<!--
+   Ant build file for clapper.org Java utility library
+
+   $Id$
+-->
+
+<project name="util" default="all" basedir=".">
+  <description>
+    Build file for "util" Java classes
+  </description>
+  <!-- set global properties for this build -->
+  <property name="build" location="build"/>
+  <property name="dist"  location="dist"/>
+  <property name="build.compiler" value="jikes"/>
+  <property name="build.compiler.emacs" value="true"/>
+  <property name="compile.listfiles" value="yes"/>
+
+  <path id="project.class.path">
+    <pathelement location="lib/"/>
+    <pathelement path="${java.class.path}/"/>
+    <pathelement path="build/"/>
+  </path>
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+    <depend srcdir="." destdir="${build}"/>
+  </target>
+
+   <patternset id="lib.sources">
+     <include name="**/*.java"/>
+     <exclude name="**/test/*.java"/>
+   </patternset>
+
+   <patternset id="test.sources">
+     <include name="**/test/*.java"/>
+   </patternset>
+
+  <target name="lib" depends="init"
+        description="compile the source, but not the testers">
+    <!-- Compile the java code from . into ${build} -->
+    <javac srcdir="." 
+	   depend="true"
+	   listfiles="${compile.listfiles}"
+	   destdir="${build}">
+      <classpath refid="project.class.path"/>
+      <patternset refid="lib.sources"/>
+    </javac>
+  </target>
+
+  <target name="testers" depends="lib"
+	  description="compile the testers">
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist}/lib"/>
+    <javac srcdir="." 
+	   depend="true"
+	   listfiles="${compile.listfiles}"
+	   destdir="${build}">
+      <classpath refid="project.class.path"/>
+      <patternset refid="test.sources"/>
+    </javac>
+  </target>
+
+  <target name="all" depends="lib,testers"/>
+
+  <target name="dist" depends="all"
+        description="generate the distribution">
+    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+    <jar jarfile="${dist}/lib/util.jar" basedir="${build}"/>
+  </target>
+
+  <target name="clean"
+        description="clean up" >
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+</project>
