@@ -33,7 +33,10 @@ import org.clapper.util.io.*;
  * </pre></blockquote>
  *
  * <p>At least one section is required. It is an error to have any variable
- * definitions before the first section header. Sections may be empty.</p>
+ * definitions before the first section header. Sections may be empty.
+ * The section name "system" is reserved. It doesn't really exist, but it's
+ * used during variable substitution (see below) to substitute from
+ * <tt>System.properties</tt>.</p>
  *
  * <h4>Section Name Syntax</h4>
  *
@@ -101,11 +104,15 @@ import org.clapper.util.io.*;
  * name of the variable to substitute. If the variable doesn't exist, or
  * has no value, an empty string is substituted.</p>
  *
+ * <p>The special section "system" is reserved. It doesn't actually
+ * exist in the configuration; however, you can refer to it during variable
+ * substitution to pull in values from <tt>System.properties</tt>.
+ *
  * <p>For example:</p>
  *
  * <blockquote><pre>
  * [main]
- * installation.directory=/usr/local/foo
+ * installation.directory=${system:user.home}/this_package
  * program.directory: ${installation.directory}/foo/programs
  *
  * [search]
@@ -184,6 +191,7 @@ public class Configuration
     private static final char   SECTION_END                = ']';
     private static final String INCLUDE                    = "%include";
     private static final int    MAX_INCLUDE_NESTING_LEVEL  = 50;
+    private static final String SYSTEM_SECTION_NAME        = "system";
 
     /*----------------------------------------------------------------------*\
                                   Classes
@@ -331,6 +339,11 @@ public class Configuration
      * a Section object.
      */
     private Map sectionsByName = new HashMap();
+
+    /**
+     * Special section for System.properties
+     */
+    private Section systemSection;
 
     /**
      * Data used during parsing. Null when parsing isn't being done.
@@ -641,12 +654,17 @@ public class Configuration
             if (s.trim().length() == 0)
                 result = defaultValue;
             else
-                result = Boolean.valueOf (s).booleanValue();
+                result = TextUtils.booleanFromString (s);
         }
 
         catch (NoSuchVariableException ex)
         {
             result = defaultValue;
+        }
+
+        catch (IllegalArgumentException ex)
+        {
+            throw new ConfigurationException (ex.getMessage());
         }
 
         return result;
@@ -738,9 +756,10 @@ public class Configuration
                                                    + "\" within itself.");
         }
 
-        int     i;
-        Section section;
-        String  value = null;
+        int      i;
+        Section  section;
+        String   sectionName;
+        String   value = null;
 
         i = varName.indexOf (':');
         if (i == -1)
@@ -750,8 +769,13 @@ public class Configuration
 
         else
         {
-            section = (Section) sectionsByName.get (varName.substring (0, i));
+            sectionName = varName.substring (0, i);
             varName = varName.substring (i + 1);
+
+            if (sectionName.equals (SYSTEM_SECTION_NAME))
+                section = systemSection;
+            else
+                section = (Section) sectionsByName.get (sectionName);
         }
 
         if (section != null)
@@ -1091,6 +1115,10 @@ public class Configuration
         }
 
         parseData.openURLs.remove (sURL);
+
+        // Now, create the phantom system section.
+
+        loadSystemSection();
     }
 
     /**
@@ -1344,6 +1372,23 @@ public class Configuration
         }
 
         parseData.includeFileNestingLevel--;
+    }
+
+    /**
+     * Load the phantom "system" section from System.properties.
+     */
+    private void loadSystemSection()
+    {
+        Properties systemProperties = System.getProperties();
+
+        systemSection = new Section (SYSTEM_SECTION_NAME);
+        for (Enumeration e = systemProperties.propertyNames();
+             e.hasMoreElements(); )
+        {
+            String name = (String) e.nextElement();
+            systemSection.addVariable (name,
+                                       systemProperties.getProperty (name));
+        }
     }
 
     /**
