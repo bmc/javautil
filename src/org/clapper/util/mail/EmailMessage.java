@@ -38,6 +38,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 
 /**
+ * <h3>Overview</h3>
+ *
  * <p>The <tt>EmailMessage</tt> class is a simplified front-end to a
  * portion of Sun's Java Mail API. It provides an easy-to-use API for
  * composing and sending an email message, including simple single-part and
@@ -97,6 +99,16 @@ import javax.mail.internet.MimeMessage;
  * {@link #MULTIPART_ALTERNATIVE}. Note: You <b>cannot</b> change the
  * subtype once you've added content to the message.</p>
  *
+ * <h3>Examples</h3>
+ *
+ * <p>The following code builds and sends a message containing a simple
+ * "Hello!" text message, with no attachments.
+ *
+ * <blockquote><pre>
+ * </pre></blockquote>
+ *
+ * <h3>Restrictions</h3>
+ *
  * <p>As a simplified front-end, this class does have some restrictions,
  * including the following.</p>
  *
@@ -111,6 +123,8 @@ import javax.mail.internet.MimeMessage;
  *
  * <p>For more complicated email interactions, use the Java Mail API
  * directly.</p>
+ *
+ * <h3>Third-party Library Requirements</h3>
  *
  * <p><b>Note:</b> This class requires the use of the Java Activation
  * Framework (JAF) classes (package <tt>javax.activation</tt>) and the

@@ -54,7 +54,7 @@ import org.clapper.util.io.*;
  * Variable values may contain anything at all. The parser ignores
  * whitespace on either side of the "=" or ":"; that is, leading whitespace
  * in the value is skipped. The way to include leading whitespace in a value is
- * escape the whitespace characters with backslashes. (see below).</p>
+ * escape the whitespace characters with backslashes. (See below).</p>
  *
  * <h4>Continuation Lines</h4>
  *
