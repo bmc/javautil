@@ -211,11 +211,12 @@ public class WindowsCmdVariableSubstituter
                         // is syntactically incorrect, just store the
                         // entire original sequence in the result string.
 
+                        String varName = var.toString();
                         if (syntaxError)
-                            result.append ('%' + var.toString() + '%');
+                            result.append ('%' + varName + '%');
                         else
-                            result.append (deref.getValue (var.toString(),
-                                                           context));
+                            result.append (deref.getVariableValue (varName,
+                                                                   context));
 
                         var.setLength (0);
                         inVar       = false;

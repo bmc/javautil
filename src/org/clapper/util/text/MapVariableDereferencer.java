@@ -99,7 +99,7 @@ public class MapVariableDereferencer implements VariableDereferencer
      *         method must return the empty string (""). It is important
      *         <b>not</b> to return null.
      */
-    public String getValue (String varName, Object context)
+    public String getVariableValue (String varName, Object context)
     {
         Object result = map.get (varName);
 

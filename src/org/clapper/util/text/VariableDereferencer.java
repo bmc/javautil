@@ -65,6 +65,6 @@ public interface VariableDereferencer
      *
      * @throws VariableSubstitutionException  substitution error
      */
-    public String getValue (String varName, Object context)
+    public String getVariableValue (String varName, Object context)
         throws VariableSubstitutionException;
 }

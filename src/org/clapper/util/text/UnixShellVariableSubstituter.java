@@ -80,8 +80,27 @@ public class UnixShellVariableSubstituter
     implements VariableSubstituter, VariableNameChecker
 {
     /*----------------------------------------------------------------------*\
-                             Private Variables
+                             Private Constants
     \*----------------------------------------------------------------------*/
+
+    private static final char VAR_START       = '$';
+    private static final char VAR_OPEN_BRACE  = '{';
+    private static final char VAR_CLOSE_BRACE = '}';
+
+    /*----------------------------------------------------------------------*\
+                             Public Constants
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * List of metacharacters that are used to introduce a variable reference.
+     * These characters cannot be permitted in a variable name.
+     */
+    public static final char[] VARIABLE_METACHARACTERS = new char[]
+    {
+        VAR_START,
+        VAR_OPEN_BRACE,
+        VAR_CLOSE_BRACE
+    };
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -116,7 +135,7 @@ public class UnixShellVariableSubstituter
      *                to use to resolve the variables' values.
      * @param context an optional context object, passed through unmodified
      *                to the <tt>deref</tt> object's
-     *                {@link VariableDereferencer#getValue getValue()} method.
+     *                {@link VariableDereferencer#getVariableValue} method.
      *                This object can be anything at all (and, in fact, may
      *                be null if you don't care.) It's primarily useful
      *                for passing context information from the caller to
@@ -127,7 +146,7 @@ public class UnixShellVariableSubstituter
      * @throws VariableSubstitutionException  substitution error
      *
      * @see #substitute(String,VariableDereferencer,VariableNameChecker,Object)
-     * @see VariableDereferencer#getValue(String,Object)
+     * @see VariableDereferencer#getVariableValue(String,Object)
      */
     public String substitute (String               s,
                               VariableDereferencer deref,
@@ -160,7 +179,7 @@ public class UnixShellVariableSubstituter
      *                     or null
      * @param context      an optional context object, passed through
      *                     unmodified to the <tt>deref</tt> object's
-     *                     {@link VariableDereferencer#getValue getValue()}
+     *                     {@link VariableDereferencer#getVariableValue}
      *                     method. This object can be anything at all (and,
      *                     in fact, may be null if you don't care.) It's
      *                     primarily useful for passing context information
@@ -172,7 +191,7 @@ public class UnixShellVariableSubstituter
      * @throws VariableSubstitutionException  substitution error
      *
      * @see #substitute(String,VariableDereferencer,Object)
-     * @see VariableDereferencer#getValue(String,Object)
+     * @see VariableDereferencer#getVariableValue(String,Object)
      */
     public String substitute (String               s,
                               VariableDereferencer deref,
@@ -210,7 +229,7 @@ public class UnixShellVariableSubstituter
             {
                 // Not in a variable.
 
-                if (c == '$')                // Possible start of new variable.
+                if (c == VAR_START)          // Possible start of new variable.
                     inVar = true;
                 else if (c == '\\')          // escape; next char is literal
                     nextIsLiteral = true;
@@ -220,7 +239,7 @@ public class UnixShellVariableSubstituter
 
             // If we get here, we're currently assembling a variable name.
 
-            else if ( (var.length() == 0) && (c == '{') )
+            else if ( (var.length() == 0) && (c == VAR_OPEN_BRACE) )
             {
                 // start of ${...} sequence
                 braces = true;
@@ -240,12 +259,17 @@ public class UnixShellVariableSubstituter
 
                 if (braces)
                 {
-                    if (c == '}')            // final brace; substitute
-                        result.append (deref.getValue (varName, context));
+                    if (c == VAR_CLOSE_BRACE)    // final brace; substitute
+                    {
+                        result.append (deref.getVariableValue (varName,
+                                                               context));
+                    }
 
                     else   // Missing trailing '}'. No substitution.
                     {
-                        result.append ("${" + var.toString());
+                        result.append (VAR_START);
+                        result.append (VAR_OPEN_BRACE);
+                        result.append (var.toString());
                         i--;             // push 'c' back on the stack
                     }
 
@@ -256,7 +280,7 @@ public class UnixShellVariableSubstituter
                 {
                     // '$' followed by something illegal. Syntax error.
 
-                    result.append ('$');
+                    result.append (VAR_START);
                     i--;                 // push 'c' back on the stack
                 }
 
@@ -264,7 +288,7 @@ public class UnixShellVariableSubstituter
                 {
                     // Legal, non-bracketed variable. Substitute.
 
-                    result.append (deref.getValue (varName, context));
+                    result.append (deref.getVariableValue (varName, context));
                     i--;             // push 'c' back on the stack
                 }
 
@@ -278,16 +302,51 @@ public class UnixShellVariableSubstituter
             // One last variable to handle.
 
             if (braces) // No trailing '}'. Syntax error.
-                result.append ("${" + var.toString());
+            {
+                result.append (VAR_START);
+                result.append (VAR_OPEN_BRACE);
+                result.append (var.toString());
+            }
 
             else if (var.length() == 0)      // just a trailing "$"
-                result.append ('$');
+            {
+                result.append (VAR_START);
+            }
 
             else
-                result.append (deref.getValue (var.toString(), context));
+            {
+                result.append (deref.getVariableValue (var.toString(),
+                                                       context));
+            }
         }
 
         return result.toString();
+    }
+
+    /**
+     * Determine whether a character is one of the variable metacharacters
+     * (i.e., the characters that identify a variable reference). Such
+     * characters cannot be part of a variable name.
+     *
+     * @param c  the character to test
+     *
+     * @return <tt>true</tt> if the character is one of the variable
+     *         metacharacters, <tt>false</tt> if not
+     */
+    public static boolean isVariableMetacharacter (char c)
+    {
+        boolean isMeta = false;
+        char[]  meta  = UnixShellVariableSubstituter.VARIABLE_METACHARACTERS;
+
+        for (int i = 0; i < meta.length; i++)
+        {
+            if (c == meta[i])
+            {
+                isMeta = true;
+                break;
+            }
+        }
+        return isMeta;
     }
 
     /**
