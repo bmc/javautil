@@ -128,5 +128,21 @@ public class FileUtils
         }
     }
 
-    
+    /**
+     * Get the extension for a path or file name.
+     *
+     * @param path  the file or path name
+     *
+     * @return the extension, or null if there isn't one
+     */
+    public static String getFileNameExtension (String path)
+    {
+        String ext = null;
+        int    i   = path.indexOf ('.');
+
+        if ((i != -1) && (i != (path.length() - 1)))
+            ext = path.substring (i + 1);
+
+        return ext;
+    }
 }
