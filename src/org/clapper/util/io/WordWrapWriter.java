@@ -112,7 +112,6 @@ import java.text.*;
  *
  * @see java.io.Writer
  * @see java.io.PrintWriter
- * @see java.io.FilterWriter
  *
  * @version $Revision$
  *
