@@ -35,9 +35,15 @@ import java.io.Serializable;
  * separate file, because inner classes cannot be serialized.
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 class FileHashMapEntry implements Serializable, Comparable
 {
+    /*----------------------------------------------------------------------*\
+                            Private Data Items
+    \*----------------------------------------------------------------------*/
+
     /**
      * The file position.
      */
@@ -46,13 +52,17 @@ class FileHashMapEntry implements Serializable, Comparable
     /**
      * The length of the stored, serialized object
      */
-    private int objectSize = -1;
+    private long objectSize = -1;
 
     /**
      * The caller's key (i.e., the key the caller of FileHashMap.put()
      * specified).
      */
     private Object key = null;
+
+    /*----------------------------------------------------------------------*\
+                               Constructors
+    \*----------------------------------------------------------------------*/
 
     /**
      * Create a new <tt>FileHashMapEntry</tt> that records the location
@@ -66,19 +76,40 @@ class FileHashMapEntry implements Serializable, Comparable
      *              size value will typically be passed when an existing
      *              <tt>FileHashMap</tt> is being reloaded from disk.
      * @param key   The caller's key (i.e., the key the caller of
-     *              <tt>FileHashMap.put()</tt> specified.)
+     *              <tt>FileHashMap.put()</tt> specified). May be null.
      *
      * @see #getFilePosition
      * @see #getObjectSize
      * @see #setObjectSize
      * @see FileHashMap#put
      */
-    FileHashMapEntry (long pos, int size, Object key)
+    FileHashMapEntry (long pos, long size, Object key)
     {
         this.filePosition = pos;
         this.objectSize   = size;
-        this.key    = key;
+        this.key          = key;
     }
+
+    /**
+     * Create an entry with no associated key. Used primarily to record
+     * file gaps. In that case, the object size is really the gap size.
+     *
+     * @param pos   The object's file position. The object may or may not
+     *              actually have been written there yet.
+     * @param size  The gap size.
+     *
+     * @see #getFilePosition
+     * @see #getObjectSize
+     * @see #setObjectSize
+     */
+    FileHashMapEntry (long pos, long size)
+    {
+        this (pos, size, null);
+    }
+
+    /*----------------------------------------------------------------------*\
+                              Public Methods
+    \*----------------------------------------------------------------------*/
 
     /**
      * Compares this object with the specified object for order. Returns a
@@ -110,9 +141,13 @@ class FileHashMapEntry implements Serializable, Comparable
               + ", objectSize="
               + objectSize
               + ", key="
-              + key
+              + ((key == null) ? "<null>" : key)
               + "]");
     }
+
+    /*----------------------------------------------------------------------*\
+                          Package-visible Methods
+    \*----------------------------------------------------------------------*/
 
     /**
      * Get the caller's key (i.e., the key the caller passed to
@@ -120,6 +155,7 @@ class FileHashMapEntry implements Serializable, Comparable
      *
      * @return the key
      *
+     * @see #setKey
      * @see FileHashMap#put
      */
     Object getKey()
@@ -128,13 +164,39 @@ class FileHashMapEntry implements Serializable, Comparable
     }
 
     /**
-     * Get the file position with which this object was initialized.
+     * Change the key for this entry
+     *
+     * @param newKey  the new key to use
+     *
+     * @see #getKey
+     */
+    void setKey (Object newKey)
+    {
+        this.key = newKey;
+    }
+
+    /**
+     * Get the file position for this entry.
      *
      * @return the file position
+     *
+     * @see #setFilePosition
      */
     long getFilePosition()
     {
         return this.filePosition;
+    }
+
+    /**
+     * Set the file position for this entry.
+     *
+     * @param pos the new file position
+     *
+     * @see #getFilePosition
+     */
+    void setFilePosition (long pos)
+    {
+        this.filePosition = pos;
     }
 
     /**
@@ -145,7 +207,7 @@ class FileHashMapEntry implements Serializable, Comparable
      *
      * @see #setObjectSize
      */
-    int getObjectSize()
+    long getObjectSize()
         throws IllegalStateException
     {
         assert (this.objectSize > 0) : "No object stored yet";
@@ -160,7 +222,7 @@ class FileHashMapEntry implements Serializable, Comparable
      *
      * @see #getObjectSize
      */
-    void setObjectSize (int size)
+    void setObjectSize (long size)
     {
         this.objectSize = size;
     }

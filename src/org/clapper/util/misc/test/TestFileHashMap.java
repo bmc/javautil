@@ -8,7 +8,8 @@ import org.clapper.util.cmdline.CommandLineUtility;
 import org.clapper.util.cmdline.CommandLineException;
 import org.clapper.util.cmdline.CommandLineUsageException;
 import org.clapper.util.cmdline.UsageInfo;
-
+import org.clapper.util.logging.Logger;
+import org.clapper.util.logging.LogLevel;
 import org.clapper.util.misc.FileHashMap;
 import org.clapper.util.misc.ObjectExistsException;
 import org.clapper.util.misc.VersionMismatchException;
@@ -40,6 +41,8 @@ public class TestFileHashMap
     private static int             paddingSize = DEFAULT_ENTRY_PADDING;
     private static int             totalValues = 0;
     private static boolean         verbose = false;
+    private static boolean         readOnly = false;
+    private static Logger          log = new Logger (TestFileHashMap.class);
 
     // What gets put into the hash tables. We want something larger than
     // the typical object.
@@ -121,6 +124,10 @@ public class TestFileHashMap
     {
         switch (shortOption)
         {
+            case 'g':
+                fileHashMapFlags |= FileHashMap.RECLAIM_FILE_GAPS;
+                break;
+
             case 'n':
                 fileHashMapFlags |= FileHashMap.NO_CREATE;
                 break;
@@ -131,6 +138,10 @@ public class TestFileHashMap
 
             case 'p':
                 paddingSize = parseIntParameter ((String) it.next());
+                break;
+
+            case 'r':
+                readOnly = true;
                 break;
 
             case 't':
@@ -162,12 +173,21 @@ public class TestFileHashMap
             throw new CommandLineUsageException ("Must specify a file prefix "
                                                + "unless -t is specified.");
         }
+
+        if (readOnly && ((fileHashMapFlags & FileHashMap.TRANSIENT) != 0))
+        {
+            throw new CommandLineUsageException ("You cannot specify both -r "
+                                               + "and -t");
+        }
     }
 
     protected void getCustomUsageInfo (UsageInfo info)
     {
+        info.addOption ('g', "reuse-gaps",
+                        "Pass the RECLAIM_FILE_GAPS flag to the FileHashMap "
+                      + "constructor");
         info.addOption ('n', "no-create",
-                        "Set the NO_CREATE flag on the FileHashMap "
+                        "Pass the NO_CREATE flag to the FileHashMap "
                       + "constructor");
         info.addOption ('p', "padding",
                         "Specify the number of bytes by which to pad each "
@@ -176,8 +196,11 @@ public class TestFileHashMap
                       + "in-memory and a disk resident map. Default value is "
                       + DEFAULT_ENTRY_PADDING);
         info.addOption ('o', "overwrite",
-                        "Set the FORCE_OVERWRITE flag on the FileHashMap "
+                        "Pass the FORCE_OVERWRITE flag to the FileHashMap "
                       + "constructor");
+        info.addOption ('r', "read-only",
+                        "Display the contents of an existing map, but don't "
+                      + "modify it. Cannot be specified with -t");
         info.addOption ('t', "transient", "Use a transient hash map");
         info.addOption ('v', "verbose", "Enable verbose messages");
 
@@ -243,7 +266,9 @@ public class TestFileHashMap
                 dumpTableByKeySet (fileHash, "On-disk table");
             }
 
-            fillTables (memoryHash, fileHash);
+            if (! readOnly)
+                fillTables (memoryHash, fileHash);
+
             dumpTables (memoryHash, fileHash);
 
             msgln ("");
@@ -522,8 +547,7 @@ public class TestFileHashMap
         msgln ("");
         msgln ("Total entries:             " + total);
         msgln ("Total access time:         " + ms + " ms");
-        msgln ("Avg access time per entry: "
-               + getAverage (ms, total) + " ms");
+        msgln ("Avg access time per entry: " + getAverage (ms, total) + " ms");
 
     }
 
@@ -532,9 +556,14 @@ public class TestFileHashMap
     {
         StringBuffer  result = new StringBuffer();
 
-        result.append (ms / total);
-        result.append (".");
-        result.append (ms % total);
+        if (total == 0)
+            result.append ("0.0");
+        else
+        {
+            result.append (ms / total);
+            result.append (".");
+            result.append (ms % total);
+        }
 
         return result.toString();
     }
@@ -553,27 +582,23 @@ public class TestFileHashMap
 
     private void msgln (String s)
     {
+        msgln (Logger.LEVEL_INFO, s);
+    }
+
+    private void msgln (LogLevel level, String s)
+    {
         if (s != null)
+        {
             System.out.print (s);
+            log.message (level, s);
+        }
         System.out.println();
         System.out.flush();
-    }
-
-    private void msg (String s)
-    {
-        System.out.print (s);
-        System.out.flush();
-    }
-
-    private void verbose (String s)
-    {
-        if (verbose)
-            msg (s);
     }
 
     private void verboseln (String s)
     {
         if (verbose)
-            msgln (s);
+            msgln (Logger.LEVEL_DEBUG, s);
     }
 }

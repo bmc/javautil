@@ -26,6 +26,8 @@
 
 package org.clapper.util.misc;
 
+import org.clapper.util.logging.Logger;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -51,17 +53,18 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * <p><tt>FileHashMap</tt> implements a <tt>java.util.Map</tt> that keeps
  * the keys in memory, but stores the values as serialized objects in a
- * random access disk file. When a caller attempts to access the value
- * associated with a given key, the <tt>FileHashMap</tt> object looks up
- * the location of the serialized value object, seeks to that location in
- * the random access file, and reads and unserializes the value object. In
- * a sense, a <tt>FileHashMap</tt> is akin to a simple, classic indexed
- * sequential file. This approach gives a <tt>FileHashMap</tt> object the
- * following characteristics:</p>
+ * random access disk file. When an application attempts to access the
+ * value associated with a given key, the <tt>FileHashMap</tt> object
+ * determines the location of the serialized value object, seeks to that
+ * location in the random access file, and reads and deserializes the value
+ * object. In a sense, a <tt>FileHashMap</tt> is akin to a simple, classic
+ * indexed sequential file. This approach gives a <tt>FileHashMap</tt>
+ * object the following characteristics:</p>
  *
  * <ul>
  *   <li>Because the map keys are cached in memory, access to the key space is
@@ -214,6 +217,28 @@ import java.util.Set;
  * disk file. A value is loaded from disk only when you actually attempt to
  * retrieve it from the <tt>Iterator</tt> or <tt>Set</tt>.
  *
+ * <p><b>Reclaiming Gaps in the File</b></p>
+ *
+ * <p>Normally, when you remove an object from the map, the space where the
+ * object was stored in the data file is not reclaimed. This strategy allows
+ * for faster insertions, since new objects are always added to the end of
+ * the disk file. However, for long-lived <tt>FileHashMap</tt> objects that
+ * are periodically modified, this strategy may not be appropriate. For that
+ * reason, you can pass a special {@link #RECLAIM_FILE_GAPS} flag to the
+ * constructor. If specified, the flag tells the object to keep track of
+ * "gaps" in the file, and reuse them if possible. When a new object is
+ * inserted into the map, and {@link #RECLAIM_FILE_GAPS} is enabled, the
+ * object will attempt to find the smallest unused area in the file to
+ * accomodate the new object. It will only add the new object to the end
+ * of the file (enlarging the file) if it cannot find a suitable gap.</p>
+ *
+ * <p>This mode is not the default, because it can add time to processing.
+ * However, it does not access the file at all; the file gap maintenance
+ * logic uses in-memory data only. So, while it adds a small amount of
+ * computational overhead, the difference between running with
+ * {@link #RECLAIM_FILE_GAPS} enabled and running with it disabled should not
+ * be dramatic.</p>
+ *
  * <p><b>Restrictions</b></p>
  *
  * <p>This class currently has the following restrictions and unimplemented
@@ -222,8 +247,6 @@ import java.util.Set;
  * <ul>
  *   <li>An object cannot be stored in a <tt>FileHashMap</tt> unless it
  *       implements <tt>java.io.Serializable</tt>.
- *   <li>When you remove an object from the map, the space
- *       where the object was stored in the data file is not reclaimed.
  *   <li>To prevent multiple Java VMs from updating the file containing the
  *       serialized values, this class asserts an exclusive lock on the file
  *       for the entire time the file is open. It's currently not possible to
@@ -239,6 +262,8 @@ import java.util.Set;
  * </ul>
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 public class FileHashMap extends AbstractMap
 {
@@ -283,6 +308,20 @@ public class FileHashMap extends AbstractMap
      */
     public static final int FORCE_OVERWRITE = 0x04;
 
+    /**
+     * Constructor flag value: Tells the object to reclaim unused space in
+     * the file, whenever possible. If this flag is not specified, then the
+     * space occupied by objects removed from the hash table is not
+     * reclaimed. This flag is not persistent. It's possible to create a
+     * persistent <tt>FileHashMap</tt> without using this flag, and later
+     * reopen the on-disk map via a new <tt>FileHashMap</tt> object that
+     * does have this flag set. Whenever the flag is set, the in-memory
+     * <tt>FileHashMap</tt> object attempts to reuse gaps in the file. When
+     * the flag is not set, the in-memory <tt>FileHashMap</tt> object
+     * ignores gaps in the file.
+     */
+    public static final int RECLAIM_FILE_GAPS = 0x08;
+
     /*----------------------------------------------------------------------*\
                              Private Constants
     \*----------------------------------------------------------------------*/
@@ -301,67 +340,16 @@ public class FileHashMap extends AbstractMap
      */
     private static final int ALL_FLAGS_MASK = NO_CREATE
                                             | TRANSIENT
-                                            | FORCE_OVERWRITE;
-
-    /*----------------------------------------------------------------------*\
-                           Private Instance Data
-    \*----------------------------------------------------------------------*/
-
-    /**
-     * The index, cached in memory. Each entry in the list is a
-     * FileHashMapEntry object. This index is stored on disk, in the index
-     * file.
-     */
-    private HashMap indexMap = null;
-
-    /**
-     * The file prefix with which this object was created.
-     */
-    private String filePrefix = null;
-
-    /**
-     * The index file.
-     */
-    private File indexFilePath = null;
-
-    /**
-     * The hash (data) file.
-     */
-    private File dataFilePath = null;
-
-    /**
-     * The open hash (data) file.
-     */
-    private RandomAccessFile dataFile = null;
-
-    /**
-     * The flags specified to the constructor.
-     */
-    private int flags = 0;
-    
-    /**
-     * Whether or not the index has been modified since the file was
-     * opened.
-     */
-    private boolean modified = false;
-
-    /**
-     * Whether or not the object is still valid. See close().
-     */
-    private boolean valid = true;
-
-    /**
-     * The value returned by the entrySet() method. It's created the first
-     * time entrySet() is called.
-     */
-    private Set entrySet = null;
+                                            | FORCE_OVERWRITE
+                                            | RECLAIM_FILE_GAPS;
 
     /*----------------------------------------------------------------------*\
                            Private Inner Classes
     \*----------------------------------------------------------------------*/
 
     /**
-     * Comparator for FileHashMapEntry objects.
+     * Comparator for FileHashMapEntry objects. Sorts by natural order,
+     * which is file position.
      */
     private class FileHashMapEntryComparator implements Comparator
     {
@@ -382,7 +370,36 @@ public class FileHashMap extends AbstractMap
     }
 
     /**
-     * Internal iterator: Loops through the FileHashMapEntry objects in
+     * Comparator for FileHashMapEntry objects. Sorts by object size, then
+     * file position. Used for ordering gap entries.
+     */
+    private class FileHashMapEntryGapComparator implements Comparator
+    {
+        public int compare (Object o1, Object o2)
+        {
+            FileHashMapEntry  e1 = (FileHashMapEntry) o1; 
+            FileHashMapEntry  e2 = (FileHashMapEntry) o2;
+            int               cmp;
+
+            if ((cmp = (int) (e1.getObjectSize() - e2.getObjectSize())) == 0)
+                cmp = (int) (e1.getFilePosition() - e2.getFilePosition());
+
+            return cmp;
+        }
+
+        public boolean equals (Object o)
+        {
+            return (o instanceof FileHashMapEntryGapComparator);
+        }
+
+        public int hashCode()
+        {
+            return super.hashCode();
+        }
+    }
+
+    /**
+     * Internal iterator that loops through the FileHashMapEntry objects in
      * sorted order, by file position. Used to implement other iterators.
      */
     private class EntryIterator implements Iterator
@@ -437,11 +454,11 @@ public class FileHashMap extends AbstractMap
     
     /**
      * Specialized iterator for looping through the value set. The iterator
-     * loops through the FileHashMapEntry items, which have been sorted
-     * by file position; each call to next() causes the iterator to load
-     * the appropriate value. This approach demand-loads the values, so
-     * they're not all loaded into memory at the same time; it also promotes
-     * iterating through the value file sequentially.
+     * loops through the FileHashMapEntry items, which have been sorted by
+     * file position; each call to next() causes the iterator to load the
+     * appropriate value. This approach (a) iterates through the value file
+     * sequentially, and (b) demand-loads the values, so they're not all
+     * loaded into memory at the same time.
      */
     private class ValueIterator extends EntryIterator
     {
@@ -579,10 +596,10 @@ public class FileHashMap extends AbstractMap
     }
 
     /**
-     * Necessary to support the Map.entrySet() routine, this class
-     * defines the result returned by the iterator for the Set returned
-     * by FileHashMap.entrySet(). Each EntrySetEntry object basically just
-     * provides an alternate, user-acceptable view of a FileHashMapEntry.
+     * Necessary to support the Map.entrySet() routine. Each object
+     * returned by FileHashMap.entrySet().iterator() is of this type. Each
+     * EntrySetEntry object provides an alternate, user-acceptable view of
+     * a FileHashMapEntry.
      */
     private class EntrySetEntry implements Map.Entry
     {
@@ -637,13 +654,12 @@ public class FileHashMap extends AbstractMap
     }
 
     /**
-     * Specialized iterator for looping through the set returned by
-     * FileHashMap.entrySet(). The iterator returns EntrySetEntry objects,
-     * each of which contains a FileHashMapEntry; the entries are returned
-     * in sorted order by FileHashMapEntry file position value. This
-     * approach demand-loads the values, so they're not all loaded into
-     * memory at the same time; it also promotes iterating through the
-     * value file sequentially.
+     * Specialized iterator returned by FileHashMap.entrySet().iterator().
+     * The iterator returns EntrySetEntry objects, each of which contains a
+     * FileHashMapEntry; the entries are returned in sorted order by
+     * FileHashMapEntry file position value. This approach (a) iterates
+     * through the value file sequentially, and (b) demand-loads the
+     * values, so they're not all loaded into memory at the same time.
      */
     private class EntrySetIterator extends EntryIterator
     {
@@ -659,11 +675,10 @@ public class FileHashMap extends AbstractMap
     }
 
     /**
-     * Implements an entry set for use with the Map.entrySet() method. The
-     * values are demand-loaded. The iterator() and toArray() methods
-     * ensure that the keys are returned in a manner that optimizes looping
-     * through the associated values (as with the various iterators,
-     * above).
+     * The actual entry set returned by FileHashMap.entrySet(). The values
+     * are demand-loaded. The iterator() and toArray() methods ensure that
+     * the keys are returned in an order that causes sequential access to the
+     * values file.
      */
     private class EntrySet extends AbstractSet
     {
@@ -868,6 +883,76 @@ public class FileHashMap extends AbstractMap
     }
 
     /*----------------------------------------------------------------------*\
+                           Private Instance Data
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * The index, cached in memory. Each entry in the list is a
+     * FileHashMapEntry object. This index is stored on disk, in the index
+     * file.
+     */
+    private HashMap indexMap = null;
+
+    /**
+     * The file prefix with which this object was created.
+     */
+    private String filePrefix = null;
+
+    /**
+     * The index file.
+     */
+    private File indexFilePath = null;
+
+    /**
+     * The hash (data) file.
+     */
+    private File dataFilePath = null;
+
+    /**
+     * The open hash (data) file.
+     */
+    private RandomAccessFile dataFile = null;
+
+    /**
+     * The flags specified to the constructor.
+     */
+    private int flags = 0;
+    
+    /**
+     * Whether or not the index has been modified since the file was
+     * opened.
+     */
+    private boolean modified = false;
+
+    /**
+     * Whether or not the object is still valid. See close().
+     */
+    private boolean valid = true;
+
+    /**
+     * The value returned by the entrySet() method. It's created the first
+     * time entrySet() is called.
+     */
+    private Set entrySet = null;
+
+    /**
+     * A set of gaps in the file, ordered sequentially by file position.
+     * Each entry in the set is a FileHashMapEntry with no associated
+     * object or key. This reference will be non-null only if the
+     * RECLAIM_FILE_GAPS flag was passed to the constructor.
+     */
+    private TreeSet fileGaps = null;
+
+    /*----------------------------------------------------------------------*\
+                            Private Class Data
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * For log messages
+     */
+    private static Logger log = new Logger (FileHashMap.class);
+
+    /*----------------------------------------------------------------------*\
                                Constructors
     \*----------------------------------------------------------------------*/
 
@@ -996,7 +1081,7 @@ public class FileHashMap extends AbstractMap
                VersionMismatchException,
                IOException
     {
-        assert ( (~(flags & ALL_FLAGS_MASK)) == 0 );
+        assert ( ((~ALL_FLAGS_MASK) & flags) == 0 );
 
         int filesFound = 0;
 
@@ -1078,6 +1163,9 @@ public class FileHashMap extends AbstractMap
             default:
                 assert (false);
         }
+
+        if ((flags & RECLAIM_FILE_GAPS) != 0)
+            findFileGaps();
     }
 
     /*----------------------------------------------------------------------*\
@@ -1100,6 +1188,14 @@ public class FileHashMap extends AbstractMap
             dataFilePath.delete();
             openDataFile (dataFilePath);
             modified = true;
+
+            if ((flags & RECLAIM_FILE_GAPS) != 0)
+            {
+                // The entire file is now one big gap.
+
+                fileGaps.clear();
+                fileGaps.add (new FileHashMapEntry (0L, dataFile.length()));
+            }
         }
 
         catch (IOException ex)
@@ -1370,14 +1466,25 @@ public class FileHashMap extends AbstractMap
 
         try
         {
-            FileHashMapEntry old   = (FileHashMapEntry) indexMap.get (key);
-            FileHashMapEntry entry = writeValue (key, value);
+            FileHashMapEntry old = (FileHashMapEntry) indexMap.get (key);
 
-            indexMap.put (key, entry);
-            modified = true;
+            // Read the old value first. Then, modify the index and write
+            // the new value. That way, we can reclaim the old value's space
+            // if RECLAIM_FILE_GAPS is enabled.
 
             if (old != null)
+            {
                 result = readValueNoError (old);
+
+                // Removing the key forces the space to be listed in the gaps
+                // list.
+
+                remove (key);
+            }
+
+            FileHashMapEntry entry = writeValue (key, value);
+            indexMap.put (key, entry);
+            modified = true;
         }
 
         catch (IOException ex)
@@ -1414,6 +1521,21 @@ public class FileHashMap extends AbstractMap
             result = readValueNoError (entry);
             indexMap.remove (key);
             modified = true;
+
+            if ((flags & RECLAIM_FILE_GAPS) != 0)
+            {
+                // Have to recalculate gaps, since we may be able to coalesce
+                // this returned space with ones to either side of it.
+
+                log.debug ("Removed value for key \""
+                         + key
+                         + "\" at pos="
+                         + entry.getFilePosition()
+                         + ", size="
+                         + entry.getObjectSize()
+                         + ". Re-figuring gaps.");
+                findFileGaps();
+            }
         }
 
         return result;
@@ -1511,6 +1633,65 @@ public class FileHashMap extends AbstractMap
     {
         this.dataFile  = openDataFile (dataFilePath);
         this.indexMap = new HashMap();
+    }
+
+    /**
+     * Locate gaps in the file by traversing the index. Initializes or
+     * reinitializes the fileGaps instance variable.
+     */
+    private void findFileGaps()
+    {
+        log.debug ("Looking for file gaps.");
+
+        if (fileGaps == null)
+            fileGaps = new TreeSet (new FileHashMapEntryGapComparator());
+        else
+            fileGaps.clear();
+
+        if (this.size() > 0)
+        {
+            FileHashMapEntry[] entries  = getSortedEntries();
+            FileHashMapEntry   previous = null;
+
+            // Handle the first one specially.
+
+            long pos  = entries[0].getFilePosition();
+            long size = entries[0].getObjectSize();
+
+            if (pos > 0)
+            {
+                // There's a gap at the beginning.
+
+                log.debug ("First entry is at pos " + pos + ", size=" + size);
+                size = (int) pos;
+                log.debug ("Gap at position 0 of size " + size);
+                fileGaps.add (new FileHashMapEntry ((long) 0, size));
+            }
+
+            previous = entries[0];
+
+            for (int i = 1; i < entries.length; i++)
+            {
+                long previousPos    = previous.getFilePosition();
+                long possibleGapPos = previousPos + previous.getObjectSize();
+                pos = entries[i].getFilePosition();
+
+                assert (pos > previousPos);
+                if (possibleGapPos != pos)
+                {
+                    int gapSize = (int) (pos - possibleGapPos);
+
+                    log.debug ("Gap at position "
+                             + possibleGapPos
+                             + " of size "
+                             + gapSize);
+                    fileGaps.add (new FileHashMapEntry (possibleGapPos,
+                                                        gapSize));
+                }
+
+                previous = entries[i];
+            }
+        }
     }
 
     /**
@@ -1615,8 +1796,8 @@ public class FileHashMap extends AbstractMap
                ClassNotFoundException,
                IllegalStateException
     {
-        int                size      = entry.getObjectSize();
-        byte               byteBuf[] = new byte[size];
+        long               size      = entry.getObjectSize();
+        byte               byteBuf[] = new byte[(int) size];
         int                sizeRead;
         ObjectInputStream  objStream;
 
@@ -1682,6 +1863,21 @@ public class FileHashMap extends AbstractMap
                                    (new FileOutputStream (this.indexFilePath));
         objStream.writeObject (VERSION_STAMP);
         objStream.writeObject (indexMap);
+
+        if (log.isDebugEnabled())
+        {
+            FileHashMapEntry[] entries = getSortedEntries();
+
+            log.debug ("Just saved index. Total entries=" + indexMap.size());
+            log.debug ("Index values follow.");
+            for (int i = 0; i < entries.length; i++)
+            {
+                long pos  = entries[i].getFilePosition();
+                long size = entries[i].getObjectSize();
+
+                log.debug ("    pos=" + pos + ", size=" + size);
+            }
+        }
     }
 
     /**
@@ -1709,17 +1905,24 @@ public class FileHashMap extends AbstractMap
         ObjectOutputStream     objStream;
         ByteArrayOutputStream  byteStream;
         FileHashMapEntry       result = null;
-        long                   filePos;
+        int                    size;
+        long                   filePos = -1;
 
         // Serialize the object to a byte buffer.
 
         byteStream = new ByteArrayOutputStream();
         objStream  = new ObjectOutputStream (byteStream);
         objStream.writeObject (obj);
+        size = byteStream.size();
 
-        // Seek to the end of the data file.
+        // Find a location for the object.
 
-        filePos = this.dataFile.length();
+        if ((flags & RECLAIM_FILE_GAPS) != 0)
+            filePos = findBestFitGap (size);
+
+        if (filePos == -1)
+            filePos = this.dataFile.length();
+
         this.dataFile.seek (filePos);
 
         // Write the bytes of the serialized object.
@@ -1728,6 +1931,63 @@ public class FileHashMap extends AbstractMap
 
         // Return the entry.
 
-        return new FileHashMapEntry (filePos, byteStream.size(), key);
+        return new FileHashMapEntry (filePos, size, key);
+    }
+
+    /**
+     * Finds the smallest gap that can hold a serialized object.
+     *
+     * @param objectSize  the size of the serialized object
+     *
+     * @return the file position, or -1 if not found
+     */
+    private long findBestFitGap (int objectSize)
+    {
+        long result = -1;
+
+        log.debug ("Finding smallest gap for " + objectSize + "-byte object");
+
+        assert (fileGaps != null);
+        for (Iterator it = fileGaps.iterator(); it.hasNext(); )
+        {
+            FileHashMapEntry  gap  = (FileHashMapEntry) it.next();
+            long              pos  = gap.getFilePosition();
+            long              size = gap.getObjectSize();
+
+            log.debug ("Gap: pos=" + pos + ", size=" + size);
+            if (size >= objectSize)
+            {
+                log.debug ("Found it.");
+                result = pos;
+
+                if (size > objectSize)
+                {
+                    log.debug ("Gap size is larger than required. Making "
+                             + "smaller gap.");
+
+                    // Remove it and re-insert it, since the gap list is
+                    // sorted by size.
+
+                    it.remove();
+
+                    pos  += objectSize;
+                    size -= objectSize;
+                    gap.setFilePosition (pos);
+                    gap.setObjectSize (size);
+
+                    log.debug ("Saving new, smaller gap: pos="
+                             + pos
+                             + ", size="
+                             + size);
+
+                    fileGaps.add (gap);
+                }
+
+                break;
+            }
+        }
+
+        log.debug ("findBestFitGap: returning " + result);
+        return result;
     }
 }
