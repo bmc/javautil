@@ -11,7 +11,7 @@ import java.io.*;
 import java.net.*;
 
 /**
- * <p>Test the <code>ConfigurationParser</code> class.</p>
+ * <p>Test the <code>Configuration</code> class.</p>
  *
  * @see UnixShellVariableSubstituter
  * @see VariableDereferencer
@@ -45,25 +45,24 @@ public class ParseConfig
      */
     public static void main (String args[])
     {
-	if (args.length != 1)
+	if (args.length < 1)
             usage();
+
+        String file = args[0];
+        Collection vars = new ArrayList();
+        for (int i = 1; i < args.length; i++)
+            vars.add (args[i]);
 
         try
         {
             ParseConfig tester = new ParseConfig();
-            tester.runTest (args[0]);
+            tester.runTest (args[0], vars);
             System.exit (0);
         }
 
-        catch (IOException ex)
+        catch (Exception ex)
         {
             System.err.println (ex.getMessage());
-            System.exit (1);
-        }
-
-        catch (ConfigurationException ex)
-        {
-            ex.printStackTrace (System.err);
             System.exit (1);
         }
     }
@@ -74,27 +73,63 @@ public class ParseConfig
 
     private static void usage()
     {
-        System.err.println ("Usage: java " + ParseConfig.class + " file|url");
+        System.err.println ("Usage: java " + ParseConfig.class +
+                            " file|url [section:var=value] ... ");
         System.exit (1);
     }
 
-    private void runTest (String thing)
+    private void runTest (String thing, Collection vars)
         throws FileNotFoundException,
                IOException,
-	       ConfigurationException
+	       ConfigurationException,
+               SectionExistsException,
+               NoSuchElementException,
+               VariableSubstitutionException
     {
-        ConfigurationParser parser = null;
+        Configuration config = null;
 
 	try
         {
-            parser = new ConfigurationParser (new URL (thing));
+            config = new Configuration (new URL (thing));
         }
 
         catch (MalformedURLException ex)
         {
-            parser = new ConfigurationParser (new File (thing));
+            config = new Configuration (new File (thing));
         }
 
-        parser.write (System.out);
+        for (Iterator it = vars.iterator(); it.hasNext(); )
+        {
+            String s = (String) it.next();
+
+            int i = s.indexOf (':');
+            if (i == -1)
+            {
+                throw new ConfigurationException ("Bad variable setting: \""
+                                                + s
+                                                + "\"");
+            }
+
+            String section = s.substring (0, i);
+
+            i++;
+            int j = s.indexOf ('=', i);
+            if (i == -1)
+            {
+                throw new ConfigurationException ("Bad variable setting: \""
+                                                + s
+                                                + "\"");
+            }
+
+            String varName = s.substring (i, j);
+            String value = s.substring (j + 1);
+
+            if (! config.containsSection (section))
+                config.addSection (section);
+
+            config.setVariable (section, varName, value, true);
+        }
+
+        config.write (System.out);
     }
 }
