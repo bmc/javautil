@@ -28,7 +28,7 @@ package org.clapper.util.io.test;
 
 import java.io.*;
 import java.util.*;
-import org.apache.oro.text.regex.*;
+import java.util.regex.*;
 import org.clapper.util.io.*;
 
 /**
@@ -67,7 +67,7 @@ public class FindFiles
             prog.findFiles (acceptPatterns, rejectPatterns);
         }
 
-        catch (MalformedPatternException ex)
+        catch (PatternSyntaxException ex)
         {
             System.err.println (ex);
             System.exit (1);
@@ -77,7 +77,7 @@ public class FindFiles
     private static void parseParams (String[]   args,
                                      Collection acceptPatterns,
                                      Collection rejectPatterns)
-        throws MalformedPatternException
+        throws PatternSyntaxException
     {
         try
         {
@@ -155,7 +155,7 @@ public class FindFiles
 
     private void findFiles (Collection acceptPatterns,
 			    Collection rejectPatterns)
-        throws MalformedPatternException
+        throws PatternSyntaxException
     {
         MultipleRegexFilenameFilter filter;
         Iterator                    it;

@@ -29,8 +29,9 @@ package org.clapper.util.text;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.apache.oro.text.perl.Perl5Util;
-import org.apache.oro.text.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Static class containing miscellaneous HTML-related utility methods.
@@ -60,7 +61,7 @@ public final class HTMLUtil
      * For regular expression substitution. Instantiated first time it's
      * needed.
      */
-    private static Perl5Util perl5Util = null;
+    private static Pattern entityPattern = null;
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -139,29 +140,40 @@ public final class HTMLUtil
 
         synchronized (HTMLUtil.class)
         {
-            if (perl5Util == null)
-                perl5Util = new Perl5Util();
+            try
+            {
+                if (entityPattern == null)
+                    entityPattern = Pattern.compile ("&(#?[^; \t]+);");
+            }
+
+            catch (PatternSyntaxException ex)
+            {
+                // Should not happen unless I've screwed up the pattern.
+                // Throw a runtime error.
+
+                assert (false);
+            }
         }
 
         ResourceBundle bundle = getResourceBundle();
         XStringBuffer buf = new XStringBuffer();
         boolean foundMatch = true;
 
-
         while (foundMatch)
         {
             String match = null;
             String preMatch = null;
             String postMatch = null;
+            int cursor = 0;
 
             synchronized (HTMLUtil.class)
             {
-                if (perl5Util.match ("/&(#?[^; \t]+);/", s))
+                Matcher matcher = entityPattern.matcher (s);
+                if (matcher.find (cursor))
                 {
-                    MatchResult matchResult = perl5Util.getMatch();
-                    match = matchResult.group (1);
-                    preMatch = perl5Util.preMatch();
-                    postMatch = perl5Util.postMatch();
+                    match = matcher.group (1);
+                    preMatch = s.substring (cursor, matcher.start (1) - 1);
+                    postMatch = s.substring (matcher.end (1) + 1);
                 }
 
                 else

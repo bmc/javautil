@@ -33,12 +33,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.oro.text.regex.PatternCompiler;
-import org.apache.oro.text.regex.Perl5Compiler;
-import org.apache.oro.text.regex.PatternMatcher;
-import org.apache.oro.text.regex.Perl5Matcher;
-import org.apache.oro.text.regex.MalformedPatternException;
-import org.apache.oro.text.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * <p><tt>MultipleRegexFilenameFilter</tt> implements a
@@ -56,9 +53,8 @@ import org.apache.oro.text.regex.Pattern;
  * <p>A <tt>MultipleRegexFilenameFilter</tt> can be configured to operate
  * on just the simple file name, or on the file's path.</p>
  *
- * <p><tt>MultipleRegexFilenameFilter</tt> uses the
- * {@link <a href="http://jakarta.apache.org/oro/">Jakarta ORO</a>}
- * regular expression classes.</p>
+ * <p><tt>MultipleRegexFilenameFilter</tt> uses the <tt>java.util.regex</tt>
+ * regular expression classes, so it requires JDK 1.4 or newer.</p>
  *
  * @see CombinationFilenameFilter
  * @see CombinationFileFilter
@@ -80,12 +76,10 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private Collection       acceptPatterns = null;
-    private Collection       rejectPatterns = null;
-    private PatternMatcher   regexMatcher;
-    private PatternCompiler  regexCompiler;
-    private int              regexOptions;
-    private int              matchType = MATCH_FILENAME;
+    private Collection  acceptPatterns = null;
+    private Collection  rejectPatterns = null;
+    private int         regexOptions;
+    private int         matchType = MATCH_FILENAME;
 
     /*----------------------------------------------------------------------*\
                             Constructor
@@ -111,9 +105,7 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
                                                   + matchType);
         }
         
-        regexCompiler  = new Perl5Compiler();
-        regexMatcher   = new Perl5Matcher();
-        regexOptions   = Perl5Compiler.CASE_INSENSITIVE_MASK;
+        regexOptions   = Pattern.CASE_INSENSITIVE;
         acceptPatterns = new ArrayList();
         rejectPatterns = new ArrayList();
     }
@@ -133,14 +125,14 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
      *
      * @param pattern  the regular expression to add
      *
-     * @throws MalformedPatternException  bad regular expression
+     * @throws PatternSyntaxException  bad regular expression
      *
      * @see #addRejectPattern
      */
     public void addAcceptPattern (String pattern)
-        throws MalformedPatternException
+        throws PatternSyntaxException
     {
-        acceptPatterns.add (regexCompiler.compile (pattern, regexOptions));
+        acceptPatterns.add (Pattern.compile (pattern, regexOptions));
     }
 
     /**
@@ -154,14 +146,14 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
      *
      * @param pattern  the regular expression to add
      *
-     * @throws MalformedPatternException  bad regular expression
+     * @throws PatternSyntaxException  bad regular expression
      *
      * @see #addAcceptPattern
      */
     public void addRejectPattern (String pattern)
-        throws MalformedPatternException
+        throws PatternSyntaxException
     {
-        rejectPatterns.add (regexCompiler.compile (pattern, regexOptions));
+        rejectPatterns.add (Pattern.compile (pattern, regexOptions));
     }
 
     /**
@@ -193,8 +185,9 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
         for (it = rejectPatterns.iterator(); it.hasNext(); )
         {
             Pattern pattern = (Pattern) it.next();
+            Matcher matcher = pattern.matcher (name);
 
-            if (regexMatcher.contains (name, pattern))
+            if (matcher.matches())
             {
                 match = false;
                 found = true;
@@ -214,8 +207,9 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
                 for (it = acceptPatterns.iterator(); it.hasNext(); )
                 {
                     Pattern pattern = (Pattern) it.next();
+                    Matcher matcher = pattern.matcher (name);
 
-                    if (regexMatcher.contains (name, pattern))
+                    if (matcher.matches())
                     {
                         match = true;
                         break;

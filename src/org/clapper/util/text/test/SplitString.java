@@ -27,7 +27,7 @@
 package org.clapper.util.text.test;
 
 import org.clapper.util.text.*;
-import org.apache.oro.text.regex.*;
+import java.util.regex.*;
 
 /**
  * <p>Test the <tt>TextUtil</tt> class's <tt>split()</tt> methods.</p>
@@ -42,7 +42,7 @@ public class SplitString
 
     private String delims = null;
     private boolean useRegexp = false;
-    private int limit = TextUtil.SPLIT_ALL;
+    private int limit = 0;
     private String[] strings = null;
 
     /*----------------------------------------------------------------------*\
@@ -177,17 +177,9 @@ public class SplitString
     }
 
     private void runTest (String[] args)
-        throws MalformedPatternException
+        throws PatternSyntaxException
     {
         parseParams (args);
-
-        Pattern pattern = null;
-
-        if (useRegexp)
-        {
-            Perl5Compiler compiler = new Perl5Compiler();
-            pattern = compiler.compile (delims);
-        }
 
         XStringBuffer printableDelims = new XStringBuffer();
         if (delims == null)
@@ -203,8 +195,8 @@ public class SplitString
         {
             String[] splitStrings = null;
 
-            if (pattern != null)
-                splitStrings = TextUtil.split (strings[i], pattern, limit);
+            if (useRegexp)
+                splitStrings = strings[i].split(delims, limit);
             else if (delims == null)
                 splitStrings = TextUtil.split (strings[i]);
             else
