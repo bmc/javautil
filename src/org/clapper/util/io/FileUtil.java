@@ -375,7 +375,7 @@ public class FileUtil
     }
 
     /**
-     * Get the extension for a path or file name.
+     * Get the extension for a path or file name. Does not include the ".".
      *
      * @param path  the file or path name
      *
