@@ -301,8 +301,12 @@ public abstract class CommandLineUtility
 
                 // Okay, now handle our options.
 
-                if (optionInfo.longOption.equals ("logging"))
+                if ((optionInfo.longOption != null) &&
+                    (optionInfo.longOption.equals ("logging")))
+                {
                     Logger.enableLogging();
+                }
+
                 else
                 {
                     parseCustomOption (optionInfo.shortOption,
