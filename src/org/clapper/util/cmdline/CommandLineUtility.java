@@ -1274,8 +1274,8 @@ public abstract class CommandLineUtility
                         BundleUtil.getMessage (Package.BUNDLE_NAME,
                                                Locale.getDefault(),
                                                "CommandLineUtility.logging",
-                                               "Enable logging via Jakarta "
-                                             + "Commons Logging API."));
+                                               "Enable logging via the "
+                                             + "java.util.logging API."));
 
         return info;
     }
