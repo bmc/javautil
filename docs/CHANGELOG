@@ -1,6 +1,14 @@
 $Id$
 ---------------------------------------------------------------------------
 
+Version 1.0.2:
+
+- Drastically simplified word-wrapping logic in org.clapper.io.WordWrapWriter.
+- Added rightJustifyString(), leftJustifyString() and centerString() methods
+  to org.clapper.util.text.TextUtil.
+- Added org.clapper.util.io.JustifyTextWriter class.
+
+
 Version 1.0.1:
 
 - New methods (copyTextFile, copyReader, etc.) in org.clapper.util.io.FileUtil.
