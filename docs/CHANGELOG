@@ -4,6 +4,26 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
+Version 1.1.5 (02 December, 2004)
+
+- Added getOptionalCardinalValue() and getRequiredCardinalValue() utility
+  methods to org.clapper.util.config.Configuration class.
+
+
+Version 1.1.4 (10 November, 2004)
+
+- Added new methods in the org.clapper.util.mail.EmailAddress, allowing
+  specification of a file name to setText() and addAttachment() methods.
+  The file name is used to specify the suggested file name in the MIME
+  headers. Also fixed some bugs relating to the assignment of file names
+  and determination of MIME types for attachments.
+
+- Added MIMETypeUtil class, with enhanced methods to map from a file name
+  or extension to a MIME type (similar to what the JDK provides), and to
+  map from a MIME type to a preferred extension (which the JDK does not
+  provide).
+
+
 Version 1.1.3 (30 October, 2004)
 
 - Added org.clapper.util.misc.FileHashMap class, a Map that keeps the keys
