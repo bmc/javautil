@@ -9,28 +9,35 @@
     Build file for "util" Java classes
   </description>
 
-  <!-- set global properties for this build -->
+  <!--
+  ***************************************************************************
+				Properties
+  ***************************************************************************
+  -->
 
-  <property name="jarname" value="org-clapper-util.jar"/>
   <property name="build" location="classes"/>
   <property name="dist"  location="dist"/>
   <property name="build.compiler" value="jikes"/>
   <property name="build.compiler.emacs" value="true"/>
   <property name="compile.listfiles" value="no"/>
+  <property name="code_jarfile" value="rssget.jar"/>
+  <property name="docs_zipfile" value="javadocs.zip"/>
+  <property name="docs_top_dir" value="${dist}/docs"/>
+  <property name="docs_api_dir" value="${docs_top_dir}/api"/>
+  <property name="src_zipfile" value="src.zip"/>
+  <property name="zip_dir_prefix" value="org/clapper/util/"/>
+
+  <!--
+  ***************************************************************************
+			    Paths and Patterns
+  ***************************************************************************
+  -->
 
   <path id="project.class.path">
     <pathelement location="lib/"/>
     <pathelement path="${java.class.path}/"/>
     <pathelement path="classes/"/>
   </path>
-
-  <target name="init">
-    <!-- Create the time stamp -->
-    <tstamp/>
-    <!-- Create the build directory structure used by compile -->
-    <mkdir dir="${build}"/>
-    <depend srcdir="." destdir="${build}"/>
-  </target>
 
   <patternset id="lib.sources">
     <include name="**/*.java"/>
@@ -45,6 +52,29 @@
   <patternset id="mail.test.sources">
     <include name="mail/test/*.java"/>
   </patternset>
+
+  <!--
+  ***************************************************************************
+			  Initialization Targets
+  ***************************************************************************
+  -->
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+    <depend srcdir="." destdir="${build}"/>
+  </target>
+
+  <!--
+  ***************************************************************************
+			       Code Targets
+  ***************************************************************************
+  -->
+
+  <target name="testers" depends="lib,lib.testers,mail.testers"/>
+  <target name="all" depends="lib,testers"/>
 
   <target name="misc" depends="init">
     <javac srcdir="." 
@@ -163,16 +193,11 @@
     </javac>
   </target>
 
-  <target name="testers" depends="lib,lib.testers,mail.testers"/>
-
-  <target name="all" depends="lib,testers"/>
-
-  <target name="dist" depends="all"
-          description="Generate the distribution">
-    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
-    <mkdir dir="${dist}/lib"/>
-    <jar jarfile="${dist}/lib/${jarname}" basedir="${build}"/>
-  </target>
+  <!--
+  ***************************************************************************
+			      Javadoc targets
+  ***************************************************************************
+  -->
 
   <target name="doc"
           description="Generate API Javadocs">
@@ -196,6 +221,42 @@
 
   <target name="docs" depends="doc"/>
   <target name="javadocs" depends="doc"/>
+
+  <!--
+  ***************************************************************************
+			     Packaging Targets
+  ***************************************************************************
+  -->
+
+  <target name="dist" depends="all"
+          description="Generate the distribution">
+    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+    <mkdir dir="${dist}/lib"/>
+    <jar jarfile="${dist}/lib/${code_jarfile}" basedir="${build}"/>
+  </target>
+
+  <target name="doczip" depends="doc"
+          description="Builds the javadocs zip file">
+    <mkdir dir="${dist}"/>
+    <zip destfile="${dist}/${docs_zipfile}">
+      <zipfileset dir="${docs_top_dir}"
+                  prefix="${zip_dir_prefix}"/>
+    </zip>
+  </target>
+
+  <target name="srczip" depends="clean"
+          description="Generate the source jar">
+    <mkdir dir="${dist}"/>
+    <zip destfile="${dist}/${src_zipfile}">
+      <zipfileset dir="." 
+                  includes="**/*.java,**/*.html,**/*.xml"
+                  excludes="**/CVS,${dist}/**,${build}/*"
+                  prefix="${zip_dir_prefix}"/>
+    </zip>
+  </target>
+
+  <target name="fulldist" depends="srczip,doczip,dist"
+          description="Generate the distribution and source jars"/>
 
   <target name="clean"
         description="clean up" >
