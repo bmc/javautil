@@ -145,4 +145,99 @@ public class FileUtils
 
         return ext;
     }
+
+    /**
+     * Get the name of a file without its extension. Does not remove
+     * any parent directory components.
+     *
+     * @param path  the path
+     *
+     * @return the path without the extension
+     */
+    public static String getFileNameNoExtension (String path)
+    {
+        int i = path.indexOf ('.');
+
+        if (i != -1)
+            path = path.substring (0, i);
+
+        return path;
+    }
+
+    /**
+     * Get the name of a file's parent directory. This is the directory
+     * part of the filename. For instance, "/home/foo.zip" would return
+     * "/home". This method uses the file's absolute path.
+     *
+     * @param fileName the file name
+     *
+     * @return directory name part of the file's absolute pathname
+     *
+     * @see #dirname(File)
+     * @see #basename(String)
+     */
+    public static String dirname (String fileName)
+    {
+        return dirname (new File (fileName));
+    }
+
+    /**
+     * Get the name of a file's parent directory. This is the directory
+     * part of the filename. For instance, "/home/foo.zip" would return
+     * "/home". This method uses the file's absolute path.
+     *
+     * @param file  the file whose parent directory is to be returned
+     *
+     * @return directory name part of the file's absolute pathname
+     *
+     * @see #dirname(String)
+     * @see #basename(File)
+     */
+    public static String dirname (File file)
+    {
+        String  absName = file.getAbsolutePath();
+        String  fileSep = System.getProperty ("file.separator");
+        int     lastSep = absName.lastIndexOf (fileSep);
+
+        return absName.substring (0, lastSep);
+    }
+
+    /**
+     * Get the base (i.e., simple file) name of a file. This is the file
+     * name stripped of any directory information. For instance,
+     * "/home/foo.zip" would return "foo.zip".
+     *
+     * @param fileName name of the file to get the basename for
+     *
+     * @return file name part of the file
+     *
+     * @see #dirname(String)
+     */
+    public static String basename (String fileName)
+    {
+        String  fileSep = System.getProperty ("file.separator");
+        int     lastSep = fileName.lastIndexOf (fileSep);
+
+        if (lastSep == -1)
+            return fileName;
+        else
+            return fileName.substring (lastSep + 1);
+    }
+
+    /**
+     * Get the base (i.e., simple file) name of a file. This is the file
+     * name stripped of any directory information. For instance,
+     * "/home/foo.zip" would return "foo.zip".
+     *
+     * @param file  the file to get the basename for
+     *
+     * @return file name part of the file
+     *
+     * @see #basename(String)
+     * @see #dirname(File)
+     */
+    public static String basename (File file)
+    {
+        return basename (file.getName());
+    }
 }
