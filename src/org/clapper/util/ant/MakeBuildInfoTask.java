@@ -75,7 +75,7 @@ public class MakeBuildInfoTask extends Task
     public void execute() throws BuildException
     {
         if (file == null)
-            throw new BuildException ("file attribute not set.");
+            throw new BuildException ("file attribute not set.", location);
 
         try
         {
@@ -87,7 +87,8 @@ public class MakeBuildInfoTask extends Task
             throw new BuildException ("Can't create build info file \""
                                     + file.getPath()
                                     + "\": "
-                                    + ex.toString());
+                                    + ex.toString(),
+                                      location);
         }
     }
 
@@ -124,14 +125,4 @@ public class MakeBuildInfoTask extends Task
     /*----------------------------------------------------------------------*\
                               Private Methods
     \*----------------------------------------------------------------------*/
-
-    /**
-     * add a name value pair to the project property set
-     * @param n name of property
-     * @param v value to set
-     */
-    private void addProperty (String n, String v)
-    {
-        getProject().setNewProperty(n, v);
-    }
 }
