@@ -38,6 +38,9 @@
   -->
 
   <property name="build" location="classes"/>
+  <property name="pkg.path" value="org/clapper/util"/>
+  <property name="src.top" location="src"/>
+  <property name="src.dir" location="${src.top}/${pkg.path}"/>
   <property name="dist"  location="dist"/>
   <property name="build.compiler" value="jikes"/>
   <property name="build.compiler.emacs" value="true"/>
@@ -92,7 +95,7 @@
     </tstamp>
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build}"/>
-    <depend srcdir="." destdir="${build}"/>
+    <depend srcdir="${src.dir}" destdir="${build}"/>
   </target>
 
   <!--
@@ -106,7 +109,7 @@
   <target name="testers" depends="lib,lib.testers,mail.testers"/>
 
   <target name="misc" depends="init">
-    <javac srcdir="." 
+    <javac srcdir="${src.dir}" 
 	   depend="true"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
@@ -118,7 +121,7 @@
   </target>
 
   <target name="io" depends="misc">
-    <javac srcdir="." 
+    <javac srcdir="${src.dir}" 
 	   depend="true"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
@@ -130,7 +133,7 @@
   </target>
 
   <target name="text" depends="io">
-    <javac srcdir="." 
+    <javac srcdir="${src.dir}" 
 	   depend="true"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
@@ -142,7 +145,7 @@
   </target>
 
   <target name="config" depends="text">
-    <javac srcdir="." 
+    <javac srcdir="${src.dir}" 
 	   depend="true"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
@@ -180,7 +183,7 @@
   </target>
 
   <target name="mail" depends="-check.javamail,text" if="javamail.exists">
-    <javac srcdir="." 
+    <javac srcdir="${src.dir}" 
 	   depend="true"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
@@ -192,7 +195,7 @@
   </target>
 
   <target name="ant.tasks">
-    <javac srcdir="." 
+    <javac srcdir="${src.dir}" 
 	   depend="true"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
@@ -245,7 +248,7 @@
           if="javamail.exists"
 	  description="compile the mail testers">
     <!-- Create the distribution directory -->
-    <javac srcdir="." 
+    <javac srcdir="${src.dir}" 
 	   depend="true"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
@@ -257,7 +260,7 @@
   <target name="lib.testers" depends="lib"
 	  description="compile the testers">
     <!-- Create the distribution directory -->
-    <javac srcdir="." 
+    <javac srcdir="${src.dir}" 
 	   depend="true"
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
@@ -277,7 +280,7 @@
     <mkdir dir="dist/docs/api"/>
     <javadoc 
              destdir="dist/docs/api"
-	     sourcepath="../../.."
+	     sourcepath="${src.top}"
              author="true"
              version="true"
 	     splitindex="true"
@@ -361,9 +364,13 @@
   <target name="clean"
         description="clean up" >
     <!-- Delete the ${build} and ${dist} directory trees -->
-    <delete dir="${build}"/>
-    <delete dir="${build}" failonerror="false" includeEmptyDirs="true"/>
-    <delete dir="${dist}/lib" failonerror="false" includeEmptyDirs="true"/>
-    <delete dir="${dist}" failonerror="false" includeEmptyDirs="true"/>
+
+    <delete failonerror="false" includeEmptyDirs="true">
+      <fileset dir="${build}"/>
+    </delete>
+
+    <delete failonerror="false" includeEmptyDirs="true">
+      <fileset dir="${dist}"/>
+    </delete>
   </target>
 </project>
