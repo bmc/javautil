@@ -236,7 +236,7 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
      * Entry in the internal linked list (queue) of LRU entries. Implements
      * Map.Entry for convenience.
      */
-    private class LRULinkedListEntry implements Map.Entry
+    private static class LRULinkedListEntry implements Map.Entry
     {
         LRULinkedListEntry  previous = null;
         LRULinkedListEntry  next     = null;
@@ -287,7 +287,7 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
      * hash map of objects also points to one of these, allowing the hash map
      * to remain untouched even as the linked list entries get reordered.
      */
-    private class LRULinkedList
+    private static class LRULinkedList
     {
         LRULinkedListEntry  head = null;
         LRULinkedListEntry  tail = null;
@@ -405,7 +405,8 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
      * Wraps any ObjectRemovalListener passed into addRemovalListener().
      * Keeps track of both the listener and its "automaticOnly" status
      */
-    private class RemovalListenerWrapper implements ObjectRemovalListener
+    private static class RemovalListenerWrapper
+        implements ObjectRemovalListener
     {
         boolean                automaticOnly;
         ObjectRemovalListener  realListener;
@@ -422,6 +423,15 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
             realListener.objectRemoved (event);
         }
     }
+
+    /*----------------------------------------------------------------------*\
+                         Private Static Variables
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * See JDK 1.5 version of java.io.Serializable
+     */
+    private static final long serialVersionUID = 1L;
 
     /*----------------------------------------------------------------------*\
                              Private Variables

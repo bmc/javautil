@@ -356,7 +356,7 @@ public class FileHashMap extends AbstractMap
      * Wraps the values data file and other administrative references related
      * to it.
      */
-    private class ValuesFile
+    private static class ValuesFile
     {
         RandomAccessFile file;
         FileLock         lock;
@@ -411,7 +411,7 @@ public class FileHashMap extends AbstractMap
      * Comparator for FileHashMapEntry objects. Sorts by natural order,
      * which is file position.
      */
-    private class FileHashMapEntryComparator implements Comparator
+    private static class FileHashMapEntryComparator implements Comparator
     {
         public int compare (Object o1, Object o2)
         {
@@ -433,7 +433,7 @@ public class FileHashMap extends AbstractMap
      * Comparator for FileHashMapEntry objects. Sorts by object size, then
      * file position. Used for ordering gap entries.
      */
-    private class FileHashMapEntryGapComparator implements Comparator
+    private static class FileHashMapEntryGapComparator implements Comparator
     {
         public int compare (Object o1, Object o2)
         {
