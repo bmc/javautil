@@ -26,8 +26,6 @@
 
 package org.clapper.util.cmdline;
 
-import java.util.Locale;
-
 import org.clapper.util.misc.NestedException;
 
 /**

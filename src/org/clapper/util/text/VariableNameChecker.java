@@ -26,9 +26,6 @@
 
 package org.clapper.util.text;
 
-import java.util.*;
-import java.io.*;
-
 /**
  * <p>This interface defines the methods for a class that checks characters
  * to determine whether they're legal for a variable name that's to be

@@ -26,13 +26,6 @@
 
 package org.clapper.util.io;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Iterator;
-
-import java.io.FilenameFilter;
-import java.io.File;
-
 /**
  * <p>Used solely to define type-safe mode values for
  * {@link CombinationFilenameFilter} and {@link CombinationFileFilter}.
@@ -86,5 +79,15 @@ public final class CombinationFilterMode
             eq = this.value == ((CombinationFilterMode) other).value;
 
         return eq;
+    }
+
+    /**
+     * Get the hash code for this object.
+     *
+     * @return the hash code
+     */
+    public int hashCode()
+    {
+        return value;
     }
 }

@@ -182,4 +182,12 @@ public final class Unicode
      * Trademark symbol
      */
     public static final char TRADEMARK = '\u2122';
+
+    /*----------------------------------------------------------------------*\
+                                Constructor
+    \*----------------------------------------------------------------------*/
+
+    private Unicode()
+    {
+    }
 }

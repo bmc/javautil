@@ -28,9 +28,6 @@ package org.clapper.util.misc;
 
 import java.lang.System;
 
-import java.util.ResourceBundle;
-import java.util.MissingResourceException;
-
 /**
  * <p>Contains the software version for the <i>org.clapper.util</i>
  * library. Also contains a main program which, invoked, displays the name
@@ -47,13 +44,21 @@ public final class Version
                              Public Constants
     \*----------------------------------------------------------------------*/
 
-    public static final String API_VERSION = "1.0.3";
+    public static final String API_VERSION = "1.1";
 
     /**
      * The name of the resource bundle containing the build info.
      */
     public static final String BUILD_INFO_BUNDLE_NAME
         = "org.clapper.util.misc.BuildInfoBundle";
+
+    /*----------------------------------------------------------------------*\
+                                Constructor
+    \*----------------------------------------------------------------------*/
+
+    private Version()
+    {
+    }
 
     /*----------------------------------------------------------------------*\
                                Main Program

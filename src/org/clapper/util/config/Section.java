@@ -26,8 +26,6 @@
 
 package org.clapper.util.config;
 
-import org.clapper.util.text.VariableSubstitutionException;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

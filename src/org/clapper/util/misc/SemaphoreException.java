@@ -26,8 +26,6 @@
 
 package org.clapper.util.misc;
 
-import java.util.Locale;
-
 /**
  * Thrown by classes that implement the {@link Semaphore} interface, to
  * indicate an error.

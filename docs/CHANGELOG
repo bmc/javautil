@@ -1,7 +1,38 @@
 $Id$
 ---------------------------------------------------------------------------
 
-Version 1.0.2:
+Version 1.1 (...):
+
+- Now requires JDK 1.4 or better. JDK 1.3 is no longer supported. Among
+  the reasons for this requirement:
+
+  * I wanted to use the new assertion capabilities of 1.4
+
+  * The regular expression classes that come with 1.4 are more extensible
+    than the Jakarta ORO classes, in that they work with anything that
+    implements the CharSequence interface, not just with Strings. Plus,
+    using java.util.regexp, instead of Jakarta ORO, removes a third-party
+    library dependency.
+
+  * The JDK 1.4 version of String introduces a split() method, obviating
+    the need to provide those methods in TextUtil.
+
+- Converted code that used Jakarta ORO to use the 1.4 java.util.regexp
+  classes.
+
+- Removed TextUtil.split() methods. JDK 1.4's String class has its own
+  methods.
+
+- Overhauled build.xml to make compilations more efficient. Requires a
+  newer version of Jikes (if compiling with Jikes).
+
+- Cleaned up a lot of unnecessary imports. Addressed minor issues that
+  Jikes warned about.
+
+- Minor javadoc changes and adjustments.
+
+
+Version 1.0.2 (24 September, 2004):
 
 - Drastically simplified word-wrapping logic in org.clapper.io.WordWrapWriter.
 - Added rightJustifyString(), leftJustifyString() and centerString() methods
@@ -9,7 +40,7 @@ Version 1.0.2:
 - Added org.clapper.util.io.JustifyTextWriter class.
 
 
-Version 1.0.1:
+Version 1.0.1 (16 September, 2004):
 
 - New methods (copyTextFile, copyReader, etc.) in org.clapper.util.io.FileUtil.
   copyTextFile() explicitly handles character set conversion.
@@ -18,6 +49,6 @@ Version 1.0.1:
 - Miscellaneous javadocs enhancements.
 
 
-Version 1.0:
+Version 1.0 (29 August, 2004):
 
-- First version of curn posted to the web.
+- First version posted to the web.

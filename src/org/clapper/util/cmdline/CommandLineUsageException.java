@@ -26,10 +26,6 @@
 
 package org.clapper.util.cmdline;
 
-import java.util.Locale;
-
-import org.clapper.util.misc.NestedException;
-
 /**
  * Thrown by a command-line utility when an error occurs while running the
  * command.

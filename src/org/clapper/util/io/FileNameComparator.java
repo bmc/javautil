@@ -139,6 +139,16 @@ public class FileNameComparator implements Comparator
         return eq;
     }
 
+    /**
+     * Get the hash code for this object.
+     *
+     * @return the hash code
+     */
+    public int hashCode()
+    {
+        return super.hashCode();
+    }
+
     /*----------------------------------------------------------------------*\
                               Private Methods
     \*----------------------------------------------------------------------*/

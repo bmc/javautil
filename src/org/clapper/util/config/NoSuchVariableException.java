@@ -26,8 +26,6 @@
 
 package org.clapper.util.config;
 
-import java.util.*;
-
 /**
  * A <tt>NoSuchVariableException</tt> is thrown by the
  * {@link Configuration} class to signify that a requested configuration

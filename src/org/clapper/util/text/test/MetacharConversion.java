@@ -26,9 +26,7 @@
 
 package org.clapper.util.text.test;
 
-import java.util.*;
 import org.clapper.util.text.*;
-import java.io.*;
 
 /**
  * <p>Test the <tt>XStringBuffer</tt> class's metacharacter conversion

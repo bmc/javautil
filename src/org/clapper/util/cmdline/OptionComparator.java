@@ -64,6 +64,11 @@ final class OptionComparator implements Comparator
         return (compare (this, o) == 0);
     }
 
+    public int hashCode()
+    {
+        return super.hashCode();
+    }
+
     private String getComparisonString (OptionInfo opt)
     {
         String result = "";

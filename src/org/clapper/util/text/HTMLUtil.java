@@ -26,14 +26,10 @@
 
 package org.clapper.util.text;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 
 import org.apache.oro.text.perl.Perl5Util;
-import org.apache.oro.text.perl.MalformedPerl5PatternException;
 import org.apache.oro.text.regex.MatchResult;
 
 /**

@@ -73,7 +73,7 @@ public final class MultipartSubtype
     }
 
     /*----------------------------------------------------------------------*\
-                            Private Data Items
+                              Public Methods
     \*----------------------------------------------------------------------*/
 
     /**
@@ -89,5 +89,15 @@ public final class MultipartSubtype
     {
         MultipartSubtype that = (MultipartSubtype) other;
         return ((this == that) || (this.subtype.equals (that.subtype)));
+    }
+
+    /**
+     * Get the hash code for this object.
+     *
+     * @return the hash code
+     */
+    public int hashCode()
+    {
+        return subtype.hashCode();
     }
 }

@@ -26,9 +26,6 @@
 
 package org.clapper.util.text;
 
-import java.util.Properties;
-import java.io.*;
-
 /**
  * <p>The <tt>UnixShellVariableSubstituter</tt> class implements the
  * <tt>VariableSubstituter</tt> interface and provides an inline
@@ -95,12 +92,13 @@ public class UnixShellVariableSubstituter
      * List of metacharacters that are used to introduce a variable reference.
      * These characters cannot be permitted in a variable name.
      */
-    public static final char[] VARIABLE_METACHARACTERS = new char[]
-    {
-        VAR_START,
-        VAR_OPEN_BRACE,
-        VAR_CLOSE_BRACE
-    };
+    public static final String VARIABLE_METACHARACTERS = new String
+                                   (new char[]
+                                    {
+                                        VAR_START,
+                                        VAR_OPEN_BRACE,
+                                        VAR_CLOSE_BRACE
+                                    });
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -336,7 +334,7 @@ public class UnixShellVariableSubstituter
     public static boolean isVariableMetacharacter (char c)
     {
         boolean isMeta = false;
-        char[]  meta  = UnixShellVariableSubstituter.VARIABLE_METACHARACTERS;
+        char[]  meta  = VARIABLE_METACHARACTERS.toCharArray();
 
         for (int i = 0; i < meta.length; i++)
         {

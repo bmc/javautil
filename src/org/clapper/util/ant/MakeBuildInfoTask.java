@@ -84,7 +84,7 @@ public class MakeBuildInfoTask extends Task
     public void execute() throws BuildException
     {
         if (file == null)
-            throw new BuildException ("file attribute not set.", location);
+            throw new BuildException ("file attribute not set.");
 
         try
         {
@@ -96,8 +96,7 @@ public class MakeBuildInfoTask extends Task
             throw new BuildException ("Can't create build info file \""
                                     + file.getPath()
                                     + "\": "
-                                    + ex.toString(),
-                                      location);
+                                    + ex.toString());
         }
     }
 

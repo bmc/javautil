@@ -53,7 +53,6 @@ class Variable
     private String         rawValue;
     private int            lineWhereDefined = 0; // 0 means unknown
     private ValueSegment[] valueSegments    = null;
-    private int            i;
     private Section        parentSection;
 
     /**
@@ -212,6 +211,7 @@ class Variable
             char[]       chars;
             boolean      literal;
             ValueSegment currentSegment = new ValueSegment();
+            int          i;
 
             chars   = cookedValue.toCharArray();
             lastCh  = '\0';

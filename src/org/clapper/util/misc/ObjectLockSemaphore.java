@@ -26,9 +26,7 @@
 
 package org.clapper.util.misc;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.text.SimpleDateFormat;
 
 /**
  * <p>The <tt>ObjectLockSemaphore</tt> class implements the {@link Semaphore}

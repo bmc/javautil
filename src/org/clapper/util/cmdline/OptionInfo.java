@@ -26,8 +26,6 @@
 
 package org.clapper.util.cmdline;
 
-import java.util.Comparator;
-
 /**
  * Used solely by <tt>UsageInfo</tt>, this class contains information about
  * an option.

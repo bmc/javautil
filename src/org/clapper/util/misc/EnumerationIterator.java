@@ -53,7 +53,7 @@ public class EnumerationIterator implements Iterator
     /**
      * The underlying Enumeration.
      */
-    private Enumeration enum = null;
+    private Enumeration enumeration = null;
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -63,11 +63,11 @@ public class EnumerationIterator implements Iterator
      * Allocate a new <tt>EnumerationIterator</tt> object that will
      * forward its calls to the specified <tt>Enumeration</tt>.
      *
-     * @param enum  The <tt>Enumeration</tt> to which to forward calls
+     * @param enumeration  The <tt>Enumeration</tt> to which to forward calls
      */
-    public EnumerationIterator (Enumeration enum)
+    public EnumerationIterator (Enumeration enumeration)
     {
-        this.enum = enum;
+        this.enumeration = enumeration;
     }
 
     /*----------------------------------------------------------------------*\
@@ -87,7 +87,7 @@ public class EnumerationIterator implements Iterator
      */
     public boolean hasNext()
     {
-        return enum.hasMoreElements();
+        return enumeration.hasMoreElements();
     }
 
     /**
@@ -101,7 +101,7 @@ public class EnumerationIterator implements Iterator
      */
     public Object next() throws NoSuchElementException
     {
-        return enum.nextElement();
+        return enumeration.nextElement();
     }
 
     /**

@@ -27,12 +27,9 @@
 package org.clapper.util.config;
 
 import org.clapper.util.text.TextUtil;
-import org.clapper.util.text.VariableSubstitutionException;
 
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Locale;
-import java.util.Properties;
 
 import java.text.SimpleDateFormat;
 

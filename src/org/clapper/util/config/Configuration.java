@@ -50,8 +50,6 @@ import java.util.StringTokenizer;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import java.text.SimpleDateFormat;
-
 import org.clapper.util.text.TextUtil;
 import org.clapper.util.text.UnixShellVariableSubstituter;
 import org.clapper.util.text.VariableDereferencer;

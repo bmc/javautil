@@ -53,12 +53,8 @@ import javax.activation.DataHandler;
 import javax.activation.FileTypeMap;
 import javax.activation.FileDataSource;
 
-import javax.mail.internet.InternetAddress;
 import javax.mail.MessagingException;
-import javax.mail.Message;
-import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
 
 /**
  * <p>The <tt>EmailMessage</tt> class is a simplified front-end to a

@@ -244,21 +244,21 @@ public class MultiIterator implements Iterator
 
     private Iterator nextIterator()
     {
-        Object    obj = aggregationIterator.next();
-        Iterator  it  = null;
+        Object    obj     = aggregationIterator.next();
+        Iterator  result  = null;
 
         if (obj instanceof Collection)
-            it = ((Collection) obj).iterator();
+            result = ((Collection) obj).iterator();
 
         else if (obj instanceof Iterator)
-            it = (Iterator) obj;
+            result = (Iterator) obj;
 
         else if (obj instanceof Enumeration)
-            it = new EnumerationIterator ((Enumeration) obj);
+            result = new EnumerationIterator ((Enumeration) obj);
 
         else
             throw new IllegalArgumentException (obj.getClass().getName());
 
-        return it;
+        return result;
     }
 }

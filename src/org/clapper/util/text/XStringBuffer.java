@@ -26,8 +26,6 @@
 
 package org.clapper.util.text;
 
-import java.net.URL;
-
 import java.util.Collection;
 
 import java.io.StringReader;

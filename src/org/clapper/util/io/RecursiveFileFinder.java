@@ -26,12 +26,11 @@
 
 package org.clapper.util.io;
 
-import java.io.*;
-import java.util.*;
-import java.text.*;
-import org.apache.oro.io.*;
-import org.apache.oro.text.*;
-import org.apache.oro.text.regex.*;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FilenameFilter;
+
+import java.util.Collection;
 
 /**
  * A <tt>RecursiveFileFinder</tt> walks a directory tree and finds all

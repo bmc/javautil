@@ -26,9 +26,6 @@
 
 package org.clapper.util.text;
 
-import java.util.*;
-import java.io.*;
-
 /**
  * <p>This interface defines the methods for a class that does inline
  * variable substitution, converting strings containing variable references

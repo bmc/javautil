@@ -26,9 +26,7 @@
 
 package org.clapper.util.text.test;
 
-import java.util.*;
 import org.clapper.util.text.*;
-import java.io.*;
 import org.apache.oro.text.regex.*;
 
 /**

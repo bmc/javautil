@@ -32,8 +32,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Locale;
 
-import org.clapper.util.misc.NestedException;
-
 import org.clapper.util.cmdline.CommandLineUtility;
 import org.clapper.util.cmdline.CommandLineException;
 import org.clapper.util.cmdline.CommandLineUsageException;

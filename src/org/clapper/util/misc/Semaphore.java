@@ -26,10 +26,6 @@
 
 package org.clapper.util.misc;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.text.SimpleDateFormat;
-
 /**
  * <p>The <tt>Semaphore</tt> interface specifies a classic counting
  * semaphore. This interface can be implemented in a variety of ways, including

@@ -156,6 +156,16 @@ public class EmailAddress implements Cloneable, Comparable
     }
 
     /**
+     * Get the hash code for this object.
+     *
+     * @return the hash code
+     */
+    public int hashCode()
+    {
+        return getAddress().hashCode();
+    }
+
+    /**
      * Compare two email addresses.
      *
      * @param obj  the other email address. Must be an <tt>EmailAddress</tt>

@@ -26,8 +26,6 @@
 
 package org.clapper.util.mail;
 
-import java.util.Locale;
-
 import org.clapper.util.misc.NestedException;
 
 /**

@@ -27,7 +27,6 @@
 package org.clapper.util.io.test;
 
 import java.io.*;
-import java.util.*;
 import org.clapper.util.io.*;
 import org.clapper.util.text.*;
 
@@ -49,19 +48,46 @@ public class TestWordWrapWriter
     private static InputStream in = System.in;
 
     /*----------------------------------------------------------------------*\
-                             Private Constants
+                                Constructor
     \*----------------------------------------------------------------------*/
 
-    /*----------------------------------------------------------------------*\
-                            Private Data Items
-    \*----------------------------------------------------------------------*/
+    private TestWordWrapWriter()
+    {
+    }
 
     /*----------------------------------------------------------------------*\
                                Main Program
     \*----------------------------------------------------------------------*/
 
     public static void main (String args[])
-        throws Throwable
+    {
+        try
+        {
+            runTest (args);
+        }
+
+        catch (IllegalArgumentException ex)
+        {
+            usage();
+            System.exit (1);
+        }
+
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+            System.exit (1);
+        }
+
+        System.exit (0);
+    }
+
+    /*----------------------------------------------------------------------*\
+                              Private Methods
+    \*----------------------------------------------------------------------*/
+
+    private static void runTest (String[] args)
+        throws IllegalArgumentException,
+               IOException
     {
         parseParams (args);
 
@@ -106,6 +132,7 @@ public class TestWordWrapWriter
     }
 
     private static void parseParams (String[] args)
+        throws IllegalArgumentException
     {
         try
         {
@@ -156,30 +183,19 @@ public class TestWordWrapWriter
 
         catch (ArrayIndexOutOfBoundsException ex)
         {
-            System.err.println ("Missing argument(s)");
-            usage();
-            System.exit (1);
-        }
-
-        catch (IllegalArgumentException ex)
-        {
-            System.err.println ("Bad option: " + ex.getMessage());
-            usage();
-            System.exit (1);
+            throw new IllegalArgumentException ("Missing argument(s)");
         }
 
         catch (NumberFormatException ex)
         {
-            System.err.println ("Bad argument to numeric option: "
-                              + ex.toString());
-            usage();
-            System.exit (1);
+            throw new IllegalArgumentException ("Bad argument to numeric "
+                                              + "option: "
+                                              + ex.toString());
         }
 
         catch (IOException ex)
         {
-            ex.printStackTrace();
-            System.exit (1);
+            throw new IllegalArgumentException (ex.toString());
         }
     }
 

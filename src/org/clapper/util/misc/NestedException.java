@@ -32,10 +32,7 @@ import java.io.LineNumberReader;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.io.PrintStream;
-import java.util.ResourceBundle;
-import java.util.MissingResourceException;
 import java.util.Locale;
-import java.text.MessageFormat;
 
 /**
  * <p><tt>NestedException</tt> defines a special <tt>Exception</tt> class

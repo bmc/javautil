@@ -26,8 +26,6 @@
 
 package org.clapper.util.config;
 
-import java.util.*;
-
 /**
  * A <tt>NoSuchSectionException</tt> is thrown by the
  * {@link Configuration} class to signify that a requested configuration

@@ -26,9 +26,6 @@
 
 package org.clapper.util.text;
 
-import java.util.Properties;
-import java.io.*;
-
 /**
  * <p>The <tt>WindowsCmdVariableSubstituter</tt> class implements the
  * <tt>VariableSubstituter</tt> interface and provides an inline
