@@ -80,38 +80,6 @@ public final class UsageInfo
     /**
      * Add a positional parameter (i.e., one that follows the options) and
      * its explanation to the usage information at the end of the list of
-     * positional parameters. The parameter is assumed to be required and
-     * is displayed as such. To control whether a parameter is displayed
-     * as required or optional, use the expanded version of
-     * {@link #addParameter(String,String,boolean) addParameter()}.
-     *
-     * @param option       The parameter placeholder string
-     * @param explanation  A one-line explanation for the parameter. The line
-     *                     can be as long as you want, and can contain multiple
-     *                     sentences, but it must not contain a newline.
-     *                     It will be automatically broken up into multiple
-     *                     lines as necessary.
-     *
-     * {@see #addParameter(String,String,boolean)
-     */ 
-    public void addParameter (String param, String explanation)
-    {
-        if (param.startsWith ("-"))
-        {
-            throw new IllegalArgumentException
-                ("(BUG) Option \""
-               + param
-               + "\" registered via UsageInfo.addParameter(), instead of "
-               + "via UsageInfo.addOption().");
-        }
-
-        paramMap.put (param, explanation);
-        paramNames.add (param);
-    }
-
-    /**
-     * Add a positional parameter (i.e., one that follows the options) and
-     * its explanation to the usage information at the end of the list of
      * positional parameters.
      *
      * @param option       The parameter placeholder string

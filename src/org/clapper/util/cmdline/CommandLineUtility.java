@@ -89,10 +89,10 @@ import java.util.NoSuchElementException;
  *         throws CommandLineUtilityException,
  *                NoSuchElementException
  *     {
- *         if (option.equals ("-v"))
+ *         if (option.equals ("-v") || option.equals ("--verbose"))
  *             verbose = true;
  *
- *         else if (option.equals ("-n"))
+ *         else if (option.equals ("-n") || option.equals ("--count"))
  *         {
  *             String arg = (String) it.next();
  *             try
@@ -119,9 +119,10 @@ import java.util.NoSuchElementException;
  *
  *     protected void getCustomUsageInfo (UsageInfo info)
  *     {
- *         info.addOption ("-v", "Enable verbose messages");
+ *         info.addOption ("-v, --verbose", "Enable verbose messages");
  *         info.addOption ("-n count", "Read specified file <count> times. Defaults to 1.");
- *         info.addParameter ("<filename>", "File to process.");
+ *         info.addOption ("--count count", "Synonym for -n option.");
+ *         info.addParameter ("filename", "File to process.", false);
  *     }
  * }
  * </pre>
