@@ -120,6 +120,8 @@
       <compilerarg compiler="jikes" value="+Peffective-java"/>
       <compilerarg compiler="jikes" value="+Punused-type-imports"/>
       <compilerarg compiler="jikes" value="+Punused-package-imports"/>
+      <compilerarg compiler="jikes" value="+Pmodifier-order"/>
+      <compilerarg compiler="jikes" value="+Pserial"/>
 
       <classpath refid="project.class.path"/>
 
@@ -169,6 +171,8 @@
       <compilerarg compiler="jikes" value="+Peffective-java"/>
       <compilerarg compiler="jikes" value="+Punused-type-imports"/>
       <compilerarg compiler="jikes" value="+Punused-package-imports"/>
+      <compilerarg compiler="jikes" value="+Pmodifier-order"/>
+      <compilerarg compiler="jikes" value="+Pserial"/>
 
       <classpath refid="project.class.path"/>
 
@@ -220,6 +224,8 @@
       <compilerarg compiler="jikes" value="+Peffective-java"/>
       <compilerarg compiler="jikes" value="+Punused-type-imports"/>
       <compilerarg compiler="jikes" value="+Punused-package-imports"/>
+      <compilerarg compiler="jikes" value="+Pmodifier-order"/>
+      <compilerarg compiler="jikes" value="+Pserial"/>
 
       <classpath refid="project.class.path"/>
 
@@ -240,6 +246,8 @@
       <compilerarg compiler="jikes" value="+Peffective-java"/>
       <compilerarg compiler="jikes" value="+Punused-type-imports"/>
       <compilerarg compiler="jikes" value="+Punused-package-imports"/>
+      <compilerarg compiler="jikes" value="+Pmodifier-order"/>
+      <compilerarg compiler="jikes" value="+Pserial"/>
 
       <classpath refid="project.class.path"/>
 
