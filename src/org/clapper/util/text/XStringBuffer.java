@@ -4,9 +4,15 @@
 
 package org.clapper.util.text;
 
-import java.net.*;
-import java.io.*;
-import org.clapper.util.io.*;
+import java.net.URL;
+
+import java.util.Collection;
+
+import java.io.StringReader;
+import java.io.PushbackReader;
+import java.io.IOException;
+
+import org.clapper.util.text.TextUtils;
 
 /**
  * An <tt>XStringBuffer</tt> objects wraps a standard Java
@@ -960,6 +966,80 @@ public class XStringBuffer
     }
 
     /**
+     * Split the contents of a buffer on a delimiter, and return the
+     * resulting strings. This method is a convenient front-end to
+     * {@link TextUtils#split(String,char)}.
+     *
+     * @param delim the delimiter
+     *
+     * @return an array of <tt>String</tt> objects
+     *
+     * @see #split(String,String)
+     * @see TextUtils#split(String,char)
+     */
+    public String[] split (char delim)
+    {
+        return TextUtils.split (this.toString(), delim);
+    }
+
+    /**
+     * Split the contents of a buffer on a delimiter, and return the
+     * resulting strings. This method is a convenient front-end to
+     * {@link TextUtils#split(String,String)}
+     *
+     * @param delimSet the delimiter set
+     *
+     * @return an array of <tt>String</tt> objects
+     *
+     * @see #split(String,char)
+     * @see TextUtils#split(String,String)
+     */
+    public String[] split (String delimSet)
+    {
+        return TextUtils.split (this.toString(), delimSet);
+    }
+
+    /**
+     * Split the contents of a buffer on a delimiter, and store the
+     * resulting strings in a specified <tt>Collection</tt>. This method
+     * is a convenient front-end for
+     * {@link TextUtils#split(String,char,Collection)}.
+     *
+     * @param delim      the delimiter
+     * @param collection where to store the resulting strings
+     *
+     * @return the number of strings added to the collection
+     *
+     * @see #split(String,String)
+     * @see TextUtils#split(String,char)
+     * @see TextUtils#split(String,String,Collection)
+     */
+    public int split (char delim, Collection collection)
+    {
+        return TextUtils.split (this.toString(), delim, collection);
+    }
+
+    /**
+     * Split the contents of a buffer on a delimiter, and store the
+     * resulting strings in a specified <tt>Collection</tt>. This method
+     * is a convenient front-end for
+     * {@link TextUtils#split(String,char,Collection)}.
+     *
+     * @param delimSet   the set of delimiters
+     * @param collection where to store the resulting strings
+     *
+     * @return the number of strings added to the collection
+     *
+     * @see #split(String,String)
+     * @see TextUtils#split(String,String)
+     * @see TextUtils#split(String,char,Collection)
+     */
+    public int split (String delimSet, Collection collection)
+    {
+        return TextUtils.split (this.toString(), delimSet, collection);
+    }
+
+    /**
      * Return a new <tt>String</tt> that contains a subsequence of
      * characters currently contained in this buffer. The substring
      * begins at the specified index and extends to the end of the
@@ -977,9 +1057,7 @@ public class XStringBuffer
         return buf.substring (index);
     }
 
-
     /**
-
      * Return a new <tt>String</tt> that contains a subsequence of
      * characters currently contained in this buffer. The substring begins
      * at the specified <tt>start</tt> and extends to the character at
