@@ -126,7 +126,7 @@ public class ArrayIterator implements Iterator
      * decrements the iterator's internal index by one, and returns the
      * corresponding element.
      *
-     * @return the next element from the underlying array
+     * @return the previous element from the underlying array
      *
      * @exception java.util.NoSuchElementException
      *            Attempt to move internal index before the first array element
