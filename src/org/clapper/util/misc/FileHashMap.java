@@ -312,7 +312,7 @@ public class FileHashMap extends AbstractMap
      * FileHashMapEntry object. This index is stored on disk, in the index
      * file.
      */
-    private Map indexMap = null;
+    private HashMap indexMap = null;
 
     /**
      * The file prefix with which this object was created.
@@ -359,141 +359,6 @@ public class FileHashMap extends AbstractMap
     /*----------------------------------------------------------------------*\
                            Private Inner Classes
     \*----------------------------------------------------------------------*/
-
-    /**
-     * Stores the location of an on-disk serialized value. Used by
-     * FileHashMap for its in-memory index and returned sets and
-     * iterators.
-     */
-    private class FileHashMapEntry implements Serializable, Comparable
-    {
-        /**
-         * The file position.
-         */
-        private long filePosition = -1;
-
-        /**
-         * The length of the stored, serialized object
-         */
-        private int objectSize = -1;
-
-        /**
-         * The caller's key (i.e., the key the caller of FileHashMap.put()
-         * specified).
-         */
-        private Object callerKey = null;
-
-        /**
-         * Create a new <tt>FileHashMapEntry</tt> that records the location
-         * and length of an item stored in the data file portion of a
-         * <tt>FileHashMap</tt> obejct.
-         *
-         * @param pos   The object's file position. The object may or may not
-         *              actually have been written there yet.
-         * @param size  The stored object's serialized size, if known, or -1
-         *              if the object has never been written. A non-negative
-         *              size value will typically be passed when an existing
-         *              <tt>FileHashMap</tt> is being reloaded from disk.
-         * @param key   The caller's key (i.e., the key the caller of
-         *              <tt>FileHashMap.put()</tt> specified.)
-         *
-         * @see #getFilePosition
-         * @see #getObjectSize
-         * @see #setObjectSize
-         * @see FileHashMap#put
-         */
-        FileHashMapEntry (long pos, int size, Object key)
-        {
-            this.filePosition = pos;
-            this.objectSize   = size;
-            this.callerKey    = key;
-        }
-
-        /**
-         * Compares this object with the specified object for order. Returns a
-         * negative integer, zero, or a positive integer as this object is less
-         * than, equal to, or greater than the specified object. The comparison
-         * key for a <tt>FileHashMapEntry</tt> is the file position value.
-         *
-         * @param o  The other object
-         */
-        public int compareTo (Object o)
-        {
-            FileHashMapEntry  other    = (FileHashMapEntry) o;
-            Long              thisPos  = new Long (this.filePosition);
-            Long              otherPos = new Long (other.filePosition);
-
-            return thisPos.compareTo (otherPos);
-        }
-
-        /**
-         * Display a string version of the contents of this object. Mostly
-         * useful for debugging.
-         *
-         * @return a string representation of the contents of this object
-         */
-        public String toString()
-        {
-            return ("FileHashMapEntry[filePosition="
-                  + filePosition
-                  + ", objectSize="
-                  + objectSize
-                  + ", callerKey="
-                  + callerKey
-                  + "]");
-        }
-
-        /**
-         * Get the caller's key (i.e., the key the caller passed to
-         * <tt>FileHashMap.put()</tt>).
-         *
-         * @return the key
-         *
-         * @see FileHashMap#put
-         */
-        Object getKey()
-        {
-            return callerKey;
-        }
-
-        /**
-         * Get the file position with which this object was initialized.
-         *
-         * @return the file position
-         */
-        long getFilePosition()
-        {
-            return this.filePosition;
-        }
-
-        /**
-         * Get the number of bytes the serialized object occupies in the
-         * random access file.
-         *
-         * @return the number of bytes occupied by the object
-         *
-         * @see #setObjectSize
-         */
-        int getObjectSize()
-            throws IllegalStateException
-        {
-            assert (this.objectSize > 0) : "No object stored yet";
-            return this.objectSize;
-        }
-
-        /**
-         * Get the number of bytes the serialized object occupies in the
-         * random access file.
-         *
-         * @param size the number of bytes occupied by the object
-         *
-         * @see #getObjectSize
-         */
-        protected void setObjectSize (int size)
-        {
-            this.objectSize = size;
-        }
-    }
 
     /**
      * Comparator for FileHashMapEntry objects.
@@ -1135,11 +1000,11 @@ public class FileHashMap extends AbstractMap
 
         int filesFound = 0;
 
-        this.filePrefix = filePrefix;
+        this.filePrefix = pathPrefix;
         this.flags      = flags;
 
-        dataFilePath    = new File (filePrefix + DATA_FILE_SUFFIX);
-        indexFilePath   = new File (filePrefix + INDEX_FILE_SUFFIX);
+        dataFilePath    = new File (pathPrefix + DATA_FILE_SUFFIX);
+        indexFilePath   = new File (pathPrefix + INDEX_FILE_SUFFIX);
 
         if ((flags & TRANSIENT) != 0)
             flags &= (~NO_CREATE);
