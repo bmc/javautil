@@ -19,7 +19,25 @@ import org.clapper.util.text.TextUtils;
  * <tt>StringBuffer</tt> object, providing a superset of
  * <tt>StringBuffer</tt>'s functionality. (<tt>XStringBuffer</tt>
  * cannot actually subclass <tt>StringBuffer</tt>, since
- * <tt>StringBuffer</tt> is final.
+ * <tt>StringBuffer</tt> is final.) Among the additional methods that this
+ * class provides are:
+ *
+ * <ul>
+ *   <li> A set of {@link #split()} methods, to split the contents of the
+ *        buffer on a delimiter
+ *   <li> A {@link #delete(String) delete()} method that deletes the first
+ *        occurrence of a substring. (<tt>StringBuffer</tt> only provides
+ *        a <tt>delete()</tt> method that takes a starting and ending index.)
+ *   <li> A {@link #replace(String,String) replace()} method that replaces
+ *        the first occurrence of a substring. (<tt>StringBuffer</tt> only
+ *        provides a <tt>replace()</tt> method that takes a starting and
+ *        ending index.)
+ *   <li> A {@link #replaceAll(String,String) replaceAll()} method to
+ *        replace all occurrences of a substring with something else
+ *   <li> Methods to encode and decode metacharacter sequences in place.
+ *        (See {@link #encodeMetacharacters()} and
+ *        {@link #decodeMetacharacters()}.)
+ * </ul>
  *
  * @see java.lang.StringBuffer
  *
@@ -963,6 +981,21 @@ public class XStringBuffer
     public void setLength (int newLength) throws IndexOutOfBoundsException
     {
         buf.setLength (newLength);
+    }
+
+    /**
+     * Split the contents of a buffer on white space, and return the
+     * resulting strings. This method is a convenient front-end to
+     * {@link TextUtils#split(String)}.
+     *
+     * @return an array of <tt>String</tt> objects
+     *
+     * @see #split(String)
+     * @see TextUtils#split(String,char)
+     */
+    public String[] split()
+    {
+        return TextUtils.split (this.toString());
     }
 
     /**
