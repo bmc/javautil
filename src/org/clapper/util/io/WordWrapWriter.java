@@ -687,7 +687,10 @@ public class WordWrapWriter extends PrintWriter
     }
 
     /**
-     * Write a single character.
+     * Write a single character. This method is called by all other
+     * <tt>write()</tt>, <tt>print()</tt> and <tt>println()</tt> methods.
+     * Thus, subclasses that wish to preprocess (or intercept) the output
+     * only have to override this method.
      *
      * @param c Character to write
      */
