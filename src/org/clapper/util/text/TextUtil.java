@@ -477,7 +477,7 @@ public final class TextUtil
      *
      * @see #centerString(String,int,char)
      * @see #leftJustifyString(String,int,char)
-     * @see #rightString(String,int,char)
+     * @see #rightJustifyString(String,int,char)
      */
     public static String centerString (String s, int width, char c)
     {
