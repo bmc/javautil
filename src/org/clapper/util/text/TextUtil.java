@@ -423,7 +423,7 @@ public final class TextUtil
 
     /**
      * <p>Split a string on a regular expression, into one or more strings.
-     * The <tt>limit<tt> parameter essentially says to split the string
+     * The <tt>limit</tt> parameter essentially says to split the string
      * only on at most the first <tt>(limit - 1)</tt> number of pattern
      * occurences.</p>
      *
@@ -468,7 +468,7 @@ public final class TextUtil
 
     /**
      * <p>Split a string on a regular expression, into one or more strings.
-     * The <tt>limit<tt> parameter essentially says to split the string
+     * The <tt>limit</tt> parameter essentially says to split the string
      * only on at most the first <tt>(limit - 1)</tt> number of pattern
      * occurences.</p>
      *
