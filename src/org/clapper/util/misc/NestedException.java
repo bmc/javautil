@@ -126,7 +126,7 @@ public class NestedException extends Exception
             buf.append (this.getClass().getName());
             if (containedException != null)
             {
-                buf.append (" (contains an ");
+                buf.append (" (contains ");
                 buf.append (containedException.getClass().getName());
                 buf.append (")");
             }

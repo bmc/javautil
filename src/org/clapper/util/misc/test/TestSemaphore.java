@@ -4,7 +4,9 @@
 
 package org.clapper.util.misc.test;
 
+import org.clapper.util.misc.ObjectLockSemaphore;
 import org.clapper.util.misc.Semaphore;
+import org.clapper.util.misc.SemaphoreException;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -37,6 +39,20 @@ public class TestSemaphore extends CommandLineUtility
         }
 
         public void run()
+        {
+            try
+            {
+                doTest();
+            }
+
+            catch (SemaphoreException ex)
+            {
+                message ("*** semaphore error: " + ex.toString());
+            }
+        }
+
+        private void doTest()
+            throws SemaphoreException
         {
             boolean acquired = false;
             Semaphore semaphore = TestSemaphore.this.semaphore;
@@ -142,8 +158,8 @@ public class TestSemaphore extends CommandLineUtility
             int          myPriority;
             int          i;
 
-            this.semaphore = new Semaphore (semCount);
-            this.parentSem = new Semaphore (0);
+            this.semaphore = new ObjectLockSemaphore (semCount);
+            this.parentSem = new ObjectLockSemaphore (0);
 
             myPriority = Thread.currentThread().getPriority();
 
