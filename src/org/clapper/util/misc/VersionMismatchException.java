@@ -91,7 +91,7 @@ public class VersionMismatchException extends NestedException
      * Constructs an exception containing a resource bundle name, a message
      * key, and a default message (in case the resource bundle can't be
      * found). Using this constructor is equivalent to calling the
-     * {@link #VersionMismatchException(String,String,String,Object[])}
+     * {@link #VersionMismatchException(String,String,String,Object[],String,String)}
      * constructor with a null pointer for the <tt>Object[]</tt> parameter.
      * Calls to {@link NestedException#getMessage(Locale)} will attempt to
      * retrieve the top-most message (i.e., the message from this exception,
@@ -110,7 +110,7 @@ public class VersionMismatchException extends NestedException
      *
      * @see #getExpectedVersion
      * @see #getFoundVersion
-     * @see #VersionMismatchException(String,String,String,Object[])
+     * @see #VersionMismatchException(String,String,String,Object[],String,String)
      * @see NestedException#getLocalizedMessage
      */
     public VersionMismatchException (String bundleName,
@@ -128,7 +128,7 @@ public class VersionMismatchException extends NestedException
      * Constructs an exception containing a resource bundle name, a message
      * key, and a default message (in case the resource bundle can't be
      * found). Using this constructor is equivalent to calling the
-     * {@link #VersionMismatchException(String,String,String,Object[])}
+     * {@link #VersionMismatchException(String,String,String,Object[],String,String)}
      * constructor, with a null pointer for the <tt>Object[]</tt> parameter.
      * Calls to {@link NestedException#getMessage(Locale)} will attempt to
      * retrieve the top-most message (i.e., the message from this exception,
@@ -148,7 +148,7 @@ public class VersionMismatchException extends NestedException
      *
      * @see #getExpectedVersion
      * @see #getFoundVersion
-     * @see #VersionMismatchException(String,String,String,Object[])
+     * @see #VersionMismatchException(String,String,String,Object[],String,String)
      * @see NestedException#getLocalizedMessage
      */
     public VersionMismatchException (String   bundleName,
@@ -167,7 +167,7 @@ public class VersionMismatchException extends NestedException
      * Constructs an exception containing a resource bundle name, a message
      * key, a default message (in case the resource bundle can't be found),
      * and another exception. Using this constructor is equivalent to calling
-     * the {@link #VersionMismatchException(String,String,String,Object[])}
+     * the {@link #VersionMismatchException(String,String,String,Object[],String,String)}
      * constructor, with a null pointer for the <tt>Object[]</tt>
      * parameter. Calls to {@link #getMessage(Locale)} will attempt to
      * retrieve the top-most message (i.e., the message from this
@@ -188,7 +188,7 @@ public class VersionMismatchException extends NestedException
      *
      * @see #getExpectedVersion
      * @see #getFoundVersion
-     * @see #VersionMismatchException(String,String,String,Object[])
+     * @see #VersionMismatchException(String,String,String,Object[],String,String)
      * @see NestedException#getMessage(Locale)
      */
     public VersionMismatchException (String    bundleName,
@@ -211,14 +211,14 @@ public class VersionMismatchException extends NestedException
      * Constructs an exception containing a resource bundle name, a message
      * key, a default message format (in case the resource bundle can't be
      * found), arguments to be incorporated in the message via
-     * <tt>java.text.MessageFormat</tt>, and another exception.
-     * Calls to {@link #getMessage(Locale)} will attempt to retrieve the
+     * <tt>java.text.MessageFormat</tt>, and another exception. Calls to
+     * {@link NestedException#getMessage(Locale)} will attempt to retrieve the
      * top-most message (i.e., the message from this exception, not from
      * nested exceptions) by querying the named resource bundle. Calls to
-     * {@link #printStackTrace(PrintWriter,Locale)} will do the same, where
-     * applicable. The message is not retrieved until one of those methods
-     * is called, because the desired locale is passed into
-     * <tt>getMessage()</tt> and <tt>printStackTrace()</tt>, not this
+     * {@link NestedException#printStackTrace(PrintWriter,Locale)} will do
+     * the same, where applicable. The message is not retrieved until one
+     * of those methods is called, because the desired locale is passed
+     * into <tt>getMessage()</tt> and <tt>printStackTrace()</tt>, not this
      * constructor.
      *
      * @param bundleName      resource bundle name
@@ -231,7 +231,7 @@ public class VersionMismatchException extends NestedException
      *
      * @see #getExpectedVersion
      * @see #getFoundVersion
-     * @see #VersionMismatchException(String,String,String,Object[])
+     * @see #VersionMismatchException(String,String,String,Object[],String,String)
      * @see NestedException#getMessage(Locale)
      */
     public VersionMismatchException (String    bundleName,

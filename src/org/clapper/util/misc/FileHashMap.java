@@ -1212,7 +1212,7 @@ public class FileHashMap extends AbstractMap
      * @throws NotSerializableException Can't save index (bug)
      * @throws IOException              Error writing index
      *
-     * @see #flush
+     * @see #save
      */
     public void close()
         throws NotSerializableException,
@@ -1387,7 +1387,6 @@ public class FileHashMap extends AbstractMap
      *
      * @return the hash code value for this map.
      *
-     * @see Map.Entry#hashCode()
      * @see Object#hashCode()
      * @see Object#equals(Object)
      * @see #equals(Object)
@@ -1548,7 +1547,7 @@ public class FileHashMap extends AbstractMap
      * on a temporary map, <tt>save()</tt> simply returns without doing
      * anything.</p>
      *
-     * @throws IOException              Error flushing changes to disk.
+     * @throws IOException              Error saving changes to disk.
      * @throws NotSerializableException Can't save index because it contains
      *                                  one or more objects that cannot be
      *                                  serialized.
