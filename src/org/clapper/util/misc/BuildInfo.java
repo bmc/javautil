@@ -86,6 +86,13 @@ public class BuildInfo
      */
     public static final String BUILT_BY_KEY = "built.by";
 
+    /**
+     * The date format, used with <tt>java.text.SimpleDateFormat</tt>,
+     * used to write the date string to the build file. This format
+     * can also be used to parse the date string, if necessary.
+     */
+    public static final String DATE_FORMAT_STRING = "yyyy/MM/dd HH:mm:ss z";
+
     /*----------------------------------------------------------------------*\
                                 Data Items
     \*----------------------------------------------------------------------*/
@@ -225,7 +232,7 @@ public class BuildInfo
         // BUILD_DATE_KEY
 
         Date now = new Date();
-        DateFormat dateFmt = new SimpleDateFormat ("yyyy/MM/dd HH:mm:ss z");
+        DateFormat dateFmt = new SimpleDateFormat (DATE_FORMAT_STRING);
         props.setProperty (BUILD_DATE_KEY, dateFmt.format (now));
 
         // BUILT_BY_KEY
