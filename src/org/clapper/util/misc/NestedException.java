@@ -54,10 +54,11 @@ public class NestedException extends Exception
     \*----------------------------------------------------------------------*/
 
     private Throwable containedException = null;
-    private String    bundleName         = null;
-    private String    messageKey         = null;
-    private String    defaultMsg         = null;
+    private String    resourceBundleName = null;
+    private String    bundleMessageKey   = null;
+    private String    defaultMessage     = null;
     private Object[]  messageParams      = null;
+    private Locale    messageLocale      = null;
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -133,7 +134,7 @@ public class NestedException extends Exception
                             String messageKey,
                             String defaultMsg)
     {
-        this (bundleName, messageKey, defaultMsg, null);
+        this (bundleName, messageKey, defaultMsg, null, null);
     }
 
     /**
@@ -162,11 +163,76 @@ public class NestedException extends Exception
                             String   defaultMsg,
                             Object[] msgParams)
     {
+        this (bundleName, messageKey, defaultMsg, msgParams, null);
+    }
+
+    /**
+     * Constructs an exception containing a resource bundle name, a message
+     * key, a default message (in case the resource bundle can't be found),
+     * and another exception. Using this constructor is equivalent to
+     * calling the {@link #NestedException(String,String,Object[])}
+     * constructor, with a null pointer for the <tt>Object[]</tt>
+     * parameter. Calls to {@link #getMessage(Locale)} will attempt to
+     * retrieve the top-most message (i.e., the message from this
+     * exception, not from nested exceptions) by querying the named
+     * resource bundle. Calls to
+     * {@link #printStackTrace(PrintWriter,Locale)} will do the same, where
+     * applicable. The message is not retrieved until one of those methods
+     * is called, because the desired locale is passed into
+     * <tt>getMessage()</tt> and <tt>printStackTrace()</tt>, not this
+     * constructor.
+     *
+     * @param bundleName  resource bundle name
+     * @param messageKey  the key to the message to find in the bundle
+     * @param defaultMsg  the default message
+     * @param exception   the exception to nest
+     *
+     * @see #NestedException(String,String,Object[])
+     * @see #getMessage(Locale)
+     */
+    public NestedException (String    bundleName,
+                            String    messageKey,
+                            String    defaultMsg,
+                            Throwable ex)
+    {
+        this (bundleName, messageKey, defaultMsg, null, ex);
+    }
+
+    /**
+     * Constructs an exception containing a resource bundle name, a message
+     * key, a default message format (in case the resource bundle can't be
+     * found), arguments to be incorporated in the message via
+     * <tt>java.text.MessageFormat</tt>, and another exception.
+     * Calls to {@link #getMessage(Locale)} will attempt to retrieve the
+     * top-most message (i.e., the message from this exception, not from
+     * nested exceptions) by querying the named resource bundle. Calls to
+     * {@link #printStackTrace(PrintWriter,Locale)} will do the same, where
+     * applicable. The message is not retrieved until one of those methods
+     * is called, because the desired locale is passed into
+     * <tt>getMessage()</tt> and <tt>printStackTrace()</tt>, not this
+     * constructor.
+     *
+     * @param bundleName  resource bundle name
+     * @param messageKey  the key to the message to find in the bundle
+     * @param defaultMsg  the default message
+     * @param msgParams   parameters to the message, if any, or null
+     * @param ex          exception to be nested
+     *
+     * @see #NestedException(String,String,Object[])
+     * @see #getMessage(Locale)
+     */
+    public NestedException (String    bundleName,
+                            String    messageKey,
+                            String    defaultMsg,
+                            Object[]  msgParams,
+                            Throwable ex)
+    {
         super();
-        this.bundleName    = bundleName;
-        this.messageKey    = messageKey;
-        this.defaultMsg    = defaultMsg;
-        this.messageParams = msgParams;
+        this.resourceBundleName = bundleName;
+        this.bundleMessageKey   = messageKey;
+        this.defaultMessage     = defaultMsg;
+        this.messageParams      = msgParams;
+        this.containedException = ex;
     }
 
     /*----------------------------------------------------------------------*\
@@ -185,7 +251,9 @@ public class NestedException extends Exception
      */
     public String getMessage()
     {
-        return getMessage (null);
+        // messageLocale is only set if printStackTrace() is called with a
+        // locale.
+        return getMessage (messageLocale);
     }
 
     /**
@@ -206,19 +274,19 @@ public class NestedException extends Exception
 	StringBuffer buf = new StringBuffer();
         String       msg = null;
 
-        if ((bundleName != null) && (messageKey != null))
+        if ((resourceBundleName != null) && (bundleMessageKey != null))
         {
-            msg = BundleUtil.getMessage (bundleName,
+            msg = BundleUtil.getMessage (resourceBundleName,
                                          locale,
-                                         messageKey,
-                                         defaultMsg,
+                                         bundleMessageKey,
+                                         defaultMessage,
                                          messageParams);
         }
 
         if (msg == null)
         {
-            msg = defaultMsg;
-            if (defaultMsg == null)
+            msg = defaultMessage;
+            if (msg == null)
                 msg = super.getMessage();
         }
 
@@ -403,6 +471,19 @@ public class NestedException extends Exception
     }
 
     /**
+     * Prints this exception and its backtrace to the standard error
+     * stream. If this exception contains another, nested exception, its
+     * stack trace is also printed.
+     *
+     * @param locale   the locale to use when retrieving messages, or null
+     *                 for the default
+     */
+    public void printStackTrace (Locale locale)
+    { 
+        printStackTrace (new PrintWriter (System.err), locale);
+    }
+
+    /**
      * Prints this exception and its backtrace to the specified
      * <tt>PrintStream</tt>. If this exception contains another, nested
      * exception, its stack trace is also printed.
@@ -439,7 +520,11 @@ public class NestedException extends Exception
     {
 	synchronized (out)
         {
+            // Hack to pass locale through to getMessage()
+
+            this.messageLocale = locale;
             super.printStackTrace (out);
+
             if (this.containedException != null)
             {
                 Throwable ex;
@@ -453,12 +538,16 @@ public class NestedException extends Exception
                 while (ex != null)
                 {
                     out.println (prefix);
-                    ex.printStackTrace (out);
-
                     if (ex instanceof NestedException)
+                    {
+                        ((NestedException) ex).printStackTrace (out, locale);
                         ex = ((NestedException) ex).getNestedException();
+                    }
                     else
+                    {
+                        ex.printStackTrace (out);
                         ex = null;
+                    }
                 }
             }
 

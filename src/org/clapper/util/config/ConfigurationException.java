@@ -26,7 +26,9 @@
 
 package org.clapper.util.config;
 
-import org.clapper.util.misc.*;
+import java.util.Locale;
+
+import org.clapper.util.misc.NestedException;
 
 /**
  * A <tt>ConfigurationException</tt> is thrown by the
@@ -118,7 +120,7 @@ public class ConfigurationException extends NestedException
      * @param defaultMsg  the default message
      *
      * @see #ConfigurationException(String,String,Object[])
-     * @see NestedException#getLocalizedMessage
+     * @see NestedException#getMessage(Locale)
      */
     public ConfigurationException (String bundleName,
                                    String messageKey,
@@ -148,7 +150,7 @@ public class ConfigurationException extends NestedException
      * @param msgParams   parameters to the message, if any, or null
      *
      * @see #ConfigurationException(String,String,Object[])
-     * @see NestedException#getLocalizedMessage
+     * @see NestedException#getMessage(Locale)
      */
     public ConfigurationException (String   bundleName,
                                    String   messageKey,
@@ -156,5 +158,69 @@ public class ConfigurationException extends NestedException
                                    Object[] msgParams)
     {
         super (bundleName, messageKey, defaultMsg, msgParams);
+    }
+
+    /**
+     * Constructs an exception containing a resource bundle name, a message
+     * key, a default message (in case the resource bundle can't be found),
+     * and another exception. Using this constructor is equivalent to
+     * calling the {@link #ConfigurationException(String,String,Object[])}
+     * constructor, with a null pointer for the <tt>Object[]</tt>
+     * parameter. Calls to {@link #getMessage(Locale)} will attempt to
+     * retrieve the top-most message (i.e., the message from this
+     * exception, not from nested exceptions) by querying the named
+     * resource bundle. Calls to
+     * {@link #printStackTrace(PrintWriter,Locale)} will do the same, where
+     * applicable. The message is not retrieved until one of those methods
+     * is called, because the desired locale is passed into
+     * <tt>getMessage()</tt> and <tt>printStackTrace()</tt>, not this
+     * constructor.
+     *
+     * @param bundleName  resource bundle name
+     * @param messageKey  the key to the message to find in the bundle
+     * @param defaultMsg  the default message
+     * @param exception   the exception to nest
+     *
+     * @see #ConfigurationException(String,String,Object[])
+     * @see NestedException#getMessage(Locale)
+     */
+    public ConfigurationException (String    bundleName,
+                                   String    messageKey,
+                                   String    defaultMsg,
+                                   Throwable ex)
+    {
+        this (bundleName, messageKey, defaultMsg, null, ex);
+    }
+
+    /**
+     * Constructs an exception containing a resource bundle name, a message
+     * key, a default message format (in case the resource bundle can't be
+     * found), arguments to be incorporated in the message via
+     * <tt>java.text.MessageFormat</tt>, and another exception.
+     * Calls to {@link #getMessage(Locale)} will attempt to retrieve the
+     * top-most message (i.e., the message from this exception, not from
+     * nested exceptions) by querying the named resource bundle. Calls to
+     * {@link #printStackTrace(PrintWriter,Locale)} will do the same, where
+     * applicable. The message is not retrieved until one of those methods
+     * is called, because the desired locale is passed into
+     * <tt>getMessage()</tt> and <tt>printStackTrace()</tt>, not this
+     * constructor.
+     *
+     * @param bundleName  resource bundle name
+     * @param messageKey  the key to the message to find in the bundle
+     * @param defaultMsg  the default message
+     * @param msgParams   parameters to the message, if any, or null
+     * @param ex          exception to be nested
+     *
+     * @see #ConfigurationException(String,String,Object[])
+     * @see NestedException#getMessage(Locale)
+     */
+    public ConfigurationException (String    bundleName,
+                                   String    messageKey,
+                                   String    defaultMsg,
+                                   Object[]  msgParams,
+                                   Throwable ex)
+    {
+        super (bundleName, messageKey, defaultMsg, msgParams, ex);
     }
 }
