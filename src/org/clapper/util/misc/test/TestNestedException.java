@@ -37,6 +37,8 @@ import org.clapper.util.cmdline.CommandLineException;
 import org.clapper.util.cmdline.CommandLineUsageException;
 import org.clapper.util.cmdline.UsageInfo;
 
+import org.clapper.util.misc.NestedException;
+
 /**
  * @version <tt>$Revision$</tt>
  */
@@ -63,16 +65,20 @@ public class TestNestedException extends CommandLineUtility
             System.exit (1);
         }
 
-        catch (CommandLineException ex)
-        {
-            System.err.println (ex.getMessage (locale));
-            ex.printStackTrace ();
-            System.exit (1);
-        }
-
         catch (Exception ex)
         {
-            ex.printStackTrace (System.err);
+            if (ex instanceof NestedException)
+            {
+                NestedException nex = (NestedException) ex;
+                System.err.println (nex.getMessages (false, locale));
+                nex.printStackTrace (System.err, locale);
+            }
+            else
+            {
+                System.err.println (ex.getMessage());
+                ex.printStackTrace (System.err);
+            }
+
             System.exit (1);
         }
     }
@@ -103,6 +109,23 @@ public class TestNestedException extends CommandLineUtility
     {
         locale = new Locale (language, country);
 
+        try
+        {
+            foo();
+        }
+
+        catch (Exception ex)
+        {
+            throw new CommandLineException ("org.clapper.util.misc.test.Test",
+                                            "error",
+                                            "Error (default)",
+                                            ex);
+        }
+    }
+
+    private void foo()
+        throws CommandLineException
+    {
         try
         {
             throw new IOException ("Oops.");
