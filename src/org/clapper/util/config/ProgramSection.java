@@ -157,7 +157,6 @@ class ProgramSection extends Section
         {
             char delim = varName.charAt (PROGRAM_NOW_VAR.length());
             String[] tokens = TextUtil.split (varName, delim);
-            System.out.println ("*** \"" + varName + "\": tokens.length=" + tokens.length);
             if ((tokens.length != 2) && (tokens.length != 4))
             {
                 throw new ConfigurationException
