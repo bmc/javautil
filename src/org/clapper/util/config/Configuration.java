@@ -318,19 +318,21 @@ import org.clapper.util.io.FileUtil;
  *
  * <p>Note: It's also possible, though hairy, to escape the special meaning
  * of special characters via the backslash character. For instance, you can
- * Escape the variable substitution lead-in character, '$', with a
+ * escape the variable substitution lead-in character, '$', with a
  * backslash. e.g., "\$". This technique is not recommended, however,
  * because you have to double-escape any backslash characters that you want
  * to be preserved literally. For instance, to get "\t", you must specify
- * "\\\\t". To get a literal backslash, specify "\\\\". This
- * double-escaping is regrettable, but necessary because the configuration
- * file parser makes two separate passes over the value (one for
+ * "\\\\t". To get a literal backslash, specify "\\\\". (Yes, that's four
+ * backslashes, just to get a single unescaped one.) This double-escaping
+ * is a regrettable side effect of how the configuration file parses
+ * variable values: It makes two separate passes over the value (one for
  * metacharacter expansion and another for variable expansion). Each of
  * those passes honors and processes backslash escapes. This problem would
- * go away if the configuration file parser did its own parsing, in one
- * pass, inline. It doesn't currently do that, because I wanted to make use
- * of the existing {@link XStringBuffer#decodeMetacharacters()} method and the
- * {@link UnixShellVariableSubstituter} class. In generally, you're better off
+ * go away if the configuration file parser parsed both metacharacter
+ * sequences and variable substitutions itself, in one pass. It doesn't
+ * currently do that, because I wanted to make use of the existing
+ * {@link XStringBuffer#decodeMetacharacters()} method and the
+ * {@link UnixShellVariableSubstituter} class. In general, you're better off
  * just sticking with single quotes.</p>
  *
  * <h4>Includes</h4>
