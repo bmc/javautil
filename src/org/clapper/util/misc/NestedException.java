@@ -128,7 +128,7 @@ public class NestedException extends Exception
      * @param defaultMsg  the default message
      *
      * @see #NestedException(String,String,Object[])
-     * @see #getLocalizedMessage
+     * @see #getMessage(Locale)
      */
     public NestedException (String bundleName,
                             String messageKey,
@@ -156,7 +156,7 @@ public class NestedException extends Exception
      * @param msgParams   parameters to the message, if any, or null
      *
      * @see #NestedException(String,String,Object[])
-     * @see #getLocalizedMessage
+     * @see #getMessage(Locale)
      */
     public NestedException (String   bundleName,
                             String   messageKey,
