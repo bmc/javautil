@@ -202,7 +202,7 @@ import org.clapper.util.io.FileUtil;
  * special variables provided by the <tt>Configuration</tt> class. Those
  * variables are:</p>
  *
- * <table border="0" align="left" width="100%">
+ * <table border="1" align="left" width="100%">
  *   <tr valign="top">
  *     <th align="left">Variable</th>
  *     <th align="left">Description</th>
@@ -219,7 +219,7 @@ import org.clapper.util.io.FileUtil;
  *        to ensure that it is properly interpreted by the configuration file
  *        parsing logic.
  *     </td>
- *     <td align="left"></td>
+ *     <td align="left">&nbsp;</td>
  *   </tr>
  *
  *   <tr valign="top">
@@ -236,7 +236,7 @@ import org.clapper.util.io.FileUtil;
  *         always produces a valid URL, regardless of the underlying host
  *         operating system.
  *     </td>
- *     <td align="left"></td>
+ *     <td align="left">&nbsp;</td>
  *   </tr>
  *
  *   <tr valign="top">
@@ -245,7 +245,7 @@ import org.clapper.util.io.FileUtil;
  *        the current time, formatted by calling
  *        <tt>java.util.Date.toString()</tt> with the default locale.
  *     </td>
- *     <td align="left">Examples</td>
+ *     <td align="left">&nbsp;</td>
  *   </tr>
  *
  *   <tr valign="top">
@@ -281,10 +281,9 @@ import org.clapper.util.io.FileUtil;
  *        and Variable Substitution</a>, below, for more details.</p>
  *     </td>
  *     <td align="left">
- *        <blockquote><pre>
- *        ${program:now|yyyy.MM.dd 'at' hh:mm:ss z}
- *        ${program:now|yyyy/MM/dd 'at' HH:mm:ss z|en|US}
- *        ${program:now|dd MMM, yyyy hh:mm:ss z|fr|FR}
+ * <pre> ${program:now|yyyy.MM.dd 'at' hh:mm:ss z}
+ * ${program:now|yyyy/MM/dd 'at' HH:mm:ss z|en|US}
+ * ${program:now|dd MMM, yyyy hh:mm:ss z|fr|FR}</pre>
  *     </td>
  *   </tr>
  * </table>
