@@ -18,12 +18,23 @@ import java.util.Comparator;
  */
 final class OptionComparator implements Comparator
 {
+    private boolean ignoreCase = false;
+
+    public OptionComparator()
+    {
+    }
+
+    public OptionComparator (boolean ignoreCase)
+    {
+        this.ignoreCase = ignoreCase;
+    }
+
     public int compare (Object o1, Object o2)
     {
         String s1 = getComparisonString ((OptionInfo) o1);
         String s2 = getComparisonString ((OptionInfo) o2);
 
-        return s1.compareToIgnoreCase (s2);
+        return ignoreCase ? s1.compareToIgnoreCase (s2) : s1.compareTo (s2);
     }
 
     public boolean equals (Object o)

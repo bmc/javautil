@@ -263,7 +263,7 @@ public final class UsageInfo
 
         // Now, sort by option name.
 
-        Arrays.sort (options, new OptionComparator());
+        Arrays.sort (options, new OptionComparator (true));
         return options;
     }
 
