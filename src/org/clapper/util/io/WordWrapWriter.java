@@ -684,6 +684,7 @@ public class WordWrapWriter extends PrintWriter
         StringBuffer  currentWord   = new StringBuffer();
         boolean       lastWasNewline= true;
         int           lines = 0;
+        int           tokensOnLine  = 0;
 
         if (prefix != null)
         {
@@ -702,6 +703,9 @@ public class WordWrapWriter extends PrintWriter
                 {
                     out.print (prefix);
                 }
+
+                // We've emitted a prefix, which by definition is at the
+                // beginning of a line. Pretend we've emitted a newline.
 
                 currentLength += prefix.length();
                 lastWasNewline = false;
@@ -724,7 +728,7 @@ public class WordWrapWriter extends PrintWriter
                     // We have a word buffered up. Emit it.
 
                     if ( ((currentLength + tokenLength) > lineLength) &&
-                         (! lastWasNewline) )
+                         (tokensOnLine > 0) )
                     {
                         // Token would overflow the line AND we're not at
                         // the beginning of a new line. Wrap first. (If we
@@ -735,6 +739,7 @@ public class WordWrapWriter extends PrintWriter
                         lines++;
                         lastWasNewline = true;
                         currentLength = 0;
+                        tokensOnLine = 0;
                     }
 
                     if (lastWasNewline && (lines > 0))
@@ -744,17 +749,18 @@ public class WordWrapWriter extends PrintWriter
                     lastWasNewline = false;
                     currentLength += tokenLength;
                     currentWord.setLength (0);
+                    tokensOnLine++;
                 }
 
                 // Now emit the white space character, wrapping the line if
                 // necessary first.
 
-                if ( (c == NEWLINE_MARKER) ||
-                     (currentLength >= lineLength) )
+                if ((c == NEWLINE_MARKER) || (currentLength >= lineLength))
                 {
                     out.println();
                     lines++;
                     currentLength = 0;
+                    tokensOnLine = 0;
                     lastWasNewline = true;
                 }
 
@@ -790,6 +796,7 @@ public class WordWrapWriter extends PrintWriter
                 out.println();
                 lines++;
                 lastWasNewline = true;
+                tokensOnLine = 0;
             }
 
             if (lastWasNewline)
