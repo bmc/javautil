@@ -274,7 +274,7 @@ public class RegexUtil
                                           });
         }
 
-        String[] fields = TextUtil.split (substitutionCommand, delim);
+        String[] fields = TextUtil.split (substitutionCommand, delim, true);
         if ((fields.length != 3) && (fields.length != 4))
         {
             throw new RegexException (Package.BUNDLE_NAME,
