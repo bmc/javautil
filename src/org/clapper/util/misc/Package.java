@@ -33,14 +33,14 @@ package org.clapper.util.misc;
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
-public final class Package
+final class Package
 {
     /*----------------------------------------------------------------------*\
-                             Public Constants
+                                 Constants
     \*----------------------------------------------------------------------*/
 
     /**
      * The name of the resource bundle for this package.
      */
-    public static final String BUNDLE_NAME = "org.clapper.util.misc.Bundle";
+    static final String BUNDLE_NAME = "org.clapper.util.misc.Bundle";
 }
