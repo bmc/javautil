@@ -8,14 +8,14 @@ import java.util.*;
 
 /**
  * A <tt>NoSuchSectionException</tt> is thrown by the
- * {@link ConfigurationParser} class to signify that a requested
- * configuration section does not exist.
+ * {@link Configuration} class to signify that a requested configuration
+ * section does not exist.
  *
- * @see NestedException
+ * @see ConfigurationException
  *
  * @version <tt>$Revision$</tt>
  */
-public class NoSuchSectionException extends NoSuchElementException
+public class NoSuchSectionException extends ConfigurationException
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
@@ -34,7 +34,9 @@ public class NoSuchSectionException extends NoSuchElementException
      */
     public NoSuchSectionException (String sectionName)
     {
-        super();
+        super (NoSuchSectionException.class.getName()
+             + ": section "
+             + sectionName);
 
         this.sectionName = sectionName;
     }
@@ -51,25 +53,5 @@ public class NoSuchSectionException extends NoSuchElementException
     public String getSectionName()
     {
         return sectionName;
-    }
-
-    /**
-     * Gets the message associated with this exception.
-     *
-     * @return the message
-     */
-    public String getMessage()
-    {
-        return this.getClass().getName() + ": section " + sectionName;
-    }
-
-    /**
-     * Gets a string representation of this exception.
-     *
-     * @return the string representation
-     */
-    public String toString()
-    {
-        return getMessage();
     }
 }

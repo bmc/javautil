@@ -8,14 +8,14 @@ import java.util.*;
 
 /**
  * A <tt>NoSuchVariableException</tt> is thrown by the
- * {@link ConfigurationParser} class to signify that a requested
- * configuration variable does not exist.
- *
- * @see NestedException
+ * {@link Configuration} class to signify that a requested configuration
+ * variable does not exist.
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @see ConfigurationException
  */
-public class NoSuchVariableException extends NoSuchElementException
+public class NoSuchVariableException extends ConfigurationException
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
@@ -36,7 +36,11 @@ public class NoSuchVariableException extends NoSuchElementException
      */
     public NoSuchVariableException (String sectionName, String variableName)
     {
-        super();
+        super (NoSuchVariableException.class.getName()
+             + ": section "
+             + sectionName
+             + ", variable "
+             + variableName);
 
         this.sectionName  = sectionName;
         this.variableName = variableName;
@@ -64,26 +68,5 @@ public class NoSuchVariableException extends NoSuchElementException
     public String getVariableName()
     {
         return variableName;
-    }
-
-    /**
-     * Gets the message associated with this exception.
-     *
-     * @return the message
-     */
-    public String getMessage()
-    {
-        return this.getClass().getName() + ": section " + sectionName +
-               ", variable " + variableName;
-    }
-
-    /**
-     * Gets a string representation of this exception.
-     *
-     * @return the string representation
-     */
-    public String toString()
-    {
-        return getMessage();
     }
 }
