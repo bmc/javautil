@@ -64,6 +64,9 @@ import org.clapper.util.io.*;
  *   <li> The section name "system" is reserved. It doesn't really exist, but
  *        it's used during variable substitution (see below) to substitute from
  *        <tt>System.properties</tt>.
+ *   <li> The section name "program" is reserved. It doesn't really exist, but
+ *        it's used during variable substitution to substitute certain canned
+ *        values, such as the running process's working directory.
  * </ul>
  *
  * <h4>Section Name Syntax</h4>
@@ -149,6 +152,30 @@ import org.clapper.util.io.*;
  * searchFailedMessage=Search failed, sorry.
  * </pre></blockquote>
  *
+ * <p>The special section "program" is also reserved. Like "system",
+ * "program" doesn't really exist, either. It's a placeholder for various
+ * special variables provided by the <tt>Configuration</tt> class. Those
+ * variables are:</p>
+ *
+ * <ul>
+ *   <li> <tt>cwd</tt>: the program's current working directory. Thus,
+ *        <tt>${program:cwd}</tt> will substitute the working directory,
+ *        with the appropriate system-specific file separator. On a Windows
+ *        system, the file separator character (a backslash) will be doubled,
+ *        to ensure that it is properly interpreted by the configuration file
+ *        parsing logic.
+ *   <li> <tt>cwdURL</tt>: the program's current working directory as a
+ *        <tt>file</tt> URL, without the trailing "/". Useful when you need
+ *        to create a URL reference to something relative to the current
+ *        directory. This is especially useful on Windows, where
+ *        <blockquote><pre>file://${program:cwd}/something.txt</pre></blockquote>
+ *         produces an invalid URL, with a mixture of backslashes and
+ *         forward slashes.  By contrast,
+ *         <blockquote><pre>${program:cwdURL}/something.txt</pre></blockquote>
+ *         always produces a valid URL, regardless of the underlying host
+ *         operating system.
+ * </ul>
+ *
  * <p>Notes and caveats:</p>
  *
  * <ul>
@@ -225,6 +252,7 @@ public class Configuration
     private static final String INCLUDE                    = "%include";
     private static final int    MAX_INCLUDE_NESTING_LEVEL  = 50;
     private static final String SYSTEM_SECTION_NAME        = "system";
+    private static final String PROGRAM_SECTION_NAME       = "program";
 
     /*----------------------------------------------------------------------*\
                                   Classes
@@ -901,7 +929,7 @@ public class Configuration
         }
 
         int      i;
-        Section  section;
+        Section  section = null;
         String   sectionName;
         String   value = null;
 
@@ -918,6 +946,10 @@ public class Configuration
 
             if (sectionName.equals (SYSTEM_SECTION_NAME))
                 section = systemSection;
+
+            else if (sectionName.equals (PROGRAM_SECTION_NAME))
+                value = getProgramSectionValue (varName);
+
             else
                 section = (Section) sectionsByName.get (sectionName);
         }
@@ -1819,5 +1851,46 @@ public class Configuration
         sectionsByName.put (sectionName, section);
 
         return section;
+    }
+
+    /**
+     * Get a value from the phantom "program" section.
+     *
+     * @param varName the variable name
+     *
+     * @return the value, or "" if not available or nonexistent variable
+     *
+     * @throws VariableSubstitutionException error getting value
+     */
+    private String getProgramSectionValue (String varName)
+        throws VariableSubstitutionException
+    {
+        String value = "";
+
+        try
+        {
+            if (varName.equals ("cwd"))
+            {
+                File dir = new File (".");
+
+                value = dir.getCanonicalPath();
+            }
+
+            else if (varName.equals ("cwdURL"))
+            {
+                File dir = new File (".");
+
+                value = dir.getCanonicalFile().toURL().toString();
+                if (value.charAt (value.length() - 1) == '/')
+                    value = value.substring (0, value.length() - 1);
+            }
+        }
+
+        catch (IOException ex)
+        {
+            throw new VariableSubstitutionException (ex);
+        }
+
+        return value;
     }
 }
