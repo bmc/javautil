@@ -609,6 +609,7 @@ public class Configuration
                ConfigurationException
     {
         String sNum = getVariableValue (sectionName, variableName);
+
         try
         {
             return Integer.parseInt (sNum);
@@ -651,6 +652,7 @@ public class Configuration
         try
         {
             String s = getVariableValue (sectionName, variableName);
+
             if (s.trim().length() == 0)
                 result = defaultValue;
             else
@@ -1253,7 +1255,14 @@ public class Configuration
                                             + "variable definition.");
         }
 
-        String varName = s.substring (0, i);
+        String varName = s.substring (0, i).trim();
+        if (varName.length() == 0)
+        {
+            throw new ConfigurationException (getExceptionPrefix (line, url)
+                                            + "Missing variable name for "
+                                            + "variable definition.");
+        }
+
         String value   = s.substring (skipWhitespace (s, i + 1));
 
         if (parseData.currentSection.getVariable (varName) != null)
@@ -1635,7 +1644,6 @@ public class Configuration
     private Section makeNewSection (String sectionName)
     {
         Section section = new Section (sectionName);
-
         sectionsInOrder.add (section);
         sectionsByName.put (sectionName, section);
 
