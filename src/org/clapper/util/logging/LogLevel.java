@@ -29,7 +29,7 @@ package org.clapper.util.logging;
 import java.util.logging.Level;
 
 /**
- * Encodes a legal logging levels for the {@link Logger} class.
+ * Encodes a legal logging level constant for the {@link Logger} class.
  */
 public class LogLevel
 {
