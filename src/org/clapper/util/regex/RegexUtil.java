@@ -26,10 +26,9 @@
 
 package org.clapper.util.regex;
 
-import org.clapper.util.text.TextUtil;
-
+import org.clapper.util.logging.Logger;
 import org.clapper.util.misc.LRUMap;
-import org.clapper.util.misc.Logger;
+import org.clapper.util.text.TextUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

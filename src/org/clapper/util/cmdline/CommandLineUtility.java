@@ -28,10 +28,9 @@ package org.clapper.util.cmdline;
 
 import org.clapper.util.io.WordWrapWriter;
 
+import org.clapper.util.logging.Logger;
 import org.clapper.util.misc.ArrayIterator;
 import org.clapper.util.misc.BundleUtil;
-import org.clapper.util.misc.Logger;
-
 import org.clapper.util.text.TextUtil;
 
 import java.util.Iterator;

@@ -24,37 +24,108 @@
   a pointer to or a copy of the original.
 \*---------------------------------------------------------------------------*/
 
-package org.clapper.util.misc;
+package org.clapper.util.logging;
 
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Method;
+import java.util.logging.Level;
 
 /**
- * <p><tt>Logger</tt> wraps the Apache Jakarta Commons Logging <tt>Log</tt>
- * class. This class supports most of the logging methods, but it doesn't
- * actually instantiate any Jakarta Commons Logging <tt>Log</tt> objects
- * unless logging is explicitly enabled via a call to the
- * {@link #enableLogging enableLogging()} method. The first call to
- * <tt>enableLogging()</tt> traverses the list of instantiated
- * <tt>Logger</tt> objects and creates underlying Jakarta Commons Logging
- * <tt>Log</tt> objects for each <tt>Logger</tt>. Any <tt>Logger</tt> objects
- * created after <tt>enableLogging()</tt> is called are automatically
- * enabled.</p>
+ * <p><tt>Logger</tt> wraps the <tt>java.util.logging</tt> API introduced
+ * in JDK 1.4, and provides an intermediary object with an interface that's
+ * similar to the Apache Jakarta Commons Logging <tt>Log</tt> class. This
+ * class supports most of the logging methods, but it doesn't actually
+ * instantiate an underlying <tt>java.util.logging.Logger</tt> object until
+ * (or unless) a thread explicitly calls the {@link #enableLogging} method.
+ * The first call to <tt>enableLogging()</tt> traverses the list of
+ * instantiated <tt>org.clapper.util.Logger</tt> objects and creates
+ * underlying <tt>java.util.logging.Logger</tt> objects for each one.
+ * Commons Logging <tt>Log</tt> objects for each <tt>Logger</tt>. Any
+ * <tt>Logger</tt> objects created after <tt>enableLogging()</tt> is called
+ * are automatically enabled.</p>
  *
  * <p>This approach prevents any interaction with the real logging layer,
  * unless logging is explicitly enabled (e.g., because a command-line
- * option has been specified). Among other things, this avoids annoying
- * startup messages from Log4J, which insists on writing warning messages
- * to the console when it can't find a configuration file.</p>
+ * option has been specified). This approach was originally taken to avoid
+ * annoying startup messages from Log4J, which insists on writing warning
+ * messages to the console when it can't find a configuration file.
+ * However, this layer has since been reimplemented solely in terms of the
+ * <tt>java.util.logging</tt> API, so that rationale is no longer
+ * pertinent. This object's main purpose now is to insulate applications
+ * from the underlying logging technology, so that technology can be
+ * changed, if necessary, without having an impact on applications that use
+ * this class.</p>
  *
- * <p>The Jakarta Commons Logging API does not need to be present for this
- * class to compile. The <tt>enableLogging()</tt> method will use the
- * default class loader to locate the appropriate Commons Logging classes
- * at runtime.</p>
+ * <p>The level mappings used by this class are identical to those used
+ * by Commons Logging. (e.g.,, a "debug" message uses the same level as
+ * a Commons Logging "debug" message.) Those mappings are:</p>
+ *
+ * <table border="0">
+ *   <tr valign="top">
+ *     <th><tt>org.clapper.util.logging.Logger</tt> method</th>
+ *     <th>Corresponding <tt>java.util.logging.Level</tt> value</th>
+ *   </tr>
+ *
+ *   <tr valign="top">
+ *     <td><tt>debug()</tt></td>
+ *     <td><tt>FINE</tt></td>
+ *   </tr>
+ *
+ *   <tr valign="top">
+ *     <td><tt>error()</tt></td>
+ *     <td><tt>SEVERE</tt></td>
+ *   </tr>
+ *
+ *   <tr valign="top">
+ *     <td><tt>fatal()</tt></td>
+ *     <td><tt>SEVERE</tt></td>
+ *   </tr>
+ *
+ *   <tr valign="top">
+ *     <td><tt>info()</tt></td>
+ *     <td><tt>INFO</tt></td>
+ *   </tr>
+ *
+ *   <tr valign="top">
+ *     <td><tt>trace()</tt></td>
+ *     <td><tt>FINEST</tt></td>
+ *   </tr>
+ *
+ *   <tr valign="top">
+ *     <td><tt>warn()</tt></td>
+ *     <td><tt>WARNING</tt></td>
+ *   </tr>
+ *
+ *
+ *   <tr valign="top">
+ *     <td><tt>debug()</tt></td>
+ *     <td><tt>FINE</tt></td>
+ *   </tr>
+ *
+ *
+ *   <tr valign="top">
+ *     <td><tt>debug()</tt></td>
+ *     <td><tt>FINE</tt></td>
+ *   </tr>
+ *
+ * <p>This approach begs the obvious question, "Why not just use Jakarta
+ * Commons Logging?" Good point. After all, Commons Logging exists to
+ * insulate the application from the underlying logging technology, and it
+ * already supports multiple logging implementations (including the
+ * <tt>java.util.logging</tt> API). There are several reasons:</p>
+ *
+ * <ul>
+ *   <li> There are reported problems with the Commons Logging approach of
+ *        using the class loader to "find" the appropriate logging
+ *        infrastructure.
+ *   <li> Using this layer, instead of Commons Logging, eliminates another
+ *        third-party jar dependency from <tt>org.clapper</tt> applications.
+ *   <li> This layer is quite a bit thinner than Commons Logging.
+ * </ul>
+
+ * <p>If you prefer Commons Logging, then, by all means, use it for your
+ * applications.</p>
  *
  * @see #enableLogging
  * @see <a href="http://jakarta.apache.org/commons/logging/index.html">Jakarta Commons Logging API</a>
@@ -78,9 +149,9 @@ public class Logger
     \*----------------------------------------------------------------------*/
 
     /**
-     * The real commons logging object. Not instantiated unless asked for.
+     * The real logging object. Not instantiated unless asked for.
      */
-    private Object log = null;
+    private java.util.logging.Logger realLogger = null;
 
     /**
      * The class name to use when instantiating the underlying Log object.
@@ -96,11 +167,6 @@ public class Logger
      * Whether or not logging is enabled.
      */
     private static boolean enabled = false;
-
-    /**
-     * The Commons Logging API LogFactory class, as a Class object.
-     */
-    private static Class commonsLogFactory = null;
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -172,8 +238,8 @@ public class Logger
      */
     public void debug (Object message)
     {
-        if (log != null)
-            logMessage (log, "debug", message);
+        if (realLogger != null)
+            realLogger.log (Level.FINE, message.toString());
     }
 
     /**
@@ -185,8 +251,8 @@ public class Logger
      */
     public void debug (Object message, Throwable ex)
     {
-        if (log != null)
-            logMessage (log, "debug", message, ex);
+        if (realLogger != null)
+            realLogger.log (Level.FINE, message.toString(), ex);
     }
 
     /**
@@ -196,8 +262,8 @@ public class Logger
      */
     public void error (Object message)
     {
-        if (log != null)
-            logMessage (log, "error", message);
+        if (realLogger != null)
+            realLogger.log (Level.SEVERE, message.toString());
     }
 
     /**
@@ -209,8 +275,8 @@ public class Logger
      */
     public void error (Object message, Throwable ex)
     {
-        if (log != null)
-            logMessage (log, "error", message, ex);
+        if (realLogger != null)
+            realLogger.log (Level.SEVERE, message.toString(), ex);
     }
 
     /**
@@ -220,8 +286,8 @@ public class Logger
      */
     public void fatal (Object message)
     {
-        if (log != null)
-            logMessage (log, "fatal", message);
+        if (realLogger != null)
+            realLogger.log (Level.SEVERE, message.toString());
     }
 
     /**
@@ -233,8 +299,8 @@ public class Logger
      */
     public void fatal (Object message, Throwable ex)
     {
-        if (log != null)
-            logMessage (log, "fatal", message, ex);
+        if (realLogger != null)
+            realLogger.log (Level.SEVERE, message.toString(), ex);
     }
 
     /**
@@ -244,8 +310,8 @@ public class Logger
      */
     public void info (Object message)
     {
-        if (log != null)
-            logMessage (log, "info", message);
+        if (realLogger != null)
+            realLogger.log (Level.INFO, message.toString());
     }
 
     /**
@@ -257,8 +323,8 @@ public class Logger
      */
     public void info (Object message, Throwable ex)
     {
-        if (log != null)
-            logMessage (log, "info", message, ex);
+        if (realLogger != null)
+            realLogger.log (Level.INFO, message.toString(), ex);
     }
 
     /**
@@ -268,8 +334,8 @@ public class Logger
      */
     public void trace (Object message)
     {
-        if (log != null)
-            logMessage (log, "trace", message);
+        if (realLogger != null)
+            realLogger.log (Level.FINEST, message.toString());
     }
 
     /**
@@ -281,8 +347,8 @@ public class Logger
      */
     public void trace (Object message, Throwable ex)
     {
-        if (log != null)
-            logMessage (log, "trace", message, ex);
+        if (realLogger != null)
+            realLogger.log (Level.FINEST, message.toString(), ex);
     }
 
     /**
@@ -292,8 +358,8 @@ public class Logger
      */
     public void warn (Object message)
     {
-        if (log != null)
-            logMessage (log, "warn", message);
+        if (realLogger != null)
+            realLogger.log (Level.WARNING, message.toString());
     }
 
     /**
@@ -305,8 +371,8 @@ public class Logger
      */
     public void warn (Object message, Throwable ex)
     {
-        if (log != null)
-            logMessage (log, "warn", message, ex);
+        if (realLogger != null)
+            realLogger.log (Level.WARNING, message.toString(), ex);
     }
 
     /**
@@ -317,7 +383,8 @@ public class Logger
      */
     public boolean isDebugEnabled()
     {
-        return (log == null) ? false : isEnabled (log, "isDebugEnabled");
+        return (realLogger == null) ? false
+                                    : realLogger.isLoggable (Level.FINE);
     }
 
     /**
@@ -328,7 +395,8 @@ public class Logger
      */
     public boolean isErrorEnabled()
     {
-        return (log == null) ? false : isEnabled (log, "isErrorEnabled");
+        return (realLogger == null) ? false
+                                    : realLogger.isLoggable (Level.SEVERE);
     }
 
     /**
@@ -339,7 +407,8 @@ public class Logger
      */
     public boolean isFatalEnabled()
     {
-        return (log == null) ? false : isEnabled (log, "isFatalEnabled");
+        return (realLogger == null) ? false
+                                    : realLogger.isLoggable (Level.SEVERE);
     }
 
     /**
@@ -350,7 +419,8 @@ public class Logger
      */
     public boolean isInfoEnabled()
     {
-        return (log == null) ? false : isEnabled (log, "isInfoEnabled");
+        return (realLogger == null) ? false
+                                    : realLogger.isLoggable (Level.INFO);
     }
 
     /**
@@ -361,7 +431,8 @@ public class Logger
      */
     public boolean isTraceEnabled()
     {
-        return (log == null) ? false : isEnabled (log, "isTraceEnabled");
+        return (realLogger == null) ? false
+                                    : realLogger.isLoggable (Level.FINEST);
     }
 
     /**
@@ -372,7 +443,8 @@ public class Logger
      */
     public boolean isWarnEnabled()
     {
-        return (log == null) ? false : isEnabled (log, "isWarnEnabled");
+        return (realLogger == null) ? false
+                                    : realLogger.isLoggable (Level.WARNING);
     }
 
     /*----------------------------------------------------------------------*\
@@ -382,250 +454,13 @@ public class Logger
     private static void enableLogger (Logger logger)
         throws UnsupportedOperationException
     {
-        try
+        synchronized (logger)
         {
-            if (commonsLogFactory == null)
-                commonsLogFactory = Class.forName (LOG_FACTORY_CLASS_NAME);
-        }
-
-        catch (ClassNotFoundException ex)
-        {
-            throw new UnsupportedOperationException
-                ("Can't find Jakarta Commons Logging API class \""
-               + LOG_FACTORY_CLASS_NAME
-               + "\"");
-        }
-
-        // Now, attempt to find the class-level getLog() method.
-
-        Method getLogMethod = null;
-
-        try
-        {
-            getLogMethod = commonsLogFactory.getMethod ("getLog",
-                                                        new Class[]
-                                                        {
-                                                            String.class
-                                                        });
-        }
-
-        catch (NoSuchMethodException ex)
-        {
-            throw new UnsupportedOperationException
-                ("Commons Logging class \""
-               + LOG_FACTORY_CLASS_NAME
-               + "\" does not contain an accessible method getLog(String)");
-        }
-
-        catch (SecurityException ex)
-        {
-            throw new UnsupportedOperationException
-                ("Commons Logging class \""
-               + LOG_FACTORY_CLASS_NAME
-               + "\" does not contain an accessible method getLog(String)");
-        }
-
-        if (! Modifier.isStatic (getLogMethod.getModifiers()))
-        {
-            throw new UnsupportedOperationException
-                ("Commons Logging method "
-               + LOG_FACTORY_CLASS_NAME
-               + ".getLog(String) is not static.");
-        }
-
-        try
-        {
-            logger.log = getLogMethod.invoke (null,
-                                              new Object[] {logger.className});
-        }
-
-        catch (Exception ex)
-        {
-            throw new UnsupportedOperationException
-                ("Can't invoke method "
-               + LOG_FACTORY_CLASS_NAME
-               + ".getLog() for class \""
-               + logger.className
-               + "\": "
-               + ex.toString());
-        }
-    }
-
-    /**
-     * Uses reflection to invoke a message method on an instantiated
-     * Commons Logging <tt>Log</tt> object.
-     *
-     * @param log         the <tt>Log</tt> object
-     * @param methodName  the method name
-     * @param message     the message
-     */
-    private void logMessage (Object   log,
-                             String   methodName,
-                             Object   message)
-    {
-        Method method = null;
-
-        try
-        {
-            Class logClass = log.getClass();
-            method = logClass.getMethod (methodName,
-                                         new Class[] {Object.class});
-        }
-
-        catch (NoSuchMethodException ex)
-        {
-            throw new UnsupportedOperationException
-                ("Commons Logging object \""
-               + log.getClass().getName()
-               + "\" does not contain an accessible method "
-               + methodName
-               + "(String)");
-        }
-
-        catch (SecurityException ex)
-        {
-            throw new UnsupportedOperationException
-                ("Commons Logging class \""
-               + log.getClass()
-               + "\" does not contain an accessible method "
-               + methodName
-               + "(String)");
-        }
-
-        try
-        {
-            method.invoke (log, new Object[] {message});
-        }
-
-        catch (Exception ex)
-        {
-            throw new UnsupportedOperationException
-                ("Can't invoke method "
-               + log.getClass().getName()
-               + "."
-               + methodName
-               + "(): "
-               + ex.toString());
-        }
-    }
-
-    /**
-     * Uses reflection to invoke a message method on an instantiated
-     * Commons Logging <tt>Log</tt> object.
-     *
-     * @param log         the <tt>Log</tt> object
-     * @param methodName  the method name
-     * @param message     the message
-     * @param t           a Throwable to go with the message
-     */
-    private void logMessage (Object    log,
-                             String    methodName,
-                             Object    message,
-                             Throwable t)
-    {
-        Method method = null;
-
-        try
-        {
-            Class logClass = log.getClass();
-            method = logClass.getMethod (methodName,
-                                         new Class[]
-                                         {
-                                             Object.class,
-                                             Throwable.class
-                                         });
-        }
-
-        catch (NoSuchMethodException ex)
-        {
-            throw new UnsupportedOperationException
-                ("Commons Logging object \""
-               + log.getClass().getName()
-               + "\" does not contain an accessible method "
-               + methodName
-               + "(String,Throwable)");
-        }
-
-        catch (SecurityException ex)
-        {
-            throw new UnsupportedOperationException
-                ("Commons Logging class \""
-               + log.getClass()
-               + "\" does not contain an accessible method "
-               + methodName
-               + "(String,Throwable)");
-        }
-
-        try
-        {
-            method.invoke (log, new Object[] {message, t});
-        }
-
-        catch (Exception ex)
-        {
-            throw new UnsupportedOperationException
-                ("Can't invoke method "
-               + log.getClass().getName()
-               + "."
-               + methodName
-               + "(): "
-               + ex.toString());
-        }
-    }
-
-    /**
-     * Uses reflection to determine whether a specific log level is enabled.
-     *
-     * @param log         the <tt>Log</tt> object
-     * @param methodName  the method name
-     *
-     * @return <tt>true</tt> or <tt>false</tt>
-     */
-    private boolean isEnabled (Object log, String methodName)
-    {
-        Method method = null;
-
-        try
-        {
-            Class logClass = log.getClass();
-            method = logClass.getMethod (methodName, null);
-        }
-
-        catch (NoSuchMethodException ex)
-        {
-            throw new UnsupportedOperationException
-                ("Commons Logging object \""
-               + log.getClass().getName()
-               + "\" does not contain an accessible method "
-               + methodName
-               + "()");
-        }
-
-        catch (SecurityException ex)
-        {
-            throw new UnsupportedOperationException
-                ("Commons Logging class \""
-               + log.getClass()
-               + "\" does not contain an accessible method "
-               + methodName
-               + "()");
-        }
-
-        try
-        {
-            Boolean result = (Boolean) method.invoke (log, null);
-            return result.booleanValue();
-        }
-
-        catch (Exception ex)
-        {
-            throw new UnsupportedOperationException
-                ("Can't invoke method "
-               + log.getClass().getName()
-               + "."
-               + methodName
-               + "(): "
-               + ex.toString());
+            if (logger.realLogger == null)
+            {
+                logger.realLogger = java.util.logging.Logger.getLogger
+                                                            (logger.className);
+            }
         }
     }
 }

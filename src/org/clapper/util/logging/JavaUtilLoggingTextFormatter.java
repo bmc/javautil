@@ -24,7 +24,7 @@
   a pointer to or a copy of the original.
 \*---------------------------------------------------------------------------*/
 
-package org.clapper.util.misc;
+package org.clapper.util.logging;
 
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
@@ -45,7 +45,7 @@ import java.io.StringWriter;
  *
  * @version <tt>$Revision$</tt>
  */
-public class JDK14TextLogFormatter extends Formatter
+public class JavaUtilLoggingTextFormatter extends Formatter
 {
     /*----------------------------------------------------------------------*\
                              Private Constants
@@ -63,9 +63,9 @@ public class JDK14TextLogFormatter extends Formatter
     \*----------------------------------------------------------------------*/
 
     /**
-     * Create a new JDK14TextLogFormatter.
+     * Create a new JavaUtilLoggingTextLogFormatter.
      */
-    public JDK14TextLogFormatter()
+    public JavaUtilLoggingTextFormatter()
     {
         super();
     }
