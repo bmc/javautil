@@ -28,6 +28,7 @@ package org.clapper.util.misc.test;
 
 import org.clapper.util.misc.MIMETypeUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -45,7 +46,7 @@ import org.clapper.util.cmdline.UsageInfo;
 public class TestMIMEType
     extends CommandLineUtility
 {
-    private Collection mimeTypes = new ArrayList();
+    private Collection arguments = new ArrayList();
 
     public static void main (String args[])
     {
@@ -85,14 +86,32 @@ public class TestMIMEType
     protected void runCommand()
         throws CommandLineException
     {
-        for (Iterator it = mimeTypes.iterator(); it.hasNext(); )
+        for (Iterator it = arguments.iterator(); it.hasNext(); )
         {
-            String mimeType = (String) it.next();
-            String ext = MIMETypeUtil.fileExtensionForMIMEType (mimeType);
-            String fakeFileName = "test." + ext;
-            String mimeType2 = MIMETypeUtil.MIMETypeForFileName (fakeFileName);
+            String arg = (String) it.next();
+            String mimeType;
+            String fileName;
+            String ext;
+            File   f = new File (arg);
 
             System.out.println ();
+            if (f.exists())
+            {
+                System.out.println ("File name:                " + arg);
+                mimeType = MIMETypeUtil.MIMETypeForFileName (arg);
+                fileName = arg;
+                ext = MIMETypeUtil.fileExtensionForMIMEType (mimeType);
+            }
+
+            else
+            {
+                mimeType = arg;
+                ext = MIMETypeUtil.fileExtensionForMIMEType (mimeType);
+                fileName = "test." + ext;
+            }
+
+            String mimeType2 = MIMETypeUtil.MIMETypeForFileName (fileName);
+
             System.out.println ("MIME type:                " + mimeType);
             System.out.println ("Extension:                " + ext);
             System.out.println ("Mapped back to MIME type: " + mimeType2);
@@ -114,16 +133,16 @@ public class TestMIMEType
     {
         do
         {
-            mimeTypes.add (it.next());
+            arguments.add (it.next());
         }
         while (it.hasNext());
     }
 
     protected void getCustomUsageInfo (UsageInfo info)
     {
-        info.addParameter ("mimeType ...",
-                           "A MIME type to test. May be specified multiple "
-                         + "times.",
+        info.addParameter ("mimeType|filename ...",
+                           "A MIME or file name type to test. "
+                         + "May be specified multiple times.",
                            true);
     }
 }
