@@ -30,11 +30,11 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * The <code>ArrayIterator</code> class provides a bridge between an array
- * of objects and an <code>Iterator</code>. It's useful in cases where you
- * have an array, but you need an <code>Iterator</code>; using an instance
- * of <code>ArrayIterator</code> saves copying the array's contents into a
- * <code>Collection</code>, just to get an <tt>Iterator</tt>.
+ * The <tt>ArrayIterator</tt> class provides a bridge between an array of
+ * objects and an <tt>Iterator</tt>. It's useful in cases where you have an
+ * array, but you need an <tt>Iterator</tt>; using an instance of
+ * <tt>ArrayIterator</tt> saves copying the array's contents into a
+ * <tt>Collection</tt>, just to get an <tt>Iterator</tt>.
  *
  * @see java.util.Iterator
  *
@@ -61,7 +61,7 @@ public class ArrayIterator implements Iterator
     \*----------------------------------------------------------------------*/
 
     /**
-     * Allocate a new <code>ArrayIterator</code> object that will
+     * Allocate a new <tt>ArrayIterator</tt> object that will
      * iterate over the specified array of objects.
      *
      * @param array  The array over which to iterate
@@ -72,7 +72,7 @@ public class ArrayIterator implements Iterator
     }
 
     /**
-     * Allocate a new <code>ArrayIterator</code> object that will iterate
+     * Allocate a new <tt>ArrayIterator</tt> object that will iterate
      * over the specified array of objects, starting at a particular index.
      * The index isn't checked for validity until <tt>next()</tt> is called.
      *
@@ -101,12 +101,12 @@ public class ArrayIterator implements Iterator
     }
 
     /**
-     * Determine whether the underlying <code>Iterator</code> has more
+     * Determine whether the underlying <tt>Iterator</tt> has more
      * elements.
      *
-     * @return <code>true</code> if and only if a call to
-     *         <code>next()</code> will return an element,
-     *         <code>false</code> otherwise.
+     * @return <tt>true</tt> if and only if a call to
+     *         <tt>next()</tt> will return an element,
+     *         <tt>false</tt> otherwise.
      *
      * @see #next
      */
