@@ -96,7 +96,6 @@ class ProgramSection extends Section
 
         // Handle the dynamic ones explicitly.
 
-        System.out.println ("*** " + varName);
         if (varName.startsWith (PROGRAM_NOW_VAR))
         {
             result = new Variable (varName, substituteDatetime (varName),
