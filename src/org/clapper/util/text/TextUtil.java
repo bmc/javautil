@@ -25,7 +25,7 @@ public class TextUtils
 
     /**
      * Convert a boolean string to a boolean value. This method is more
-     * generous than <tt>java.lang.Boolean.valueOf()</tt>. The following
+     * generous than <tt>java.lang.Boolean.booleanValue()</tt>. The following
      * strings (in upper or lower case) are recognized as <tt>true</tt>:
      * "1", "true", "yes", "y". The following
      * strings (in upper or lower case) are recognized as <tt>false</tt>:
