@@ -4,6 +4,9 @@
 
 package org.clapper.util.misc;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.LineNumberReader;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.io.PrintStream;
@@ -110,24 +113,93 @@ public class NestedException extends Exception
 
     /**
      * Get all the messages of all the nested exceptions, as one
-     * string, with each message on a separate line.
+     * string, with each message on a separate line. To run all the messages
+     * together into one line, use {@link #getMessages(boolean)}, with a
+     * parameter of <tt>true</tt>.
      *
      * @return the aggregated messages
+     *
+     * @see #getMessages(boolean)
      */
     public String getMessages()
     {
-        StringWriter sw = new StringWriter();
-        PrintWriter  pw = new PrintWriter (sw);
-        Throwable    ex = this;
+        return getMessages (false);
+    }
+
+    /**
+     * Get all the messages of all the nested exceptions, as one string. If
+     * the <tt>elideNewlines</tt> parameter is <tt>true</tt>, then the
+     * messages are joined so that there are no newlines in the resulting
+     * string. Otherwise, (a) any existing newlines in the messages are
+     * preserved, and (b) each nested message occupies its own line.
+     *
+     * @param elideNewlines  whether to elide newlines or not
+     *
+     * @return the aggregated messages
+     */
+    public String getMessages (boolean elideNewlines)
+    {
+        StringWriter  sw = new StringWriter();
+        PrintWriter   pw = new PrintWriter (sw);
+        Throwable     ex = this;
+        StringBuffer  buf = null;
+
+        if (elideNewlines)
+            buf = new StringBuffer();
+
+        // Note: Last exception message dumped should not have a newline.
 
         while (ex != null)
         {
-            pw.println (ex.toString());
+            String s = ex.getMessage();
 
-            if (ex instanceof NestedException)
-                ex = ((NestedException) ex).getNestedException();
-            else
+            if (s == null)
+                s = ex.toString();
+
+            if (elideNewlines)
+            {
+                // Must remove any newlines in this message,
+
+                try
+                {
+                    LineNumberReader r = new LineNumberReader
+                                           (new StringReader (s));
+                    String line;
+                    String sep = "";
+
+                    buf.setLength (0);
+                    while ((line = r.readLine()) != null)
+                    {
+                        buf.append (sep);
+                        buf.append (line);
+                        sep = " ";
+                    }
+
+                    s = buf.toString();
+                }
+
+                catch (IOException ioEx)
+                {
+                    // Shouldn't happen. If it does, just use the original
+                    // string.
+                }
+            }
+
+            // Add the message to the buffer
+
+            pw.print (s);
+
+            if (! (ex instanceof NestedException))
                 break;
+
+            ex = ((NestedException) ex).getNestedException();
+            if (ex != null)
+            {
+                if (elideNewlines)
+                    pw.print (": ");
+                else
+                    pw.println();
+            }
         }
 
         return sw.getBuffer().toString();
