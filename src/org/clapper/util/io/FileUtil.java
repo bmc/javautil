@@ -152,7 +152,9 @@ public class FileUtils
         int nr = 0;
 
         while ((nr = src.read (buf)) != -1)
-            dst.write (buf, 0, nr); 
+            dst.write (buf, 0, nr);
+
+        dst.flush();
             
     }
     /**
