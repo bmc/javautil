@@ -7,6 +7,7 @@ package org.clapper.util.mail;
 import java.net.InetAddress;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.InputStream;
 import java.io.File;
 import java.io.OutputStream;
@@ -145,7 +146,7 @@ import javax.mail.internet.MimeMessage;
  * @see SMTPEmailTransport
  * @see <a href="http://java.sun.com/javamail/">The Java Mail API home page</a>
  */
-public class EmailMessage
+public class EmailMessage implements Serializable
 {
     /*----------------------------------------------------------------------*\
                              Public Constants
