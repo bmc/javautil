@@ -258,6 +258,12 @@
   <target name="fulldist" depends="srczip,doczip,dist"
           description="Generate the distribution and source jars"/>
 
+  <!--
+  ***************************************************************************
+			     Clean-up Targets
+  ***************************************************************************
+  -->
+
   <target name="clean"
         description="clean up" >
     <!-- Delete the ${build} and ${dist} directory trees -->
