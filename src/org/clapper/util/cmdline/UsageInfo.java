@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Iterator;
 
@@ -27,16 +28,27 @@ import java.util.Iterator;
 public final class UsageInfo
 {
     /*----------------------------------------------------------------------*\
+                                 Constants
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * Constant to use for a short option, to indicate that there is no
+     * short option.
+     */
+    public static final char NO_SHORT_OPTION = '\u0000';
+
+    /*----------------------------------------------------------------------*\
                            Private Data Elements
     \*----------------------------------------------------------------------*/
 
-    private Map     optionMap = new TreeMap (new OptionComparator());
-    private Map     paramMap = new HashMap();
-    private Set     requiredParams = new HashSet();
-    private List    paramNames = new ArrayList();
-    private String  usageLine = null;
-    private String  usagePrologue = null;
-    private String  usageTrailer = null;
+    private Map               shortOptionMap = new HashMap();
+    private Map               longOptionMap = new HashMap();
+    private Map               paramMap = new HashMap();
+    private Set               requiredParams = new HashSet();
+    private List              paramNames = new ArrayList();
+    private String            usageLine = null;
+    private String            usagePrologue = null;
+    private String            usageTrailer = null;
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -55,26 +67,88 @@ public final class UsageInfo
 
     /**
      * Add an option and its explanation to the usage information.
+     * This method is shorthand for:
      *
-     * @param option       The option string, with leading "-"
+     * <blockquote><pre>{@link #addOption(char,String,String,String) addOption(}(shortOption, longOption, null, explanation)</pre></blockquote>
+     *
+     * That is, it's useful for options that take no parameters.
+     *
+     * @param shortOption  The single-character short option (e.g., 'a'
+     *                     for "-a"), or {@link #NO_SHORT_OPTION} to indicate
+     *                     that there is no short option.
+     * @param longOption   The corresponding long option, if any, or null.
+     *                     The option should be specified without any leading
+     *                     "-" character (e.g., "logging", not "--logging").
      * @param explanation  A one-line explanation for the option. The line
      *                     can be as long as you want, and can contain multiple
      *                     sentences, but it must not contain a newline.
      *                     It will be automatically broken up into multiple
      *                     lines as necessary.
      */ 
-    public void addOption (String option, String explanation)
+    public void addOption (char   shortOption,
+                           String longOption,
+                           String explanation)
     {
-        if (! option.startsWith ("-"))
+        addOption (shortOption, longOption, null, explanation);
+    }
+
+    /**
+     * Add an option and its explanation to the usage information.
+     * Examples:
+     *
+     * <blockquote><pre>
+     * usageInfo.addOption ('n', "total-images", "num",
+     *                      "Total number of images to generate");
+     * usageInfo.addOption ('v', "verbose", null,
+     *                      "Enable verbose mode")
+     * </pre></blockquote>
+     *
+     * @param shortOption  The single-character short option (e.g., 'a'
+     *                     for "-a"), or {@link #NO_SHORT_OPTION} to indicate
+     *                     that there is no short option.
+     * @param longOption   The corresponding long option, if any, or null.
+     *                     The option should be specified without any leading
+     *                     "-" character (e.g., "logging", not "--logging").
+     * @param argToken     A token to represent the option's parameter, if any,
+     *                     in the generated usage message. null if the option
+     *                     takes no parameters.
+     * @param explanation  A one-line explanation for the option. The line
+     *                     can be as long as you want, and can contain multiple
+     *                     sentences, but it must not contain a newline.
+     *                     It will be automatically broken up into multiple
+     *                     lines as necessary.
+     */ 
+    public void addOption (char   shortOption,
+                           String longOption,
+                           String argToken,
+                           String explanation)
+    {
+        if ((longOption != null) && (longOption.startsWith ("-")))
         {
             throw new IllegalArgumentException
-                ("(BUG) Alleged option \""
-               + option
-               + "\", registered via UsageInfo.addOption(), doesn't begin "
+                ("(BUG) Long option \""
+               + longOption
+               + "\", registered via UsageInfo.addOption(), starts "
                + "with \"-\".");
         }
 
-        optionMap.put (option, explanation);
+        if ((shortOption == NO_SHORT_OPTION) && (longOption == null))
+        {
+            throw new IllegalArgumentException
+                ("(BUG) shortOption parameter is NO_SHORT_OPTION, and "
+               + "longOption parameter is null.");
+        }
+
+        OptionInfo optionInfo = new OptionInfo (shortOption,
+                                                longOption,
+                                                argToken,
+                                                explanation);
+
+        if (shortOption != NO_SHORT_OPTION)
+            shortOptionMap.put (new Character (shortOption), optionInfo);
+
+        if (longOption != null)
+            longOptionMap.put (longOption, optionInfo);
     }
 
     /**
@@ -82,7 +156,7 @@ public final class UsageInfo
      * its explanation to the usage information at the end of the list of
      * positional parameters.
      *
-     * @param param         The parameter placeholder string
+     * @param param        The parameter placeholder string
      * @param explanation  A one-line explanation for the parameter. The line
      *                     can be as long as you want, and can contain multiple
      *                     sentences, but it must not contain a newline.
@@ -164,21 +238,29 @@ public final class UsageInfo
         return (String) paramMap.get (name);
     }
 
-    String[] getOptions()
+    OptionInfo getOptionInfo (char shortOption)
     {
-        String[]  options = new String[optionMap.size()];
-        int       i;
-        Iterator  it;
-
-        for (i = 0, it = optionMap.keySet().iterator(); it.hasNext(); i++)
-            options[i] = (String) it.next();
-
-        return options;
+        return (OptionInfo) shortOptionMap.get (new Character (shortOption));
     }
 
-    String getOptionExplanation (String option)
+    OptionInfo getOptionInfo (String longOption)
     {
-        return (String) optionMap.get (option);
+        return (OptionInfo) longOptionMap.get (longOption);
+    }
+
+    OptionInfo[] getOptions()
+    {
+        OptionInfo[] options = new OptionInfo[shortOptionMap.size()];
+        int          i;
+        Iterator     it;
+
+        for (i = 0, it = shortOptionMap.values().iterator(); it.hasNext(); i++)
+            options[i] = (OptionInfo) it.next();
+
+        // Now, sort by option name.
+
+        Arrays.sort (options, new OptionComparator());
+        return options;
     }
 
     String getUsagePrologue()

@@ -7,22 +7,39 @@ package org.clapper.util.cmdline;
 import java.util.Comparator;
 
 /**
- * Used solely by <tt>UsageInfo</tt>, this method compares strings
- * in a case-insensitive manner.
+ * Used solely by <tt>UsageInfo</tt>, an instance of this class compares
+ * <tt>OptionInfo</tt> items, by short option name or long option name, in
+ * a case-insensitive manner.
  *
  * @version <tt>$Revision$</tt>
  *
  * @see UsageInfo
+ * @see OptionInfo
  */
 final class OptionComparator implements Comparator
 {
     public int compare (Object o1, Object o2)
     {
-        return (((String) o1).compareToIgnoreCase ((String) o2));
+        String s1 = getComparisonString ((OptionInfo) o1);
+        String s2 = getComparisonString ((OptionInfo) o2);
+
+        return s1.compareToIgnoreCase (s2);
     }
 
     public boolean equals (Object o)
     {
         return (compare (this, o) == 0);
+    }
+
+    private String getComparisonString (OptionInfo opt)
+    {
+        String result = "";
+
+        if (opt.shortOption != UsageInfo.NO_SHORT_OPTION)
+            result = String.valueOf (opt.shortOption);
+        else if (opt.longOption != null)
+            result = opt.longOption;
+
+        return result;
     }
 }

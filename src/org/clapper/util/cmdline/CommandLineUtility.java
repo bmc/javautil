@@ -136,8 +136,9 @@ public abstract class CommandLineUtility
                            Private Data Elements
     \*----------------------------------------------------------------------*/
 
-    private WordWrapWriter  wErr = new WordWrapWriter (System.out);
-    private Logger          log  = new Logger (CommandLineUtility.class);
+    private static Logger log  = new Logger (CommandLineUtility.class);
+
+    private UsageInfo usageInfo = null;
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -175,6 +176,7 @@ public abstract class CommandLineUtility
 
         try
         {
+            usageInfo = getUsageInfo();
             parseParams (args);
             runCommand();
         }
@@ -227,18 +229,54 @@ public abstract class CommandLineUtility
                 String arg = (String) it.next();
 
                 if (! (arg.charAt (0) == '-') )
-                    break;
+                {
+                    // Move iterator back, since we've already advanced
+                    // past the last option and retrieved the first
+                    // non-option.
 
-                if (arg.equals ("--logging"))
+                    it.previous();
+                    break;
+                }
+
+                // First, verify that the option is legal.
+
+                OptionInfo optionInfo = null;
+
+                if (arg.length() == 2)
+                    optionInfo = usageInfo.getOptionInfo (arg.charAt (1));
+                else
+                {
+                    if (! arg.startsWith ("--"))
+                    {
+                        throw new CommandLineUsageException
+                            ("Option \""
+                           + arg
+                           + "\" is not a single character short option, but "
+                           + "doesn't start with \"--\", as long options "
+                           + "must.");
+                    }
+
+                    optionInfo = usageInfo.getOptionInfo (arg.substring (2));
+                }
+
+                if (optionInfo == null)
+                {
+                    throw new CommandLineUsageException
+                        ("Unknown option: \"" + arg + "\".");
+                }
+
+                // Okay, now handle our options.
+
+                if (optionInfo.longOption.equals ("logging"))
                     Logger.enableLogging();
                 else
-                    parseCustomOption (arg, it);
+                {
+                    parseCustomOption (optionInfo.shortOption,
+                                       optionInfo.longOption,
+                                       it);
+                }
             }
 
-            // Move iterator back, since we've already advanced past the
-            // last option and retrieved the first non-option.
-
-            it.previous();
             processPostOptionCommandLine (it);
 
             // Should be no parameters left now.
@@ -265,19 +303,29 @@ public abstract class CommandLineUtility
      * <tt>Iterator</tt> (which returns <tt>String</tt> objects). This
      * default method simply throws an exception.
      *
-     * @param option   the option, including the leading '-'
-     * @param it       the <tt>Iterator</tt> for the remainder of the
-     *                 command line
+     * @param shortOption  the short option character, or
+     *                     {@link UsageInfo#NO_SHORT_OPTION} if there isn't
+     *                     one (i.e., if this is a long-only option).
+     * @param longOption   the long option string, without any leading
+     *                     "-" characters, or null if this is a short-only
+     *                     option
+     * @param it           the <tt>Iterator</tt> for the remainder of the
+     *                     command line, for extracting parameters.
      *
      * @throws CommandLineUsageException  on error
      * @throws NoSuchElementException     overran the iterator (i.e., missing
      *                                    parameter) 
      */
-    protected void parseCustomOption (String option, Iterator it)
+    protected void parseCustomOption (char     shortOption,
+                                      String   longOption,
+                                      Iterator it)
         throws CommandLineUsageException,
                NoSuchElementException
     {
-        throw new CommandLineUsageException ("Unknown option: " + option);
+        throw new CommandLineUsageException ("(BUG) custom option found, but "
+                                           + this.getClass().getName()
+                                           + " class provides no "
+                                           + "parseCustomOption() method.");
     }
 
     /**
@@ -361,7 +409,6 @@ public abstract class CommandLineUtility
      */
     protected final void usage (String prefixMsg)
     {
-        UsageInfo       info = new UsageInfo();
         WordWrapWriter  out = new WordWrapWriter (System.err);
         String[]        strings;
         Iterator        it;
@@ -369,11 +416,10 @@ public abstract class CommandLineUtility
         int             maxParamLength = 0;
         int             maxOptionLength = 0;
         String          s;
+        StringBuffer    usageLine = new StringBuffer();
+        OptionInfo[]    options;
+        OptionInfo      opt;
 
-        info.addOption ("--logging",
-                        "Enable logging via Jakarta Commons Logging API.");
-
-        getCustomUsageInfo (info);
 
         if (prefixMsg != null)
         {
@@ -384,7 +430,6 @@ public abstract class CommandLineUtility
 
         // Now, print the summary line.
 
-        StringBuffer usageLine = new StringBuffer();
         usageLine.append ("java ");
         usageLine.append (getClass().getName());
         usageLine.append (" [options]");
@@ -392,14 +437,17 @@ public abstract class CommandLineUtility
         // Add the parameter placeholders. We'll also calculate the maximum
         // parameter name length in this loop, to save an iteration later.
 
-        strings = info.getParameterNames();
+        strings = usageInfo.getParameterNames();
         if (strings.length > 0)
         {
             for (i = 0; i < strings.length; i++)
             {
                 usageLine.append (' ');
 
-                boolean optional = (! info.parameterIsRequired (strings[i]));
+                boolean optional = true;
+                if (usageInfo.parameterIsRequired (strings[i]))
+                    optional = false;
+
                 if (optional)
                     usageLine.append ('[');
                 usageLine.append (strings[i]);
@@ -410,7 +458,7 @@ public abstract class CommandLineUtility
             }
         }
 
-        if ( (s = info.getUsagePrologue()) != null)
+        if ( (s = usageInfo.getUsagePrologue()) != null)
             out.println (s);
 
         out.setPrefix ("Usage: ");
@@ -423,28 +471,75 @@ public abstract class CommandLineUtility
         out.println ("OPTIONS:");
         out.println ();
 
-        strings = info.getOptions();
-        for (i = 0; i < strings.length; i++)
+        maxOptionLength = 2;
+        options = usageInfo.getOptions();
+        for (i = 0; i < options.length; i++)
         {
-            maxOptionLength = Math.max (maxOptionLength,
-                                        strings[i].length() + 1);
+            opt = options[i];
+            if (opt.longOption != null)
+            {
+                // Allow room for short option, long option and argument,
+                // if any.
+                //
+                // -x, --long-x <arg>
+
+                int    len = 0;
+                String sep = "";
+                if (opt.shortOption != UsageInfo.NO_SHORT_OPTION)
+                {
+                    len = 2;    // -x
+                    sep = ", ";
+                }
+
+                if (opt.longOption != null)
+                    len += (sep.length() + 2 + opt.longOption.length());
+
+                maxOptionLength = Math.max (maxOptionLength, len + 1);
+            }
         }
 
         // Now, print the options.
 
-        for (i = 0; i < strings.length; i++)
+        StringBuffer optString = new StringBuffer();
+        for (i = 0; i < options.length; i++)
         {
-            // indent the whole thing four blanks.
+            // If there's a short option, print it first. Then do the
+            // long one.
 
-            out.setPrefix (padString (strings[i], maxOptionLength));
-            out.println (info.getOptionExplanation (strings[i]));
+            opt = options[i];
+            optString.setLength (0);
+            String sep = "";
+
+            if (opt.shortOption != UsageInfo.NO_SHORT_OPTION)
+            {
+                optString.append ('-');
+                optString.append (opt.shortOption);
+                sep = ", ";
+            }
+
+            if (opt.longOption != null)
+            {
+                optString.append (sep);
+                optString.append ("--");
+                optString.append (opt.longOption);
+                if (opt.argToken != null)
+                {
+                    optString.append (' ');
+                    optString.append (opt.argToken);
+                }
+
+                out.setPrefix (padString (optString.toString(),
+                                          maxOptionLength));
+                out.println (opt.explanation);
+            }
+
             out.setPrefix (null);
         }
 
         // Print the parameters. We already have size of the the largest
         // parameter name.
 
-        strings = info.getParameterNames();
+        strings = usageInfo.getParameterNames();
         if (strings.length > 0)
         {
             out.println ();
@@ -456,12 +551,12 @@ public abstract class CommandLineUtility
             for (i = 0; i < strings.length; i++)
             {
                 out.setPrefix (padString (strings[i], maxOptionLength));
-                out.println (info.getParameterExplanation (strings[i]));
+                out.println (usageInfo.getParameterExplanation (strings[i]));
                 out.setPrefix (null);
             }
         }
 
-        if ( (s = info.getUsageTrailer()) != null)
+        if ( (s = usageInfo.getUsageTrailer()) != null)
             out.println (s);
 
         out.flush();
@@ -479,5 +574,18 @@ public abstract class CommandLineUtility
             buf.append (' ');
 
         return buf.toString();
+    }
+
+    private UsageInfo getUsageInfo()
+    {
+        UsageInfo info = new UsageInfo();
+
+        info.addOption (UsageInfo.NO_SHORT_OPTION,
+                        "logging",
+                        "Enable logging via Jakarta Commons Logging API.");
+
+        getCustomUsageInfo (info);
+
+        return info;
     }
 }
