@@ -749,6 +749,14 @@ public class Configuration
         XStringBuffer  value = new XStringBuffer();
         boolean        firstSection = true;
 
+        out.print (COMMENT_CHARS.charAt (0));
+        out.print (" Written by ");
+        out.println (this.getClass().getName());
+        out.print (COMMENT_CHARS.charAt (0));
+        out.print (" on ");
+        out.println (new Date().toString());
+        out.println();
+
         for (itSect = sectionsInOrder.iterator(); itSect.hasNext(); )
         {
             section = (Section) itSect.next();
