@@ -193,7 +193,7 @@ public class TestRegexUtil
 
     protected void getCustomUsageInfo (UsageInfo info)
     {
-        info.addParameter ("s/re/repl/[gimox]",
+        info.addParameter ("s/re/repl/[g][i][m][o][x]",
                            "Substitution command to execute on strings",
                            true);
         info.addParameter ("[string] ...",
