@@ -83,4 +83,64 @@ public class EmailException extends NestedException
     {
 	super (message, exception);
     }
+
+    /**
+     * Constructs an exception containing a resource bundle name, a message
+     * key, and a default message (in case the resource bundle can't be
+     * found). Using this constructor is equivalent to calling the
+     * {@link #EmailException(String,String,Object[])} constructor,
+     * with a null pointer for the <tt>Object[]</tt> parameter.
+     * Calls to {@link NestedException#getMessage(Locale)} will attempt to
+     * retrieve the top-most message (i.e., the message from this exception,
+     * not from nested exceptions) by querying the named resource bundle.
+     * Calls to {@link NestedException#printStackTrace(PrintWriter,Locale)}
+     * will do the same, where applicable. The message is not retrieved
+     * until one of those methods is called, because the desired locale is
+     * passed into <tt>getMessage()</tt> and <tt>printStackTrace()</tt>,
+     * not this constructor.
+     *
+     * @param bundleName  resource bundle name
+     * @param messageKey  the key to the message to find in the bundle
+     * @param defaultMsg  the default message
+     *
+     * @see #EmailException(String,String,Object[])
+     * @see NestedException#getLocalizedMessage
+     */
+    public EmailException (String bundleName,
+                           String messageKey,
+                           String defaultMsg)
+    {
+        super (bundleName, messageKey, defaultMsg);
+    }
+
+    /**
+     * Constructs an exception containing a resource bundle name, a message
+     * key, and a default message (in case the resource bundle can't be
+     * found). Using this constructor is equivalent to calling the
+     * {@link #EmailException(String,String,Object[])} constructor,
+     * with a null pointer for the <tt>Object[]</tt> parameter.
+     * Calls to {@link NestedException#getMessage(Locale)} will attempt to
+     * retrieve the top-most message (i.e., the message from this exception,
+     * not from nested exceptions) by querying the named resource bundle.
+     * Calls to {@link NestedException#printStackTrace(PrintWriter,Locale)}
+     * will do the same, where applicable. The message is not retrieved
+     * until one of those methods is called, because the desired locale is
+     * passed into <tt>getMessage()</tt> and <tt>printStackTrace()</tt>,
+     * not this constructor.
+     *
+     * @param bundleName  resource bundle name
+     * @param messageKey  the key to the message to find in the bundle
+     * @param defaultMsg  the default message
+     * @param msgParams   parameters to the message, if any, or null
+     *
+     * @see #EmailException(String,String,Object[])
+     * @see NestedException#getLocalizedMessage
+     */
+    public EmailException (String   bundleName,
+                           String   messageKey,
+                           String   defaultMsg,
+                           Object[] msgParams)
+    {
+        super (bundleName, messageKey, defaultMsg, msgParams);
+    }
 }
