@@ -103,9 +103,19 @@ import javax.mail.internet.MimeMessage;
  * <h3>Examples</h3>
  *
  * <p>The following code builds and sends a message containing a simple
- * "Hello!" text message, with no attachments.
+ * text part and one attachment, a Zip file.
  *
  * <blockquote><pre>
+ * EmailMessage message = new EmailMessage();
+ *
+ * message.setSubject ("The Zip file");
+ * message.setText ("Joe, here's the Zip file I promised.");
+ * message.setSender (new EmailAddress ("me@example.com"));
+ * message.addTo (new EmailAddress ("joe@example.com"));
+ * message.addAttachment (new File ("stuff.zip"));
+ *
+ * SMTPEmailTransport transport = new SMTPEmailTransport ("smtp.example.com");
+ * transport.send (message);
  * </pre></blockquote>
  *
  * <h3>Restrictions</h3>
