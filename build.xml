@@ -32,17 +32,21 @@
     <depend srcdir="." destdir="${build}"/>
   </target>
 
-   <patternset id="lib.sources">
-     <include name="**/*.java"/>
-     <exclude name="**/test/*.java"/>
-   </patternset>
+  <patternset id="lib.sources">
+    <include name="**/*.java"/>
+    <exclude name="**/test/*.java"/>
+  </patternset>
 
-   <patternset id="test.sources">
-     <include name="**/test/*.java"/>
-   </patternset>
+  <patternset id="lib.test.sources">
+    <include name="**/test/*.java"/>
+    <exclude name="mail/test/*.java"/>
+  </patternset>
+
+  <patternset id="mail.test.sources">
+    <include name="mail/test/*.java"/>
+  </patternset>
 
   <target name="misc" depends="init">
-    <!-- Compile the java code from . into ${build} -->
     <javac srcdir="." 
 	   depend="true"
 	   listfiles="${compile.listfiles}"
@@ -55,7 +59,6 @@
   </target>
 
   <target name="io" depends="misc">
-    <!-- Compile the java code from . into ${build} -->
     <javac srcdir="." 
 	   depend="true"
 	   listfiles="${compile.listfiles}"
@@ -68,7 +71,6 @@
   </target>
 
   <target name="text" depends="io">
-    <!-- Compile the java code from . into ${build} -->
     <javac srcdir="." 
 	   depend="true"
 	   listfiles="${compile.listfiles}"
@@ -81,7 +83,6 @@
   </target>
 
   <target name="config" depends="text">
-    <!-- Compile the java code from . into ${build} -->
     <javac srcdir="." 
 	   depend="true"
 	   listfiles="${compile.listfiles}"
@@ -93,10 +94,64 @@
     </javac>
   </target>
 
-  <target name="lib" depends="config">
+  <!--
+  Can only build the "mail" component if the Java Mail API and
+  the Java Activation Framework are both in the CLASSPATH
+  -->
+
+  <target name="-check.jaf.exists">
+    <available classname="javax.activation.DataSource" 
+	       property="jaf.exists" value="true"/>
   </target>
 
-  <target name="testers" depends="lib"
+  <target name="-check.javamail.exists" 
+	  depends="-check.jaf.exists"
+	  if="jaf.exists">
+    <available classname="javax.mail.Session" 
+	       property="javamail.exists" value="true"/>
+  </target>
+
+  <target name="-check.javamail" 
+          depends="-check.javamail.exists"
+          unless="javamail.exists">
+    <echo>
+*** Ant cannot find the Java Mail API and/or the Java Activation Framework,
+*** so, all components that require those packages will be skipped. To enable
+*** those components, install the Java Mail API and Java Activation Framework,
+*** and make them available in your CLASSPATH. Both packages can be found
+*** at http://java.sun.com/
+    </echo>
+  </target>
+
+  <target name="mail" depends="-check.javamail,text" if="javamail.exists">
+    <javac srcdir="." 
+	   depend="true"
+	   listfiles="${compile.listfiles}"
+	   destdir="${build}">
+      <classpath refid="project.class.path"/>
+      <patternset>
+        <include name="mail/*.java"/>
+      </patternset>
+    </javac>
+  </target>
+
+  <target name="lib" depends="misc,io,text,config,mail">
+  </target>
+
+  <target name="mail.testers" depends="-check.javamail,lib"
+          if="javamail.exists"
+	  description="compile the mail testers">
+    <!-- Create the distribution directory -->
+    <javac srcdir="." 
+	   depend="true"
+	   listfiles="${compile.listfiles}"
+	   destdir="${build}">
+      <classpath refid="project.class.path"/>
+      <patternset refid="mail.test.sources"/>
+    </javac>
+  </target>
+
+  <target name="lib.testers" depends="lib"
 	  description="compile the testers">
     <!-- Create the distribution directory -->
     <javac srcdir="." 
@@ -104,9 +159,11 @@
 	   listfiles="${compile.listfiles}"
 	   destdir="${build}">
       <classpath refid="project.class.path"/>
-      <patternset refid="test.sources"/>
+      <patternset refid="lib.test.sources"/>
     </javac>
   </target>
+
+  <target name="testers" depends="lib,lib.testers,mail.testers"/>
 
   <target name="all" depends="lib,testers"/>
 
@@ -143,6 +200,8 @@
         description="clean up" >
     <!-- Delete the ${build} and ${dist} directory trees -->
     <delete dir="${build}"/>
-    <delete dir="${dist}"/>
+    <delete dir="${build}" failonerror="false" includeEmptyDirs="true"/>
+    <delete dir="${dist}/lib" failonerror="false" includeEmptyDirs="true"/>
+    <delete dir="${dist}" failonerror="false" includeEmptyDirs="true"/>
   </target>
 </project>
