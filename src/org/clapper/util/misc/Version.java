@@ -46,7 +46,7 @@ public final class Version
                              Public Constants
     \*----------------------------------------------------------------------*/
 
-    public static final String API_VERSION = "1.0.1";
+    public static final String API_VERSION = "1.0.2";
 
     /**
      * The name of the resource bundle containing the build info.
