@@ -47,12 +47,12 @@ import org.clapper.util.io.*;
  * <p>Each section contains zero or more variable settings. Similar to a
  * <tt>Properties</tt> file, the variables are specified as name/value
  * pairs, separated by an equal sign ("=") or a colon (":"). Variable names
- * may contain alphanumerics and periods ("."). Variable values may contain
- * anything at all. The parser ignores whitespace on either side of the "="
- * or ":"; that is, leading whitespace in the value is skipped. Values may
- * be single- or double-quoted; the quotes are stripped. The way to include
- * leading whitespace in a value is to quote the value or escape the
- * whitespace (see below).</p>
+ * are case-sensitive and may contain alphanumerics and periods (".").
+ * Variable values may contain anything at all. The parser ignores
+ * whitespace on either side of the "=" or ":"; that is, leading whitespace
+ * in the value is skipped. Values may be single- or double-quoted; the
+ * quotes are stripped. The way to include leading whitespace in a value is
+ * to quote the value or escape the whitespace (see below).</p>
  *
  * <h4>Continuation Lines</h4>
  *
@@ -414,7 +414,7 @@ public class Configuration
         throws IOException,
                ConfigurationException
     {
-        parse (iStream, null);
+        load (iStream);
     }
 
     /*----------------------------------------------------------------------*\
@@ -545,6 +545,173 @@ public class Configuration
     }
 
     /**
+     * Convenience method to get and convert an optional integer parameter.
+     * The default value applies if the variable is missing or is there but
+     * has an empty value.
+     *
+     * @param sectionName   section name
+     * @param variableName  variable name
+     * @param defaultValue  default value if not found
+     *
+     * @return the value, or the default value if not found
+     *
+     * @throws NoSuchSectionException no such section
+     * @throws ConfigurationException bad numeric value
+     */
+    public int getOptionalIntegerValue (String sectionName,
+                                        String variableName,
+                                        int    defaultValue)
+        throws NoSuchSectionException,
+               ConfigurationException
+    {
+        try
+        {
+            return getRequiredIntegerValue (sectionName, variableName);
+        }
+
+        catch (NoSuchVariableException ex)
+        {
+            return defaultValue;
+        }
+    }
+
+    /**
+     * Convenience method to get and convert a required integer parameter.
+     * The default value applies if the variable is missing or is there
+     * but has an empty value.
+     *
+     * @param sectionName   section name
+     * @param variableName  variable name
+     *
+     * @return the value
+     *
+     * @throws NoSuchSectionException  no such section
+     * @throws NoSuchVariableException no such variable
+     * @throws ConfigurationException  bad numeric value
+     */
+    public int getRequiredIntegerValue (String sectionName,
+                                        String variableName)
+        throws NoSuchSectionException,
+               NoSuchVariableException,
+               ConfigurationException
+    {
+        String sNum = getVariableValue (sectionName, variableName);
+        try
+        {
+            return Integer.parseInt (sNum);
+        }
+
+        catch (NumberFormatException ex)
+        {
+            throw new ConfigurationException ("Bad numeric value \""
+                                            + sNum
+                                            + "\" for variable \""
+                                            + variableName
+                                            + "\" in section \""
+                                            + sectionName
+                                            + "\"");
+        }
+    }
+
+    /**
+     * Convenience method to get and convert an optional boolean parameter.
+     * The default value applies if the variable is missing or is there
+     * but has an empty value.
+     *
+     * @param sectionName   section name
+     * @param variableName  variable name
+     * @param defaultValue  default value if not found
+     *
+     * @return the value, or the default value if not found
+     *
+     * @throws NoSuchSectionException no such section
+     * @throws ConfigurationException bad numeric value
+     */
+    public boolean getOptionalBooleanValue (String  sectionName,
+                                            String  variableName,
+                                            boolean defaultValue)
+        throws NoSuchSectionException,
+               ConfigurationException
+    {
+        boolean result = defaultValue;
+
+        try
+        {
+            String s = getVariableValue (sectionName, variableName);
+            if (s.trim().length() == 0)
+                result = defaultValue;
+            else
+                result = Boolean.valueOf (s).booleanValue();
+        }
+
+        catch (NoSuchVariableException ex)
+        {
+            result = defaultValue;
+        }
+
+        return result;
+    }
+
+    /**
+     * Convenience method to get and convert a required boolean parameter.
+     *
+     * @param sectionName   section name
+     * @param variableName  variable name
+     *
+     * @return the value
+     *
+     * @throws NoSuchSectionException  no such section
+     * @throws NoSuchVariableException no such variable
+     * @throws ConfigurationException  bad numeric value
+     */
+    public boolean getRequiredBooleanValue (String sectionName,
+                                            String variableName)
+        throws NoSuchSectionException,
+               ConfigurationException,
+               NoSuchVariableException
+    {
+        return Boolean.valueOf (getVariableValue (sectionName, variableName))
+                      .booleanValue();
+    }
+
+    /**
+     * Convenience method to get an optional string value. The default
+     * value applies if the variable is missing or is there but has an
+     * empty value.
+     *
+     * @param sectionName   section name
+     * @param variableName  variable name
+     * @param defaultValue  default value if not found
+     *
+     * @return the value, or the default value if not found
+     *
+     * @throws NoSuchSectionException no such section
+     * @throws ConfigurationException bad numeric value
+     */
+    public String getOptionalStringValue (String sectionName,
+                                          String variableName,
+                                          String defaultValue)
+        throws NoSuchSectionException,
+               ConfigurationException
+    {
+        String result;
+
+        try
+        {
+            result = getVariableValue (sectionName, variableName);
+            if (result.trim().length() == 0)
+                result = defaultValue;
+        }
+
+        catch (NoSuchVariableException ex)
+        {
+            result = defaultValue;
+        }
+
+        return result;
+    }
+
+    /**
      * Get the value associated with a given variable. Required by the
      * {@link VariableDereferencer} interface, this method is used during
      * parsing to handle variable substitutions (but also potentially
@@ -669,6 +836,23 @@ public class Configuration
     {
         clear();
         parse (url.openStream(), url);
+    }
+
+    /**
+     * Load configuration from an <tt>InputStream</tt>. Any existing data
+     * is discarded.
+     *
+     * @param iStream  the <tt>InputStream</tt>
+     *
+     * @throws IOException             can't open or read URL
+     * @throws ConfigurationException  error in configuration data
+     */
+    public void load (InputStream iStream)
+        throws IOException,
+               ConfigurationException
+    {
+        clear();
+        parse (iStream, null);
     }
 
     /**
