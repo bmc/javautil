@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,14 +42,15 @@ public final class UsageInfo
                            Private Data Elements
     \*----------------------------------------------------------------------*/
 
-    private Map               shortOptionMap = new HashMap();
-    private Map               longOptionMap = new HashMap();
-    private Map               paramMap = new HashMap();
-    private Set               requiredParams = new HashSet();
-    private List              paramNames = new ArrayList();
-    private String            usageLine = null;
-    private String            usagePrologue = null;
-    private String            usageTrailer = null;
+    private Map     shortOptionMap = new HashMap();
+    private Map     longOptionMap = new HashMap();
+    private Set     allOptions = new TreeSet (new OptionComparator());
+    private Map     paramMap = new HashMap();
+    private Set     requiredParams = new HashSet();
+    private List    paramNames = new ArrayList();
+    private String  usageLine = null;
+    private String  usagePrologue = null;
+    private String  usageTrailer = null;
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -149,6 +151,8 @@ public final class UsageInfo
 
         if (longOption != null)
             longOptionMap.put (longOption, optionInfo);
+
+        allOptions.add (optionInfo);
     }
 
     /**
@@ -250,11 +254,11 @@ public final class UsageInfo
 
     OptionInfo[] getOptions()
     {
-        OptionInfo[] options = new OptionInfo[shortOptionMap.size()];
+        OptionInfo[] options = new OptionInfo[allOptions.size()];
         int          i;
         Iterator     it;
 
-        for (i = 0, it = shortOptionMap.values().iterator(); it.hasNext(); i++)
+        for (i = 0, it = allOptions.iterator(); it.hasNext(); i++)
             options[i] = (OptionInfo) it.next();
 
         // Now, sort by option name.

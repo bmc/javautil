@@ -580,11 +580,11 @@ public abstract class CommandLineUtility
     {
         UsageInfo info = new UsageInfo();
 
+        getCustomUsageInfo (info);
+
         info.addOption (UsageInfo.NO_SHORT_OPTION,
                         "logging",
                         "Enable logging via Jakarta Commons Logging API.");
-
-        getCustomUsageInfo (info);
 
         return info;
     }
