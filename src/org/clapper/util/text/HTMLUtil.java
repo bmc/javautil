@@ -124,7 +124,7 @@ public final class HTMLUtil
 
     /**
      * Converts all inline HTML character entities (c.f.,
-     * (c.f. <a href="http://www.w3.org/TR/REC-html40/sgml/entities.html">http://www.w3.org/TR/REC-html40/sgml/entities.html</a>)
+     * <a href="http://www.w3.org/TR/REC-html40/sgml/entities.html">http://www.w3.org/TR/REC-html40/sgml/entities.html</a>)
      * to their Unicode character counterparts, if possible. Unrecognized
      * entity strings are left untouched.
      *
