@@ -263,6 +263,14 @@ public class Configuration
         String name;
         String cookedValue;
         String rawValue;
+        int    lineWhereDefined = 0; // 0 means unknown
+
+        Variable (String name, String value, int lineWhereDefined)
+        {
+            this.name = name;
+            this.lineWhereDefined = lineWhereDefined;
+            setValue (value);
+        }
 
         Variable (String name, String value)
         {
@@ -274,6 +282,16 @@ public class Configuration
         {
             this.rawValue = value;
             this.cookedValue = value;            
+        }
+
+        int lineWhereDefined()
+        {
+            return this.lineWhereDefined;
+        }
+
+        void setLineWhereDefined (int lineNumber)
+        {
+            this.lineWhereDefined = lineNumber;
         }
     }
 
@@ -312,6 +330,13 @@ public class Configuration
             Variable variable = new Variable (varName, value);
             valueMap.put (varName, variable);
             variableNames.add (varName);
+            return variable;
+        }
+
+        Variable addVariable (String varName, String value, int lineDefined)
+        {
+            Variable variable = addVariable (varName, value);
+            variable.setLineWhereDefined (lineDefined);
             return variable;
         }
     }
@@ -1348,7 +1373,7 @@ public class Configuration
     }
 
     /**
-     * Handle a new variable.
+     * Handle a new variable during parsing.
      *
      * @param line  line buffer
      * @param url   URL currently being processed, or null if unknown
@@ -1385,8 +1410,8 @@ public class Configuration
         }
 
         String value = s.substring (skipWhitespace (s, i + 1));
-
-        if (parseData.currentSection.getVariable (varName) != null)
+        Variable existing = parseData.currentSection.getVariable (varName);
+        if (existing != null)
         {
             throw new ConfigurationException (getExceptionPrefix (line, url)
                                             + "Section \""
@@ -1394,10 +1419,12 @@ public class Configuration
                                             + "\": Duplicate definition of "
                                             + "variable \""
                                             + varName
-                                            + "\".");
+                                            + "\". First instance was defined "
+                                            + "on line "
+                                            + existing.lineWhereDefined());
         }
 
-        parseData.currentSection.addVariable (varName, value);
+        parseData.currentSection.addVariable (varName, value, line.number);
     }
 
     /**
