@@ -723,7 +723,8 @@ public class Configuration
      * @throws NoSuchSectionException  the named section does not exist
      * @throws NoSuchVariableException the section has no such variable
      */
-    public String getVariableValue (String sectionName, String variableName)
+    public String getConfigurationValue (String sectionName,
+                                         String variableName)
         throws NoSuchSectionException,
                NoSuchVariableException
     {
@@ -797,7 +798,7 @@ public class Configuration
                NoSuchVariableException,
                ConfigurationException
     {
-        String sNum = getVariableValue (sectionName, variableName);
+        String sNum = getConfigurationValue (sectionName, variableName);
 
         try
         {
@@ -870,7 +871,7 @@ public class Configuration
                NoSuchVariableException,
                ConfigurationException
     {
-        String sNum = getVariableValue (sectionName, variableName);
+        String sNum = getConfigurationValue (sectionName, variableName);
 
         try
         {
@@ -917,7 +918,7 @@ public class Configuration
 
         try
         {
-            String s = getVariableValue (sectionName, variableName);
+            String s = getConfigurationValue (sectionName, variableName);
 
             if (s.trim().length() == 0)
                 result = defaultValue;
@@ -956,7 +957,8 @@ public class Configuration
                ConfigurationException,
                NoSuchVariableException
     {
-        return Boolean.valueOf (getVariableValue (sectionName, variableName))
+        return Boolean.valueOf (getConfigurationValue (sectionName,
+                                                       variableName))
                       .booleanValue();
     }
 
@@ -984,7 +986,7 @@ public class Configuration
 
         try
         {
-            result = getVariableValue (sectionName, variableName);
+            result = getConfigurationValue (sectionName, variableName);
             if (result.trim().length() == 0)
                 result = defaultValue;
         }
