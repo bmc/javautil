@@ -243,10 +243,10 @@ public class TestSemaphore extends CommandLineUtility
         throws CommandLineUsageException,
                NoSuchElementException
     {
-        semCount = parseIntParam ((String) it.next());
-        nThreads = parseIntParam ((String) it.next());
-        holdTime = parseIntParam ((String) it.next());
-        pendTime = parseIntParam ((String) it.next());
+        semCount = parseIntParameter ((String) it.next());
+        nThreads = parseIntParameter ((String) it.next());
+        holdTime = parseIntParameter ((String) it.next());
+        pendTime = parseIntParameter ((String) it.next());
     }
 
     protected void getCustomUsageInfo (UsageInfo info)
@@ -265,22 +265,6 @@ public class TestSemaphore extends CommandLineUtility
                            "How long, in milliseconds, a thread should wait "
                          + "to acquire a semaphore. 0 means forever.",
                            true);
-    }
-
-    private int parseIntParam (String value)
-        throws CommandLineUsageException
-    {
-        try
-        {
-            return Integer.parseInt (value);
-        }
-
-        catch (NumberFormatException ex)
-        {
-            throw new CommandLineUsageException ("bad numeric parameter: \""
-                                               + value
-                                               + "\"");
-        }
     }
 
     /**
