@@ -117,12 +117,14 @@ public class FileUtils
      * @param is    the source <tt>InputStream</tt>
      * @param os    the destination <tt>OutputStream</tt>
      *
+     * @return total number of bytes copied
+     *
      * @throws IOException  on error
      */
-    public static void copyStream (InputStream is, OutputStream os)
+    public static int copyStream (InputStream is, OutputStream os)
         throws IOException
     {
-        copyStream (is, os, 8192);
+        return copyStream (is, os, 8192);
     }
 
     /**
@@ -135,13 +137,17 @@ public class FileUtils
      * @param dst        the destination <tt>OutputStream</tt>
      * @param bufferSize the buffer size to use
      *
+     * @return total number of bytes copied
+     *
      * @throws IOException  on error
      */
-    public static void copyStream (InputStream  src,
-                                   OutputStream dst,
-                                   int          bufferSize)
+    public static int copyStream (InputStream  src,
+                                  OutputStream dst,
+                                  int          bufferSize)
         throws IOException
     {
+        int totalCopied = 0;
+
         if (! (src instanceof BufferedInputStream))
             src = new BufferedInputStream (src);
 
@@ -152,21 +158,30 @@ public class FileUtils
         int nr = 0;
 
         while ((nr = src.read (buf)) != -1)
+        {
             dst.write (buf, 0, nr);
+            totalCopied += nr;
+        }
 
         dst.flush();
-            
+
+        return totalCopied;
     }
+
     /**
      * Copy one file to another.
      *
      * @param src  The file to copy
      * @param dst  Where to copy it. Can be a directory or a file.
      *
+     * @return total number of bytes copied
+     *
      * @throws IOException on error
      */
-    public static void copyFile (File src, File dst) throws IOException
+    public static int copyFile (File src, File dst) throws IOException
     {
+        int totalCopied = 0;
+
         if (dst.isDirectory())
             dst = new File (dst, src.getName());
         
@@ -178,7 +193,7 @@ public class FileUtils
             from = new FileInputStream (src);
             to   = new FileOutputStream (dst);
 
-            copyStream (from, to);
+            totalCopied = copyStream (from, to);
         }
 
         finally
@@ -189,6 +204,8 @@ public class FileUtils
             if (to != null)
                 to.close();
         }
+
+        return totalCopied;
     }
 
     /**
