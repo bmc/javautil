@@ -1,4 +1,4 @@
-<!--
+<!--                                                              -*-text-*-
   Ant build file for clapper.org Java utility library
 
   $Id$
@@ -41,9 +41,14 @@
   <property name="pkg.path" value="org/clapper/util"/>
   <property name="src.top" location="src"/>
   <property name="src.dir" location="${src.top}/${pkg.path}"/>
+
+  <!-- 
+       <javac> uses a different source directory to prevent constant
+       recompilation. See "http://ant.apache.org/faq.html#always-recompiles"
+       for details.
+  -->
+  <property name="javac.src.dir" location="${src.top}"/>
   <property name="dist"  location="dist"/>
-  <property name="build.compiler" value="jikes"/>
-  <property name="build.compiler.emacs" value="true"/>
   <property name="javac.debug" value="true"/>
   <property name="javac.listfiles" value="no"/>
   <property name="build.info.file" 
@@ -67,20 +72,6 @@
     <pathelement path="${java.class.path}/"/>
     <pathelement path="classes/"/>
   </path>
-
-  <patternset id="lib.sources">
-    <include name="**/*.java"/>
-    <exclude name="**/test/*.java"/>
-  </patternset>
-
-  <patternset id="lib.test.sources">
-    <include name="**/test/*.java"/>
-    <exclude name="mail/test/*.java"/>
-  </patternset>
-
-  <patternset id="mail.test.sources">
-    <include name="mail/test/*.java"/>
-  </patternset>
 
   <!--
   ***************************************************************************
@@ -119,8 +110,7 @@
   <target name="lib" depends="lib.unconditional,lib.conditional"/>
 
   <target name="lib.unconditional" depends="init">
-    <javac srcdir="${src.dir}" 
-           sourcepath="${src.top}"
+    <javac srcdir="${javac.src.dir}" 
 	   source="1.4"
 	   debug="${javac.debug}"
 	   listfiles="${javac.listfiles}"
@@ -133,8 +123,10 @@
 
       <classpath refid="project.class.path"/>
 
-      <exclude name="mail/*.java"/>
+      <include name="**/*.java"/>
+      <exclude name="${pkg.path}/mail/*.java"/>
       <exclude name="**/test/*.java"/>
+
     </javac>
   </target>
 
@@ -167,8 +159,8 @@
   </target>
 
   <target name="mail" depends="-check.javamail" if="javamail.exists">
-    <javac srcdir="${src.dir}" 
-           sourcepath="${src.top}"
+    <echo level="verbose">Found Java Mail API. Compiling mail classes.</echo>
+    <javac srcdir="${javac.src.dir}" 
 	   source="1.4"
 	   debug="${javac.debug}"
 	   listfiles="${javac.listfiles}"
@@ -180,7 +172,7 @@
 
       <classpath refid="project.class.path"/>
 
-      <include name="mail/*.java"/>
+      <include name="${pkg.path}/mail/*.java"/>
     </javac>
   </target>
 
@@ -219,8 +211,7 @@
           if="javamail.exists"
 	  description="compile the mail testers">
     <!-- Create the distribution directory -->
-    <javac srcdir="${src.dir}" 
-           sourcepath="${src.top}"
+    <javac srcdir="${javac.src.dir}" 
 	   source="1.4"
 	   debug="${javac.debug}"
 	   listfiles="${javac.listfiles}"
@@ -232,7 +223,7 @@
 
       <classpath refid="project.class.path"/>
 
-      <include name="mail/test/*.java"/>
+      <include name="${pkg.path}/mail/test/*.java"/>
 
     </javac>
   </target>
@@ -240,9 +231,8 @@
   <target name="lib.testers"
 	  description="compile the testers">
     <!-- Create the distribution directory -->
-    <javac srcdir="${src.dir}" 
+    <javac srcdir="${javac.src.dir}" 
 	   source="1.4"
-           sourcepath="${src.top}"
 	   debug="${javac.debug}"
 	   listfiles="${javac.listfiles}"
 	   destdir="${build}">
@@ -254,7 +244,7 @@
       <classpath refid="project.class.path"/>
 
       <include name="**/test/*.java"/>
-      <exclude name="mail/test/*.java"/>
+      <exclude name="${pkg.path}/mail/test/*.java"/>
 
     </javac>
   </target>
