@@ -45,7 +45,7 @@
   <property name="build.compiler" value="jikes"/>
   <property name="build.compiler.emacs" value="true"/>
   <property name="javac.debug" value="true"/>
-  <property name="compile.listfiles" value="no"/>
+  <property name="javac.listfiles" value="no"/>
   <property name="build.info.file" 
             value="${build}/org/clapper/util/misc/BuildInfoBundle.properties"/>
   <property name="code_jar_name" value="ocutil"/>
@@ -105,7 +105,7 @@
   ***************************************************************************
   -->
 
-  <target name="all" depends="lib,bundles,testers"/>
+  <target name="all" depends="init,lib,bundles,testers"/>
 
   <target name="bundles">
     <copy todir="${build}">
@@ -116,58 +116,28 @@
   </target>
 
   <target name="testers" depends="lib,lib.testers,mail.testers"/>
+  <target name="lib" depends="lib.unconditional,lib.conditional"/>
 
-  <target name="misc" depends="init">
+  <target name="lib.unconditional" depends="init">
     <javac srcdir="${src.dir}" 
-	   depend="true"
+           sourcepath="${src.top}"
 	   debug="${javac.debug}"
-	   listfiles="${compile.listfiles}"
+	   listfiles="${javac.listfiles}"
+	   deprecation="yes"
 	   destdir="${build}">
+
+      <compilerarg compiler="jikes" value="+Peffective-java"/>
+      <compilerarg compiler="jikes" value="+Punused-type-imports"/>
+      <compilerarg compiler="jikes" value="+Punused-package-imports"/>
+
       <classpath refid="project.class.path"/>
-      <patternset>
-        <include name="misc/*.java"/>
-      </patternset>
+
+      <exclude name="mail/*.java"/>
+      <exclude name="**/test/*.java"/>
     </javac>
   </target>
 
-  <target name="io" depends="misc,text">
-    <javac srcdir="${src.dir}" 
-	   depend="true"
-	   debug="${javac.debug}"
-	   listfiles="${compile.listfiles}"
-	   destdir="${build}">
-      <classpath refid="project.class.path"/>
-      <patternset>
-        <include name="io/*.java"/>
-      </patternset>
-    </javac>
-  </target>
-
-  <target name="text" depends="misc">
-    <javac srcdir="${src.dir}" 
-	   depend="true"
-	   debug="${javac.debug}"
-	   listfiles="${compile.listfiles}"
-	   destdir="${build}">
-      <classpath refid="project.class.path"/>
-      <patternset>
-        <include name="text/*.java"/>
-      </patternset>
-    </javac>
-  </target>
-
-  <target name="config" depends="text">
-    <javac srcdir="${src.dir}" 
-	   depend="true"
-	   debug="${javac.debug}"
-	   listfiles="${compile.listfiles}"
-	   destdir="${build}">
-      <classpath refid="project.class.path"/>
-      <patternset>
-        <include name="config/*.java"/>
-      </patternset>
-    </javac>
-  </target>
+  <target name="lib.conditional" depends="mail"/>
 
   <!--
   Can only build the "mail" component if the Java Mail API and
@@ -195,42 +165,20 @@
     </echo>
   </target>
 
-  <target name="mail" depends="-check.javamail,text" if="javamail.exists">
+  <target name="mail" depends="-check.javamail" if="javamail.exists">
     <javac srcdir="${src.dir}" 
-	   depend="true"
+           sourcepath="${src.top}"
 	   debug="${javac.debug}"
-	   listfiles="${compile.listfiles}"
+	   listfiles="${javac.listfiles}"
 	   destdir="${build}">
-      <classpath refid="project.class.path"/>
-      <patternset>
-        <include name="mail/*.java"/>
-      </patternset>
-    </javac>
-  </target>
 
-  <target name="cmdline">
-    <javac srcdir="${src.dir}" 
-	   depend="true"
-	   debug="${javac.debug}"
-	   listfiles="${compile.listfiles}"
-	   destdir="${build}">
+      <compilerarg compiler="jikes" value="+Peffective-java"/>
+      <compilerarg compiler="jikes" value="+Punused-type-imports"/>
+      <compilerarg compiler="jikes" value="+Punused-package-imports"/>
+
       <classpath refid="project.class.path"/>
-      <patternset>
-        <include name="cmdline/*.java"/>
-      </patternset>
-    </javac>
-  </target>
-  
-  <target name="ant.tasks">
-    <javac srcdir="${src.dir}" 
-	   depend="true"
-	   debug="${javac.debug}"
-	   listfiles="${compile.listfiles}"
-	   destdir="${build}">
-      <classpath refid="project.class.path"/>
-      <patternset>
-        <include name="ant/*.java"/>
-      </patternset>
+
+      <include name="mail/*.java"/>
     </javac>
   </target>
 
@@ -270,20 +218,24 @@
                      compiler="${compiler}"/>
   </target>
 
-  <target name="lib" 
-          depends="misc,io,text,config,mail,cmdline,ant.tasks,-build.info"/>
-
   <target name="mail.testers" depends="-check.javamail,lib"
           if="javamail.exists"
 	  description="compile the mail testers">
     <!-- Create the distribution directory -->
     <javac srcdir="${src.dir}" 
-	   depend="true"
+           sourcepath="${src.top}"
 	   debug="${javac.debug}"
-	   listfiles="${compile.listfiles}"
+	   listfiles="${javac.listfiles}"
 	   destdir="${build}">
+
+      <compilerarg compiler="jikes" value="+Peffective-java"/>
+      <compilerarg compiler="jikes" value="+Punused-type-imports"/>
+      <compilerarg compiler="jikes" value="+Punused-package-imports"/>
+
       <classpath refid="project.class.path"/>
-      <patternset refid="mail.test.sources"/>
+
+      <include name="mail/test/*.java"/>
+
     </javac>
   </target>
 
@@ -291,12 +243,20 @@
 	  description="compile the testers">
     <!-- Create the distribution directory -->
     <javac srcdir="${src.dir}" 
-	   depend="true"
+           sourcepath="${src.top}"
 	   debug="${javac.debug}"
-	   listfiles="${compile.listfiles}"
+	   listfiles="${javac.listfiles}"
 	   destdir="${build}">
+
+      <compilerarg compiler="jikes" value="+Peffective-java"/>
+      <compilerarg compiler="jikes" value="+Punused-type-imports"/>
+      <compilerarg compiler="jikes" value="+Punused-package-imports"/>
+
       <classpath refid="project.class.path"/>
-      <patternset refid="lib.test.sources"/>
+
+      <include name="**/test/*.java"/>
+      <exclude name="mail/test/*.java"/>
+
     </javac>
   </target>
 
