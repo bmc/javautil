@@ -194,14 +194,14 @@ import org.clapper.util.io.FileUtil;
  *        system, the file separator character (a backslash) will be doubled,
  *        to ensure that it is properly interpreted by the configuration file
  *        parsing logic.
- *   <li> <tt>cwdURL</tt>: the program's current working directory as a
+ *   <li> <tt>cwd.url</tt>: the program's current working directory as a
  *        <tt>file</tt> URL, without the trailing "/". Useful when you need
  *        to create a URL reference to something relative to the current
  *        directory. This is especially useful on Windows, where
  *        <blockquote><pre>file://${program:cwd}/something.txt</pre></blockquote>
  *         produces an invalid URL, with a mixture of backslashes and
  *         forward slashes.  By contrast,
- *         <blockquote><pre>${program:cwdURL}/something.txt</pre></blockquote>
+ *         <blockquote><pre>${program:cwd.url}/something.txt</pre></blockquote>
  *         always produces a valid URL, regardless of the underlying host
  *         operating system.
  * </ul>
@@ -1906,7 +1906,7 @@ public class Configuration
                 value = dir.getCanonicalPath();
             }
 
-            else if (varName.equals ("cwdURL"))
+            else if (varName.equals ("cwd.url"))
             {
                 File dir = new File (".");
 
