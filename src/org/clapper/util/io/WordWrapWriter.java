@@ -138,7 +138,7 @@ public class WordWrapWriter extends PrintWriter
     /**
      * Where the output is really going.
      */
-    private PrintWriter out = null;
+    private PrintWriter writer = null;
 
     /**
      * The line length to use.
@@ -257,7 +257,7 @@ public class WordWrapWriter extends PrintWriter
     public WordWrapWriter (Writer output, int lineLength, int indentSpaces)
     {
         super (output);
-        out = new PrintWriter (output);
+        writer = new PrintWriter (output);
         setLineLength (lineLength);
         setIndentation (indentSpaces);
     } 
@@ -773,7 +773,6 @@ public class WordWrapWriter extends PrintWriter
     {
         int           currentLength = 0;
         int           length        = buf.length();
-        int           lineLength    = getLineLength();
         int           tokenLength;
         char          contents[];
         StringBuffer  currentWord   = new StringBuffer();
@@ -791,12 +790,12 @@ public class WordWrapWriter extends PrintWriter
                 if (emittedPrefix)
                 {
                     for (int i = 0; i < prefix.length(); i++)
-                        out.print (' ');
+                        writer.print (' ');
                 }
 
                 else
                 {
-                    out.print (prefix);
+                    writer.print (prefix);
                 }
 
                 // We've emitted a prefix, which by definition is at the
@@ -830,7 +829,7 @@ public class WordWrapWriter extends PrintWriter
                         // were at the beginning of a new line, forcing a
                         // "wrap" would introduce a spurious newline.)
 
-                        out.println();
+                        writer.println();
                         lines++;
                         lastWasNewline = true;
                         currentLength = 0;
@@ -840,7 +839,7 @@ public class WordWrapWriter extends PrintWriter
                     if (lastWasNewline && (lines > 0))
                         currentLength += indent();
 
-                    out.print (currentWord.toString());
+                    writer.print (currentWord.toString());
                     lastWasNewline = false;
                     currentLength += tokenLength;
                     currentWord.setLength (0);
@@ -852,7 +851,7 @@ public class WordWrapWriter extends PrintWriter
 
                 if ((c == NEWLINE_MARKER) || (currentLength >= lineLength))
                 {
-                    out.println();
+                    writer.println();
                     lines++;
                     currentLength = 0;
                     tokensOnLine = 0;
@@ -865,7 +864,7 @@ public class WordWrapWriter extends PrintWriter
                         currentLength += indent();
                     else
                     {
-                        out.print (c);
+                        writer.print (c);
                         currentLength++;
                     }
 
@@ -888,7 +887,7 @@ public class WordWrapWriter extends PrintWriter
             if ( (! lastWasNewline) &&
                  ((currentLength + tokenLength) > lineLength) )
             {
-                out.println();
+                writer.println();
                 lines++;
                 lastWasNewline = true;
                 tokensOnLine = 0;
@@ -897,16 +896,16 @@ public class WordWrapWriter extends PrintWriter
             if (lastWasNewline)
                 currentLength += indent();
 
-            out.print (currentWord.toString());
+            writer.print (currentWord.toString());
             lastWasNewline = false;
         }
 
         // Issue a final newline and flush the output stream.
 
         if (! lastWasNewline)
-            out.println();
+            writer.println();
 
-        out.flush();
+        writer.flush();
     }
 
     /**
@@ -922,12 +921,12 @@ public class WordWrapWriter extends PrintWriter
         if (prefix != null)
         {
             for (i = 0; i < prefix.length(); i++)
-                out.write (indentChar);
+                writer.write (indentChar);
             result += prefix.length();
         }
 
         for (i = 0; i < indentation; i++)
-            out.write (indentChar);
+            writer.write (indentChar);
 
         return result;
     }

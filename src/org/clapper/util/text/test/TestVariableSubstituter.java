@@ -59,18 +59,18 @@ public class TestVariableSubstituter
 
         TestVariableSubstituter tester;
 
-        VariableSubstituter vsub = null;
+        VariableSubstituter vs = null;
 
         if (args[0].equals ("unix"))
-            vsub = new UnixShellVariableSubstituter();
+            vs = new UnixShellVariableSubstituter();
         else if (args[0].equals ("windows"))
-            vsub = new WindowsCmdVariableSubstituter();
+            vs = new WindowsCmdVariableSubstituter();
         else
             usage();
 
         try
         {
-            tester = new TestVariableSubstituter (vsub);
+            tester = new TestVariableSubstituter (vs);
             tester.runTest (args[1], strings);
             System.exit (0);
         }
