@@ -31,14 +31,23 @@ import java.io.StringReader;
 import java.io.LineNumberReader;
 import java.io.StringWriter;
 import java.io.PrintWriter;
-import java.io.PrintStream;
 import java.util.Locale;
 
 /**
  * <p><tt>NestedException</tt> defines a special <tt>Exception</tt> class
- * that permits exceptions to wrap other exceptions. While
- * <tt>NestedException</tt> can be used directly, it is most useful as a
- * base class for other exception classes.</p>
+ * that permits exceptions to wrap other exceptions. Much of the
+ * functionality of this class has been subsumed by the "chained exception"
+ * handling introduced in JDK 1.4. However, this class is retained for
+ * two reasons:</p>
+ *
+ * <ul>
+ *   <li> backward compatibility
+ *   <li> it has constructors that support internationalization and
+ *        localization of exception messages
+ * </ul>
+ *
+ * <p>While <tt>NestedException</tt> can be used directly, it is most useful
+ * as a base class for other exceptions classes.</p>
  *
  * @version <tt>$Revision$</tt>
  *
@@ -50,7 +59,6 @@ public class NestedException extends Exception
                              Private Variables
     \*----------------------------------------------------------------------*/
 
-    private Throwable containedException = null;
     private String    resourceBundleName = null;
     private String    bundleMessageKey   = null;
     private String    defaultMessage     = null;
@@ -78,8 +86,7 @@ public class NestedException extends Exception
      */
     public NestedException (Throwable exception)
     {
-	super();
-	this.containedException = exception;
+	super (exception);
     }
 
     /**
@@ -101,8 +108,7 @@ public class NestedException extends Exception
      */
     public NestedException (String message, Throwable exception)
     {
-	super (message);
-	this.containedException = exception;
+	super (message, exception);
     }
 
     /**
@@ -229,11 +235,11 @@ public class NestedException extends Exception
                             Throwable ex)
     {
         super();
+        initCause (ex);
         this.resourceBundleName = bundleName;
         this.bundleMessageKey   = messageKey;
         this.defaultMessage     = defaultMsg;
         this.messageParams      = msgParams;
-        this.containedException = ex;
     }
 
     /*----------------------------------------------------------------------*\
@@ -297,6 +303,7 @@ public class NestedException extends Exception
 	else
         {
             buf.append (this.getClass().getName());
+            Throwable containedException = getCause();
             if (containedException != null)
             {
                 buf.append (" (contains ");
@@ -411,10 +418,7 @@ public class NestedException extends Exception
 
             pw.print (s);
 
-            if (! (ex instanceof NestedException))
-                break;
-
-            ex = ((NestedException) ex).getNestedException();
+            ex = getCause();
             if (ex != null)
             {
                 if (elideNewlines)
@@ -432,10 +436,12 @@ public class NestedException extends Exception
      * if any.
      *
      * @return the nested exception, or null
+     *
+     * @deprecated Use <tt>java.lang.Throwable.getCause()</tt> instead
      */
     public Throwable getNestedException()
     {
-        return containedException;
+        return getCause();
     }
 
     /**
@@ -459,100 +465,5 @@ public class NestedException extends Exception
 	String s = getClass().getName();
 	String message = getMessage();
 	return (message != null) ? (s + ": " + message) : s;
-    }
-
-    /**
-     * Prints this exception and its backtrace to the standard error
-     * stream. If this exception contains another, nested exception, its
-     * stack trace is also printed.
-     */
-    public void printStackTrace()
-    { 
-        printStackTrace (System.err);
-    }
-
-    /**
-     * Prints this exception and its backtrace to the standard error
-     * stream. If this exception contains another, nested exception, its
-     * stack trace is also printed.
-     *
-     * @param locale   the locale to use when retrieving messages, or null
-     *                 for the default
-     */
-    public void printStackTrace (Locale locale)
-    { 
-        printStackTrace (new PrintWriter (System.err), locale);
-    }
-
-    /**
-     * Prints this exception and its backtrace to the specified
-     * <tt>PrintStream</tt>. If this exception contains another, nested
-     * exception, its stack trace is also printed.
-     *
-     * @param out <tt>PrintStream</tt> to use for output
-     */
-    public void printStackTrace (PrintStream out)
-    { 
-        printStackTrace (new PrintWriter (out));
-    }
-
-    /**
-     * Prints this exception and its backtrace to the specified
-     * <tt>PrintWriter</tt>. If this exception contains another, nested
-     * exception, its stack trace is also printed.
-     *
-     * @param out <tt>PrintStream</tt> to use for output
-     */
-    public void printStackTrace (PrintWriter out)
-    {
-        printStackTrace (out, null);
-    }
-
-    /**
-     * Prints this exception and its backtrace to the specified
-     * <tt>PrintWriter</tt>. If this exception contains another, nested
-     * exception, its stack trace is also printed.
-     *
-     * @param out    <tt>PrintStream</tt> to use for output
-     * @param locale the locale to use when retrieving the message, or null
-     *               for the default
-     */
-    public void printStackTrace (PrintWriter out, Locale locale)
-    {
-	synchronized (out)
-        {
-            // Hack to pass locale through to getMessage()
-
-            this.messageLocale = locale;
-            super.printStackTrace (out);
-
-            if (this.containedException != null)
-            {
-                Throwable ex;
-                String    prefix;
-
-                ex  = this.containedException;
-                prefix = BundleUtil.getMessage (Package.BUNDLE_NAME,
-                                                locale,
-                                                "NestedException.prefix",
-                                                "*** NestedException");
-                while (ex != null)
-                {
-                    out.println (prefix);
-                    if (ex instanceof NestedException)
-                    {
-                        ((NestedException) ex).printStackTrace (out, locale);
-                        ex = ((NestedException) ex).getNestedException();
-                    }
-                    else
-                    {
-                        ex.printStackTrace (out);
-                        ex = null;
-                    }
-                }
-            }
-
-            out.flush();
-        }
     }
 }

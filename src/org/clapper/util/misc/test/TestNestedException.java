@@ -66,7 +66,7 @@ public class TestNestedException extends CommandLineUtility
         catch (CommandLineException ex)
         {
             System.err.println (ex.getMessage (locale));
-            ex.printStackTrace (locale);
+            ex.printStackTrace ();
             System.exit (1);
         }
 
