@@ -4,6 +4,17 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
+Version 1.1.2 (20 October, 2004)
+
+- Moved org.clapper.util.misc.JDK14TextLogFormatter and
+  org.clapper.util.misc.Logger classes to the org.clapper.util.logging
+  package. Renamed JDK14TextLogFormatter to JavaUtilLoggingTextFormatter.
+
+- org.clapper.util.logging.Logger is now implemented directly in terms of
+  java.util.logging, eliminating another third-party dependency. Consult
+  the javadocs for org.clapper.logging.Logger for complete rationale.
+
+
 Version 1.1.1 (12 October, 2004)
 
 - Added org.clapper.util.misc.JDK14TextLogFormatter class, a simple
