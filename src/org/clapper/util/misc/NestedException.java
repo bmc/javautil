@@ -112,8 +112,8 @@ public class NestedException extends Exception
      * Constructs an exception containing a resource bundle name, a message
      * key, and a default message (in case the resource bundle can't be
      * found). Using this constructor is equivalent to calling the
-     * {@link #NestedException(String,String,String,Object[])} constructor,
-     * with a null pointer for the <tt>Object[]</tt> parameter.
+     * {@link #NestedException(String,String,String,Object[])}
+     * constructor, with a null pointer for the <tt>Object[]</tt> parameter.
      * Calls to {@link #getMessage(Locale)} will attempt to retrieve
      * the top-most message (i.e., the message from this exception, not
      * from nested exceptions) by querying the named resource bundle.
@@ -141,14 +141,18 @@ public class NestedException extends Exception
      * Constructs an exception containing a resource bundle name, a message
      * key, a default message format (in case the resource bundle can't be
      * found), and arguments to be incorporated in the message via
-     * <tt>java.text.MessageFormat</tt>. Calls to {@link #getMessage(Locale)}
-     * will attempt to retrieve the top-most message (i.e., the message from
-     * this exception, not from nested exceptions) by querying the named
-     * resource bundle. Calls to {@link #printStackTrace(PrintWriter,Locale)}
-     * will do the same, where applicable. The message is not retrieved
-     * until one of those methods is called, because the desired locale is
-     * passed into <tt>getMessage()</tt> and <tt>printStackTrace()</tt>,
-     * not this constructor.
+     * <tt>java.text.MessageFormat</tt>. Using this constructor is
+     * equivalent to calling the
+     * {@link #NestedException(String,String,String,Object[],Throwable)}
+     * with a null <tt>Throwable</tt> parameter. Calls to
+     * {@link #getMessage(Locale)} will attempt to retrieve the top-most
+     * message (i.e., the message from this exception, not from nested
+     * exceptions) by querying the named resource bundle. Calls to
+     * {@link #printStackTrace(PrintWriter,Locale)} will do the same, where
+     * applicable. The message is not retrieved until one of those methods
+     * is called, because the desired locale is passed into
+     * <tt>getMessage()</tt> and <tt>printStackTrace()</tt>, not this
+     * constructor.
      *
      * @param bundleName  resource bundle name
      * @param messageKey  the key to the message to find in the bundle
@@ -168,9 +172,9 @@ public class NestedException extends Exception
 
     /**
      * Constructs an exception containing a resource bundle name, a message
-     * key, a default message (in case the resource bundle can't be found),
-     * and another exception. Using this constructor is equivalent to
-     * calling the {@link #NestedException(String,String,String,Object[])}
+     * key, a default message (in case the resource bundle can't be found), and
+     * another exception. Using this constructor is equivalent to calling the
+     * {@link #NestedException(String,String,String,Object[],Throwable)}
      * constructor, with a null pointer for the <tt>Object[]</tt>
      * parameter. Calls to {@link #getMessage(Locale)} will attempt to
      * retrieve the top-most message (i.e., the message from this

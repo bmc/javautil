@@ -119,8 +119,8 @@ public class EmailException extends NestedException
      * Constructs an exception containing a resource bundle name, a message
      * key, and a default message (in case the resource bundle can't be
      * found). Using this constructor is equivalent to calling the
-     * {@link #EmailException(String,String,String,Object[])} constructor,
-     * with a null pointer for the <tt>Object[]</tt> parameter.
+     * {@link #EmailException(String,String,String,Object[],Throwable)}
+     * constructor, with a null pointer for the <tt>Throwable</tt> parameter.
      * Calls to {@link NestedException#getMessage(Locale)} will attempt to
      * retrieve the top-most message (i.e., the message from this exception,
      * not from nested exceptions) by querying the named resource bundle.
@@ -148,9 +148,9 @@ public class EmailException extends NestedException
 
     /**
      * Constructs an exception containing a resource bundle name, a message
-     * key, a default message (in case the resource bundle can't be found),
-     * and another exception. Using this constructor is equivalent to
-     * calling the {@link #EmailException(String,String,String,Object[])}
+     * key, a default message (in case the resource bundle can't be found), and
+     * another exception. Using this constructor is equivalent to calling the
+     * {@link #EmailException(String,String,String,Object[],Throwable)}
      * constructor, with a null pointer for the <tt>Object[]</tt>
      * parameter. Calls to {@link #getMessage(Locale)} will attempt to
      * retrieve the top-most message (i.e., the message from this
