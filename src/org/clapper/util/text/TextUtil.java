@@ -515,7 +515,7 @@ public final class TextUtil
     }
 
     /**
-     * Right justify a string in a fixed-width field, using the specified
+     * Center a string in a fixed-width field, using the specified
      * character for padding. If the string is already longer than the
      * field width, it is returned unchanged.
      *
