@@ -52,7 +52,7 @@
   <property name="code_jar_path" value="${dist}/lib/${code_jar_file}"/>
   <property name="docs_top_dir" value="${dist}/docs"/>
   <property name="docs_api_dir" value="${docs_top_dir}/api"/>
-  <property name="zip_dir_prefix" value="org/clapper/util/"/>
+  <property name="zip_dir_prefix" value="util/"/>
   <property name="release_dir" value="${dist}/release"/>
 
   <!--
