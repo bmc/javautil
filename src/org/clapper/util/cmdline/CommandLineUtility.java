@@ -128,11 +128,11 @@ import java.util.NoSuchElementException;
  *             count = parseIntParameter ((String) it.next());
  *
  *         else
- *             throw new CommandLineUtilityException ("Unknown option: " + option);
+ *             throw new CommandLineUsageException ("Unknown option: " + option);
  *     }
  *
  *     protected void processPostOptionCommandLine (Iterator<String> it)
- *         throws BadCommandLineException,
+ *         throws CommandLineUsageException,
  *                NoSuchElementException
  *     {
  *         filename = it.next();
