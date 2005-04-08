@@ -52,7 +52,7 @@ public class TestRegexUtil
     extends CommandLineUtility
 {
     private String substitution;
-    private Collection strings = new ArrayList();
+    private Collection<String> strings = new ArrayList<String>();
 
     class LineReaderIterator implements Iterator
     {
@@ -171,16 +171,16 @@ public class TestRegexUtil
         }
     }
 
-    protected void parseCustomOption (char     shortOption,
-                                      String   longOption,
-                                      Iterator it)
+    protected void parseCustomOption (char             shortOption,
+                                      String           longOption,
+                                      Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException
     {
         throw new CommandLineUsageException ("Unrecognized option");
     }
     
-    protected void processPostOptionCommandLine (Iterator it)
+    protected void processPostOptionCommandLine (Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException
     {

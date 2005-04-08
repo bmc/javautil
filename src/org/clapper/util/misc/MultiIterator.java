@@ -33,15 +33,15 @@ import java.util.Enumeration;
 import java.util.NoSuchElementException;
 
 /**
- * The <tt>MultiIterator</tt> class provides a way to iterate over multiple
- * <tt>Collection</tt>, <tt>Enumeration</tt> and <tt>Iterator</tt> objects
- * at once. You instantiate a <tt>MultiIterator</tt> object and add one or
- * more <tt>Collection</tt>, <tt>Enumeration</tt> or <tt>Iterator</tt>
- * objects to it; when you use the iterator, it iterates over the contents
- * of each contained composite object, one by one, in the order they were
- * added to the <tt>MultiIterator</tt>. When the iterator reaches the end
- * of one object's contents, it moves on to the next object, until no more
- * composite objects are left.
+ * <p>The <tt>MultiIterator</tt> class provides a way to iterate over
+ * multiple <tt>Collection</tt>, <tt>Enumeration</tt> and <tt>Iterator</tt>
+ * objects at once. You instantiate a <tt>MultiIterator</tt> object and add
+ * one or more <tt>Collection</tt>, <tt>Enumeration</tt> or
+ * <tt>Iterator</tt> objects to it; when you use the iterator, it iterates
+ * over the contents of each contained composite object, one by one, in the
+ * order they were added to the <tt>MultiIterator</tt>. When the iterator
+ * reaches the end of one object's contents, it moves on to the next
+ * object, until no more composite objects are left.</p>
  *
  * @see java.util.Iterator
  * @see java.util.Enumeration
@@ -51,7 +51,7 @@ import java.util.NoSuchElementException;
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
-public class MultiIterator implements Iterator
+public class MultiIterator<T> implements Iterator<T>
 {
     /*----------------------------------------------------------------------*\
                            Private Data Elements
@@ -60,17 +60,17 @@ public class MultiIterator implements Iterator
     /**
      * The underlying objects being iterated over, stored in a Collection
      */
-    private Collection aggregation = new ArrayList();
+    private Collection<Iterator<T>> aggregation = new ArrayList<Iterator<T>>();
 
     /**
      * The iterator for the list of aggregation
      */
-    private Iterator aggregationIterator = null;
+    private Iterator<Iterator<T>> aggregationIterator = null;
 
     /**
      * The iterator for the current object
      */
-    private Iterator it = null;
+    private Iterator<T> it = null;
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -92,10 +92,10 @@ public class MultiIterator implements Iterator
      *
      * @see #addCollection(Collection)
      */
-    public MultiIterator (Collection array[])
+    public MultiIterator (Collection<T> array[])
     {
         for (int i = 0; i < array.length; i++)
-            aggregation.add (array[i]);
+            addCollection (array[i]);
     }
 
     /**
@@ -107,10 +107,13 @@ public class MultiIterator implements Iterator
      *
      * @see #addCollection(Collection)
      */
-    public MultiIterator (Collection coll)
+    public MultiIterator (Collection<Collection<T>> coll)
     {
-        for (Iterator iterator = coll.iterator(); iterator.hasNext(); )
-            aggregation.add ((Collection) iterator.next());
+        for (Iterator<Collection<T>> iterator = coll.iterator();
+             iterator.hasNext(); )
+        {
+            addCollection (iterator.next());
+        }
     }
 
     /*----------------------------------------------------------------------*\
@@ -118,19 +121,25 @@ public class MultiIterator implements Iterator
     \*----------------------------------------------------------------------*/
 
     /**
-     * Add a <tt>Collection</tt> to the end of the list of composite
+     * <p>Add a <tt>Collection</tt> to the end of the list of composite
      * objects being iterated over. It's safe to call this method while
      * iterating, as long as you haven't reached the end of the last
-     * composite object currently in the iterator.
+     * composite object currently in the iterator.</p>
+     *
+     * <p><b>Note</b>: This method is simply shorthand for:</p>
+     *
+     * <blockquote>
+     * <pre>addIterator (collection.iterator());</pre>
+     * </blockquote>
      *
      * @param collection  The <tt>Collection</tt> to add.
      *
      * @see #addIterator
      * @see #addEnumeration
      */
-    public void addCollection (Collection collection)
+    public void addCollection (Collection<T> collection)
     {
-        aggregation.add (collection);
+        aggregation.add (collection.iterator());
     }
 
     /**
@@ -144,7 +153,7 @@ public class MultiIterator implements Iterator
      * @see #addCollection
      * @see #addEnumeration
      */
-    public void addIterator (Iterator iterator)
+    public void addIterator (Iterator<T> iterator)
     {
         aggregation.add (iterator);
     }
@@ -155,14 +164,21 @@ public class MultiIterator implements Iterator
      * iterating, as long as you haven't reached the end of the last
      * composite object currently in the iterator.
      *
+     * <p><b>Note</b>: This method is simply shorthand for:</p>
+     *
+     * <blockquote>
+     * <pre>addIterator (new EnumerationIterator<T> (enumeration));</pre>
+     * </blockquote>
+     *
      * @param enumeration  The <tt>Enumeration</tt> to add.
      *
      * @see #addCollection
      * @see #addIterator
+     * @see EnumerationIterator
      */
-    public void addEnumeration (Enumeration enumeration)
+    public void addEnumeration (Enumeration<T> enumeration)
     {
-        aggregation.add (enumeration);
+        aggregation.add (new EnumerationIterator<T> (enumeration));
     }
 
     /**
@@ -195,9 +211,9 @@ public class MultiIterator implements Iterator
      *
      * @see java.util.Iterator#next
      */
-    public Object next() throws NoSuchElementException
+    public T next() throws NoSuchElementException
     {
-        Object result = null;
+        T result = null;
 
         checkIterator();
         if (it != null)
@@ -224,14 +240,12 @@ public class MultiIterator implements Iterator
 
     private synchronized void checkIterator()
     {
-        Collection collection;
-
         if (aggregationIterator == null) 
         {
             it = null;
             aggregationIterator = aggregation.iterator();
             if (aggregationIterator.hasNext())
-                it = nextIterator();
+                it = aggregationIterator.next();
         }
 
         while ( (it != null) && (! it.hasNext()) )
@@ -240,27 +254,7 @@ public class MultiIterator implements Iterator
                 it = null;
 
             else
-                it = nextIterator();
+                it = aggregationIterator.next();
         }
-    }
-
-    private Iterator nextIterator()
-    {
-        Object    obj     = aggregationIterator.next();
-        Iterator  result  = null;
-
-        if (obj instanceof Collection)
-            result = ((Collection) obj).iterator();
-
-        else if (obj instanceof Iterator)
-            result = (Iterator) obj;
-
-        else if (obj instanceof Enumeration)
-            result = new EnumerationIterator ((Enumeration) obj);
-
-        else
-            throw new IllegalArgumentException (obj.getClass().getName());
-
-        return result;
     }
 }

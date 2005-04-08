@@ -74,7 +74,7 @@ public class TestVariableSubstituter
 	if (args.length < 3)
             usage();
 
-        Collection strings = new ArrayList();
+        Collection<String> strings = new ArrayList<String>();
 
         for (int i = 2; i < args.length; i++)
             strings.add (args[i]);

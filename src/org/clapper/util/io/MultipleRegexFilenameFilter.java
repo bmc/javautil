@@ -76,10 +76,10 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private Collection  acceptPatterns = null;
-    private Collection  rejectPatterns = null;
-    private int         regexOptions;
-    private int         matchType = MATCH_FILENAME;
+    private Collection<Pattern>  acceptPatterns = null;
+    private Collection<Pattern>  rejectPatterns = null;
+    private int                  regexOptions;
+    private int                  matchType = MATCH_FILENAME;
 
     /*----------------------------------------------------------------------*\
                             Constructor
@@ -106,8 +106,8 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
         }
         
         regexOptions   = Pattern.CASE_INSENSITIVE;
-        acceptPatterns = new ArrayList();
-        rejectPatterns = new ArrayList();
+        acceptPatterns = new ArrayList<Pattern>();
+        rejectPatterns = new ArrayList<Pattern>();
     }
 
     /*----------------------------------------------------------------------*\
@@ -182,9 +182,8 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
 
         // Check for rejects first.
 
-        for (it = rejectPatterns.iterator(); it.hasNext(); )
+        for (Pattern pattern : rejectPatterns)
         {
-            Pattern pattern = (Pattern) it.next();
             Matcher matcher = pattern.matcher (name);
 
             if (matcher.matches())
@@ -204,9 +203,8 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
 
             else
             {
-                for (it = acceptPatterns.iterator(); it.hasNext(); )
+                for (Pattern pattern : acceptPatterns)
                 {
-                    Pattern pattern = (Pattern) it.next();
                     Matcher matcher = pattern.matcher (name);
 
                     if (matcher.matches())

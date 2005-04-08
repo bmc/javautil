@@ -72,7 +72,7 @@ public class ParseConfig
             usage();
 
         String file = args[0];
-        Collection vars = new ArrayList();
+        Collection<String> vars = new ArrayList<String>();
         for (int i = 1; i < args.length; i++)
             vars.add (args[i]);
 

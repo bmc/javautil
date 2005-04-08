@@ -123,7 +123,8 @@ public class RegexUtil
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private LRUMap compiledRegexps = new LRUMap (100);
+    private LRUMap<Substitution, Pattern> compiledRegexps =
+        new LRUMap<Substitution, Pattern> (100);
 
     /**
      * For logging.

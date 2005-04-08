@@ -46,7 +46,7 @@ import org.clapper.util.cmdline.UsageInfo;
 public class TestMIMEType
     extends CommandLineUtility
 {
-    private Collection arguments = new ArrayList();
+    private Collection<String> arguments = new ArrayList<String>();
 
     public static void main (String args[])
     {
@@ -118,16 +118,16 @@ public class TestMIMEType
         }
     }
 
-    protected void parseCustomOption (char     shortOption,
-                                      String   longOption,
-                                      Iterator it)
+    protected void parseCustomOption (char             shortOption,
+                                      String           longOption,
+                                      Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException
     {
         throw new CommandLineUsageException ("Unrecognized option");
     }
     
-    protected void processPostOptionCommandLine (Iterator it)
+    protected void processPostOptionCommandLine (Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException
     {

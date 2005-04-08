@@ -189,7 +189,7 @@ public class Logger
     /**
      * The list of existing <tt>Logger</tt> objects.
      */
-    private static Collection loggers = new ArrayList();
+    private static Collection<Logger> loggers = new ArrayList<Logger>();
 
     /**
      * Whether or not logging is enabled.
@@ -251,8 +251,8 @@ public class Logger
         {
             if (! enabled)
             {
-                for (Iterator it = loggers.iterator(); it.hasNext(); )
-                    enableLogger ((Logger) it.next());
+                for (Logger logger : loggers)
+                    enableLogger (logger);
 
                 enabled = true;
             }

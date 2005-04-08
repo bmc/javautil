@@ -200,7 +200,7 @@ public final class TextUtil
      * @see #split(String,char,Collection)
      * @see #split(String,String,Collection)
      */
-    public static int split (String s, Collection collection)
+    public static int split (String s, Collection<String> collection)
     {
         return split (s, collection, false);
     }
@@ -238,9 +238,9 @@ public final class TextUtil
      * @see #split(String,char,Collection)
      * @see #split(String,String,Collection)
      */
-    public static int split (String     s,
-                             Collection collection,
-                             boolean    preserveEmptyFields)
+    public static int split (String             s,
+                             Collection<String> collection,
+                             boolean            preserveEmptyFields)
     {
         return split (s, (String) null, collection, preserveEmptyFields);
     }
@@ -388,9 +388,9 @@ public final class TextUtil
                                   String  delimSet,
                                   boolean preserveEmptyFields)
     {
-        String[]        result = null;
-        StringTokenizer tok;
-        Collection      temp = new ArrayList();
+        String[]           result = null;
+        StringTokenizer    tok;
+        Collection<String> temp = new ArrayList<String>();
 
         if (delimSet == null)
             delimSet = " \t\n\r";
@@ -460,7 +460,9 @@ public final class TextUtil
      * @see #split(String,String)
      * @see #split(String,String,Collection)
      */
-    public static int split (String s, char delim, Collection collection)
+    public static int split (String             s,
+                             char               delim,
+                             Collection<String> collection)
     {
         return split (s, String.valueOf (delim), collection);
     }
@@ -499,10 +501,10 @@ public final class TextUtil
      * @see #split(String,String)
      * @see #split(String,String,Collection)
      */
-    public static int split (String     s,
-                             char       delim,
-                             Collection collection,
-                             boolean    preserveEmptyFields)
+    public static int split (String             s,
+                             char               delim,
+                             Collection<String> collection,
+                             boolean            preserveEmptyFields)
     {
         return split (s,
                       String.valueOf (delim),
@@ -545,7 +547,9 @@ public final class TextUtil
      * @see #split(String,String)
      * @see #split(String,char,Collection)
      */
-    public static int split (String s, String delimSet, Collection collection)
+    public static int split (String             s,
+                             String             delimSet,
+                             Collection<String> collection)
     {
         return split (s, delimSet, collection, false);
     }
@@ -591,10 +595,10 @@ public final class TextUtil
      * @see #split(String,String)
      * @see #split(String,char,Collection)
      */
-    public static int split (String     s,
-                             String     delimSet,
-                             Collection collection,
-                             boolean    preserveEmptyFields)
+    public static int split (String             s,
+                             String             delimSet,
+                             Collection<String> collection,
+                             boolean            preserveEmptyFields)
     {
         String[] strs = split (s, delimSet, preserveEmptyFields);
 
@@ -663,7 +667,8 @@ public final class TextUtil
      * @see #split(String,String,Collection)
      * @see #join(Collection,char)
      */
-    public static String join (Collection objects, String delim)
+    public static String join (Collection<? extends Object> objects,
+                               String delim)
     {
         String result = "";
 
@@ -697,7 +702,8 @@ public final class TextUtil
      * @see #split(String,char,Collection)
      * @see #join(Collection,String)
      */
-    public static String join (Collection objects, char delim)
+    public static String join (Collection<? extends Object> objects,
+                               char                         delim)
     {
         return join (objects, "" + delim);
     }

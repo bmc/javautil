@@ -257,28 +257,28 @@ public class EmailMessage implements Serializable
     /**
      * Additional headers.
      */
-    private List additionalHeaders = new LinkedList();
+    private List<String> additionalHeaders = new LinkedList<String>();
 
     /**
      * Attachments. The list contains MimeBodyPart objects.
      */
-    private List attachments = new ArrayList();
+    private List<MimeBodyPart> attachments = new ArrayList<MimeBodyPart>();
 
     /**
      * List of primary ("To:") recipients. Each element is an
      * EmailAddress object.
      */
-    private List to = new ArrayList();
+    private List<EmailAddress> to = new ArrayList<EmailAddress>();
 
     /**
      * List of Cc: recipients. Each element is an EmailAddress object.
      */
-    private List cc = new ArrayList();
+    private List<EmailAddress> cc = new ArrayList<EmailAddress>();
 
     /**
      * List of Bcc: recipients. Each element is an EmailAddress object.
      */
-    private List bcc = new ArrayList();
+    private List<EmailAddress> bcc = new ArrayList<EmailAddress>();
 
     /**
      * The subject.
@@ -294,7 +294,7 @@ public class EmailMessage implements Serializable
      * Temporary files that need to be deleted. (Used when processing
      * InputStream content. The Collection contains File objects.
      */
-    private Collection temporaryFiles = new ArrayList();
+    private Collection<File> temporaryFiles = new ArrayList<File>();
 
     /**
      * Used by generateAttachmentName()
@@ -499,12 +499,12 @@ public class EmailMessage implements Serializable
      * @see #addTo(EmailAddress)
      * @see #getTo
      * @see #clearTo
-     * @see #addCc(Collection)
-     * @see #addBcc(Collection)
+     * @see #addCc(Collection<?>)
+     * @see #addBcc(Collection<?>)
      * @see #clearAllRecipients
      * @see EmailAddress
      */
-    public void addTo (Collection emailAddresses)
+    public void addTo (Collection<?> emailAddresses)
         throws EmailException
     {
         addEmailAddresses (emailAddresses, to);
@@ -526,7 +526,7 @@ public class EmailMessage implements Serializable
      *
      * @see EmailAddress
      */
-    public Collection getTo()
+    public Collection<EmailAddress> getTo()
         throws EmailException
     {
         return getEmailAddresses (to);
@@ -617,7 +617,7 @@ public class EmailMessage implements Serializable
      * @throws EmailException  improperly formed email address
      *
      * @see #addCc(String)
-     * @see #addCc(Collection)
+     * @see #addCc(Collection<?>)
      * @see #getTo
      * @see #clearTo
      * @see #addTo(String[])
@@ -646,12 +646,12 @@ public class EmailMessage implements Serializable
      * @see #addCc(EmailAddress)
      * @see #getCc
      * @see #clearCc
-     * @see #addTo(Collection)
-     * @see #addBcc(Collection)
+     * @see #addTo(Collection<?>)
+     * @see #addBcc(Collection<?>)
      * @see #clearAllRecipients
      * @see EmailAddress
      */
-    public void addCc (Collection emailAddresses)
+    public void addCc (Collection<?> emailAddresses)
         throws EmailException
     {
         addEmailAddresses (emailAddresses, cc);
@@ -673,7 +673,7 @@ public class EmailMessage implements Serializable
      *
      * @see EmailAddress
      */
-    public Collection getCc()
+    public Collection<EmailAddress> getCc()
         throws EmailException
     {
         return getEmailAddresses (cc);
@@ -764,11 +764,11 @@ public class EmailMessage implements Serializable
      * @throws EmailException  improperly formed email address
      *
      * @see #addBcc(String)
-     * @see #addBcc(Collection)
+     * @see #addBcc(Collection<?>)
      * @see #getTo
      * @see #clearTo
-     * @see #addTo(Collection)
-     * @see #addCc(Collection)
+     * @see #addTo(Collection<?>)
+     * @see #addCc(Collection<?>)
      * @see #clearAllRecipients
      */
     public void addBcc (String[] emailAddresses)
@@ -793,12 +793,12 @@ public class EmailMessage implements Serializable
      * @see #addBcc(EmailAddress)
      * @see #getBcc
      * @see #clearBcc
-     * @see #addTo(Collection)
-     * @see #addCc(Collection)
+     * @see #addTo(Collection<?>)
+     * @see #addCc(Collection<?>)
      * @see #clearAllRecipients
      * @see EmailAddress
      */
-    public void addBcc (Collection emailAddresses)
+    public void addBcc (Collection<?> emailAddresses)
         throws EmailException
     {
         addEmailAddresses (emailAddresses, bcc);
@@ -820,7 +820,7 @@ public class EmailMessage implements Serializable
      *
      * @see EmailAddress
      */
-    public Collection getBcc()
+    public Collection<EmailAddress> getBcc()
         throws EmailException
     {
         return getEmailAddresses (bcc);
@@ -2306,7 +2306,7 @@ public class EmailMessage implements Serializable
      *
      * @return the list of "To:" addresses
      */
-    Collection getToAddresses()
+    Collection<EmailAddress> getToAddresses()
     {
         return to;
     }
@@ -2317,7 +2317,7 @@ public class EmailMessage implements Serializable
      *
      * @return the list of "Cc:" addresses
      */
-    Collection getCcAddresses()
+    Collection<EmailAddress> getCcAddresses()
     {
         return cc;
     }
@@ -2328,7 +2328,7 @@ public class EmailMessage implements Serializable
      *
      * @return the list of "Bcc:" addresses
      */
-    Collection getBccAddresses()
+    Collection<EmailAddress> getBccAddresses()
     {
         return bcc;
     }
@@ -2366,8 +2366,8 @@ public class EmailMessage implements Serializable
      *
      * @throws EmailException  improperly formed email address
      */
-    private void addEmailAddress (EmailAddress emailAddress,
-                                  Collection   coll)
+    private void addEmailAddress (EmailAddress             emailAddress,
+                                  Collection<EmailAddress> coll)
         throws EmailException
     {
         coll.add (emailAddress);
@@ -2381,8 +2381,8 @@ public class EmailMessage implements Serializable
      *
      * @throws EmailException  improperly formed email address
      */
-    private void addEmailAddresses (String[]   addresses,
-                                    Collection coll)
+    private void addEmailAddresses (String[]                 addresses,
+                                    Collection<EmailAddress> coll)
         throws EmailException
     {
         for (int i = 0; i < addresses.length; i++)
@@ -2401,18 +2401,16 @@ public class EmailMessage implements Serializable
      *
      * @throws EmailException  improperly formed email address
      */
-    private void addEmailAddresses (Collection sourceColl,
-                                    Collection targetColl)
+    private void addEmailAddresses (Collection<?>            sourceColl,
+                                    Collection<EmailAddress> targetColl)
         throws EmailException
     {
-        for (Iterator it = sourceColl.iterator(); it.hasNext(); )
+        for (Object o : sourceColl)
         {
-            Object o = it.next();
-
             if (o instanceof String)
                 targetColl.add (new EmailAddress ((String) o));
             else if (o instanceof EmailAddress)
-                targetColl.add (o);
+                targetColl.add ((EmailAddress) o);
             else
             {
                 throw new EmailException ("BUG: Expected object of type "
@@ -2434,13 +2432,14 @@ public class EmailMessage implements Serializable
      *
      * @throws EmailException  error on copy
      */
-    private Collection getEmailAddresses (Collection coll)
+    private Collection<EmailAddress>
+    getEmailAddresses (Collection<EmailAddress> coll)
         throws EmailException
     {
-        Collection result = new ArrayList();
+        Collection<EmailAddress> result = new ArrayList<EmailAddress>();
 
-        for (Iterator it = coll.iterator(); it.hasNext(); )
-            result.add (new EmailAddress ((EmailAddress) it.next()));
+        for (Iterator<EmailAddress> it = coll.iterator(); it.hasNext(); )
+            result.add (new EmailAddress (it.next()));
 
         return result;
     }

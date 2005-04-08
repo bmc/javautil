@@ -54,7 +54,7 @@ public class TestLRUMap
     private int initialCapacity = LRUMap.DEFAULT_INITIAL_CAPACITY;
     private int maxCapacity = initialCapacity * 2;
     private float loadFactor = LRUMap.DEFAULT_LOAD_FACTOR;
-    private Collection keyValuePairs = new ArrayList();
+    private Collection<String[]> keyValuePairs = new ArrayList<String[]>();
 
     public static void main (String args[])
     {
@@ -104,13 +104,17 @@ public class TestLRUMap
     protected void runCommand()
         throws CommandLineException
     {
-        LRUMap map = new LRUMap (initialCapacity, loadFactor, maxCapacity);
-        Iterator it;
+        LRUMap<String, String> map;
+        Iterator<String[]> it;
+
+        map = new LRUMap<String, String> (initialCapacity,
+                                          loadFactor,
+                                          maxCapacity);
 
         map.addRemovalListener (this, false);
         for (it = keyValuePairs.iterator(); it.hasNext(); )
         {
-            String[] pair = (String[]) it.next();
+            String[] pair = it.next();
 
             System.out.println ("Adding: " + pair[0] + "=" + pair[1]);
             map.put (pair[0], pair[1]);
@@ -124,9 +128,9 @@ public class TestLRUMap
         traverse (map);
     }
 
-    protected void parseCustomOption (char     shortOption,
-                                      String   longOption,
-                                      Iterator it)
+    protected void parseCustomOption (char             shortOption,
+                                      String           longOption,
+                                      Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException
     {
@@ -135,7 +139,7 @@ public class TestLRUMap
             case 'i':
                 initialCapacity = parseIntOptionArgument (shortOption,
                                                           longOption,
-                                                          (String) it.next(),
+                                                          it.next(),
                                                           1,
                                                           Integer.MAX_VALUE);
                 break;
@@ -143,7 +147,7 @@ public class TestLRUMap
             case 'm':
                 maxCapacity = parseIntOptionArgument (shortOption,
                                                       longOption,
-                                                      (String) it.next(),
+                                                      it.next(),
                                                       1,
                                                       Integer.MAX_VALUE);
                 break;
@@ -151,7 +155,7 @@ public class TestLRUMap
             case 'l':
                 loadFactor = parseFloatOptionArgument (shortOption,
                                                        longOption,
-                                                       (String) it.next(),
+                                                       it.next(),
                                                        0.1f,
                                                        1.0f);
                 break;
@@ -161,13 +165,13 @@ public class TestLRUMap
         }
     }
     
-    protected void processPostOptionCommandLine (Iterator it)
+    protected void processPostOptionCommandLine (Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException
     {
         do
         {
-            String s = (String) it.next();
+            String s = it.next();
             String[] fields = TextUtil.split (s, "=");
             if (fields.length != 2)
             {
@@ -196,16 +200,16 @@ public class TestLRUMap
                            true);
     }
 
-    private void traverse (Map map)
+    private void traverse (Map<String, String> map)
     {
-        Iterator it;
+        Iterator<String> it;
 
         System.out.println ();
         System.out.println ("Traversal by keySet() and get().");
         for (it = map.keySet().iterator(); it.hasNext(); )
         {
-            Object key = it.next();
-            Object value = map.get (key);
+            String key = it.next();
+            String value = map.get (key);
 
             if (value != null)
                 System.out.println (key.toString() + "=" + value.toString());
@@ -217,8 +221,8 @@ public class TestLRUMap
         System.out.println ("Traversal by keySet() and get().");
         for (it = map.keySet().iterator(); it.hasNext(); )
         {
-            Object key = it.next();
-            Object value = map.get (key);
+            String key = it.next();
+            String value = map.get (key);
 
             if (value != null)
                 System.out.println (key.toString() + "=" + value.toString());
@@ -228,13 +232,12 @@ public class TestLRUMap
 
         System.out.println ();
         System.out.println ("Traversal by entry set.");
-        for (it = map.entrySet().iterator(); it.hasNext(); )
+        Iterator<Map.Entry<String, String>> it2;
+        for (it2 = map.entrySet().iterator(); it2.hasNext(); )
         {
-            Map.Entry entry = (Map.Entry) it.next();
+            Map.Entry<String, String> entry = it2.next();
 
-            System.out.println (entry.getKey().toString()
-                              + "="
-                              + entry.getValue().toString());
+            System.out.println (entry.getKey() + "=" + entry.getValue());
         }
     }
 }

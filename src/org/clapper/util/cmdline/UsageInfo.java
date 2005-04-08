@@ -71,12 +71,15 @@ public final class UsageInfo
                            Private Data Elements
     \*----------------------------------------------------------------------*/
 
-    private Map     shortOptionMap = new HashMap();
-    private Map     longOptionMap = new HashMap();
-    private Set     allOptions = new TreeSet (new OptionComparator());
-    private Map     paramMap = new HashMap();
-    private Set     requiredParams = new HashSet();
-    private List    paramNames = new ArrayList();
+    private Map<Character, OptionInfo> shortOptionMap =
+                                        new HashMap<Character, OptionInfo>();
+    private Map<String, OptionInfo> longOptionMap =
+                                        new HashMap<String, OptionInfo>();
+    private Set<OptionInfo> allOptions =
+                            new TreeSet<OptionInfo> (new OptionComparator());
+    private Map<String, String> paramMap = new HashMap<String, String>();
+    private Set<String> requiredParams = new HashSet<String>();
+    private List<String> paramNames = new ArrayList<String>();
     private String  usageLine = null;
     private String  usagePrologue = null;
     private String  usageTrailer = null;
@@ -176,7 +179,7 @@ public final class UsageInfo
                                                 explanation);
 
         if (shortOption != NO_SHORT_OPTION)
-            shortOptionMap.put (new Character (shortOption), optionInfo);
+            shortOptionMap.put (shortOption, optionInfo);
 
         if (longOption != null)
             longOptionMap.put (longOption, optionInfo);
@@ -251,12 +254,12 @@ public final class UsageInfo
 
     String[] getParameterNames()
     {
-        String[]  names = new String[paramNames.size()];
-        int       i;
-        Iterator  it;
+        String[]         names = new String[paramNames.size()];
+        int              i;
+        Iterator<String> it;
 
         for (i = 0, it = paramNames.iterator(); it.hasNext(); i++)
-            names[i] = (String) it.next();
+            names[i] = it.next();
 
         return names;
     }
@@ -268,27 +271,27 @@ public final class UsageInfo
 
     String getParameterExplanation (String name)
     {
-        return (String) paramMap.get (name);
+        return paramMap.get (name);
     }
 
     OptionInfo getOptionInfo (char shortOption)
     {
-        return (OptionInfo) shortOptionMap.get (new Character (shortOption));
+        return shortOptionMap.get (shortOption);
     }
 
     OptionInfo getOptionInfo (String longOption)
     {
-        return (OptionInfo) longOptionMap.get (longOption);
+        return longOptionMap.get (longOption);
     }
 
     OptionInfo[] getOptions()
     {
-        OptionInfo[] options = new OptionInfo[allOptions.size()];
-        int          i;
-        Iterator     it;
+        OptionInfo[]         options = new OptionInfo[allOptions.size()];
+        int                  i;
+        Iterator<OptionInfo> it;
 
         for (i = 0, it = allOptions.iterator(); it.hasNext(); i++)
-            options[i] = (OptionInfo) it.next();
+            options[i] = it.next();
 
         // Now, sort by option name.
 

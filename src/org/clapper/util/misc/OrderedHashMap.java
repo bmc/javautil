@@ -51,7 +51,9 @@ import java.io.Serializable;
  * @see #keysInInsertionOrder
  * @see #getKeysInInsertionOrder
  */
-public class OrderedHashMap extends HashMap implements Cloneable, Serializable
+public class OrderedHashMap<K,V>
+    extends HashMap<K,V>
+    implements Cloneable, Serializable
 {
     /*----------------------------------------------------------------------*\
                          Private Static Variables
@@ -66,7 +68,7 @@ public class OrderedHashMap extends HashMap implements Cloneable, Serializable
                              Private Variables
     \*----------------------------------------------------------------------*/
 
-    private LinkedList keysInOrder = new LinkedList();
+    private LinkedList<K> keysInOrder = new LinkedList<K>();
 
     /*----------------------------------------------------------------------*\
                                 Constructors
@@ -115,7 +117,7 @@ public class OrderedHashMap extends HashMap implements Cloneable, Serializable
      *
      * @see #OrderedHashMap(OrderedHashMap)
      */
-    public OrderedHashMap (Map map)
+    public OrderedHashMap (Map<? extends K, ? extends V> map)
     {
 	super (map);
         keysInOrder.addAll (map.keySet());
@@ -129,7 +131,7 @@ public class OrderedHashMap extends HashMap implements Cloneable, Serializable
      *
      * @param map  the map whose mappings are to be copied
      */
-    public OrderedHashMap (OrderedHashMap map)
+    public OrderedHashMap (OrderedHashMap<? extends K, ? extends V> map)
     {
         super (map);
         keysInOrder.addAll (map.keysInOrder);
@@ -148,7 +150,7 @@ public class OrderedHashMap extends HashMap implements Cloneable, Serializable
      *
      * @see #keysInInsertionOrder
      */
-    public int getKeysInInsertionOrder (List list)
+    public int getKeysInInsertionOrder (List<? super K> list)
     {
         list.addAll (keysInOrder);
 
@@ -162,9 +164,9 @@ public class OrderedHashMap extends HashMap implements Cloneable, Serializable
      *
      * @see #getKeysInInsertionOrder
      */
-    public List keysInInsertionOrder()
+    public List<K> keysInInsertionOrder()
     {
-        return new ArrayList (keysInOrder);
+        return new ArrayList<K> (keysInOrder);
     }
 
     /**
@@ -175,7 +177,7 @@ public class OrderedHashMap extends HashMap implements Cloneable, Serializable
      */
     public Object clone()
     {
-        return new OrderedHashMap (this);
+        return new OrderedHashMap<K,V> (this);
     }
 
     /**
@@ -200,9 +202,9 @@ public class OrderedHashMap extends HashMap implements Cloneable, Serializable
      * @return the previous value associated with the key, or null if (a) there
      *         was no previous value, or (b) the previous value was a null
      */
-    public Object put (Object key, Object value)
+    public V put (K key, V value)
     {
-        Object oldValue = super.put (key, value);
+        V oldValue = super.put (key, value);
 
         keysInOrder.remove (key);
         keysInOrder.add (key);
@@ -222,12 +224,13 @@ public class OrderedHashMap extends HashMap implements Cloneable, Serializable
      *
      * @see #putAll(OrderedHashMap)
      */
-    public void putAll (Map map)
+    public void putAll (Map<? extends K, ? extends V> map)
     {
-        for (Iterator it = map.keySet().iterator(); it.hasNext(); )
+        for (Iterator<? extends K> it = map.keySet().iterator();
+             it.hasNext(); )
         {
-            Object key = it.next();
-            Object value = map.get (key);
+            K key = it.next();
+            V value = map.get (key);
 
             this.put (key, value);
         }
@@ -245,13 +248,13 @@ public class OrderedHashMap extends HashMap implements Cloneable, Serializable
      * @see #putAll(OrderedHashMap)
      * @see #keysInInsertionOrder
      */
-    public void putAll (OrderedHashMap map)
+    public void putAll (OrderedHashMap<? extends K, ? extends V> map)
     {
-        for (Iterator it = map.keysInInsertionOrder().iterator();
+        for (Iterator<? extends K> it = map.keysInInsertionOrder().iterator();
              it.hasNext(); )
         {
-            Object key = it.next();
-            Object value = map.get (key);
+            K key = it.next();
+            V value = map.get (key);
 
             this.put (key, value);
         }
@@ -266,9 +269,9 @@ public class OrderedHashMap extends HashMap implements Cloneable, Serializable
      * @return the previous value associated with the key, or null if (a) there
      *         was no previous value, or (b) the previous value was a null
      */
-    public Object remove (Object key)
+    public V remove (Object key)
     {
-        Object oldValue = super.remove (key);
+        V oldValue = super.remove (key);
 
         keysInOrder.remove (key);
 

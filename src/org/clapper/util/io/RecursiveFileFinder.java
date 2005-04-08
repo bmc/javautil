@@ -70,7 +70,7 @@ public class RecursiveFileFinder
      *
      * @return the number of <tt>File</tt> objects found
      */
-    public int findFiles (File directory, Collection collection)
+    public int findFiles (File directory, Collection<File> collection)
     {
         return findFiles (directory, (FileFilter) null, collection);
     }
@@ -86,9 +86,9 @@ public class RecursiveFileFinder
      *
      * @return the number of <tt>File</tt> objects found
      */
-    public int findFiles (File           directory,
-                          FilenameFilter filter,
-                          Collection     collection)
+    public int findFiles (File             directory,
+                          FilenameFilter   filter,
+                          Collection<File> collection)
     {
         int    total = 0;
         File[] files = directory.listFiles (filter);
@@ -122,9 +122,9 @@ public class RecursiveFileFinder
      *
      * @return the number of <tt>File</tt> objects found
      */
-    public int findFiles (File       directory,
-                          FileFilter filter,
-                          Collection collection)
+    public int findFiles (File             directory,
+                          FileFilter       filter,
+                          Collection<File> collection)
     {
         int    total = 0;
         File[] files = directory.listFiles (filter);

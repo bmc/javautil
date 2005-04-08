@@ -78,7 +78,9 @@ import java.io.Serializable;
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
-public class LRUMap extends AbstractMap implements Cloneable, Serializable
+public class LRUMap<K,V>
+    extends AbstractMap<K,V>
+    implements Cloneable, Serializable
 {
     /*----------------------------------------------------------------------*\
                              Public Constants
@@ -103,12 +105,30 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
      * Set of Map.Entry (really, LRULinkedListEntry) objects returned by
      * the LRUMap.entrySet() method.
      */
-    private class EntrySet extends AbstractSet
+    private class EntrySet extends AbstractSet<Map.Entry<K,V>>
     {
-        public Iterator iterator()
+        public Iterator<Map.Entry<K,V>> iterator()
         {
-            return new EntryIterator();
-        }
+            return new Iterator<Map.Entry<K,V>>()
+            {
+                EntryIterator it = new EntryIterator();
+
+                public Map.Entry<K,V> next()
+                {
+                    return (Map.Entry<K,V>) it.next();
+                }
+
+                public boolean hasNext()
+                {
+                    return it.hasNext();
+                }
+
+                public void remove()
+                {
+                    it.remove();
+                }
+            };
+         }
 
         public boolean contains (Object o)
         {
@@ -144,7 +164,7 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
     /**
      * Iterator returned by EntrySet.iterator()
      */
-    private class EntryIterator implements Iterator
+    private class EntryIterator implements Iterator<LRULinkedListEntry>
     {
         private LRULinkedListEntry current;
 
@@ -153,7 +173,7 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
             current = lruQueue.head;
         }
 
-        public Object next()
+        public LRULinkedListEntry next()
         {
             LRULinkedListEntry result = current;
             current = current.next;
@@ -174,21 +194,21 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
     /**
      * Set of key objects returned by the LRUMap.keySet() method.
      */
-    private class KeySet extends AbstractSet
+    private class KeySet extends AbstractSet<K>
     {
-        public Iterator iterator()
+        public Iterator<K> iterator()
         {
             return new KeySetIterator();
         }
 
-        public boolean contains (Object o)
+        public boolean contains (Object key)
         {
-            return LRUMap.this.containsKey (o);
+            return LRUMap.this.containsKey (key);
         }
 
-        public boolean remove (Object o)
+        public boolean remove (Object key)
         {
-            return (LRUMap.this.remove (o) != null);
+            return (LRUMap.this.remove (key) != null);
         }
 
         public int size()
@@ -205,7 +225,7 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
     /**
      * Iterator returned by KeySet.iterator()
      */
-    private class KeySetIterator implements Iterator
+    private class KeySetIterator implements Iterator<K>
     {
         private LRULinkedListEntry current;
 
@@ -214,7 +234,7 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
             current = lruQueue.head;
         }
 
-        public Object next()
+        public K next()
         {
             LRULinkedListEntry result = current;
             current = current.next;
@@ -236,21 +256,21 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
      * Entry in the internal linked list (queue) of LRU entries. Implements
      * Map.Entry for convenience.
      */
-    private static class LRULinkedListEntry implements Map.Entry
+    private class LRULinkedListEntry implements Map.Entry<K,V>
     {
         LRULinkedListEntry  previous = null;
         LRULinkedListEntry  next     = null;
-        Object              key      = null;
-        Object              value    = null;
+        K                   key      = null;
+        V                   value    = null;
 
-        LRULinkedListEntry (Object key, Object value)
+        LRULinkedListEntry (K key, V value)
         {
             setKeyValue (key, value);
         }
 
         public boolean equals (Object o)
         {
-            return (o instanceof LRULinkedListEntry);
+            return LRULinkedListEntry.class.isInstance (o);
         }
 
         public int hashCode()
@@ -258,25 +278,25 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
             return key.hashCode();
         }
 
-        public Object getKey()
+        public K getKey()
         {
             return key;
         }
 
-        public Object getValue()
+        public V getValue()
         {
             return value;
         }
 
-        void setKeyValue (Object key, Object value)
+        void setKeyValue (K key, V value)
         {
             this.key   = key;
             this.value = value;
         }
 
-        public Object setValue (Object value)
+        public V setValue (V value)
         {
-            Object oldValue = this.value;
+            V oldValue = this.value;
             this.value = value;
             return oldValue;
         }
@@ -287,7 +307,7 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
      * hash map of objects also points to one of these, allowing the hash map
      * to remain untouched even as the linked list entries get reordered.
      */
-    private static class LRULinkedList
+    private class LRULinkedList
     {
         LRULinkedListEntry  head = null;
         LRULinkedListEntry  tail = null;
@@ -434,15 +454,42 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
     private static final long serialVersionUID = 1L;
 
     /*----------------------------------------------------------------------*\
+                              Private Classes
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * Type alias
+     */
+    private class ListenerMap extends HashMap<ObjectRemovalListener,
+                                              RemovalListenerWrapper>
+    {
+        ListenerMap()
+        {
+            super();
+        }
+    }
+
+    /**
+     * Type alias for actual hash table
+     */
+    private class EntryMap extends HashMap<K,LRULinkedListEntry>
+    {
+        EntryMap (int initialCapacity, float loadFactor)
+        {
+            super (initialCapacity, loadFactor);
+        }
+    }
+
+    /*----------------------------------------------------------------------*\
                              Private Variables
     \*----------------------------------------------------------------------*/
 
     private int            maxCapacity;
     private float          loadFactor;
     private int            initialCapacity;
-    private Map            hash;
+    private EntryMap       hash;
     private LRULinkedList  lruQueue;
-    private Map            removalListeners = null;
+    private ListenerMap    removalListeners = null;
 
     /*----------------------------------------------------------------------*\
                                 Constructors
@@ -491,8 +538,8 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
         this.maxCapacity     = maxCapacity;
         this.loadFactor      = loadFactor;
         this.initialCapacity = initialCapacity;
-        this.hash     = new HashMap (initialCapacity, loadFactor);
-        this.lruQueue    = new LRULinkedList();
+        this.hash            = new EntryMap (initialCapacity, loadFactor);
+        this.lruQueue        = new LRULinkedList();
     }
 
     /**
@@ -503,7 +550,7 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
      *
      * @param map  the map whose mappings are to be copied
      */
-    public LRUMap (LRUMap map)
+    public LRUMap (LRUMap<? extends K, ? extends V> map)
     {
         this (map.initialCapacity, map.loadFactor, map.maxCapacity);
         putAll (map);
@@ -537,7 +584,7 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
     addRemovalListener (ObjectRemovalListener listener, boolean automaticOnly)
     {
         if (removalListeners == null)
-            removalListeners = new HashMap();
+            removalListeners = new ListenerMap();
 
         removalListeners.put (listener,
                               new RemovalListenerWrapper (listener,
@@ -621,7 +668,7 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
      *
      * @throws UnsupportedOperationException unconditionally
      */
-    public Set entrySet()
+    public Set<Map.Entry<K,V>> entrySet()
     {
         return new EntrySet();
     }
@@ -635,9 +682,9 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
      *
      * @return the associated object, or null if not found
      */
-    public Object get (Object key)
+    public V get (Object key)
     {
-        Object              value = null;
+        V                   value = null;
         LRULinkedListEntry  entry  = (LRULinkedListEntry) hash.get (key);
 
         if (entry != null)
@@ -717,7 +764,7 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
      *
      * @return the set of keys in this map
      */
-    public Set keySet()
+    public Set<K> keySet()
     {
         return new KeySet();
     }
@@ -735,14 +782,14 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
      * @return the previous value associated with the key, or null if (a) there
      *         was no previous value, or (b) the previous value was a null
      */
-    public Object put (Object key, Object value)
+    public V put (K key, V value)
     {
         // If the total number of entries is at capacity, then we need to
         // remove one of them to make room. The linked list is a priority
         // queue, of sorts, with least recently used items at the end. So
         // remove the tail entries.
 
-        Object              oldValue = null;
+        V                   oldValue = null;
         LRULinkedListEntry  entry    = (LRULinkedListEntry) hash.get (key);
 
         if (entry == null)
@@ -779,12 +826,13 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
      *
      * @param map  the map whose mappings are to be copied
      */
-    public void putAll (Map map)
+    public void putAll (Map<? extends K, ? extends V> map)
     {
-        for (Iterator it = map.keySet().iterator(); it.hasNext(); )
+        for (Iterator<? extends K> it = map.keySet().iterator();
+             it.hasNext(); )
         {
-            Object key = it.next();
-            Object value = map.get (key);
+            K key = it.next();
+            V value = map.get (key);
 
             this.put (key, value);
         }
@@ -798,9 +846,9 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
      * @return the previous value associated with the key, or null if (a) there
      *         was no previous value, or (b) the previous value was a null
      */
-    public Object remove (Object key)
+    public V remove (Object key)
     {
-        Object              value = null;
+        V                   value = null;
         LRULinkedListEntry  entry = (LRULinkedListEntry) hash.remove (key);
 
         if (entry != null)
@@ -861,7 +909,7 @@ public class LRUMap extends AbstractMap implements Cloneable, Serializable
      */
     protected Object clone()
     {
-        return new LRUMap (this);
+        return new LRUMap<K,V> (this);
     }
 
     /*----------------------------------------------------------------------*\

@@ -54,12 +54,12 @@ class Section
     /**
      * Names of variables, in order encountered. Contains strings.
      */
-    private List variableNames = new ArrayList();
+    private List<String> variableNames = new ArrayList<String>();
 
     /**
      * List of Variable objects, indexed by variable name
      */
-    private Map valueMap = new HashMap();
+    private Map<String, Variable> valueMap = new HashMap<String, Variable>();
 
     /**
      * The section's unique ID. This ID increases monotonically from 1.
@@ -113,7 +113,7 @@ class Section
      * @return an unmodifiable <tt>Collection</tt> of <tt>String</tt> variable
      *         names
      */
-    Collection getVariableNames()
+    Collection<String> getVariableNames()
     {
         return Collections.unmodifiableList (variableNames);
     }
@@ -130,7 +130,7 @@ class Section
     Variable getVariable (String varName)
         throws ConfigurationException
     {
-        return (Variable) valueMap.get (varName);
+        return valueMap.get (varName);
     }
 
     /**

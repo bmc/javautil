@@ -1078,7 +1078,7 @@ public class XStringBuffer
      * @see TextUtil#split(String,char)
      * @see TextUtil#split(String,String,Collection)
      */
-    public int split (char delim, Collection collection)
+    public int split (char delim, Collection<String> collection)
     {
         return TextUtil.split (this.toString(), delim, collection);
     }
@@ -1099,7 +1099,7 @@ public class XStringBuffer
      * @see TextUtil#split(String,String)
      * @see TextUtil#split(String,char,Collection)
      */
-    public int split (String delimSet, Collection collection)
+    public int split (String delimSet, Collection<String> collection)
     {
         return TextUtil.split (this.toString(), delimSet, collection);
     }

@@ -57,9 +57,9 @@ public class FindFiles
 
     public static void main (String args[])
     {
-        FindFiles   prog           = new FindFiles();
-        Collection  acceptPatterns = new ArrayList();
-        Collection  rejectPatterns = new ArrayList();
+        FindFiles           prog           = new FindFiles();
+        Collection<String>  acceptPatterns = new ArrayList<String>();
+        Collection<String>  rejectPatterns = new ArrayList<String>();
 
         try
         {
@@ -74,9 +74,9 @@ public class FindFiles
         }
     }
 
-    private static void parseParams (String[]   args,
-                                     Collection acceptPatterns,
-                                     Collection rejectPatterns)
+    private static void parseParams (String[]           args,
+                                     Collection<String> acceptPatterns,
+                                     Collection<String> rejectPatterns)
         throws PatternSyntaxException
     {
         try
@@ -160,7 +160,7 @@ public class FindFiles
         MultipleRegexFilenameFilter filter;
         Iterator                    it;
 	RecursiveFileFinder         finder = new RecursiveFileFinder();
-	Collection                  files  = new ArrayList();
+	Collection<File>            files  = new ArrayList<File>();
 
 	filter = new MultipleRegexFilenameFilter
 	                       (MultipleRegexFilenameFilter.MATCH_PATH);

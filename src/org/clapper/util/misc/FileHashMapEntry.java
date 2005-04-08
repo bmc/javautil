@@ -38,7 +38,8 @@ import java.io.Serializable;
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
-class FileHashMapEntry implements Serializable, Comparable
+class FileHashMapEntry<K>
+    implements Serializable, Comparable<FileHashMapEntry>
 {
     /*----------------------------------------------------------------------*\
                          Private Static Variables
@@ -67,7 +68,7 @@ class FileHashMapEntry implements Serializable, Comparable
      * The caller's key (i.e., the key the caller of FileHashMap.put()
      * specified).
      */
-    private Object key = null;
+    private K key = null;
 
     /*----------------------------------------------------------------------*\
                                Constructors
@@ -92,7 +93,7 @@ class FileHashMapEntry implements Serializable, Comparable
      * @see #setObjectSize
      * @see FileHashMap#put
      */
-    FileHashMapEntry (long pos, int size, Object key)
+    FileHashMapEntry (long pos, int size, K key)
     {
         this.filePosition = pos;
         this.objectSize   = size;
@@ -128,7 +129,7 @@ class FileHashMapEntry implements Serializable, Comparable
      *
      * @param o  The other object
      */
-    public int compareTo (Object o)
+    public int compareTo (FileHashMapEntry o)
     {
         FileHashMapEntry  other    = (FileHashMapEntry) o;
         Long              thisPos  = new Long (this.filePosition);
@@ -167,7 +168,7 @@ class FileHashMapEntry implements Serializable, Comparable
      * @see #setKey
      * @see FileHashMap#put
      */
-    Object getKey()
+    K getKey()
     {
         return key;
     }
@@ -179,7 +180,7 @@ class FileHashMapEntry implements Serializable, Comparable
      *
      * @see #getKey
      */
-    void setKey (Object newKey)
+    void setKey (K newKey)
     {
         this.key = newKey;
     }

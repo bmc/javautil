@@ -124,12 +124,12 @@ public class MIMETypeUtil
      * is initialized the first time fileExtensionForMIMEType() is
      * called.
      */
-    private static Map mimeTypeToExtensionMap = null;
+    private static Map<String, String> mimeTypeToExtensionMap = null;
 
     /**
      * Reverse lookup table, by extension.
      */
-    private static Map extensionToMIMETypeMap = null;
+    private static Map<String, String> extensionToMIMETypeMap = null;
 
     /**
      * For issuing log messages
@@ -367,9 +367,9 @@ public class MIMETypeUtil
      *                           as the map's keys. This method clears the
      *                           map before storing anything in it.
      */
-    public static void parseContentTypeHeader (String       contentTypeHeader,
+    public static void parseContentTypeHeader (String contentTypeHeader,
                                                StringBuffer mimeType,
-                                               Map          parameters)
+                                               Map<String, String> parameters)
     {
         if ((mimeType == null) && (parameters == null))
             return;
@@ -382,7 +382,7 @@ public class MIMETypeUtil
             mimeType = new StringBuffer();
 
         if (parameters == null)
-            parameters = new HashMap();
+            parameters = new HashMap<String, String>();
 
         String[] tokens = TextUtil.split (contentTypeHeader, " ;");
         mimeType.setLength (0);
@@ -409,8 +409,8 @@ public class MIMETypeUtil
         if (mimeTypeToExtensionMap != null)
             return;
 
-        mimeTypeToExtensionMap = new HashMap();
-        extensionToMIMETypeMap = new HashMap();
+        mimeTypeToExtensionMap = new HashMap<String, String>();
+        extensionToMIMETypeMap = new HashMap<String, String>();
 
         // First, check the user's home directory.
 
@@ -529,7 +529,7 @@ public class MIMETypeUtil
                     //
                     // We don't handle those.
 
-                    List  extensions = new ArrayList();
+                    List<String> extensions = new ArrayList<String>();
 
                     for (int i = 1; i < fields.length; i++)
                     {

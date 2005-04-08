@@ -28,6 +28,7 @@ package org.clapper.util.io;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Iterator;
 
 import java.io.FileFilter;
@@ -79,7 +80,7 @@ public class CombinationFileFilter implements FileFilter
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private Collection             filters = new LinkedList();
+    private List<FileFilter>       filters = new LinkedList<FileFilter>();
     private CombinationFilterMode  mode    = AND_FILTERS;
 
     /*----------------------------------------------------------------------*\
@@ -191,9 +192,9 @@ public class CombinationFileFilter implements FileFilter
      */
     public boolean accept (File file)
     {
-        boolean         accepted = false;
-        Iterator        it = filters.iterator();
-        FileFilter  filter;  
+        boolean              accepted = false;
+        Iterator<FileFilter> it = filters.iterator();
+        FileFilter           filter;  
 
         if (mode.value == AND_FILTERS.value)
         {
@@ -201,7 +202,7 @@ public class CombinationFileFilter implements FileFilter
 
             while (accepted && it.hasNext())
             {
-                filter = (FileFilter) it.next();
+                filter = it.next();
                 accepted = filter.accept (file);
             }
         }
@@ -212,7 +213,7 @@ public class CombinationFileFilter implements FileFilter
 
             while ((! accepted) && it.hasNext())
             {
-                filter = (FileFilter) it.next();
+                filter = it.next();
                 accepted = filter.accept (file);
             }
         }

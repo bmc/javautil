@@ -40,7 +40,7 @@ import java.util.Comparator;
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
-public class FileNameComparator implements Comparator
+public class FileNameComparator implements Comparator<Object>
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items

@@ -60,16 +60,16 @@ public class Send extends CommandLineUtility
                             Instance Variables
     \*----------------------------------------------------------------------*/
 
-    private EmailMessage    msg = new EmailMessage();
-    private EmailTransport  transport = null;
-    private boolean         dumpTextPart = false;
-    private String          textMimeType = "text/plain";
-    private String          text = null;
-    private File            textFile = null;
-    private boolean         useInputStreams = false;
-    private boolean         debug = false;
-    private PrintWriter     out = new WordWrapWriter (System.out, 79);
-    private Collection      attachmentFiles = new ArrayList();
+    private EmailMessage     msg = new EmailMessage();
+    private EmailTransport   transport = null;
+    private boolean          dumpTextPart = false;
+    private String           textMimeType = "text/plain";
+    private String           text = null;
+    private File             textFile = null;
+    private boolean          useInputStreams = false;
+    private boolean          debug = false;
+    private PrintWriter      out = new WordWrapWriter (System.out, 79);
+    private Collection<File> attachmentFiles = new ArrayList<File>();
 
     /*----------------------------------------------------------------------*\
                                   Tester
@@ -163,9 +163,9 @@ public class Send extends CommandLineUtility
      * @throws NoSuchElementException     overran the iterator (i.e., missing
      *                                    parameter) 
      */
-    protected void parseCustomOption (char     shortOption,
-                                      String   longOption,
-                                      Iterator it)
+    protected void parseCustomOption (char             shortOption,
+                                      String           longOption,
+                                      Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException
     {
@@ -191,7 +191,7 @@ public class Send extends CommandLineUtility
                 switch (shortOption)
                 {
                     case 'a':
-                        msg.addAttachment ((String) it.next());
+                        msg.addAttachment (it.next());
                         break;
 
                     case 'A':
@@ -282,7 +282,7 @@ public class Send extends CommandLineUtility
      *                                    safe for subclass implementations of
      *                                    this method not to handle it
      */
-    protected void processPostOptionCommandLine (Iterator it)
+    protected void processPostOptionCommandLine (Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException
     {
@@ -292,7 +292,7 @@ public class Send extends CommandLineUtility
             transport.setDebug (debug, System.out);
 
             while (it.hasNext())
-                msg.addTo ((String) it.next());
+                msg.addTo (it.next());
         }
 
         catch (EmailException ex)

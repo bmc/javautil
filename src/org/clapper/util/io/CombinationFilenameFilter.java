@@ -28,6 +28,7 @@ package org.clapper.util.io;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Iterator;
 
 import java.io.FilenameFilter;
@@ -80,8 +81,8 @@ public class CombinationFilenameFilter implements FilenameFilter
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private Collection             filters = new LinkedList();
-    private CombinationFilterMode  mode    = AND_FILTERS;
+    private List<FilenameFilter> filters = new LinkedList<FilenameFilter>();
+    private CombinationFilterMode  mode  = AND_FILTERS;
 
     /*----------------------------------------------------------------------*\
                             Constructor

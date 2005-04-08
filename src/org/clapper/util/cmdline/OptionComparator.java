@@ -40,7 +40,7 @@ import java.util.Comparator;
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
-final class OptionComparator implements Comparator
+final class OptionComparator implements Comparator<OptionInfo>
 {
     private boolean ignoreCase = false;
 
@@ -53,17 +53,17 @@ final class OptionComparator implements Comparator
         this.ignoreCase = ignoreCase;
     }
 
-    public int compare (Object o1, Object o2)
+    public int compare (OptionInfo o1, OptionInfo o2)
     {
-        String s1 = getComparisonString ((OptionInfo) o1);
-        String s2 = getComparisonString ((OptionInfo) o2);
+        String s1 = getComparisonString (o1);
+        String s2 = getComparisonString (o2);
 
         return ignoreCase ? s1.compareToIgnoreCase (s2) : s1.compareTo (s2);
     }
 
     public boolean equals (Object o)
     {
-        return (compare (this, o) == 0);
+        return (this.getClass().isInstance (o));
     }
 
     public int hashCode()

@@ -46,7 +46,7 @@ import java.util.NoSuchElementException;
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
-public class EnumerationIterator implements Iterator
+public class EnumerationIterator<T> implements Iterator<T>
 {
     /*----------------------------------------------------------------------*\
                            Private Data Elements
@@ -55,7 +55,7 @@ public class EnumerationIterator implements Iterator
     /**
      * The underlying Enumeration.
      */
-    private Enumeration enumeration = null;
+    private Enumeration<T> enumeration = null;
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -67,7 +67,7 @@ public class EnumerationIterator implements Iterator
      *
      * @param enumeration  The <tt>Enumeration</tt> to which to forward calls
      */
-    public EnumerationIterator (Enumeration enumeration)
+    public EnumerationIterator (Enumeration<T> enumeration)
     {
         this.enumeration = enumeration;
     }
@@ -101,7 +101,7 @@ public class EnumerationIterator implements Iterator
      *
      * @see Iterator#next
      */
-    public Object next() throws NoSuchElementException
+    public T next() throws NoSuchElementException
     {
         return enumeration.nextElement();
     }

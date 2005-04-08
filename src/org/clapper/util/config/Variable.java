@@ -205,13 +205,13 @@ class Variable
     {
         if (valueSegments == null)
         {
-            Collection   segments = new ArrayList();
-            char         ch;
-            char         lastCh;
-            char[]       chars;
-            boolean      literal;
-            ValueSegment currentSegment = new ValueSegment();
-            int          i;
+            Collection<ValueSegment> segments = new ArrayList<ValueSegment>();
+            char                     ch;
+            char                     lastCh;
+            char[]                   chars;
+            boolean                  literal;
+            ValueSegment             currentSegment = new ValueSegment();
+            int                      i;
 
             chars   = cookedValue.toCharArray();
             lastCh  = '\0';

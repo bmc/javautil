@@ -115,43 +115,33 @@ import java.util.NoSuchElementException;
  *         ...
  *     }
  *
- *     protected void parseCustomOption (String option, Iterator it)
- *         throws CommandLineUtilityException,
+ *     protected void parseCustomOption (char shortOption,
+ *                                       String longOption,
+ *                                       Iterator<String> it)
+ *         throws CommandLineUsageException,
  *                NoSuchElementException
  *     {
- *         if (option.equals ("-v") || option.equals ("--verbose"))
+ *         if (longOption.equals ("verbose") || (shortOption == 'v'))
  *             verbose = true;
  *
- *         else if (option.equals ("-n") || option.equals ("--count"))
- *         {
- *             String arg = (String) it.next();
- *             try
- *             {
- *                 count = Integer.parseInt (arg);
- *             }
- *
- *             catch (NumberFormatException ex)
- *             {
- *                 throw new CommandLineException ("Non-numeric parameter \"" + arg "\" to -n option");
- *             }
- *         }
+ *         else if (longOption.equals ("count") || (shortOption == 'n'))
+ *             count = parseIntParameter ((String) it.next());
  *
  *         else
- *             throw new BadCommandLineException ("Unknown option: " + option);
+ *             throw new CommandLineUtilityException ("Unknown option: " + option);
  *     }
  *
- *     protected void processPostOptionCommandLine (Iterator it)
+ *     protected void processPostOptionCommandLine (Iterator<String> it)
  *         throws BadCommandLineException,
  *                NoSuchElementException
  *     {
- *         filename = (String) it.next();
+ *         filename = it.next();
  *     }
  *
  *     protected void getCustomUsageInfo (UsageInfo info)
  *     {
- *         info.addOption ("-v, --verbose", "Enable verbose messages");
- *         info.addOption ("-n count", "Read specified file <count> times. Defaults to 1.");
- *         info.addOption ("--count count", "Synonym for -n option.");
+ *         info.addOption ('v', "verbose", null, "Enable verbose messages")
+ *         info.addOption ('n', "count", "total", "Read specified file <total> times. Defaults to 1.");
  *         info.addParameter ("filename", "File to process.", false);
  *     }
  * }
@@ -265,9 +255,9 @@ public abstract class CommandLineUtility
      * @throws NoSuchElementException     overran the iterator (i.e., missing
      *                                    parameter) 
      */
-    protected void parseCustomOption (char     shortOption,
-                                      String   longOption,
-                                      Iterator it)
+    protected void parseCustomOption (char             shortOption,
+                                      String           longOption,
+                                      Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException
     {
@@ -305,7 +295,7 @@ public abstract class CommandLineUtility
      *                                    safe for subclass implementations of
      *                                    this method not to handle it
      */
-    protected void processPostOptionCommandLine (Iterator it)
+    protected void processPostOptionCommandLine (Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException
     {
@@ -323,24 +313,19 @@ public abstract class CommandLineUtility
      *
      * <ul>
      *   <li> Each parameter must be added to the object, via the
-     *        <tt>UsageInfo.addParameter()</tt> method. The first argument
-     *        to <tt>addParameter()</tt> is the parameter string (e.g.,
-     *        "<dbCfg>" or "input_file"). The second parameter is the
-     *        one-line description. The description may be of any length,
-     *        but it should be a single line.
+     *        {@link UsageInfo#addParameter UsageInfo.addParameter()} method.
      *
      *   <li> Each option must be added to the object, via the
-     *        <tt>UsageInfo.addOption()</tt> method. The first argument to
-     *        <tt>addOption()</tt> is the option string (e.g., "-x" or
-     *        "-version"). The second parameter is the one-line
-     *        description. The description may be of any length, but it
-     *        should be a single line.
+     *        {@link UsageInfo#addOption UsageInfo.addOption()} method.
      * </ul>
      *
      * That information will be combined with the common options supported
      * by the base class, and used to build a usage message.
      *
      * @param info   The <tt>UsageInfo</tt> object to fill.
+     *
+     * @see UsageInfo#addOption
+     * @see UsageInfo#addParameter
      */
     protected void getCustomUsageInfo (UsageInfo info)
     {
@@ -356,7 +341,8 @@ public abstract class CommandLineUtility
 
     /**
      * Convenience method that parses an integer value, throwing a
-     * <tt>CommandLineUsageException</tt>, not a <tt>NumberFormatException<tt>,
+     * <tt>CommandLineUsageException</tt>, not a
+     * <tt>NumberFormatException</tt>,
      * on error.
      *
      * @param value the string value to parse
@@ -390,8 +376,9 @@ public abstract class CommandLineUtility
 
     /**
      * Convenience method that parses an integer value, throwing a
-     * <tt>CommandLineUsageException</tt>, not a <tt>NumberFormatException<tt>,
-     * on error. This version of the method also does range checking.
+     * <tt>CommandLineUsageException</tt>, not a
+     * <tt>NumberFormatException</tt>, on error. This version of the method
+     * also does range checking.
      *
      * @param value the string value to parse
      * @param min   the minimum legal value for the result
@@ -443,9 +430,9 @@ public abstract class CommandLineUtility
     }
 
     /**
-     * Convenience method that parses an integer option argument, throwing a
-     * <tt>CommandLineUsageException</tt>, not a <tt>NumberFormatException<tt>,
-     * on error.
+     * Convenience method that parses an integer option argument, throwing
+     * a <tt>CommandLineUsageException</tt>, not a
+     * <tt>NumberFormatException</tt>, on error.
      *
      * @param shortOption short option, as passed to {@link #parseCustomOption}
      * @param longOption  long option, as passed to {@link #parseCustomOption}
@@ -486,9 +473,10 @@ public abstract class CommandLineUtility
     }
 
     /**
-     * Convenience method that parses an integer option argument, throwing a
-     * <tt>CommandLineUsageException</tt>, not a <tt>NumberFormatException<tt>,
-     * on error. This version of the method also does range checking.
+     * Convenience method that parses an integer option argument, throwing
+     * a <tt>CommandLineUsageException</tt>, not a
+     * <tt>NumberFormatException</tt>, on error. This version of the method
+     * also does range checking.
      *
      * @param shortOption short option, as passed to {@link #parseCustomOption}
      * @param longOption  long option, as passed to {@link #parseCustomOption}
@@ -550,8 +538,8 @@ public abstract class CommandLineUtility
 
     /**
      * Convenience method that parses a floating point value, throwing a
-     * <tt>CommandLineUsageException</tt>, not a <tt>NumberFormatException<tt>,
-     * on error.
+     * <tt>CommandLineUsageException</tt>, not a
+     * <tt>NumberFormatException</tt>, on error.
      *
      * @param value the string value to parse
      *
@@ -585,8 +573,9 @@ public abstract class CommandLineUtility
 
     /**
      * Convenience method that parses a floating point value, throwing a
-     * <tt>CommandLineUsageException</tt>, not a <tt>NumberFormatException<tt>,
-     * on error. This version of the method also does range checking.
+     * <tt>CommandLineUsageException</tt>, not a
+     * <tt>NumberFormatException</tt>, on error. This version of the method
+     * also does range checking.
      *
      * @param value the string value to parse
      * @param min   the minimum legal value for the result
@@ -640,7 +629,7 @@ public abstract class CommandLineUtility
     /**
      * Convenience method that parses a float point option argument,
      * throwing a <tt>CommandLineUsageException</tt>, not a
-     * <tt>NumberFormatException<tt>, on error.
+     * <tt>NumberFormatException</tt>, on error.
      *
      * @param shortOption short option, as passed to {@link #parseCustomOption}
      * @param longOption  long option, as passed to {@link #parseCustomOption}
@@ -683,7 +672,7 @@ public abstract class CommandLineUtility
     /**
      * Convenience method that parses a floating point option argument,
      * throwing a <tt>CommandLineUsageException</tt>, not a
-     * <tt>NumberFormatException<tt>, on error. This version of the method
+     * <tt>NumberFormatException</tt>, on error. This version of the method
      * also does range checking.
      *
      * @param shortOption short option, as passed to {@link #parseCustomOption}
@@ -749,7 +738,7 @@ public abstract class CommandLineUtility
     /**
      * Convenience method that parses a double value, throwing a
      * <tt>CommandLineUsageException</tt>, not a
-     * <tt>NumberFormatException<tt>, on error.
+     * <tt>NumberFormatException</tt>, on error.
      *
      * @param value the string value to parse
      *
@@ -783,8 +772,9 @@ public abstract class CommandLineUtility
 
     /**
      * Convenience method that parses a double value, throwing a
-     * <tt>CommandLineUsageException</tt>, not a <tt>NumberFormatException<tt>,
-     * on error. This version of the method also does range checking.
+     * <tt>CommandLineUsageException</tt>, not a
+     * <tt>NumberFormatException</tt>, on error. This version of the method
+     * also does range checking.
      *
      * @param value the string value to parse
      * @param min   the minimum legal value for the result
@@ -839,8 +829,8 @@ public abstract class CommandLineUtility
 
     /**
      * Convenience method that parses a double option argument, throwing a
-     * <tt>CommandLineUsageException</tt>, not a <tt>NumberFormatException<tt>,
-     * on error.
+     * <tt>CommandLineUsageException</tt>, not a
+     * <tt>NumberFormatException</tt>, on error.
      *
      * @param shortOption short option, as passed to {@link #parseCustomOption}
      * @param longOption  long option, as passed to {@link #parseCustomOption}
@@ -883,7 +873,7 @@ public abstract class CommandLineUtility
     /**
      * Convenience method that parses a double floating point option
      * argument, throwing a <tt>CommandLineUsageException</tt>, not a
-     * <tt>NumberFormatException<tt>, on error. This version of the method
+     * <tt>NumberFormatException</tt>, on error. This version of the method
      * also does range checking.
      *
      * @param shortOption short option, as passed to {@link #parseCustomOption}
@@ -968,13 +958,13 @@ public abstract class CommandLineUtility
     private void parseParams (String args[])
         throws CommandLineUsageException
     {
-        ArrayIterator it = new ArrayIterator (args);
+        ArrayIterator<String> it = new ArrayIterator<String> (args);
 
         try
         {
             while (it.hasNext())
             {
-                String arg = (String) it.next();
+                String arg = it.next();
 
                 if (! (arg.charAt (0) == UsageInfo.SHORT_OPTION_PREFIX) )
                 {
@@ -1071,17 +1061,16 @@ public abstract class CommandLineUtility
      */
     private void usage (String prefixMsg)
     {
-        WordWrapWriter  out = new WordWrapWriter (System.err);
-        String[]        strings;
-        Iterator        it;
-        int             i;
-        int             maxParamLength = 0;
-        int             maxOptionLength = 0;
-        String          s;
-        StringBuffer    usageLine = new StringBuffer();
-        OptionInfo[]    options;
-        OptionInfo      opt;
-        Locale          locale = Locale.getDefault();
+        WordWrapWriter   out = new WordWrapWriter (System.err);
+        String[]         strings;
+        int              i;
+        int              maxParamLength = 0;
+        int              maxOptionLength = 0;
+        String           s;
+        StringBuffer     usageLine = new StringBuffer();
+        OptionInfo[]     options;
+        OptionInfo       opt;
+        Locale           locale = Locale.getDefault();
 
         if (prefixMsg != null)
         {

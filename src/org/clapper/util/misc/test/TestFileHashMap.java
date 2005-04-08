@@ -127,9 +127,9 @@ public class TestFileHashMap
         }
     }
 
-    protected void parseCustomOption (char     shortOption,
-                                      String   longOption,
-                                      Iterator it)
+    protected void parseCustomOption (char             shortOption,
+                                      String           longOption,
+                                      Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException
     {
@@ -162,7 +162,7 @@ public class TestFileHashMap
                 break;
 
             case 'p':
-                paddingSize = parseIntParameter ((String) it.next());
+                paddingSize = parseIntParameter (it.next());
                 break;
 
             case 'r':
@@ -182,7 +182,7 @@ public class TestFileHashMap
         }
     }
     
-    protected void processPostOptionCommandLine (Iterator it)
+    protected void processPostOptionCommandLine (Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException
     {
@@ -190,7 +190,7 @@ public class TestFileHashMap
 
         if (it.hasNext())
         {
-            filePrefix = (String) it.next();
+            filePrefix = it.next();
         }
 
         else if ((fileHashMapFlags & FileHashMap.TRANSIENT) == 0)
@@ -223,7 +223,7 @@ public class TestFileHashMap
         info.addOption ('n', "no-create",
                         "Pass the NO_CREATE flag to the FileHashMap "
                       + "constructor");
-        info.addOption ('p', "padding",
+        info.addOption ('p', "padding", "<n>",
                         "Specify the number of bytes by which to pad each "
                       + "entry. This is useful for increasing the footprint "
                       + "of each entry, to test the difference between an "
@@ -254,8 +254,8 @@ public class TestFileHashMap
                ObjectExistsException,
                VersionMismatchException
     {
-        HashMap      memoryHash = null;
-        FileHashMap  fileHash = null;
+        HashMap<String, Entry>      memoryHash = null;
+        FileHashMap<String, Entry>  fileHash = null;
         long         ms;
 
         try
@@ -271,7 +271,7 @@ public class TestFileHashMap
             {
                 msgln ("Creating in-memory hash table ...");
                 startTimer();
-                memoryHash = new HashMap();
+                memoryHash = new HashMap<String, Entry>();
                 ms = stopTimer();
                 msgln ("Done. Elapsed time: " + ms + " ms");
             }
@@ -286,14 +286,15 @@ public class TestFileHashMap
                 if ((fileHashMapFlags & FileHashMap.TRANSIENT) != 0)
                 {
                     if (filePrefix == null)
-                        fileHash = new FileHashMap();
+                        fileHash = new FileHashMap<String, Entry>();
                     else
-                        fileHash = new FileHashMap (filePrefix);
+                        fileHash = new FileHashMap<String, Entry> (filePrefix);
                 }
 
                 else
                 {
-                    fileHash = new FileHashMap (filePrefix, fileHashMapFlags);
+                    fileHash = new FileHashMap<String, Entry> (filePrefix,
+                                                                fileHashMapFlags);
                 }
 
                 ms = stopTimer();
@@ -347,7 +348,8 @@ public class TestFileHashMap
         }
     }
 
-    private void fillTables (Map memoryHash, Map fileHash)
+    private void fillTables (Map<String, Entry> memoryHash,
+                             Map<String, Entry> fileHash)
     {
         if (memoryHash != null)
             fillTable (memoryHash, "in-memory");
@@ -356,7 +358,7 @@ public class TestFileHashMap
             fillTable (fileHash, "on-disk");
     }
 
-    private void fillTable (Map map, String mapName)
+    private void fillTable (Map<String, Entry> map, String mapName)
     {
         long  msAccum = 0;
         int   i;
@@ -368,7 +370,7 @@ public class TestFileHashMap
         for (i = 1; i <= totalValues; i++)
         {
             String key = KEY_FMT.format (new Integer (i));
-            Object old;
+            Entry old;
             long   ms;
             Entry  value = new Entry (key, paddingSize);
 
@@ -396,7 +398,8 @@ public class TestFileHashMap
              + getAverage (msAccum, i) + " ms");
     }
 
-    private void dumpTables (Map memoryHash, Map fileHash)
+    private void dumpTables (Map<String, Entry> memoryHash,
+                             Map<String, Entry> fileHash)
     {
         msgln ("");
         msgln ("----------------------------------------------");
@@ -439,16 +442,16 @@ public class TestFileHashMap
             dumpTableNonSequentially (fileHash, "On-disk table");
     }
 
-    private void dumpTableByKeySet (Map map, String label)
+    private void dumpTableByKeySet (Map<String, Entry> map, String label)
     {
         if (map.size() == 0)
             msgln (label + " is empty");
 
         else
         {
-            Iterator  it;
-            int       i;
-            long      ms;
+            Iterator<String>  it;
+            int               i;
+            long              ms;
 
             msgln ("");
             msgln (label);
@@ -456,9 +459,9 @@ public class TestFileHashMap
             ms = 0;
             for (i = 0, it = map.keySet().iterator(); it.hasNext(); i++)
             {
-                Object key = it.next();
+                String key = it.next();
                 startTimer();
-                Entry value = (Entry) map.get (key);
+                Entry value = map.get (key);
                 ms += stopTimer();
 
                 verboseln ("    \"" + key + "\" -> \"" + value + "\"");
@@ -481,16 +484,16 @@ public class TestFileHashMap
         }
     }
 
-    private void dumpTableByValueSet (Map map, String label)
+    private void dumpTableByValueSet (Map<String, Entry> map, String label)
     {
         if (map.size() == 0)
             msgln (label + " is empty");
 
         else
         {
-            Iterator  it;
-            int       i;
-            long      ms;
+            Iterator<Entry>  it;
+            int              i;
+            long             ms;
 
             msgln ("");
             msgln (label);
@@ -499,7 +502,7 @@ public class TestFileHashMap
             for (i = 0, it = map.values().iterator(); it.hasNext(); i++)
             {
                 startTimer();
-                Object value = it.next();
+                Entry value = it.next();
                 ms += stopTimer();
 
                 verboseln ("    \"" + value + "\"");
@@ -522,16 +525,16 @@ public class TestFileHashMap
         }
     }
 
-    private void dumpTableByEntrySet (Map map, String label)
+    private void dumpTableByEntrySet (Map<String, Entry> map, String label)
     {
         if (map.size() == 0)
             msgln (label + " is empty");
 
         else
         {
-            Iterator  it;
-            int       i;
-            long      ms;
+            Iterator<Map.Entry<String, Entry>>  it;
+            int                  i;
+            long                 ms;
 
             msgln ("");
             msgln (label);
@@ -540,9 +543,9 @@ public class TestFileHashMap
             for (i = 0, it = map.entrySet().iterator(); it.hasNext(); i++)
             {
                 startTimer();
-                Map.Entry entry = (Map.Entry) it.next();
-                Object key = entry.getKey();
-                Object value = entry.getValue();
+                Map.Entry<String, Entry> entry = it.next();
+                String key = entry.getKey();
+                Entry value = entry.getValue();
                 ms += stopTimer();
 
                 verboseln ("    \"" + key + "\" -> \"" + value + "\"");

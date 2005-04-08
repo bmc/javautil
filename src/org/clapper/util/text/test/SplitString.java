@@ -120,9 +120,9 @@ public class SplitString extends CommandLineUtility
         }
     }
 
-    protected void parseCustomOption (char     shortOption,
-                                      String   longOption,
-                                      Iterator it)
+    protected void parseCustomOption (char             shortOption,
+                                      String           longOption,
+                                      Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException
     {
@@ -131,16 +131,16 @@ public class SplitString extends CommandLineUtility
             case 'l':
                 limit = parseIntOptionArgument (shortOption,
                                                 longOption,
-                                                (String) it.next());
+                                                it.next());
                 break;
 
             case 'r':
-                delims = (String) it.next();
+                delims = it.next();
                 useRegexp = true;
                 break;
 
             case 'd':
-                delims = (String) it.next();
+                delims = it.next();
                 useRegexp = false;
                 break;
 
@@ -153,11 +153,11 @@ public class SplitString extends CommandLineUtility
         }
     }
     
-    protected void processPostOptionCommandLine (Iterator it)
+    protected void processPostOptionCommandLine (Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException
     {
-        Collection temp = new ArrayList();
+        Collection<String> temp = new ArrayList<String>();
 
         do
         {
@@ -166,7 +166,10 @@ public class SplitString extends CommandLineUtility
         while (it.hasNext());
 
         strings = new String[temp.size()];
-        temp.toArray (strings);
+
+        int i;
+        for (i = 0, it = temp.iterator(); it.hasNext(); i++)
+            strings[i] = it.next();
     }
 
     protected void getCustomUsageInfo (UsageInfo info)

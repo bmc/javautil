@@ -42,7 +42,7 @@ import java.util.NoSuchElementException;
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
-public class ArrayIterator implements Iterator
+public class ArrayIterator<T> implements Iterator<T>
 {
     /*----------------------------------------------------------------------*\
                            Private Data Elements
@@ -51,7 +51,7 @@ public class ArrayIterator implements Iterator
     /**
      * The underlying Array.
      */
-    private Object array[] = null;
+    private T array[] = null;
 
     /**
      * The next array index.
@@ -68,7 +68,7 @@ public class ArrayIterator implements Iterator
      *
      * @param array  The array over which to iterate
      */
-    public ArrayIterator (Object array[])
+    public ArrayIterator (T array[])
     {
         this.array = array;
     }
@@ -81,7 +81,7 @@ public class ArrayIterator implements Iterator
      * @param array  The array over which to iterate
      * @param index  The index at which to start
      */
-    public ArrayIterator (Object array[], int index)
+    public ArrayIterator (T array[], int index)
     {
         this.array = array;
         this.next  = index;
@@ -128,9 +128,9 @@ public class ArrayIterator implements Iterator
      * @see #previous()
      * @see java.util.Iterator#next
      */
-    public Object next() throws NoSuchElementException
+    public T next() throws NoSuchElementException
     {
-        Object result = null;
+        T result = null;
 
         try
         {
@@ -157,9 +157,9 @@ public class ArrayIterator implements Iterator
      *
      * @see #next()
      */
-    public Object previous() throws NoSuchElementException
+    public T previous() throws NoSuchElementException
     {
-        Object result = null;
+        T result = null;
 
         try
         {

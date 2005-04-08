@@ -474,7 +474,7 @@ public class Configuration
          * Table of files/URLs currently open. Used during include
          * processing.
          */
-        private Set openURLs = new HashSet();
+        private Set<String> openURLs = new HashSet<String>();
 
         ParseContext()
         {
@@ -494,13 +494,14 @@ public class Configuration
      * List of sections, in order encountered. Each element is a reference to
      * a Section object.
      */
-    private List sectionsInOrder = new ArrayList();
+    private List<Section> sectionsInOrder = new ArrayList<Section>();
 
     /**
      * Sections by name. Each index is a string. Each value is a reference to
      * a Section object.
      */
-    private Map sectionsByName = new HashMap();
+    private Map<String, Section> sectionsByName =
+                                             new HashMap<String, Section>();
 
     /**
      * Special section for System.properties
@@ -671,12 +672,25 @@ public class Configuration
      *
      * @see #getVariableNames
      */
-    public Collection getSectionNames (Collection collection)
+    public Collection<String> getSectionNames (Collection<String> collection)
     {
-        for (Iterator it = sectionsInOrder.iterator(); it.hasNext(); )
-            collection.add (((Section) it.next()).getName());
+        for (Section section : sectionsInOrder)
+            collection.add (section.getName());
 
         return collection;
+    }
+    
+    /**
+     * Get the names of the sections in this object, in the order they were
+     * parsed and/or added.
+     *
+     * @return a new <tt>Collection</tt> of section names
+     *
+     * @see #getVariableNames
+     */
+    public Collection<String> getSectionNames()
+    {
+        return getSectionNames (new ArrayList<String>());
     }
     
     /**
@@ -697,17 +711,37 @@ public class Configuration
      * @see #containsSection
      * @see #getVariableValue
      */
-    public Collection getVariableNames (String     sectionName,
-                                        Collection collection)
+    public Collection<String> getVariableNames (String             sectionName,
+                                                Collection<String> collection)
         throws NoSuchSectionException
     {
-        Section section = (Section) sectionsByName.get (sectionName);
+        Section section = sectionsByName.get (sectionName);
         if (section == null)
             throw new NoSuchSectionException (sectionName);
 
         collection.addAll (section.getVariableNames());
 
         return collection;
+    }
+    
+    /**
+     * Get the names of the all the variables in a section, in the order
+     * they were parsed and/or added.
+     *
+     * @param sectionName the name of the section to access
+     *
+     * @return a new <tt>Collection</tt> of variable names
+     *
+     * @throws NoSuchSectionException  no such section
+     *
+     * @see #getSectionNames
+     * @see #containsSection
+     * @see #getVariableValue
+     */
+    public Collection<String> getVariableNames (String sectionName)
+        throws NoSuchSectionException
+    {
+        return getVariableNames (sectionName, new ArrayList<String>());
     }
     
     /**
@@ -1157,7 +1191,7 @@ public class Configuration
                 section = programSection;
 
             else
-                section = (Section) sectionsByName.get (sectionName);
+                section = sectionsByName.get (sectionName);
         }
 
         if (section != null)
@@ -1322,7 +1356,7 @@ public class Configuration
         throws NoSuchSectionException,
                VariableSubstitutionException
     {
-        Section section = (Section) sectionsByName.get (sectionName);
+        Section section = sectionsByName.get (sectionName);
         if (section == null)
             throw new NoSuchSectionException (sectionName);
 
@@ -1376,11 +1410,6 @@ public class Configuration
     public void write (PrintWriter out)
         throws ConfigurationException
     {
-        Iterator       itSect;
-        Iterator       itVar;
-        Section        section;
-        String         varName;
-        Variable       var;
         XStringBuffer  value = new XStringBuffer();
         boolean        firstSection = true;
 
@@ -1392,21 +1421,17 @@ public class Configuration
         out.println (new Date().toString());
         out.println();
 
-        for (itSect = sectionsInOrder.iterator(); itSect.hasNext(); )
+        for (Section section : sectionsInOrder)
         {
-            section = (Section) itSect.next();
-
             if (! firstSection)
                 out.println();
 
             out.println (SECTION_START + section.getName() + SECTION_END);
             firstSection = false;
 
-            for (itVar = section.getVariableNames().iterator();
-                 itVar.hasNext(); )
+            for (String varName : section.getVariableNames())
             {
-                varName = (String) itVar.next();
-                var = section.getVariable (varName);
+                Variable var = section.getVariable (varName);
                 value.setLength (0);
                 value.append (var.getCookedValue());
                 value.encodeMetacharacters();

@@ -63,7 +63,7 @@ public class MapVariableDereferencer implements VariableDereferencer
     /**
      * Associated Map object.
      */
-    private Map map = null;
+    private Map<Object,Object> map = null;
 
     /*----------------------------------------------------------------------*\
                                Constructors
@@ -77,7 +77,7 @@ public class MapVariableDereferencer implements VariableDereferencer
      * @param map  The <code>Map</code> object from which to resolve
      *             variable references.
      */
-    public MapVariableDereferencer (Map map)
+    public MapVariableDereferencer (Map<Object,Object> map)
     {
         this.map = map;
     }

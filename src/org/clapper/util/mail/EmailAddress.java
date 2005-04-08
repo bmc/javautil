@@ -224,7 +224,7 @@ public class EmailAddress implements Cloneable, Comparable
      *
      * @throws EmailException  if a bad address is encountered
      */
-    public static int parse (String s, Collection collection)
+    public static int parse (String s, Collection<EmailAddress> collection)
         throws EmailException
     {
         int total = 0;
