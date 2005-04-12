@@ -410,18 +410,24 @@ public class Configuration
     \*----------------------------------------------------------------------*/
 
     /**
+     * Line types
+     */
+    enum LineType
+    {
+        COMMENT,
+        INCLUDE,
+        SECTION,
+        VARIABLE,
+        BLANK
+    }
+
+    /**
      * Contains one logical input line.
      */
-    class Line
+    static class Line
     {
-        static final int COMMENT  = 0;
-        static final int INCLUDE  = 1;
-        static final int SECTION  = 2;
-        static final int VARIABLE = 3;
-        static final int BLANK    = 4;
-
         int            number = 0;
-        int            type   = COMMENT;
+        LineType       type   = LineType.COMMENT;
         XStringBuffer  buffer = new XStringBuffer();
 
         Line()
@@ -1538,20 +1544,20 @@ public class Configuration
             {
                 switch (line.type)
                 {
-                    case Line.COMMENT:
-                    case Line.BLANK:
+                    case COMMENT:
+                    case BLANK:
                         break;
 
-                    case Line.INCLUDE:
+                    case INCLUDE:
                         handleInclude (line, url, parseContext);
                         break;
 
-                    case Line.SECTION:
+                    case SECTION:
                         parseContext.currentSection = handleNewSection (line,
                                                                         url);
                         break;
 
-                    case Line.VARIABLE:
+                    case VARIABLE:
                         if (parseContext.currentSection == null)
                         {
                             throw new ConfigurationException
@@ -1998,22 +2004,22 @@ public class Configuration
                 char firstChar;
 
                 if (s.length() == 0)
-                    line.type = Line.BLANK;
+                    line.type = LineType.BLANK;
 
                 else if (COMMENT_CHARS.indexOf (s.charAt (0)) != -1)
-                    line.type = Line.COMMENT;
+                    line.type = LineType.COMMENT;
 
                 else if (s.charAt (0) == SECTION_START)
-                    line.type = Line.SECTION;
+                    line.type = LineType.SECTION;
 
                 else if (new StringTokenizer (s).nextToken().equals (INCLUDE))
-                    line.type = Line.INCLUDE;
+                    line.type = LineType.INCLUDE;
 
                 else
-                    line.type = Line.VARIABLE;
+                    line.type = LineType.VARIABLE;
             }
 
-            if ((line.type == Line.VARIABLE) && (hasContinuationMark (s)))
+            if ((line.type == LineType.VARIABLE) && (hasContinuationMark (s)))
             {
                 continued = true;
                 line.buffer.append (s.substring (0, s.length() - 1));
