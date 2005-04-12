@@ -26,32 +26,30 @@
 
 package org.clapper.util.config;
 
-import org.clapper.util.misc.PropertiesMap;
-
 import java.util.Enumeration;
 import java.util.Properties;
 
 /**
- * Implements the special "system" section
+ * Implements the special "env" section
  *
  * @see Section
  */
-class SystemSection extends Section
+class EnvSection extends Section
 {
     /*----------------------------------------------------------------------*\
                                 Constructor
     \*----------------------------------------------------------------------*/
 
     /**
-     * Allocate a new <tt>SystemSection</tt> object, loading its values from
-     * the system properties list.
+     * Allocate a new <tt>EnvSection</tt> object, loading its values from
+     * the environment.
      *
      * @param name  the section name
      * @param id    the ID
      */
-    SystemSection (String name, int id)
+    EnvSection (String name, int id)
     {
         super (name, id);
-        super.addVariables (new PropertiesMap (System.getProperties()));
+        super.addVariables (System.getenv());
     }
 }

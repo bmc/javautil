@@ -162,4 +162,19 @@ class Section
         variable.setLineWhereDefined (lineDefined);
         return variable;
     }
+
+    /**
+     * Add all the name/value pairs in a <tt>Map</tt> to this section,
+     * overwriting any existing variables with the same names.
+     *
+     * @param map  the map
+     */
+    void addVariables (Map<String, String> map)
+    {
+        for (String varName : map.keySet())
+        {
+            String value = map.get (varName);
+            addVariable (varName, value);
+        }
+    }
 }

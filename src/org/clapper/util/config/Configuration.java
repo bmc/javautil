@@ -177,9 +177,15 @@ import org.clapper.util.io.FileUtil;
  * the current section. It is not possible to substitute the value of a
  * variable in a section that occurs later in the file.</p>
  *
- * <p>The special section "system" is reserved. It doesn't actually
- * exist in the configuration; however, you can refer to it during variable
- * substitution to pull in values from <tt>System.properties</tt>.
+ * <p>The section names "system", "env", and "program" are reserved for
+ * special "pseudosections."</p>
+ *
+ * <p>The "system" pseudosection is used to interpolate values from Java's
+ * <tt>System.properties</tt> class. For instance,
+ * <tt>${system:user.home}</tt> substitutes the value of the
+ * <tt>user.home</tt> system property (typically, the home directory of the
+ * user running <i>curn</i>). Similarly, <tt>${system:user.name}</tt>
+ * substitutes the user's name.</p>
  *
  * <p>For example:</p>
  *
@@ -195,10 +201,21 @@ import org.clapper.util.io.FileUtil;
  * searchFailedMessage=Search failed, sorry.
  * </pre></blockquote>
  *
- * <p>The special section "program" is also reserved. Like "system",
- * "program" doesn't really exist, either. It's a placeholder for various
- * special variables provided by the <tt>Configuration</tt> class. Those
- * variables are:</p>
+ * <p>The "env" pseudosection is used to interpolate values from the
+ * environment. On UNIX systems, for instance, <tt>${env:HOME}</tt>
+ * substitutes user's home directory (and is, therefore, a synonym for
+ * <tt>${system:user.home}</tt>. On some versions of Windows,
+ * <tt>${env:USERNAME}</tt> will substitute the name of the user running
+ * <i>curn</i>. Note: On UNIX systems, environment variable names are
+ * typically case-sensitive; for instance, <tt>${env:USER}</tt> and
+ * <tt>${env:user}</tt> refer to different environment variables. On
+ * Windows systems, environment variable names are typically
+ * case-insensitive; <tt>${env:USERNAME}</tt> and <tt>${env:username}</tt>
+ * are equivalent.</p>
+ *
+ * <p>The "program" pseudosection is a placeholder for various special
+ * variables provided by the <tt>Configuration</tt> class. Those variables
+ * are:</p>
  *
  * <table border="1" align="left" width="100%">
  *   <tr valign="top">
@@ -404,6 +421,7 @@ public class Configuration
     private static final int    MAX_INCLUDE_NESTING_LEVEL  = 50;
     private static final String SYSTEM_SECTION_NAME        = "system";
     private static final String PROGRAM_SECTION_NAME       = "program";
+    private static final String ENV_SECTION_NAME           = "env";
 
     /*----------------------------------------------------------------------*\
                                   Classes
@@ -518,6 +536,11 @@ public class Configuration
      * Special section for program properties
      */
     private Section programSection;
+
+    /**
+     * Special section for env properties
+     */
+    private Section envSection;
 
     /**
      * Section ID values.
@@ -1196,6 +1219,9 @@ public class Configuration
             else if (sectionName.equals (PROGRAM_SECTION_NAME))
                 section = programSection;
 
+            else if (sectionName.equals (ENV_SECTION_NAME))
+                section = envSection;
+
             else
                 section = sectionsByName.get (sectionName);
         }
@@ -1508,14 +1534,15 @@ public class Configuration
         Line           line = new Line();
         String         sURL = url.toExternalForm();
 
-        // Now, create the phantom program and system sections. These MUST
-        // be created first, or other sections won't be able to substitute
-        // from them. (i.e., They must have the lowest IDs.)
+        // Now, create the phantom program, env and system sections. These
+        // MUST be created first, or other sections won't be able to
+        // substitute from them. (i.e., They must have the lowest IDs.)
 
         programSection = new ProgramSection (PROGRAM_SECTION_NAME,
                                              nextSectionID());
         systemSection  = new SystemSection (SYSTEM_SECTION_NAME,
                                             nextSectionID());
+        envSection  = new EnvSection (ENV_SECTION_NAME, nextSectionID());
 
         if (parseContext.openURLs.contains (sURL))
         {
