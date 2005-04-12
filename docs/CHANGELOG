@@ -10,6 +10,11 @@ Version 2.0 (...)
 
 - Various classes converted to use JDK 1.5 generics.
 
+- org.clapper.util.config.Configuration class now supports an "env"
+  pseudosection, to interpolate the values of environment variables into
+  a configuration. (The 1.5 JDK has re-established support for environment
+  variables.) See the javadocs for the Configuration class for details.
+
 - org.clapper.util.io.JustifyTextWriter now uses (new) enum
   org.clapper.util.io.JustifyStyle to specify the justification style
   (CENTER, LEFT_JUSTIFY, RIGHT_JUSTIFY), instead of an "int".
