@@ -7,8 +7,42 @@ $Id$
 Version 2.0 (...)
 
 - Now requires Java 1.5.0 JDK/JRE.
+
 - Various classes converted to use JDK 1.5 generics.
 
+- org.clapper.util.io.JustifyTextWriter now uses (new) enum
+  org.clapper.util.io.JustifyStyle to specify the justification style
+  (CENTER, LEFT_JUSTIFY, RIGHT_JUSTIFY), instead of an "int".
+  Unfortunately, this change is not backward-compatible with previous
+  versions of this library.
+
+- org.clapper.util.MultipleRegexFilenameFilter now uses enums for the
+  match type values:
+
+  * MultipleRegexFilenameFilter.MATCH_FILENAME becomes
+    MultipleRegexFilenameFilter.MatchType.FILENAME
+
+  * MultipleRegexFilenameFilter.MATCH_PATH becomes
+    MultipleRegexFilenameFilter.MatchType.PATH
+
+  Again, this change will force code changes on callers.
+
+- org.clapper.util.text.MapVariableDereferencer now expects a
+  java.util.Map<String,String> object, not just a Map object.
+
+- To make it easier to use a java.util.Properties object with the
+  org.clapper.util.text.VariableSubstituter class, there's now a type-safe
+  org.clapper.util.misc.PropertiesMap wrapper for java.util.Properties.
+
+
+Version 1.1.8 (...)
+
+- Fixed bug in org.clapper.util.cmdline.CommandLineUtility class: Default
+  version processPostOptionCommandLine() threw an unconditional exception.
+  It should've thrown an exception only if the iterator still had something
+  in it. This bug led to an erroneous usage message with utilities that
+  expected no parameters and thus did not override the
+  processPostOptionCommandLine() method. (Branch version fix.)
 
 Version 1.1.7 (08 April, 2005)
 
