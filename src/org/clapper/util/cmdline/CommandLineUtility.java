@@ -299,10 +299,13 @@ public abstract class CommandLineUtility
         throws CommandLineUsageException,
                NoSuchElementException
     {
-        throw new CommandLineUsageException
+        if (it.hasNext())
+        {
+            throw new CommandLineUsageException
                              (Package.BUNDLE_NAME,
                               "CommandLineUtility.extraParams",
                               "Extra command line parameter(s).");
+        }
     }
 
     /**
