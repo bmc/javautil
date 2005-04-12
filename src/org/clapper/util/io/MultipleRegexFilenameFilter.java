@@ -69,8 +69,13 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
                              Public Constants
     \*----------------------------------------------------------------------*/
 
-    public static final int MATCH_FILENAME = 0;
-    public static final int MATCH_PATH     = 1;
+    /**
+     * Match types
+     */
+    public enum MatchType
+    {
+        FILENAME, PATH
+    }
 
     /*----------------------------------------------------------------------*\
                             Private Data Items
@@ -79,7 +84,7 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
     private Collection<Pattern>  acceptPatterns = null;
     private Collection<Pattern>  rejectPatterns = null;
     private int                  regexOptions;
-    private int                  matchType = MATCH_FILENAME;
+    private MatchType            matchType = MatchType.FILENAME;
 
     /*----------------------------------------------------------------------*\
                             Constructor
@@ -88,23 +93,12 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
     /**
      * Construct a new <tt>MultipleRegexFilenameFilter</tt>.
      *
-     * @param matchType <tt>MATCH_FILENAME</tt> to match just the
-     *                  filename, <tt>MATCH_PATH</tt> to match the path
+     * @param matchType <tt>MatchType.FILENAME</tt> to match just the
+     *                  filename, <tt>MatchType.PATH</tt> to match the path
      */
-    public MultipleRegexFilenameFilter (int matchType)
+    public MultipleRegexFilenameFilter (MatchType matchType)
     {
-        switch (matchType)
-        {
-            case MATCH_FILENAME:
-            case MATCH_PATH:
-                this.matchType = matchType;
-                break;
-
-            default:
-                throw new IllegalArgumentException ("Bad matchType parameter: "
-                                                  + matchType);
-        }
-        
+        this.matchType = matchType;
         regexOptions   = Pattern.CASE_INSENSITIVE;
         acceptPatterns = new ArrayList<Pattern>();
         rejectPatterns = new ArrayList<Pattern>();
@@ -161,8 +155,9 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
      * regular expressions in the <i>reject</i> and <i>accept</i> lists.
      *
      * @param dir   The directory containing the file. Ignored if
-     *              the match type is {@link #MATCH_FILENAME}. Used to build
-     *              the path to match if the match type is {@link #MATCH_PATH}
+     *              the match type is <tt>MatchType.FILENAME</tt>. Used to
+     *              build the path to match when the match type is
+     *              <tt>MatchType.PATH</tt>
      * @param name  the file name
      *
      * @return <tt>true</tt> if the file matches, <tt>false</tt> if it doesn't
@@ -173,7 +168,7 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
         boolean   match = false;
         boolean   found = false;
 
-        if (matchType == MATCH_PATH)
+        if (matchType == MatchType.PATH)
         {
             name = dir.getPath()
                  + System.getProperty ("file.separator")

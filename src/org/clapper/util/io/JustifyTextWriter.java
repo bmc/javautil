@@ -116,21 +116,6 @@ public class JustifyTextWriter extends PrintWriter
     public static final int DEFAULT_LINE_LENGTH =
                                        WordWrapWriter.DEFAULT_LINE_LENGTH;
 
-    /**
-     * Signifies right-justification.
-     */
-    public static final int RIGHT_JUSTIFY = 1;
-
-    /**
-     * Signifies left-justification.
-     */
-    public static final int LEFT_JUSTIFY = 2;
-
-    /**
-     * Signifies centering
-     */
-    public static final int CENTER = 3;
-
     /*----------------------------------------------------------------------*\
                              Private Constants
     \*----------------------------------------------------------------------*/
@@ -157,7 +142,7 @@ public class JustifyTextWriter extends PrintWriter
     /**
      * Justification type
      */
-    private int justification = LEFT_JUSTIFY;
+    private JustifyStyle justification = JustifyStyle.LEFT_JUSTIFY;
 
     /*----------------------------------------------------------------------*\
                                Constructors
@@ -169,17 +154,16 @@ public class JustifyTextWriter extends PrintWriter
      * line length of 79.
      *
      * @param output         Where the output goes.
-     * @param justification  How to justify the output, one of
-     *                       {@link #RIGHT_JUSTIFY}, {@link #LEFT_JUSTIFY},
-     *                       or {@link #CENTER}
+     * @param justification  How to justify the output
      *
      * @see #DEFAULT_LINE_LENGTH
      * @see #JustifyTextWriter(Writer,int,int)
      * @see #JustifyTextWriter(PrintWriter,int)
      * @see #JustifyTextWriter(OutputStream,int)
+     * @see JustifyStyle
      * @see java.io.Writer
      */
-    public JustifyTextWriter (Writer output, int justification)
+    public JustifyTextWriter (Writer output, JustifyStyle justification)
     {
         this (new PrintWriter (output), justification, DEFAULT_LINE_LENGTH);
     }
@@ -190,17 +174,17 @@ public class JustifyTextWriter extends PrintWriter
      * line length of 79.
      *
      * @param output         Where the output goes.
-     * @param justification  How to justify the output, one of
-     *                       {@link #RIGHT_JUSTIFY}, {@link #LEFT_JUSTIFY},
-     *                       or {@link #CENTER}
+     * @param justification  How to justify the output
      *
      * @see #DEFAULT_LINE_LENGTH
      * @see #JustifyTextWriter(Writer,int)
      * @see #JustifyTextWriter(PrintWriter,int,int)
      * @see #JustifyTextWriter(OutputStream,int)
+     * @see JustifyStyle
      * @see java.io.Writer
      */
-    public JustifyTextWriter (PrintWriter output, int justification)
+    public JustifyTextWriter (PrintWriter  output,
+                              JustifyStyle justification)
     {
         this (output, justification, DEFAULT_LINE_LENGTH);
     }
@@ -211,17 +195,17 @@ public class JustifyTextWriter extends PrintWriter
      * default line length of 79.
      *
      * @param output         Where the output goes.
-     * @param justification  How to justify the output, one of
-     *                       {@link #RIGHT_JUSTIFY}, {@link #LEFT_JUSTIFY},
-     *                       or {@link #CENTER}
+     * @param justification  How to justify the output
      *
      * @see #DEFAULT_LINE_LENGTH
      * @see #JustifyTextWriter(OutputStream,int,int)
      * @see #JustifyTextWriter(Writer,int)
      * @see #JustifyTextWriter(PrintWriter,int)
+     * @see JustifyStyle
      * @see java.io.OutputStream
      */
-    public JustifyTextWriter (OutputStream output, int justification)
+    public JustifyTextWriter (OutputStream output,
+                              JustifyStyle justification)
     {
         this (output, justification, DEFAULT_LINE_LENGTH);
     }
@@ -232,20 +216,19 @@ public class JustifyTextWriter extends PrintWriter
      * line length.
      *
      * @param output         Where the output goes.
-     * @param justification  How to justify the output, one of
-     *                       {@link #RIGHT_JUSTIFY}, {@link #LEFT_JUSTIFY},
-     *                       or {@link #CENTER}
+     * @param justification  How to justify the output
      * @param lineLength     The desired line length.
      *
      * @see #DEFAULT_LINE_LENGTH
      * @see #JustifyTextWriter(Writer,int)
      * @see #JustifyTextWriter(PrintWriter,int,int)
      * @see #JustifyTextWriter(OutputStream,int,int)
+     * @see JustifyStyle
      * @see java.io.Writer
      */
-    public JustifyTextWriter (Writer output,
-                              int    justification,
-                              int    lineLength)
+    public JustifyTextWriter (Writer       output,
+                              JustifyStyle justification,
+                              int          lineLength)
     {
         this (new PrintWriter (output), justification, lineLength);
     } 
@@ -256,20 +239,19 @@ public class JustifyTextWriter extends PrintWriter
      * specified line length.
      *
      * @param output         Where the output goes.
-     * @param justification  How to justify the output, one of
-     *                       {@link #RIGHT_JUSTIFY}, {@link #LEFT_JUSTIFY},
-     *                       or {@link #CENTER}
+     * @param justification  How to justify the output
      * @param lineLength     The desired line length.
      *
      * @see #DEFAULT_LINE_LENGTH
      * @see #JustifyTextWriter(PrintWriter,int)
      * @see #JustifyTextWriter(Writer,int,int)
      * @see #JustifyTextWriter(OutputStream,int,int)
+     * @see JustifyStyle
      * @see java.io.Writer
      */
-    public JustifyTextWriter (PrintWriter output,
-                              int         justification,
-                              int         lineLength)
+    public JustifyTextWriter (PrintWriter  output,
+                              JustifyStyle justification,
+                              int          lineLength)
     {
         super (output);
         writer = output;
@@ -283,19 +265,18 @@ public class JustifyTextWriter extends PrintWriter
      * specified line length.
      *
      * @param output         Where the output goes.
-     * @param justification  How to justify the output, one of
-     *                       {@link #RIGHT_JUSTIFY}, {@link #LEFT_JUSTIFY},
-     *                       or {@link #CENTER}
+     * @param justification  How to justify the output
      * @param lineLength     The desired line length.
      *
      * @see #DEFAULT_LINE_LENGTH
      * @see #JustifyTextWriter(OutputStream,int)
      * @see #JustifyTextWriter(Writer,int,int)
      * @see #JustifyTextWriter(PrintWriter,int,int)
+     * @see JustifyStyle
      * @see java.io.Writer
      */
     public JustifyTextWriter (OutputStream output,
-                              int          justification,
+                              JustifyStyle justification,
                               int          lineLength)
     {
         super (output);
@@ -339,30 +320,28 @@ public class JustifyTextWriter extends PrintWriter
     }
 
     /**
-     * Retrieve the current justification type.
+     * Retrieve the current justification style.
      *
-     * @return The current justification type, one of {@link #RIGHT_JUSTIFY},
-     *         {@link #LEFT_JUSTIFY}, or {@link #CENTER}
+     * @return The current justification style
      *
      * @see #setJustification
      */
-    public int getJustification()
+    public JustifyStyle getJustification()
     {
         return justification;
     }
 
 
     /**
-     * Set or change the current justification type.
+     * Set or change the current justification style.
      *
-     * @param type The new justification type, one of {@link #RIGHT_JUSTIFY},
-     *             {@link #LEFT_JUSTIFY}, or {@link #CENTER}
+     * @param style The new justification style
      *
      * @see #setJustification
      */
-    public void setJustification (int type)
+    public void setJustification (JustifyStyle style)
     {
-        justification = type;
+        justification = style;
     }
 
     /**

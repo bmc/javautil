@@ -44,7 +44,7 @@ public class TestWordWrapWriter
     private static int indent = 0;
     private static int lineLen = WordWrapWriter.DEFAULT_LINE_LENGTH;
     private static JustifyTextWriter jtWriter = null;
-    private static int justification = -1;
+    private static JustifyStyle justification = null;
     private static InputStream in = System.in;
 
     /*----------------------------------------------------------------------*\
@@ -149,13 +149,13 @@ public class TestWordWrapWriter
                     lineLen = Integer.parseInt (args[++i]);
 
                 else if (args[i].equals ("-R"))
-                    justification = JustifyTextWriter.RIGHT_JUSTIFY;
+                    justification = JustifyStyle.RIGHT_JUSTIFY;
 
                 else if (args[i].equals ("-C"))
-                    justification = JustifyTextWriter.CENTER;
+                    justification = JustifyStyle.CENTER;
 
                 else if (args[i].equals ("-L"))
-                    justification = JustifyTextWriter.LEFT_JUSTIFY;
+                    justification = JustifyStyle.LEFT_JUSTIFY;
 
                 else
                     throw new IllegalArgumentException (args[i]);
@@ -173,7 +173,7 @@ public class TestWordWrapWriter
                 System.exit (1);
             }
 
-            if (justification != -1)
+            if (justification != null)
             {
                 jtWriter = new JustifyTextWriter (System.out,
                                                   justification,

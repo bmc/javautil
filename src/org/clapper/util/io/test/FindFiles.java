@@ -163,7 +163,7 @@ public class FindFiles
 	Collection<File>            files  = new ArrayList<File>();
 
 	filter = new MultipleRegexFilenameFilter
-	                       (MultipleRegexFilenameFilter.MATCH_PATH);
+	                       (MultipleRegexFilenameFilter.MatchType.PATH);
 
         for (it = acceptPatterns.iterator(); it.hasNext(); )
             filter.addAcceptPattern ((String) it.next());
