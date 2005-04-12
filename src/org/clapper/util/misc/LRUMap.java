@@ -454,7 +454,7 @@ public class LRUMap<K,V>
     private static final long serialVersionUID = 1L;
 
     /*----------------------------------------------------------------------*\
-                              Private Classes
+                               Type Aliases
     \*----------------------------------------------------------------------*/
 
     /**
@@ -664,9 +664,7 @@ public class LRUMap<K,V>
      * operations. It does not support the <tt>add</tt> or <tt>addAll</tt>
      * operations.
      *
-     * @return nothing
-     *
-     * @throws UnsupportedOperationException unconditionally
+     * @return the entry set
      */
     public Set<Map.Entry<K,V>> entrySet()
     {
