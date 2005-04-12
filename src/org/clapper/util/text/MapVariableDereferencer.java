@@ -26,27 +26,60 @@
 
 package org.clapper.util.text;
 
-import java.util.*;
+import org.clapper.util.misc.PropertiesMap;
+
+import java.util.Map;
+import java.util.Properties;
 
 /**
- * <p>The <code>MapVariableDereferencer</code> class implements the
- * <code>VariableDereferencer</code> interface and resolves variable
- * references by looking them up in a supplied <code>Map</code> object. By
- * using a <code>Map</code> object, this class can support variable lookups
+ * <p>The <tt>MapVariableDereferencer</tt> class implements the
+ * <tt>VariableDereferencer</tt> interface and resolves variable
+ * references by looking them up in a supplied <tt>Map</tt> object. By
+ * using a <tt>Map</tt> object, this class can support variable lookups
  * from a variety of existing data structures, including:</p>
  *
  * <ul>
- *   <li><code>java.util.HashMap</code> and <code>java.util.TreeMap</code>
+ *   <li><tt>java.util.HashMap</tt> and <tt>java.util.TreeMap</tt>
  *       objects
- *   <li><code>java.util.Hashtable</code> objects
- *   <li><code>java.util.Properties</code> objects
+ *   <li><tt>java.util.Hashtable</tt> objects
+ *   <li><tt>java.util.Properties</tt> objects
  * </ul>
  *
- * <p>The keys in the supplied <code>Map</code> object <b>must</b> be
- * <code>String</code> objects. The values can be anything, though their
- * <code>toString()</code> methods will be called to coerce them to
- * strings.</p>
- * 
+ * <p>The keys and values in the supplied <tt>Map</tt> object
+ * <b>must</b> be <tt>String</tt> objects. </p>
+ *
+ * <h3>Example</h3>
+ *
+ * <p>Perhaps the simplest example is one that uses the environment
+ * variables of the running Java VM. (Recall that
+ * <tt>java.lang.System.getenv()</tt> is no longer deprecated as of the 1.5
+ * JDK.) The following sample program reads strings from the command line
+ * and substitutes Unix-style environment variable references.</p>
+ *
+ * <blockquote>
+ * <pre>
+ * import org.clapper.util.text.MapVariableDereferencer;
+ * import org.clapper.util.text.VariableDereferencer;
+ * import org.clapper.util.text.VariableSubstituter;
+ * import org.clapper.util.text.UnixShellVariableSubstituter;
+ *
+ * public class Test
+ * {
+ *     public static void main (String[] args) throws Throwable
+ *     {
+ *         VariableDereference vars = new MapVariableDereferencer (System.getenv());
+ *         VariableSubstituter sub = new UnixShellVariableSubstituter();
+ *
+ *         for (int i = 0; i < args.length; i++)
+ *         {
+ *             System.out.println ("BEFORE: \"" + args[i] + "\"");
+ *             System.out.println ("AFTER:  \"" + sub.substitute (args[i], vars, null));
+ *         }
+ *     }
+ * }
+ * </pre>
+ * </blockquote>
+ *
  * @see VariableDereferencer
  * @see VariableSubstituter
  *
@@ -57,29 +90,48 @@ import java.util.*;
 public class MapVariableDereferencer implements VariableDereferencer
 {
     /*----------------------------------------------------------------------*\
+                               Inner Classes
+    \*----------------------------------------------------------------------*/
+
+    /*----------------------------------------------------------------------*\
                              Private Variables
     \*----------------------------------------------------------------------*/
 
     /**
      * Associated Map object.
      */
-    private Map<Object,Object> map = null;
+    private Map<String,String> map = null;
 
     /*----------------------------------------------------------------------*\
                                Constructors
     \*----------------------------------------------------------------------*/
 
     /**
-     * Create a new <code>MapVariableDereferencer</code> object that
-     * resolves its variable references from the specified <code>Map</code>
+     * Create a new <tt>MapVariableDereferencer</tt> object that
+     * resolves its variable references from the specified <tt>Map</tt>
      * object.
      *
-     * @param map  The <code>Map</code> object from which to resolve
+     * @param map  The <tt>Map</tt> object from which to resolve
      *             variable references.
      */
-    public MapVariableDereferencer (Map<Object,Object> map)
+    public MapVariableDereferencer (Map<String,String> map)
     {
         this.map = map;
+    }
+
+    /**
+     * Create a new <tt>MapVariableDereferencer</tt> object that resolves
+     * its variable references from the specified <tt>Properties</tt>
+     * object.
+     *
+     * @param properties  The <tt>Properties</tt> object from which to resolve
+     *                    variable references.
+     */
+    public MapVariableDereferencer (Properties properties)
+    {
+        // Use a type-safe wrapper
+
+        map = new PropertiesMap (properties);
     }
 
     /*----------------------------------------------------------------------*\
@@ -101,8 +153,8 @@ public class MapVariableDereferencer implements VariableDereferencer
      */
     public String getVariableValue (String varName, Object context)
     {
-        Object result = map.get (varName);
+        String result = map.get (varName);
 
-        return (result == null) ? "" : result.toString();
+        return (result == null) ? "" : result;
     }
 }
