@@ -157,9 +157,9 @@ public class JustifyTextWriter extends PrintWriter
      * @param justification  How to justify the output
      *
      * @see #DEFAULT_LINE_LENGTH
-     * @see #JustifyTextWriter(Writer,int,int)
-     * @see #JustifyTextWriter(PrintWriter,int)
-     * @see #JustifyTextWriter(OutputStream,int)
+     * @see #JustifyTextWriter(Writer,JustifyStyle,int)
+     * @see #JustifyTextWriter(PrintWriter,JustifyStyle)
+     * @see #JustifyTextWriter(OutputStream,JustifyStyle)
      * @see JustifyStyle
      * @see java.io.Writer
      */
@@ -177,9 +177,9 @@ public class JustifyTextWriter extends PrintWriter
      * @param justification  How to justify the output
      *
      * @see #DEFAULT_LINE_LENGTH
-     * @see #JustifyTextWriter(Writer,int)
-     * @see #JustifyTextWriter(PrintWriter,int,int)
-     * @see #JustifyTextWriter(OutputStream,int)
+     * @see #JustifyTextWriter(Writer,JustifyStyle)
+     * @see #JustifyTextWriter(PrintWriter,JustifyStyle,int)
+     * @see #JustifyTextWriter(OutputStream,JustifyStyle)
      * @see JustifyStyle
      * @see java.io.Writer
      */
@@ -198,9 +198,9 @@ public class JustifyTextWriter extends PrintWriter
      * @param justification  How to justify the output
      *
      * @see #DEFAULT_LINE_LENGTH
-     * @see #JustifyTextWriter(OutputStream,int,int)
-     * @see #JustifyTextWriter(Writer,int)
-     * @see #JustifyTextWriter(PrintWriter,int)
+     * @see #JustifyTextWriter(OutputStream,JustifyStyle,int)
+     * @see #JustifyTextWriter(Writer,JustifyStyle)
+     * @see #JustifyTextWriter(PrintWriter,JustifyStyle)
      * @see JustifyStyle
      * @see java.io.OutputStream
      */
@@ -220,9 +220,9 @@ public class JustifyTextWriter extends PrintWriter
      * @param lineLength     The desired line length.
      *
      * @see #DEFAULT_LINE_LENGTH
-     * @see #JustifyTextWriter(Writer,int)
-     * @see #JustifyTextWriter(PrintWriter,int,int)
-     * @see #JustifyTextWriter(OutputStream,int,int)
+     * @see #JustifyTextWriter(Writer,JustifyStyle)
+     * @see #JustifyTextWriter(PrintWriter,JustifyStyle,int)
+     * @see #JustifyTextWriter(OutputStream,JustifyStyle,int)
      * @see JustifyStyle
      * @see java.io.Writer
      */
@@ -243,9 +243,9 @@ public class JustifyTextWriter extends PrintWriter
      * @param lineLength     The desired line length.
      *
      * @see #DEFAULT_LINE_LENGTH
-     * @see #JustifyTextWriter(PrintWriter,int)
-     * @see #JustifyTextWriter(Writer,int,int)
-     * @see #JustifyTextWriter(OutputStream,int,int)
+     * @see #JustifyTextWriter(PrintWriter,JustifyStyle)
+     * @see #JustifyTextWriter(Writer,JustifyStyle,int)
+     * @see #JustifyTextWriter(OutputStream,JustifyStyle,int)
      * @see JustifyStyle
      * @see java.io.Writer
      */
@@ -269,9 +269,9 @@ public class JustifyTextWriter extends PrintWriter
      * @param lineLength     The desired line length.
      *
      * @see #DEFAULT_LINE_LENGTH
-     * @see #JustifyTextWriter(OutputStream,int)
-     * @see #JustifyTextWriter(Writer,int,int)
-     * @see #JustifyTextWriter(PrintWriter,int,int)
+     * @see #JustifyTextWriter(OutputStream,JustifyStyle)
+     * @see #JustifyTextWriter(Writer,JustifyStyle,int)
+     * @see #JustifyTextWriter(PrintWriter,JustifyStyle,int)
      * @see JustifyStyle
      * @see java.io.Writer
      */

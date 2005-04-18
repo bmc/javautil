@@ -145,8 +145,6 @@ public class CombinationFilenameFilter implements FilenameFilter
      *              filename only needs to be accepted by one of the
      *              contained filters.
      *
-     * @return the previous mode
-     *
      * @see #getMode
      */
     public void setMode (CombinationFilterMode mode)

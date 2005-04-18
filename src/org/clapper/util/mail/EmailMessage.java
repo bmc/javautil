@@ -499,8 +499,8 @@ public class EmailMessage implements Serializable
      * @see #addTo(EmailAddress)
      * @see #getTo
      * @see #clearTo
-     * @see #addCc(Collection<?>)
-     * @see #addBcc(Collection<?>)
+     * @see #addCc(Collection)
+     * @see #addBcc(Collection)
      * @see #clearAllRecipients
      * @see EmailAddress
      */
@@ -617,7 +617,7 @@ public class EmailMessage implements Serializable
      * @throws EmailException  improperly formed email address
      *
      * @see #addCc(String)
-     * @see #addCc(Collection<?>)
+     * @see #addCc(Collection)
      * @see #getTo
      * @see #clearTo
      * @see #addTo(String[])
@@ -646,8 +646,8 @@ public class EmailMessage implements Serializable
      * @see #addCc(EmailAddress)
      * @see #getCc
      * @see #clearCc
-     * @see #addTo(Collection<?>)
-     * @see #addBcc(Collection<?>)
+     * @see #addTo(Collection)
+     * @see #addBcc(Collection)
      * @see #clearAllRecipients
      * @see EmailAddress
      */
@@ -764,11 +764,11 @@ public class EmailMessage implements Serializable
      * @throws EmailException  improperly formed email address
      *
      * @see #addBcc(String)
-     * @see #addBcc(Collection<?>)
+     * @see #addBcc(Collection)
      * @see #getTo
      * @see #clearTo
-     * @see #addTo(Collection<?>)
-     * @see #addCc(Collection<?>)
+     * @see #addTo(Collection)
+     * @see #addCc(Collection)
      * @see #clearAllRecipients
      */
     public void addBcc (String[] emailAddresses)
@@ -793,8 +793,8 @@ public class EmailMessage implements Serializable
      * @see #addBcc(EmailAddress)
      * @see #getBcc
      * @see #clearBcc
-     * @see #addTo(Collection<?>)
-     * @see #addCc(Collection<?>)
+     * @see #addTo(Collection)
+     * @see #addCc(Collection)
      * @see #clearAllRecipients
      * @see EmailAddress
      */
