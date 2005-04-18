@@ -42,7 +42,7 @@ import java.io.Serializable;
  * wrapper around a <tt>java.util.Properties</tt> object, allowing the
  * <tt>Properties</tt> object to be used where a type-safe <tt>Map</tt> is
  * expected. (One such place is with a
- * {@link org.clapper.util.text.VariableSubstituter} class.
+ * {@link org.clapper.util.text.VariableSubstituter} class.)
  *
  * @see java.util.Properties
  * 

@@ -33,7 +33,7 @@ package org.clapper.util.misc;
  *
  * <ul>
  *   <li> using the Java object-locking primitives (see, for instance,
- *        the {@link ObjectLockSemaphore}
+ *        the {@link ObjectLockSemaphore})
  *   <li> using the Java Native Interface (JNI) to access an underlying
  *        operating system semaphore primitive (e.g., the System V semaphore
  *        service on a Unix system)
