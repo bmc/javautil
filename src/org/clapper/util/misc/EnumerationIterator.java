@@ -39,9 +39,15 @@ import java.util.NoSuchElementException;
  * the <tt>Collections.enumeration()</tt> method in the <tt>java.util</tt>
  * package.</p>
  *
- * <p>Note: To use an <tt>Enumeration</tt> in a JDK 1.5-style <i>for
- * each</i> loop, you'll want to use the {@link IterableEnumeration}
- * wrapper, instead.</p>
+ * <p>You can also use an instance of this class to wrap an
+ * <tt>Enumeration</tt> for use in a JDK 1.5-style <i>for each</i> loop.
+ * For instance:</p>
+ *
+ * <blockquote><pre>
+ * Vector<String> v = ...
+ * for (String s : new EnumerationIterator<String> (v.elements()))
+ *     ...
+ * </pre></blockquote>
  *
  * @see IterableEnumeration
  * @see java.util.Iterator
@@ -51,7 +57,7 @@ import java.util.NoSuchElementException;
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
-public class EnumerationIterator<T> implements Iterator<T>
+public class EnumerationIterator<T> implements Iterator<T>, Iterable<T>
 {
     /*----------------------------------------------------------------------*\
                            Private Data Elements
@@ -95,6 +101,16 @@ public class EnumerationIterator<T> implements Iterator<T>
     public boolean hasNext()
     {
         return enumeration.hasMoreElements();
+    }
+
+    /**
+     * Returns this iterator. Necessary for the <tt>Iterable</tt> interface.
+     *
+     * @return this object
+     */
+    public Iterator<T> iterator()
+    {
+        return this;
     }
 
     /**
