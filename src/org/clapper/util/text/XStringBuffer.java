@@ -59,13 +59,16 @@ import org.clapper.util.text.TextUtil;
  *        {@link #decodeMetacharacters()}.)
  * </ul>
  *
+ * <p>Because <tt>XStringBuffer</tt> wraps a <tt>StringBuffer</tt>, it is
+ * thread-safe, but it can also be slower than a <tt>StringBuilder</tt>.
+ *
  * @see java.lang.StringBuffer
  *
  * @version <tt>$Revision$</tt>
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
-public class XStringBuffer
+public class XStringBuffer implements CharSequence, Appendable
 {
     /*----------------------------------------------------------------------*\
                              Public Constants
@@ -135,10 +138,13 @@ public class XStringBuffer
      * the buffer.
      *
      * @param val  The boolean value.
+     *
+     * @return a reference to this object
      */
-    public void append (boolean val)
+    public XStringBuffer append (boolean val)
     {
         buf.append (val);
+        return this;
     }
 
     /**
@@ -146,10 +152,13 @@ public class XStringBuffer
      * at its maximum length, the character is silently ignored.
      *
      * @param c  The character to append.
+     *
+     * @return a reference to this object
      */
-    public void append (char c)
+    public XStringBuffer append (char c)
     {
         buf.append (c);
+        return this;
     }
 
     /**
@@ -158,10 +167,13 @@ public class XStringBuffer
      * buffer to exceed its maximum length.
      *
      * @param chars  The characters to append.
+     *
+     * @return a reference to this object
      */
-    public void append (char chars[])
+    public XStringBuffer append (char chars[])
     {
         buf.append (chars);
+        return this;
     }
 
     /**
@@ -172,10 +184,13 @@ public class XStringBuffer
      * @param chars  The characters to append.
      * @param offset The index of the first character to append
      * @param len    The maximum number of characters to append
+     *
+     * @return a reference to this object
      */
-    public void append (char chars[], int offset, int len)
+    public XStringBuffer append (char chars[], int offset, int len)
     {
         buf.append (chars, offset, len);
+        return this;
     }
 
     /**
@@ -183,10 +198,13 @@ public class XStringBuffer
      * the buffer.
      *
      * @param val  The double value.
+     *
+     * @return a reference to this object
      */
-    public void append (double val)
+    public XStringBuffer append (double val)
     {
         buf.append (val);
+        return this;
     }
 
     /**
@@ -194,10 +212,13 @@ public class XStringBuffer
      * the buffer.
      *
      * @param val  The float value.
+     *
+     * @return a reference to this object
      */
-    public void append (float val)
+    public XStringBuffer append (float val)
     {
         buf.append (val);
+        return this;
     }
 
     /**
@@ -205,10 +226,13 @@ public class XStringBuffer
      * the buffer.
      *
      * @param val  The int value.
+     *
+     * @return a reference to this object
      */
-    public void append (int val)
+    public XStringBuffer append (int val)
     {
         buf.append (val);
+        return this;
     }
 
     /**
@@ -216,20 +240,26 @@ public class XStringBuffer
      * the buffer.
      *
      * @param val  The long value.
+     *
+     * @return a reference to this object
      */
-    public void append (long val)
+    public XStringBuffer append (long val)
     {
         buf.append (val);
+        return this;
     }
 
     /**
      * Append the string representation of an object to the buffer.
      *
      * @param obj  The object whose string value is to be appended.
+     *
+     * @return a reference to this object
      */
-    public void append (Object obj)
+    public XStringBuffer append (Object obj)
     {
         buf.append (obj);
+        return this;
     }
 
     /**
@@ -237,10 +267,13 @@ public class XStringBuffer
      * the buffer.
      *
      * @param val  The short value.
+     *
+     * @return a reference to this object
      */
-    public void append (short val)
+    public XStringBuffer append (short val)
     {
         buf.append (val);
+        return this;
     }
 
     /**
@@ -249,10 +282,50 @@ public class XStringBuffer
      * exceed its maximum length.
      *
      * @param s  The string to append.
+     *
+     * @return a reference to this object
      */
-    public void append (String s)
+    public XStringBuffer append (String s)
     {
         buf.append (s);
+        return this;
+    }
+
+    /**
+     * Append the entire contents of the specified <tt>CharSequence</tt> to
+     * the buffer. This method appends only as much of the
+     * <tt>CharSequence</tt> as will fit without causing the buffer to
+     * exceed its maximum length.
+     *
+     * @param csq  The <tt>CharSequence</tt> to append
+     *
+     * @return a reference to this object
+     *
+     * @see #append(CharSequence,int,int)
+     */
+    public XStringBuffer append (CharSequence csq)
+    {
+        buf.append (csq);
+        return this;
+    }
+
+    /**
+     * Append a subsequence of the specified <tt>CharSequence</tt> to the
+     * buffer. This method appends only as much of the subsequence as will
+     * fit without causing the buffer to exceed its maximum length.
+     *
+     * @param csq    The <tt>CharSequence</tt> to append
+     * @param start  The starting index of the subsequence
+     * @param end    One past the ending index of the subsequence
+     *
+     * @return a reference to this object
+     *
+     * @see #append(CharSequence)
+     */
+    public XStringBuffer append (CharSequence csq, int start, int end)
+    {
+        buf.append (csq, start, end);
+        return this;
     }
 
     /**
@@ -1136,11 +1209,35 @@ public class XStringBuffer
      * @throws StringIndexOutOfBoundsException if <tt>start</tt> is negative,
      *                                         greater than <tt>length()<tt>,
      *                                         or greater than <tt>end</tt>
+     *
+     * @see #subSequence
      */
     public String substring (int start, int end)
         throws StringIndexOutOfBoundsException
     {
         return buf.substring (start, end);
+    }
+
+    /**
+     * Return a new <tt>CharSequence</tt> object (really, another
+     * <tt>XStringBuffer</tt>0 that contains a subsequence of
+     * characters currently contained in this buffer. The substring begins
+     * at the specified <tt>start</tt> and extends to the character at
+     * index <tt>end - 1</tt>.
+     *
+     * @param start  The beginning index, inclusive
+     * @param end    The beginning index, exclusive
+     *
+     * @return the subsequence
+     *
+     * @throws IndexOutOfBoundsException if <tt>start</tt> is negative,
+     *                                   greater than <tt>length()<tt>,
+     *                                   or greater than <tt>end</tt>
+     */
+    public CharSequence subSequence (int start, int end)
+        throws IndexOutOfBoundsException
+    {
+        return buf.subSequence (start, end);
     }
 
     /**
