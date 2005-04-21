@@ -229,9 +229,9 @@ public class TestSemaphore extends CommandLineUtility
         }
     }
 
-    protected void parseCustomOption (char     shortOption,
-                                      String   longOption,
-                                      Iterator it)
+    protected void parseCustomOption (char             shortOption,
+                                      String           longOption,
+                                      Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException
     {
@@ -239,14 +239,14 @@ public class TestSemaphore extends CommandLineUtility
                                        + shortOption);
     }
     
-    protected void processPostOptionCommandLine (Iterator it)
+    protected void processPostOptionCommandLine (Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException
     {
-        semCount = parseIntParameter ((String) it.next());
-        nThreads = parseIntParameter ((String) it.next());
-        holdTime = parseIntParameter ((String) it.next());
-        pendTime = parseIntParameter ((String) it.next());
+        semCount = parseIntParameter (it.next());
+        nThreads = parseIntParameter (it.next());
+        holdTime = parseIntParameter (it.next());
+        pendTime = parseIntParameter (it.next());
     }
 
     protected void getCustomUsageInfo (UsageInfo info)

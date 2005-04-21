@@ -51,7 +51,7 @@ import java.util.NoSuchElementException;
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
-public class MultiIterator<T> implements Iterator<T>
+public class MultiIterator<T> implements Iterator<T>, Iterable<T>
 {
     /*----------------------------------------------------------------------*\
                            Private Data Elements
@@ -200,6 +200,16 @@ public class MultiIterator<T> implements Iterator<T>
             someLeft = it.hasNext();
 
         return someLeft;
+    }
+
+    /**
+     * Returns this iterator. Necessary for the <tt>Iterable</tt> interface.
+     *
+     * @return this object
+     */
+    public Iterator<T> iterator()
+    {
+        return this;
     }
 
     /**
