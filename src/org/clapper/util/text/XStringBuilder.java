@@ -315,8 +315,6 @@ public class XStringBuilder extends XStringBufBase
      * @param start  The beginning index, inclusive
      * @param end    The ending index, exclusive
      *
-     * @return This object
-     *
      * @throws IndexOutOfBoundsException  if <tt>start</tt> is negative,
      *                                    greater than <tt>length()<tt>,
      *                                    or greater than <tt>end</tt>

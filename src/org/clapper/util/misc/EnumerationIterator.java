@@ -49,7 +49,6 @@ import java.util.NoSuchElementException;
  *     ...
  * </pre></blockquote>
  *
- * @see IterableEnumeration
  * @see java.util.Iterator
  * @see java.util.Enumeration
  *

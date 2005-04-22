@@ -1026,8 +1026,6 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      * Return the number of characters currently in the buffer.
      *
      * @return The number of characters in the buffer.
-     *
-     * @see #capacity
      */
     public int length()
     {
