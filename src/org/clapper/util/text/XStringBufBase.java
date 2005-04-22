@@ -236,9 +236,16 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      * @throws IOException  I/O error
      */
     public XStringBufBase append (char c)
-        throws IOException
     {
-        getBufferAsAppendable().append (c);
+        try
+        {
+            getBufferAsAppendable().append (c);
+        }
+
+        catch (IOException ex)
+        {
+        }
+
         return this;
     }
 
@@ -256,17 +263,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
         Appendable buf = getBufferAsAppendable();
 
         for (int i = 0; i < chars.length; i++)
-        {
-            try
-            {
-                append (chars[i]);
-            }
-
-            catch (IOException ex)
-            {
-                // Shouldn't happen here
-            }
-        }
+            append (chars[i]);
 
         return this;
     }
@@ -721,15 +718,16 @@ public abstract class XStringBufBase implements CharSequence, Appendable
     public void decodeMetacharacters (int start, int end)
         throws StringIndexOutOfBoundsException
     {
-        char  chars[] = toString().toCharArray();
-        int   i       = 0;
+        char           chars[] = toString().toCharArray();
+        int            i       = 0;
+        StringBuilder  newBuf  = new StringBuilder();
 
         try
         {
             // Copy verbatim the region of characters prior to "start"
 
             while (i < start)
-                append (chars[i++]);
+                newBuf.append (chars[i++]);
 
             // Process the region. First, allocate a PushbackReader than
             // can handle up to 5 characters (4 characters for a Unicode
@@ -755,7 +753,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
                         // Incomplete metacharacter sequence at end of
                         // region. Just pass along the backslash as is.
 
-                        append ((char) c);
+                        newBuf.append ((char) c);
                     }
 
                     else
@@ -765,15 +763,15 @@ public abstract class XStringBufBase implements CharSequence, Appendable
                             break;
 
                         if (c == -2) // Bad unicode sequence
-                            append (METACHAR_SEQUENCE_START);
+                            newBuf.append (METACHAR_SEQUENCE_START);
                         else
-                            append ((char) c);
+                            newBuf.append ((char) c);
                     }
                 }
 
                 else
                 {
-                    append ((char) c);
+                    newBuf.append ((char) c);
                 }
             }
 
@@ -781,7 +779,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
 
             i = end;
             while (i < chars.length)
-                append (chars[i++]);
+                newBuf.append (chars[i++]);
         }
 
         catch (ArrayIndexOutOfBoundsException ex)
@@ -793,6 +791,9 @@ public abstract class XStringBufBase implements CharSequence, Appendable
         {
             throw new StringIndexOutOfBoundsException();
         }
+
+        clear();
+        append (newBuf.toString());
     }
 
     /**
