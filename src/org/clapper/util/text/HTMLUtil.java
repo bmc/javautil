@@ -92,7 +92,7 @@ public final class HTMLUtil
     {
         char[]         ch = s.toCharArray();
         boolean        inElement = false;
-        XStringBuffer  buf = new XStringBuffer();
+        XStringBuilder buf = new XStringBuilder();
 
         for (int i = 0; i < ch.length; i++)
         {

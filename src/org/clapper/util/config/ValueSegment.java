@@ -26,7 +26,7 @@
 
 package org.clapper.util.config;
 
-import org.clapper.util.text.XStringBuffer;
+import org.clapper.util.text.XStringBuilder;
 
 /**
  * A variable value segment. This is just a substring, with a flag that
@@ -34,7 +34,7 @@ import org.clapper.util.text.XStringBuffer;
  */
 class ValueSegment
 {
-    XStringBuffer  segmentBuf = new XStringBuffer();
+    XStringBuilder segmentBuf = new XStringBuilder();
     boolean        isLiteral  = false;
 
     ValueSegment()
