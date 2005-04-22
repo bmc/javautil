@@ -26,7 +26,7 @@
 
 package org.clapper.util.config;
 
-import org.clapper.util.text.XStringBuffer;
+import org.clapper.util.text.XStringBufBase;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -223,7 +223,7 @@ class Variable
                 switch (ch)
                 {
                     case LITERAL_QUOTE:
-                        if (lastCh == XStringBuffer.METACHAR_SEQUENCE_START)
+                        if (lastCh == XStringBufBase.METACHAR_SEQUENCE_START)
                         {
                             // Escaped quote. Pass as literal.
                             currentSegment.append (ch);
@@ -280,8 +280,8 @@ class Variable
                 valueSegments = new ValueSegment [segments.size()];
 
                 i = 0;
-                for (Iterator it = segments.iterator(); it.hasNext(); )
-                    valueSegments[i++] = (ValueSegment) it.next();
+                for (ValueSegment vs : segments)
+                    valueSegments[i++] = vs;
             }
         }
     }
@@ -298,7 +298,7 @@ class Variable
     {
         if (valueSegments != null)
         {
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
 
             for (int i = 0; i < valueSegments.length; i++)
             {
