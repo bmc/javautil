@@ -8,7 +8,15 @@ Version 2.0 (...)
 
 - Now requires Java 1.5.0 JDK/JRE.
 
-- Various classes converted to use JDK 1.5 generics.
+- Converted various classes to use JDK 1.5 generics.
+
+- The org.clapper.util.text.XStringBuffer class now implements
+  java.lang.Appendable and java.lang.CharSequence.
+
+- New class org.clapper.util.text.XStringBuilder provides similar
+  functionality to XStringBuffer, except that it wraps a StringBuilder.
+  Functionality common to XStringBuffer and XStringBuilder is in a new
+  XStringBufBase class.
 
 - org.clapper.util.config.Configuration class now supports an "env"
   pseudosection, to interpolate the values of environment variables into
@@ -39,8 +47,11 @@ Version 2.0 (...)
   org.clapper.util.text.VariableSubstituter class, there's now a type-safe
   org.clapper.util.misc.PropertiesMap wrapper for java.util.Properties.
 
+- Add new (simple) org.clapper.util.io.XMLWriter class, used to write
+  XML output.
 
-Version 1.1.8 (...)
+
+Version 1.1.8 (21 April, 2005)
 
 - Fixed bug in org.clapper.util.cmdline.CommandLineUtility class: Default
   version processPostOptionCommandLine() threw an unconditional exception.
