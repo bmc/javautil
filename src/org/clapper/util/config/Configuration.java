@@ -160,7 +160,7 @@ import org.clapper.util.io.FileUtil;
  * <tt>\n</tt>, <tt>\r</tt>, <tt>\\</tt>, <tt>\"</tt>, <tt>\'</tt>,
  * <tt>\&nbsp;</tt> (a backslash and a space), and
  * <tt>&#92;u</tt><i>xxxx</i> are recognized and converted to single
- * characters. Note that metacharacter expansion is performed <i>after</i>
+ * characters. Note that metacharacter expansion is performed <i>before</i>
  * variable substitution.</p>
  *
  * <h5>Variable Substitution</h5>
@@ -1791,8 +1791,8 @@ public class Configuration
         {
             newVar.segmentValue();
             VariableSubstituter sub = new UnixShellVariableSubstituter();
-            substituteVariables (newVar, sub, false);
             decodeMetacharacters (newVar);
+            substituteVariables (newVar, sub, false);
             newVar.reassembleCookedValueFromSegments();
         }
 
