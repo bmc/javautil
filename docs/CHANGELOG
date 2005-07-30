@@ -4,6 +4,22 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
+Version 2.0.1 (29 July, 2005)
+
+- Some minor changes to the org.clapper.util.mail.EmailMessage class:
+
+  a) The clear() method now explicitly deletes any temporary files that
+     were created to handle java.io.InputStream attachments. As before, the
+     the finalizer also performs that explicit deletion, and the files are
+     marked for deletion when the VM exits. But the application can now
+     force that cleanup itself.
+
+  b) Added some new versions of the setText() and addAttachment() methods,
+     permitting use of a java.io.File object while still setting an
+     explicit attachment name that isn't necessarily derived from the
+     actual file name.
+
+
 Version 2.0 (22 April, 2005)
 
 - Now requires Java 1.5.0 JDK/JRE.

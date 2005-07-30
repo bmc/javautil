@@ -27,6 +27,7 @@
 package org.clapper.util.mail;
 
 import org.clapper.util.io.FileUtil;
+import org.clapper.util.logging.Logger;
 import org.clapper.util.misc.MIMETypeUtil;
 
 import java.io.IOException;
@@ -139,6 +140,8 @@ import javax.mail.internet.MimeBodyPart;
  *
  * SMTPEmailTransport transport = new SMTPEmailTransport ("smtp.example.com");
  * transport.send (message);
+ *
+ * message.clear();
  * </pre></blockquote>
  *
  * <h3>Restrictions</h3>
@@ -297,9 +300,9 @@ public class EmailMessage implements Serializable
     private Collection<File> temporaryFiles = new ArrayList<File>();
 
     /**
-     * Used by generateAttachmentName()
+     * For log messages
      */
-    private int attachmentCounter = 0;
+    private static Logger log = new Logger (EmailMessage.class);
 
     /*----------------------------------------------------------------------*\
                                Constructors
@@ -348,6 +351,55 @@ public class EmailMessage implements Serializable
      */
     protected void finalize()
     {
+        clear();
+    }
+
+    /*----------------------------------------------------------------------*\
+                              Public Methods
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * <p>Clear the message. This method clears all fields except the SMTP
+     * host. Specifically, this method:</p>
+     *
+     * <ul>
+     *   <li> Clears the lists of To, Cc and Bcc recipients
+     *   <li> Clears the text part
+     *   <li> Clears and removes all attachments
+     *   <li> Deletes any temporary files that were created to store
+     *        attachments
+     *   <li> Clears the sender field
+     *   <li> Resets the message type to {@link #MULTIPART_MIXED}
+     * </ul>
+     *
+     * <p>The cleared <tt>EmailMessage</tt> can then be used for a fresh
+     * message.</p>
+     *
+     * <p>NOTE: It's a good idea to call this method when you're finished
+     * with the message; it ensures that the resources used by the
+     * message--including temporary files for certain kinds of
+     * attachments--are released. The finalizer calls this method, but the
+     * finalizer might not fire right away (and, on some platforms, in some
+     * circumstances, the finalizer may not fire at all).</p>
+     *
+     * @see #clearTo()
+     * @see #clearBcc()
+     * @see #clearCc()
+     * @see #clearAllRecipients()
+     * @see #clearText
+     */
+    public void clear()
+    {
+        clearTo();
+        clearBcc();
+        clearCc();
+        clearAllAttachments();
+        clearText();
+        initAdditionalHeaders();
+
+        this.sender = null;
+        multipartSubtype = MULTIPART_MIXED;
+
         // Clean up any temporary files.
 
         for (Iterator it = temporaryFiles.iterator(); it.hasNext(); )
@@ -356,23 +408,22 @@ public class EmailMessage implements Serializable
 
             try
             {
-                f.delete();
+                log.debug ("Deleting temporary file \"" + f.getPath() + "\"");
+                if (! f.delete())
+                    log.error ("Failed to delete \"" + f.getPath() + "\"");
+
             }
 
             catch (Exception ex)
             {
-                // Not much we can do about it here.
+                log.error ("Failed to delete \"" + f.getPath() + "\"", ex);
             }
 
             it.remove();
         }
 
-        temporaryFiles = null;
+        assert (temporaryFiles.size() == 0);
     }
-
-    /*----------------------------------------------------------------------*\
-                              Public Methods
-    \*----------------------------------------------------------------------*/
 
     /**
      * Add a header to the outgoing message. Note that callers should
@@ -1408,7 +1459,8 @@ public class EmailMessage implements Serializable
 
     /**
      * Set the text part of the message from the contents of a file. If
-     * this message already has a text part, it will be replaced.
+     * this message already has a text part, it will be replaced. The text
+     * part's file name will be taken from the <tt>File</tt> object.
      *
      * @param file     The <tt>File</tt> object from which to get the text
      * @param mimeType The MIME type to associate with the text part, or
@@ -1431,10 +1483,41 @@ public class EmailMessage implements Serializable
     public void setText (File file, String mimeType)
         throws EmailException
     {
+        setText (file, file.getName(), mimeType);
+    }
+
+    /**
+     * Set the text part of the message from the contents of a file,
+     * allowing the caller to specify the file name to use when identifying
+     * the text part. If this message already has a text part, it will be
+     * replaced.
+     *
+     * @param file     The <tt>File</tt> object from which to get the text
+     * @param fileName The file name to use
+     * @param mimeType The MIME type to associate with the text part, or
+     *                 null to assume the default based on the file extension
+     *
+     * @throws EmailException  error setting text part of message
+     *
+     * @see #getText()
+     * @see #setText(File)
+     * @see #setText(String,String)
+     * @see #setText(String,String,String)
+     * @see #setText(String[],String,String)
+     * @see #setText(InputStream,String)
+     * @see #setText(InputStream,String,String)
+     * @see #setText(Iterator)
+     * @see #setText(Iterator,String)
+     * @see #setText(Iterator,String,String)
+     * @see #clearText()
+     */
+    public void setText (File file, String fileName, String mimeType)
+        throws EmailException
+    {
         try
         {
             MimeBodyPart    bodyPart   = makeBodyPart (file,
-                                                       file.getName(),
+                                                       fileName,
                                                        mimeType);
             int             slash;
             String          mainType;
@@ -2028,7 +2111,8 @@ public class EmailMessage implements Serializable
 
     /**
      * Add an attachment from the contents of a file. The MIME type is
-     * taken from the file's extension.
+     * taken from the file's extension. The file's name will be used as the
+     * attachment name.
      *
      * @param file   The <tt>File</tt> to read to create the attachment
      *
@@ -2061,7 +2145,8 @@ public class EmailMessage implements Serializable
     }
 
     /**
-     * Add an attachment from the contents of a file.
+     * Add an attachment from the contents of a file. The file's name will
+     * be used as the attachment name.
      *
      * @param file     The <tt>File</tt> to read to create the attachment
      * @param mimeType The MIME type to associate with the file, or null
@@ -2086,6 +2171,42 @@ public class EmailMessage implements Serializable
         try
         {
             attachments.add (makeBodyPart (file, file.getName(), mimeType));
+        }
+
+        catch (MessagingException ex)
+        {
+            throw new EmailException ("Cannot add attachment to email message",
+                                      ex);
+        }
+    }
+
+    /**
+     * Add an attachment from the contents of a file.
+     *
+     * @param file     The <tt>File</tt> to read to create the attachment
+     * @param fileName The file name to use as the attachment name
+     * @param mimeType The MIME type to associate with the file, or null
+     *                 to infer the MIME type from the file's extension
+     *
+     * @throws EmailException  error adding the attachment
+     *
+     * @see #addAttachment(File,String)
+     * @see #addAttachment(String)
+     * @see #addAttachment(String,String)
+     * @see #addAttachment(String[],String)
+     * @see #addAttachment(InputStream)
+     * @see #addAttachment(InputStream,String)
+     * @see #addAttachment(Iterator)
+     * @see #getAttachment(int)
+     * @see #getAttachmentContentType(int)
+     * @see #totalAttachments()
+     */
+    public void addAttachment (File file, String fileName, String mimeType)
+        throws EmailException
+    {
+        try
+        {
+            attachments.add (makeBodyPart (file, fileName, mimeType));
         }
 
         catch (MessagingException ex)
@@ -2257,33 +2378,6 @@ public class EmailMessage implements Serializable
         return result;
     }
 
-    /**
-     * Clear the message. This method clears all fields except the SMTP
-     * host. Specifically, it:
-     *
-     * <ul>
-     *   <li> Clears the lists of To, Cc and Bcc recipients
-     *   <li> Clears the text part
-     *   <li> Clears and removes all attachments
-     *   <li> Clears the sender field
-     * </ul>
-     *
-     * @see #clearTo()
-     * @see #clearBcc()
-     * @see #clearCc()
-     * @see #clearAllRecipients()
-     * @see #clearText
-     */
-    public void clear()
-    {
-        clearTo();
-        clearBcc();
-        clearCc();
-        clearAllAttachments();
-        clearText();
-        this.sender = null;
-    }
-
     /*----------------------------------------------------------------------*\
                           Package-visible Methods
     \*----------------------------------------------------------------------*/
@@ -2450,6 +2544,7 @@ public class EmailMessage implements Serializable
      */
     private void initAdditionalHeaders()
     {
+        additionalHeaders.clear();
         for (int i = 0; i < CUSTOM_HEADERS.length; i++)
             additionalHeaders.add (CUSTOM_HEADERS[i]);
     }
@@ -2596,6 +2691,7 @@ public class EmailMessage implements Serializable
         extension = "." + extension;
         File tempFile = File.createTempFile ("mail", extension);
         tempFile.deleteOnExit();
+        log.debug ("Created temporary file \"" + tempFile.getPath() + "\"");
         temporaryFiles.add (tempFile);
 
         OutputStream os = new BufferedOutputStream

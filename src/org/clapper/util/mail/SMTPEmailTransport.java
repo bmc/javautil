@@ -258,7 +258,7 @@ public class SMTPEmailTransport implements EmailTransport
             // Send it.
 
             transport.connect();
-	    Transport.send (javamailMessage);
+	    transport.send (javamailMessage);
             transport.close();
         }
 
