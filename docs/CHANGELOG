@@ -67,6 +67,22 @@ Version 2.0 (22 April, 2005)
   XML output.
 
 
+Version 1.1.9 (09 August, 2005) [MAINTENANCE RELEASE OF DEPRECATED CODE BRANCH]
+
+- Some minor changes to the org.clapper.util.mail.EmailMessage class:
+
+  a) The clear() method now explicitly deletes any temporary files that
+     were created to handle java.io.InputStream attachments. As before, the
+     the finalizer also performs that explicit deletion, and the files are
+     marked for deletion when the VM exits. But the application can now
+     force that cleanup itself.
+
+  b) Added some new versions of the setText() and addAttachment() methods,
+     permitting use of a java.io.File object while still setting an
+     explicit attachment name that isn't necessarily derived from the
+     actual file name.
+
+
 Version 1.1.8 (21 April, 2005)
 
 - Fixed bug in org.clapper.util.cmdline.CommandLineUtility class: Default
