@@ -637,6 +637,24 @@ public final class TextUtil
 
     /**
      * Join a set of strings into one string, putting the specified delimiter
+     * between adjacent strings. This version of <tt>join()</tt> supports the
+     * new Java variable argument syntax.
+     *
+     * @param delim    the delimiter string
+     * @param strings  the strings to be joined
+     *
+     * @return the joined string, or "" if the array is empty.
+     *
+     * @see #split(String,char)
+     * @see #join(String[],String)
+     */
+    public static String join (String delim, String... strings)
+    {
+        return join (strings, delim);
+    }
+
+    /**
+     * Join a set of strings into one string, putting the specified delimiter
      * between adjacent strings.
      *
      * @param strings  the strings to be joined
@@ -648,6 +666,24 @@ public final class TextUtil
      * @see #join(String[],String)
      */
     public static String join (String[] strings, char delim)
+    {
+        return join (strings, "" + delim);
+    }
+
+    /**
+     * Join a set of strings into one string, putting the specified delimiter
+     * between adjacent strings. This version of <tt>join()</tt> supports the
+     * new Java variable argument syntax.
+     *
+     * @param delim    the delimiter character
+     * @param strings  the strings to be joined
+     *
+     * @return the joined string, or "" if the array is empty.
+     *
+     * @see #split(String,char)
+     * @see #join(String[],String)
+     */
+    public static String join (char delim, String... strings)
     {
         return join (strings, "" + delim);
     }
