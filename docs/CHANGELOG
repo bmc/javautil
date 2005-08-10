@@ -4,6 +4,11 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
+Version 2.0.2 (10 August, 2005)
+
+- Add versions of TextUtil.join() that take variable arguments.
+
+
 Version 2.0.1 (29 July, 2005)
 
 - Some minor changes to the org.clapper.util.mail.EmailMessage class:
