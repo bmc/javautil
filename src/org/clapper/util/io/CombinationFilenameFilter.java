@@ -64,18 +64,22 @@ public class CombinationFilenameFilter implements FilenameFilter
     \*----------------------------------------------------------------------*/
 
     /**
-     * Mode setting that instructs the filter to <tt>AND</tt> all the
-     * contained filters.
+     * Convenience constant for backward compatibility: Mode setting that
+     * instructs the filter to <tt>AND</tt> all the contained filters.
+     *
+     * @see CombinationFilterMode#AND_FILTERS
      */
     public static final CombinationFilterMode AND_FILTERS =
-                                                new CombinationFilterMode (1);
+                               CombinationFilterMode.AND_FILTERS;
 
     /**
-     * Mode setting that instructs the filter to <tt>OR</tt> all the
-     * contained filters.
+     * Convenience constant for backward compatibility: Mode setting that
+     * instructs the filter to <tt>OR</tt> all the contained filters.
+     *
+     * @see CombinationFilterMode#OR_FILTERS
      */
     public static final CombinationFilterMode OR_FILTERS  =
-                                                new CombinationFilterMode (2);
+                               CombinationFilterMode.OR_FILTERS;
 
     /*----------------------------------------------------------------------*\
                             Private Data Items
@@ -196,7 +200,7 @@ public class CombinationFilenameFilter implements FilenameFilter
         Iterator        it = filters.iterator();
         FilenameFilter  filter;  
 
-        if (mode.value == AND_FILTERS.value)
+        if (mode == AND_FILTERS)
         {
             accepted = true;
 

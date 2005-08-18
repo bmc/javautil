@@ -37,57 +37,17 @@ package org.clapper.util.io;
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */
-public final class CombinationFilterMode
+public enum CombinationFilterMode
 {
-    /*----------------------------------------------------------------------*\
-                               Instance Data
-    \*----------------------------------------------------------------------*/
+    /**
+     * Mode setting that instructs the filter to <tt>AND</tt> all the
+     * contained filters.
+     */
+    AND_FILTERS,
 
     /**
-     * The actual value, package visible.
+     * Mode setting that instructs the filter to <tt>OR</tt> all the
+     * contained filters.
      */
-    final int value;
-
-    /*----------------------------------------------------------------------*\
-                                Constructor1
-    \*----------------------------------------------------------------------*/
-
-    /**
-     * One constructor, again, package-visible.
-     */
-    CombinationFilterMode (int value)
-    {
-        this.value = value;
-    }
-
-    /*----------------------------------------------------------------------*\
-                              Public Methods
-    \*----------------------------------------------------------------------*/
-
-    /**
-     * Determine whether this object equals another one.
-     *
-     * @param other the other object
-     *
-     * @return <tt>true</tt> if they're equal, <tt>false</tt> if not.
-     */
-    public boolean equals (Object other)
-    {
-        boolean eq = false;
-
-        if (other instanceof CombinationFilterMode)
-            eq = this.value == ((CombinationFilterMode) other).value;
-
-        return eq;
-    }
-
-    /**
-     * Get the hash code for this object.
-     *
-     * @return the hash code
-     */
-    public int hashCode()
-    {
-        return value;
-    }
-}
+    OR_FILTERS
+};
