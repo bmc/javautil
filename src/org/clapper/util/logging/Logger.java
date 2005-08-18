@@ -111,7 +111,7 @@ import java.util.logging.Level;
  *        third-party jar dependency from <tt>org.clapper</tt> applications.
  *   <li> This layer is quite a bit thinner than Commons Logging.
  * </ul>
-
+ *
  * <p>If you prefer Commons Logging, then, by all means, use it for your
  * applications.</p>
  *
@@ -129,34 +129,52 @@ public class Logger
     \*----------------------------------------------------------------------*/
 
     /**
-     * Level parameter to the {@link #message} method.
+     * Log level constant for debug messages. Defined here for backward
+     * compatibility.
+     *
+     * @see LogLevel#DEBUG
      */
-    public static final LogLevel LEVEL_DEBUG = new LogLevel (Level.FINE);
+    public static LogLevel LEVEL_DEBUG = LogLevel.DEBUG;
 
     /**
-     * Level parameter to the {@link #message} method.
+     * Log level constant for error messages. Defined here for backward
+     * compatibility.
+     *
+     * @see LogLevel#ERROR
      */
-    public static final LogLevel LEVEL_ERROR = new LogLevel (Level.SEVERE);
+    public static LogLevel LEVEL_ERROR = LogLevel.ERROR;
 
     /**
-     * Level parameter to the {@link #message} method.
+     * Log level constant for fatal-error messages. Defined here for
+     * backward compatibility.
+     *
+     * @see LogLevel#FATAL
      */
-    public static final LogLevel LEVEL_FATAL = new LogLevel (Level.SEVERE);
+    public static LogLevel LEVEL_FATAL = LogLevel.FATAL;
 
     /**
-     * Level parameter to the {@link #message} method.
+     * Log level constant for informational messages. Defined here for
+     * backward compatibility.
+     *
+     * @see LogLevel#INFO
      */
-    public static final LogLevel LEVEL_INFO = new LogLevel (Level.INFO);
+    public static LogLevel LEVEL_INFO = LogLevel.INFO;
 
     /**
-     * Level parameter to the {@link #message} method.
+     * Log level constant for trace messages. Defined here for backward
+     * compatibility.
+     *
+     * @see LogLevel#TRACE
      */
-    public static final LogLevel LEVEL_TRACE = new LogLevel (Level.FINEST);
+    public static LogLevel LEVEL_TRACE = LogLevel.TRACE;
 
     /**
-     * Level parameter to the {@link #message} method.
+     * Log level constant for warning messages. Defined here for backward
+     * compatibility.
+     *
+     * @see LogLevel#WARNING
      */
-    public static final LogLevel LEVEL_WARNING = new LogLevel (Level.WARNING);
+    public static LogLevel LEVEL_WARNING = LogLevel.WARNING;
 
     /*----------------------------------------------------------------------*\
                              Private Constants
@@ -165,12 +183,12 @@ public class Logger
     /**
      * Convenience of reference
      */
-    private static final Level DEBUG   = LEVEL_DEBUG.getLevel();
-    private static final Level ERROR   = LEVEL_ERROR.getLevel();
-    private static final Level FATAL   = LEVEL_FATAL.getLevel();
-    private static final Level INFO    = LEVEL_INFO.getLevel();
-    private static final Level TRACE   = LEVEL_TRACE.getLevel();
-    private static final Level WARNING = LEVEL_WARNING.getLevel();
+    private static final Level DEBUG   = LogLevel.DEBUG.getLevel();
+    private static final Level ERROR   = LogLevel.ERROR.getLevel();
+    private static final Level FATAL   = LogLevel.FATAL.getLevel();
+    private static final Level INFO    = LogLevel.INFO.getLevel();
+    private static final Level TRACE   = LogLevel.TRACE.getLevel();
+    private static final Level WARNING = LogLevel.WARNING.getLevel();
 
     /*----------------------------------------------------------------------*\
                            Private Instance Data

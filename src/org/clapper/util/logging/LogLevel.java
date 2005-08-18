@@ -29,10 +29,46 @@ package org.clapper.util.logging;
 import java.util.logging.Level;
 
 /**
- * Encodes a legal logging level constant for the {@link Logger} class.
+ * Encodes legal logging level constants for the {@link Logger} class.
+ *
+ * @version <tt>$Revision$</tt>
  */
-public class LogLevel
+public enum LogLevel
 {
+    /*----------------------------------------------------------------------*\
+                        Enumeration Constant Values
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * Log message at "debug" level
+     */
+    DEBUG (Level.FINE),
+
+    /**
+     * Log message at "error" level
+     */
+    ERROR (Level.SEVERE),
+
+    /**
+     * Log message at "fatal error" level
+     */
+    FATAL (Level.SEVERE),
+
+    /**
+     * Log message at "informational message" level
+     */
+    INFO (Level.INFO),
+
+    /**
+     * Log message at "trace" level
+     */
+    TRACE (Level.FINEST),
+
+    /**
+     * Log message at "warning" level
+     */
+    WARNING (Level.WARNING);
+
     /*----------------------------------------------------------------------*\
                            Private Instance Data
     \*----------------------------------------------------------------------*/
