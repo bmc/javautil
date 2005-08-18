@@ -29,6 +29,10 @@ package org.clapper.util.misc;
 import java.util.Date;
 
 /**
+ * <p><b>NOTE: This class, and its parent interface, are deprecated. With
+ * J2SE 5.0 (a.k.a., Java 1.5), the JDK provides its own semaphore class,
+ * <tt>java.util.concurrent.Semaphore</tt>.</b></p>
+ *
  * <p>The <tt>ObjectLockSemaphore</tt> class implements the {@link Semaphore}
  * interface and provides a classic counting semaphore that uses the Java
  * object-locking primitives (the same locking primitives used to implement
@@ -148,6 +152,8 @@ import java.util.Date;
  * </blockquote>
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @deprecated J2SE 5.0 now provides a <tt>java.util.concurrent.Semaphore</tt> class
  *
  * @author Copyright &copy; 2004 Brian M. Clapper
  */

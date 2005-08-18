@@ -27,6 +27,10 @@
 package org.clapper.util.misc;
 
 /**
+ * <p><b>NOTE: This interface, and its subclasses, are deprecated. With
+ * J2SE 5.0 (a.k.a., Java 1.5), the JDK provides its own semaphore class,
+ * <tt>java.util.concurrent.Semaphore</tt>.</b></p>
+ *
  * <p>The <tt>Semaphore</tt> interface specifies a classic counting
  * semaphore. This interface can be implemented in a variety of ways, including
  * (but not limited to) the following:</p>
@@ -101,6 +105,10 @@ package org.clapper.util.misc;
  * semaphore's <tt>acquire()</tt> method times out.</p>
  *
  * @version <tt>$Revision$</tt>
+ *
+ * @deprecated J2SE 5.0 now provides a <tt>java.util.concurrent.Semaphore</tt> class
+ *
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
 public interface Semaphore
 {
