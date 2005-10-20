@@ -955,7 +955,7 @@ public class Configuration
             throw new ConfigurationException
                                (Package.BUNDLE_NAME,
                                 "Configuration.negativeCardinalValue",
-                                "Bad netaive numeric value \"{0}\" "
+                                "Bad negative numeric value \"{0}\" "
                               + "for variable \"{1}\" in section \"{2}\"",
                                 new Object[]
                                 {
