@@ -71,7 +71,7 @@ public class NoSuchVariableException extends ConfigurationException
                "noSuchVariable",
                "Variable \"{0}\" does not exist in configuration section "
              + "\"{1}\"",
-               new Object[] {sectionName, variableName});
+               new Object[] {variableName, sectionName});
 
         this.sectionName  = sectionName;
         this.variableName = variableName;
