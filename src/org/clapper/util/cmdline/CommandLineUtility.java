@@ -1240,7 +1240,7 @@ public abstract class CommandLineUtility
 
             for (i = 0; i < strings.length; i++)
             {
-                out.setPrefix (padString (strings[i], maxOptionLength));
+                out.setPrefix (padString (strings[i], maxParamLength));
                 out.println (usageInfo.getParameterExplanation (strings[i]));
                 out.setPrefix (null);
             }
