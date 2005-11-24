@@ -231,6 +231,12 @@ public class RollingFileWriter extends PrintWriter
     }
 
     /*----------------------------------------------------------------------*\
+                             Private Constants
+    \*----------------------------------------------------------------------*/
+
+    private static final String GZIP_EXTENSION = ".gz";
+
+    /*----------------------------------------------------------------------*\
                            Private Inner Classes
     \*----------------------------------------------------------------------*/
 
@@ -241,12 +247,38 @@ public class RollingFileWriter extends PrintWriter
     private static class BackupIndexDereferencer
         implements VariableDereferencer
     {
-        private Integer index = null;
-        private boolean legal = false;
+        private Integer        index;
+        private DecimalFormat  indexFormat;
+        private boolean        legal = false;
 
-        BackupIndexDereferencer (Integer index)
+        BackupIndexDereferencer (Integer index, int maxRolledOverFiles)
         {
-            this.index = index;
+            this.index       = index;
+            this.indexFormat = indexFormat;
+
+            // Have to create a decimal format we can use to construct the
+            // suffix with the appropriate number of digits. The simplest
+            // solution is to take the max number of files value, subtract
+            // 1, and figure out how many digits that number has. A few
+            // examples will illustrate that this works:
+            //
+            // maxRolledOverFiles  maxRolledOverFiles  # of 
+            //     value            value minus 1  digits    extensions
+            // ---------------------------------------------------------------
+            //        2                  1           1       0, 1           
+            //        9                  8           1       0, 1, 2, ..., 7
+            //       10                  9           1       0, 1, 2, ..., 9
+            //       25                 24           2       00, 01, ..., 24
+            //      100                 99           2       00, 01, ..., 99
+            //      101                100           3       000, 001, ..., 100
+
+            String        digitCount = String.valueOf (maxRolledOverFiles - 1);
+            StringBuilder format     = new StringBuilder();
+
+            for (int i = 0; i < digitCount.length(); i++)
+                format.append ('0');
+
+            indexFormat = new DecimalFormat (format.toString());
         }
 
         public String getVariableValue (String varName, Object context)
@@ -262,7 +294,15 @@ public class RollingFileWriter extends PrintWriter
             }
 
             legal = true;
-            return (index == null) ? "" : index.toString();
+            StringBuilder buf = new StringBuilder();
+
+            if (index != null)
+            {
+                buf.append (".");
+                buf.append (indexFormat.format (index));
+            }
+                
+            return buf.toString();
         }
 
         boolean patternIsLegal()
@@ -301,12 +341,6 @@ public class RollingFileWriter extends PrintWriter
      * automatic file roll-over is disabled.
      */
     private int maxRolledOverFiles = 0;
-
-    /**
-     * Use to format the backup file index number. Only defined if
-     * automatic rollover is enabled.
-     */
-    private DecimalFormat extensionFormat = null;
 
     /**
      * Compression type
@@ -460,7 +494,7 @@ public class RollingFileWriter extends PrintWriter
      * @param maxRolledFileSize  The maximum size, in bytes, that the file can
      *                           be before it is rolled over, or 0 for no
      *                           maximum.
-     * @param maxRolledFiles     The maximum number of rolled-over log files
+     * @param maxRolledOverFiles The maximum number of rolled-over log files
      *                           to retain, or 0 for no maximum.
      * @param compressionType    {@link Compression#COMPRESS_BACKUPS} to
      *                           compress backups,
@@ -479,50 +513,29 @@ public class RollingFileWriter extends PrintWriter
     public RollingFileWriter (String           fileNamePattern,
                               String           charsetName,
                               long             maxRolledFileSize,
-                              int              maxRolledFiles,
+                              int              maxRolledOverFiles,
                               Compression      compressionType,
                               RolloverCallback callback)
         throws IOExceptionExt
     {
         super (openPrimaryFile (fileNamePattern,
                                 charsetName,
-                                maxRolledFiles,
+                                maxRolledOverFiles,
                                 compressionType,
                                 callback),
                true);
 
         this.filePattern = fileNamePattern;
         this.compressionType = compressionType;
-        this.primaryFile = resolveFilePattern (fileNamePattern, null);
+        this.primaryFile = resolveFilePattern (fileNamePattern,
+                                               null,
+                                               maxRolledOverFiles,
+                                               null);
         this.callback = callback;
         this.charsetName = charsetName;
         this.compressionType = compressionType;
         this.maxRolledFileSize  = maxRolledFileSize;
-        this.maxRolledOverFiles = maxRolledFiles;
-
-        // Have to create a decimal format we can use to construct the
-        // suffix with the appropriate number of digits. The simplest
-        // solution is to take the max number of files value, subtract
-        // 1, and figure out how many digits that number has. A few examples
-        // will illustrate that this works:
-        //
-        // maxRolledOverFiles  maxRolledOverFiles  # of 
-        //     value            value minus 1     digits    extensions
-        // -------------------------------------------------------------------
-        //        2                  1              1       0, 1           
-        //        9                  8              1       0, 1, 2, ..., 7
-        //       10                  9              1       0, 1, 2, ..., 9
-        //       25                 24              2       00, 01, ..., 24
-        //      100                 99              2       00, 01, ..., 99
-        //      101                100              3       000, 001, ..., 100
-
-        String        digitCount = new Integer (maxRolledFiles - 1).toString();
-        StringBuffer  format     = new StringBuffer();
-
-        for (int i = 0; i < digitCount.length(); i++)
-            format.append ('0');
-
-        extensionFormat = new DecimalFormat (format.toString());
+        this.maxRolledOverFiles = maxRolledOverFiles;
     }
 
     /*----------------------------------------------------------------------*\
@@ -745,13 +758,10 @@ public class RollingFileWriter extends PrintWriter
      *
      * @param sourceFile      the file to move
      * @param targetFile      where it should go
-     * @param compressionType whether or not to compress the target
      *
      * @throws IOExceptionExt  on error
      */
-    private static void renameFile (File        sourceFile,
-                                    File        targetFile,
-                                    Compression compressionType)
+    private static void renameFile (File sourceFile, File targetFile)
         throws IOExceptionExt
     {
         log.debug ("Moving file \""
@@ -787,38 +797,6 @@ public class RollingFileWriter extends PrintWriter
                                       },
                                       ex);
         }
-
-        if (compressionType == Compression.COMPRESS_BACKUPS)
-        {
-            try
-            {
-                InputStream is = new FileInputStream (targetFile);
-                OutputStream os = new GZIPOutputStream 
-                                   (new FileOutputStream (targetFile.getPath()
-                                                        + ".gz"));
-                FileUtil.copyStream (is, os);
-                is.close();
-                os.close();
-
-                if (! targetFile.delete())
-                {
-                    throw new IOExceptionExt
-                        (Package.BUNDLE_NAME,
-                         "RollingFileWriter.cantDeleteFile",
-                         "Can't delete file \"{0}\"",
-                         new Object[] {targetFile.getPath()});
-                }
-            }
-
-            catch (IOException ex)
-            {
-                throw new IOExceptionExt
-                        (Package.BUNDLE_NAME,
-                         "RollingFileWriter.cantGzipFile",
-                         "Can't gzip file \"{0}\"",
-                         new Object[] {targetFile.getPath()});
-            }
-        }
     }
 
     /**
@@ -847,7 +825,10 @@ public class RollingFileWriter extends PrintWriter
                                            RolloverCallback callback)
         throws IOExceptionExt
     {
-        File    primaryFile = resolveFilePattern (fileNamePattern, null);
+        File    primaryFile = resolveFilePattern (fileNamePattern,
+                                                  null,
+                                                  maxRolledOverFiles,
+                                                  null);
         Writer  w           = null;
 
         if (primaryFile.exists())
@@ -913,15 +894,19 @@ public class RollingFileWriter extends PrintWriter
     /**
      * Resolve a file pattern into a file.
      *
-     * @param fileNamePattern  the pattern
-     * @param index            the file index, or null for the primary file
+     * @param fileNamePattern    the pattern
+     * @param index              the file index, or null for the primary file
+     * @param maxRolledOverFiles max number of rolled-over files
+     * @param compressionType    compression type, or null
      *
      * @return the File object
      *
      * @throws IOExceptionExt on error
      */
-    private static File resolveFilePattern (String  fileNamePattern,
-                                            Integer index)
+    private static File resolveFilePattern (String        fileNamePattern,
+                                            Integer       index,
+                                            int           maxRolledOverFiles,
+                                            Compression   compressionType)
         throws IOExceptionExt
     {
         try
@@ -929,7 +914,7 @@ public class RollingFileWriter extends PrintWriter
             // Validate the pattern by expanding it to its primary file name.
 
             BackupIndexDereferencer deref =
-                new BackupIndexDereferencer (index);
+                new BackupIndexDereferencer (index, maxRolledOverFiles);
             UnixShellVariableSubstituter sub =
                 new UnixShellVariableSubstituter();
 
@@ -944,6 +929,9 @@ public class RollingFileWriter extends PrintWriter
                                         + "the \"$\\{n\\}\" marker.",
                                           new Object[] {fileNamePattern});
             }
+
+            if (compressionType == Compression.COMPRESS_BACKUPS)
+                fileName = fileName + GZIP_EXTENSION;
 
             return new File (fileName);
         }
@@ -1002,7 +990,10 @@ public class RollingFileWriter extends PrintWriter
 
         for (i = 0; i < maxRolledOverFiles; i++)
         {
-            File f = resolveFilePattern (fileNamePattern, i);
+            File f = resolveFilePattern (fileNamePattern,
+                                         i,
+                                         maxRolledOverFiles,
+                                         compressionType);
 
             if (! f.exists())
             {
@@ -1025,8 +1016,14 @@ public class RollingFileWriter extends PrintWriter
 
         for (i = firstGap - 1; i >= 0; i--)
         {
-            File targetFile = resolveFilePattern (fileNamePattern, i + 1);
-            File sourceFile = resolveFilePattern (fileNamePattern, i);
+            File targetFile = resolveFilePattern (fileNamePattern,
+                                                  i + 1,
+                                                  maxRolledOverFiles,
+                                                  compressionType);
+            File sourceFile = resolveFilePattern (fileNamePattern,
+                                                  i,
+                                                  maxRolledOverFiles,
+                                                  compressionType);
 
             // Target file can exist if there was no gap (i.e., we're at
             // the end of all the possible files).
@@ -1052,7 +1049,7 @@ public class RollingFileWriter extends PrintWriter
 
             // Attempt to move the source file to the target slot.
 
-            renameFile (sourceFile, targetFile, compressionType);
+            renameFile (sourceFile, targetFile);
         }
 
         String rollOverMsg = null;
@@ -1089,9 +1086,14 @@ public class RollingFileWriter extends PrintWriter
             rollingFileWriter.flush();
             rollingFileWriter.close();
 
-            renameFile (primaryFile,
-                        resolveFilePattern (fileNamePattern, 0),
-                        compressionType);
+            File targetFile = resolveFilePattern (fileNamePattern,
+                                                  0,
+                                                  maxRolledOverFiles,
+                                                  null);
+            renameFile (primaryFile, targetFile);
+
+            if (compressionType == Compression.COMPRESS_BACKUPS)
+                gzipFile (targetFile);
         }
 
         // Finally, open the file. Add the same 'rolled over' message to
@@ -1120,5 +1122,43 @@ public class RollingFileWriter extends PrintWriter
         }
 
         return result;
+    }
+
+    /**
+     * Gzip a file.
+     *
+     * @param file  the file to gzip
+     *
+     * @throws IOExceptionExt on error
+     */
+    private static void gzipFile (File file)
+        throws IOExceptionExt
+    {
+        try
+        {
+            InputStream is = new FileInputStream (file);
+            OutputStream os = new GZIPOutputStream 
+                                   (new FileOutputStream (file.getPath()
+                                                        + GZIP_EXTENSION));
+            FileUtil.copyStream (is, os);
+            is.close();
+            os.close();
+
+            if (! file.delete())
+            {
+                throw new IOExceptionExt (Package.BUNDLE_NAME,
+                                          "RollingFileWriter.cantDeleteFile",
+                                          "Can't delete file \"{0}\"",
+                                          new Object[] {file.getPath()});
+            }
+        }
+
+        catch (IOException ex)
+        {
+            throw new IOExceptionExt (Package.BUNDLE_NAME,
+                                      "RollingFileWriter.cantGzipFile",
+                                      "Can't gzip file \"{0}\"",
+                                      new Object[] {file.getPath()});
+        }
     }
 }
