@@ -53,6 +53,7 @@
   <property name="javac.listfiles" value="no"/>
   <property name="javac.source" value="1.5"/>
   <property name="javac_lint_unchecked_opt" value="-Xlint:unchecked"/>
+  <property name="javac_lint_deprecation_opt" value="-Xlint:deprecation"/>
   <property name="build.info.file" 
             value="${build}/org/clapper/util/misc/BuildInfoBundle.properties"/>
   <property name="code_jar_name" value="ocutil"/>
@@ -126,6 +127,9 @@
       <compilerarg compiler="jikes" value="+Pserial"/>
 
       <compilerarg compiler="javac1.5" value="${javac_lint_unchecked_opt}"/>
+      <!--
+      <compilerarg compiler="javac1.5" value="${javac_lint_deprecation_opt}"/>
+      -->
 
       <classpath refid="project.class.path"/>
 
@@ -179,6 +183,9 @@
       <compilerarg compiler="jikes" value="+Pserial"/>
 
       <compilerarg compiler="javac1.5" value="${javac_lint_unchecked_opt}"/>
+      <!--
+      <compilerarg compiler="javac1.5" value="${javac_lint_deprecation_opt}"/>
+      -->
 
       <classpath refid="project.class.path"/>
 
@@ -234,6 +241,9 @@
       <compilerarg compiler="jikes" value="+Pserial"/>
 
       <compilerarg compiler="javac1.5" value="${javac_lint_unchecked_opt}"/>
+      <!--
+      <compilerarg compiler="javac1.5" value="${javac_lint_deprecation_opt}"/>
+      -->
 
       <classpath refid="project.class.path"/>
 
@@ -258,6 +268,9 @@
       <compilerarg compiler="jikes" value="+Pserial"/>
 
       <compilerarg compiler="javac1.5" value="${javac_lint_unchecked_opt}"/>
+      <!--
+      <compilerarg compiler="javac1.5" value="${javac_lint_deprecation_opt}"/>
+      -->
 
       <classpath refid="project.class.path"/>
 
