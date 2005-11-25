@@ -375,6 +375,16 @@ public class FileUtil
     }
 
     /**
+     * Get the virtual machine's default encoding.
+     *
+     * @return the default encoding
+     */
+    public static String getDefaultEncoding()
+    {
+        return java.nio.charset.Charset.defaultCharset().name();
+    }
+
+    /**
      * Get the extension for a path or file name. Does not include the ".".
      *
      * @param path  the file or path name
@@ -384,7 +394,7 @@ public class FileUtil
     public static String getFileNameExtension (String path)
     {
         String ext = null;
-        int    i   = path.indexOf ('.');
+        int    i   = path.lastIndexOf ('.');
 
         if ((i != -1) && (i != (path.length() - 1)))
             ext = path.substring (i + 1);
@@ -402,7 +412,7 @@ public class FileUtil
      */
     public static String getFileNameNoExtension (String path)
     {
-        int i = path.indexOf ('.');
+        int i = path.lastIndexOf ('.');
 
         if (i != -1)
             path = path.substring (0, i);
