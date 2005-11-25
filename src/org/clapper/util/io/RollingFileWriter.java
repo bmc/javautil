@@ -383,10 +383,10 @@ public class RollingFileWriter extends PrintWriter
      *
      * @throws IOExceptionExt  Failed to open file
      *
-     * @see #RollingFileWriter(String,CompressionType)
-     * @see #RollingFileWriter(String,String,CompressionType)
-     * @see #RollingFileWriter(String,long,int,CompressionType)
-     * @see #RollingFileWriter(String,String,long,int,CompressionType,RolloverCallback)
+     * @see #RollingFileWriter(String,Compression)
+     * @see #RollingFileWriter(String,String,Compression)
+     * @see #RollingFileWriter(String,long,int,Compression)
+     * @see #RollingFileWriter(String,String,long,int,Compression,RolloverCallback)
      */
     public RollingFileWriter (String fileNamePattern)
         throws IOExceptionExt
@@ -409,9 +409,9 @@ public class RollingFileWriter extends PrintWriter
      * @throws IOExceptionExt  Failed to open file
      *
      * @see #RollingFileWriter(String)
-     * @see #RollingFileWriter(String,String,CompressionType)
-     * @see #RollingFileWriter(String,long,int,CompressionType)
-     * @see #RollingFileWriter(String,String,long,int,CompressionType,RolloverCallback)
+     * @see #RollingFileWriter(String,String,Compression)
+     * @see #RollingFileWriter(String,long,int,Compression)
+     * @see #RollingFileWriter(String,String,long,int,Compression,RolloverCallback)
      */
     public RollingFileWriter (String      fileNamePattern,
                               Compression compressionType)
@@ -437,9 +437,9 @@ public class RollingFileWriter extends PrintWriter
      * @throws IOExceptionExt  Failed to open file
      *
      * @see #RollingFileWriter(String)
-     * @see #RollingFileWriter(String,CompressionType)
-     * @see #RollingFileWriter(String,long,int,CompressionType)
-     * @see #RollingFileWriter(String,String,long,int,CompressionType,RolloverCallback)
+     * @see #RollingFileWriter(String,Compression)
+     * @see #RollingFileWriter(String,long,int,Compression)
+     * @see #RollingFileWriter(String,String,long,int,Compression,RolloverCallback)
      */
     public RollingFileWriter (String      fileNamePattern,
                               String      charsetName,
@@ -468,9 +468,9 @@ public class RollingFileWriter extends PrintWriter
      * @throws IOExceptionExt Failed to open file.
      *
      * @see #RollingFileWriter(String)
-     * @see #RollingFileWriter(String,CompressionType)
-     * @see #RollingFileWriter(String,String,CompressionType)
-     * @see #RollingFileWriter(String,String,long,int,CompressionType,RolloverCallback)
+     * @see #RollingFileWriter(String,Compression)
+     * @see #RollingFileWriter(String,String,Compression)
+     * @see #RollingFileWriter(String,String,long,int,Compression,RolloverCallback)
      */
     public RollingFileWriter (String  fileNamePattern,
                               String  charsetName,
@@ -506,9 +506,9 @@ public class RollingFileWriter extends PrintWriter
      * @throws IOExceptionExt Failed to open file.
      *
      * @see #RollingFileWriter(String)
-     * @see #RollingFileWriter(String,CompressionType)
-     * @see #RollingFileWriter(String,String,CompressionType)
-     * @see #RollingFileWriter(String,String,long,int,CompressionType,RolloverCallback)
+     * @see #RollingFileWriter(String,Compression)
+     * @see #RollingFileWriter(String,String,Compression)
+     * @see #RollingFileWriter(String,String,long,int,Compression,RolloverCallback)
      */
     public RollingFileWriter (String      fileNamePattern,
                               long        maxRolledFileSize,
@@ -547,9 +547,9 @@ public class RollingFileWriter extends PrintWriter
      * @throws IOExceptionExt Failed to open file.
      *
      * @see #RollingFileWriter(String)
-     * @see #RollingFileWriter(String,CompressionType)
-     * @see #RollingFileWriter(String,String,CompressionType)
-     * @see #RollingFileWriter(String,long,int,CompressionType)
+     * @see #RollingFileWriter(String,Compression)
+     * @see #RollingFileWriter(String,String,Compression)
+     * @see #RollingFileWriter(String,long,int,Compression)
      */
     public RollingFileWriter (String           fileNamePattern,
                               String           charsetName,
