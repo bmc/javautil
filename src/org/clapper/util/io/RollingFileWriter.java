@@ -194,6 +194,12 @@ public class RollingFileWriter extends PrintWriter
                              Public Constants
     \*----------------------------------------------------------------------*/
 
+    /**
+     * The pattern to substitute. Useful for classes that have to insert
+     * this pattern into a string.
+     */
+    public static final String INDEX_PATTERN = "${n}";
+
     /*----------------------------------------------------------------------*\
                            Public Inner Classes
     \*----------------------------------------------------------------------*/
@@ -445,16 +451,51 @@ public class RollingFileWriter extends PrintWriter
 
     /**
      * Create a new <tt>RollingFileWriter</tt> that will write to the
-     * specified file, automatically rolling the file over when it exceeds
-     * a specified maximum size. No {@link RollingFileWriter.RolloverCallback}
-     * object will be registered.
+     * specified file, optionally automatically rolling the file over when
+     * it exceeds a specified maximum size. No
+     * {@link RollingFileWriter.RolloverCallback} object will be registered,
+     * and rolled files will not be compressed.
      *
      * @param fileNamePattern   The name pattern for the file to open
+     * @param charsetName       The name of the character encoding to use for
+     *                          the output, or null for the default
      * @param maxRolledFileSize The maximum size, in bytes, that the file can
      *                          be before it is rolled over, or 0 for no
      *                          maximum.
      * @param maxRolledFiles    The maximum number of rolled-over log files
      *                          to retain, or 0 for no maximum.
+     *
+     * @throws IOExceptionExt Failed to open file.
+     *
+     * @see #RollingFileWriter(String)
+     * @see #RollingFileWriter(String,CompressionType)
+     * @see #RollingFileWriter(String,String,CompressionType)
+     * @see #RollingFileWriter(String,String,long,int,CompressionType,RolloverCallback)
+     */
+    public RollingFileWriter (String  fileNamePattern,
+                              String  charsetName,
+                              long    maxRolledFileSize,
+                              int     maxRolledFiles)
+        throws IOExceptionExt
+    {
+        this (fileNamePattern,
+              null,
+              maxRolledFileSize,
+              maxRolledFiles,
+              Compression.DONT_COMPRESS_BACKUPS,
+              null);
+    }
+
+    /**
+     * Create a new <tt>RollingFileWriter</tt> that will write to the
+     * specified file, optionally automatically rolling the file over when
+     * it exceeds a specified maximum size. No
+     * {@link RollingFileWriter.RolloverCallback} object will be registered.
+     *
+     * @param fileNamePattern   The name pattern for the file to open
+     * @param maxRolledFileSize The maximum size, in bytes, that the file can
+     *                          be before it is rolled over, or 0 for no
+     *                          maximum.
      * @param maxRolledFiles    The maximum number of rolled-over log files
      *                          to retain, or 0 for no maximum.
      * @param compressionType   {@link Compression#COMPRESS_BACKUPS} to
@@ -485,8 +526,8 @@ public class RollingFileWriter extends PrintWriter
 
     /**
      * Create a new <tt>RollingFileWriter</tt> that will write to the
-     * specified file, automatically rolling the file over when it exceeds
-     * a specified maximum size.
+     * specified file, optionally automatically rolling the file over when
+     * it exceeds a specified maximum size.
      *
      * @param fileNamePattern    The name pattern for the file to open
      * @param charsetName        The name of the character encoding to use for
@@ -1085,16 +1126,16 @@ public class RollingFileWriter extends PrintWriter
                      + "\".");
             rollingFileWriter.flush();
             rollingFileWriter.close();
-
-            File targetFile = resolveFilePattern (fileNamePattern,
-                                                  0,
-                                                  maxRolledOverFiles,
-                                                  null);
-            renameFile (primaryFile, targetFile);
-
-            if (compressionType == Compression.COMPRESS_BACKUPS)
-                gzipFile (targetFile);
         }
+
+        File targetFile = resolveFilePattern (fileNamePattern,
+                                              0,
+                                              maxRolledOverFiles,
+                                              null);
+        renameFile (primaryFile, targetFile);
+
+        if (compressionType == Compression.COMPRESS_BACKUPS)
+            gzipFile (targetFile);
 
         // Finally, open the file. Add the same 'rolled over' message to
         // the top of this one.
