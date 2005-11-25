@@ -4,7 +4,7 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
-Version 2.1 (...)
+Version 2.1 (25 November, 2005)
 
 - Added new RollingFileWriter class. Works like a FileWriter, but
   rolls files when they get too big.
@@ -18,6 +18,7 @@ Version 2.1 (...)
 - Fixed getFileNameNoExtension() and getFileNameExtension() methods
   in org.clapper.util.io.FileUtil to look for the last "." in the
   file name, not the first.
+
 
 Version 2.0.3 (19 August, 2005)
 
