@@ -26,6 +26,9 @@
 
 package org.clapper.util.text;
 
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -129,6 +132,8 @@ public final class HTMLUtil
      * @return the resulting, possibly modified, string
      *
      * @see #stripHTMLTags
+     *
+     * @see #makeCharacterEntities
      */
     public static String convertCharacterEntities (String s)
     {
@@ -235,6 +240,62 @@ public final class HTMLUtil
 
         if (s.length() > 0)
             buf.append (s);
+
+        return buf.toString();
+    }
+
+    /**
+     * Converts appropriate Unicode characters to their HTML character entity
+     * counterparts (c.f.,
+     * <a href="http://www.w3.org/TR/REC-html40/sgml/entities.html">http://www.w3.org/TR/REC-html40/sgml/entities.html</a>).
+     *
+     * @param s the string to convert
+     *
+     * @return the resulting, possibly modified, string
+     *
+     * @see #stripHTMLTags
+     *
+     * @see #convertCharacterEntities
+     */
+    public static String makeCharacterEntities (String s)
+    {
+        // First, make a character-to-entity-name map from the resource bundle.
+
+        ResourceBundle bundle = getResourceBundle();
+        Map<Character,String> charToEntityName =
+            new HashMap<Character,String>();
+        Enumeration<String> keys = bundle.getKeys();
+        XStringBuffer buf = new XStringBuffer();
+
+        while (keys.hasMoreElements())
+        {
+            String key = keys.nextElement();
+            String sChar = bundle.getString (key);
+            char c = sChar.charAt (0);
+
+            // Transform the bundle key into an entity name by removing the
+            // "html_" prefix.
+
+            buf.clear();
+            buf.append (key);
+            buf.delete ("html_");
+
+            charToEntityName.put (c, buf.toString());
+        }
+
+        char[] chars = s.toCharArray();
+        buf.clear();
+
+        for (int i = 0; i < chars.length; i++)
+        {
+            char c = chars[i];
+
+            String entity = charToEntityName.get (c);
+            if (entity == null)
+                buf.append (c);
+            else
+                buf.append ("&" + entity + ";");
+        }
 
         return buf.toString();
     }
