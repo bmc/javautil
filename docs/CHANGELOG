@@ -4,6 +4,16 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
+Version 2.1.1 (13 December, 2005)
+
+- Added makeCharacterEntities() method to org.clapper.util.text.HTMLUtil
+  class.
+
+- Fixed a org.clapper.util.io.RollingFileWriter constructor that was
+  ignoring the specified character set name (i.e., the encoding) and using
+  the default encoding of the VM.
+
+
 Version 2.1 (25 November, 2005)
 
 - Added new RollingFileWriter class. Works like a FileWriter, but
