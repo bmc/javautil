@@ -479,7 +479,7 @@ public class RollingFileWriter extends PrintWriter
         throws IOExceptionExt
     {
         this (fileNamePattern,
-              null,
+              charsetName,
               maxRolledFileSize,
               maxRolledFiles,
               Compression.DONT_COMPRESS_BACKUPS,
