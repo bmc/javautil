@@ -370,6 +370,79 @@
 
   <!--
   ***************************************************************************
+			     Installer Target
+  ***************************************************************************
+  -->
+
+  <target name="installer"
+	  depends="-set.version.properties">
+    <taskdef name="izpack" classname="com.izforge.izpack.ant.IzPackTask"/>
+    <izpack output="${release_dir}/install-ocutil.jar"
+	    installerType="standard"
+	    basedir="."
+	    izPackDir="/usr/local/java/IzPack">
+      <config><![CDATA[
+<installation version="1.0">
+  <info>
+    <appname>clapper.org Java Utility Library</appname>
+    <appversion>@{curn.version}</appversion>
+    <appsubpath>ocutil</appsubpath>
+    <authors>
+      <author name="Brian Clapper" email="bmc@clapper.org"/>
+    </authors>
+    <url>http://www.clapper.org/software/java/util/</url>
+    <javaversion>1.5</javaversion>
+  </info>
+
+  <guiprefs width="800" height="600" resizable="no"/>
+
+  <locale>
+    <langpack iso3="eng"/>
+  </locale>
+
+  <resources>
+    <res id="LicencePanel.licence" src="LICENSE"/>
+  </resources>
+
+  <panels>
+    <panel classname="HelloPanel"/>
+    <!--
+    <panel classname="InfoPanel"/>
+    -->
+    <panel classname="LicencePanel"/>
+    <panel classname="TargetPanel"/> 
+    <panel classname="PacksPanel"/>
+    <panel classname="InstallPanel"/>
+    <panel classname="FinishPanel"/>
+  </panels>
+
+  <packs>
+    <pack name="Base" required="yes">
+      <description>The jar file</description>
+      <file src="LICENSE" targetdir="$INSTALL_PATH"/>
+      <file src="@{release_dir}/@{versioned_code_jar_file}"
+	    targetdir="$INSTALL_PATH"/>
+    </pack>
+    <pack name="Docs" required="no">
+      <description>The API Javadocs</description>
+      <file src="dist/docs/api"
+	    targetdir="$INSTALL_PATH/docs"/>
+      <file src="docs/CHANGELOG"
+	    targetdir="$INSTALL_PATH/docs"/>
+    </pack>
+    <pack name="Sources" required="no">
+      <description>The sources</description>
+      <file src="@{release_dir}/@{versioned_src_zipfile}"
+	    targetdir="$INSTALL_PATH"/>
+    </pack>
+  </packs>
+</installation>
+      ]]></config>
+    </izpack>
+  </target>
+
+  <!--
+  ***************************************************************************
 			     Clean-up Targets
   ***************************************************************************
   -->
