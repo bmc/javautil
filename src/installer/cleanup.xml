@@ -1,0 +1,10 @@
+<processing>
+  <job name="Clean up">
+    <os family="windows"/>
+    <executefile name="$INSTALL_PATH/scripts/cleanup.bat"/>
+  </job>
+  <job name="Clean up">
+    <os family="unix"/>
+    <executefile name="$INSTALL_PATH/scripts/cleanup.sh"/>
+  </job>
+</processing>

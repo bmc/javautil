@@ -317,6 +317,22 @@
   ***************************************************************************
   -->
 
+  <!--
+      WARNING: This file set is essentially duplicated in the installer's
+      config file, below. There's no way around that, unfortunately.
+  -->
+  <zipfileset dir="." id="sources.fileset"
+	      prefix="${zip_dir_prefix}" casesensitive="yes">
+    <exclude name="${dist}/**"/>
+    <exclude name="${build}"/>
+    <exclude name="**/CVS"/>
+    <include name="**/*.java"/>
+    <include name="**/package.html"/>
+    <include name="overview.html"/>
+    <include name="**/*.xml"/>
+    <include name="**/*.properties"/>
+  </zipfileset>
+
   <target name="-set.version.properties" depends="-get.version">
     <property name="versioned_src_zipfile"
               value="src-${api.version}.zip"/>
@@ -348,16 +364,7 @@
           description="Generate the source zip">
     <mkdir dir="${release_dir}"/>
     <zip destfile="${release_dir}/${versioned_src_zipfile}">
-      <zipfileset dir="." 
-                  prefix="${zip_dir_prefix}" casesensitive="yes">
-        <exclude name="${dist}/**"/>
-        <exclude name="${build}"/>
-        <exclude name="**/CVS"/>
-        <include name="**/*.java"/>
-        <include name="**/package.html"/>
-        <include name="overview.html"/>
-        <include name="**/*.xml"/>
-      </zipfileset>
+      <zipfileset refid="source.fileset"/>
     </zip>
   </target>
 
@@ -374,13 +381,68 @@
   ***************************************************************************
   -->
 
+  <!--
+      If you're going to build the installer, you'll need the IzPack
+      utility (http://www.izforge.com/izpack/), and you'll have to set
+      this value to the location of the IzPack installation.
+  -->
+  <property name="izpack.home" value="/usr/local/java/IzPack"/>
+  <property name="src.install" value="${src.top}/installer"/>
+
   <target name="installer"
 	  depends="-set.version.properties">
+
+    <!-- Define the IzPack task -->
+
     <taskdef name="izpack" classname="com.izforge.izpack.ant.IzPackTask"/>
+
+    <!-- Create a temporary installation directory -->
+
+    <property name="install.tmp" location="${dist}/install"/>
+    <mkdir dir="${install.tmp}"/>
+
+    <!--
+	Copy the LICENSE file and "unwrap" it so it's not wrapped weirdly
+	in the installer's License GUI screen. Oddly enough, this isn't an
+	issue with the README file
+    -->
+
+    <copy todir="${install.tmp}" file="LICENSE"/>
+
+    <!-- First, replace all double newlines with "@@@@" -->
+    <replace dir="${install.tmp}">
+      <include name="LICENSE"/>
+
+      <replacetoken><![CDATA[
+
+]]></replacetoken>
+      <replacevalue>@@@@</replacevalue>
+    </replace>
+
+    <!-- Next, replace single newlines with blanks -->
+    <replace dir="${install.tmp}">
+      <include name="LICENSE"/>
+
+      <replacetoken><![CDATA[
+]]></replacetoken>
+      <replacevalue> </replacevalue>
+    </replace>
+
+    <!-- Finally, restore the double newlines -->
+    <replace dir="${install.tmp}">
+      <include name="LICENSE"/>
+      <replacetoken>@@@@</replacetoken>
+      <replacevalue><![CDATA[
+
+]]></replacevalue>
+    </replace>
+
+    <!-- Build the installer -->
+
     <izpack output="${release_dir}/install-ocutil.jar"
 	    installerType="standard"
 	    basedir="."
-	    izPackDir="/usr/local/java/IzPack">
+	    izPackDir="${izpack.home}">
       <config><![CDATA[
 <installation version="1.0">
   <info>
@@ -401,7 +463,9 @@
   </locale>
 
   <resources>
-    <res id="LicencePanel.licence" src="LICENSE"/>
+    <res id="LicencePanel.licence" src="@{install.tmp}/LICENSE"/>
+    <res id="Installer.image" src="@{src.install}/clapper-logo.png"/>
+    <res id="ProcessPanel.Spec.xml" src="@{src.install}/cleanup.xml"/>
   </resources>
 
   <panels>
@@ -413,6 +477,7 @@
     <panel classname="TargetPanel"/> 
     <panel classname="PacksPanel"/>
     <panel classname="InstallPanel"/>
+    <panel classname="ProcessPanel"/>
     <panel classname="FinishPanel"/>
   </panels>
 
@@ -422,7 +487,30 @@
       <file src="LICENSE" targetdir="$INSTALL_PATH"/>
       <file src="@{release_dir}/@{versioned_code_jar_file}"
 	    targetdir="$INSTALL_PATH"/>
+
+      <!-- for cleaning up -->
+
+      <singlefile src="@{src.top}/installer/cleanup.sh"
+                  target="$INSTALL_PATH/scripts/cleanup.sh">
+	<os family="unix"/>
+      </singlefile>
+      <parsable targetfile="$INSTALL_PATH/scripts/cleanup.sh">
+	<os family="unix"/>
+      </parsable>
+      <executable targetfile="$INSTALL_PATH/scripts/cleanup.sh"
+                  stage="never" os="unix"/>
+
+      <singlefile src="@{src.top}/installer/cleanup.bat"
+                  target="$INSTALL_PATH/scripts/cleanup.bat">
+        <os family="windows"/>
+      </singlefile>
+      <parsable targetfile="$INSTALL_PATH/scripts/cleanup.bat">
+	<os family="windows"/>
+      </parsable>
+      <executable targetfile="$INSTALL_PATH/scripts/cleanup.bat" stage="never"
+                  os="windows"/>
     </pack>
+
     <pack name="Docs" required="no">
       <description>The API Javadocs</description>
       <file src="dist/docs/api"
@@ -430,15 +518,38 @@
       <file src="docs/CHANGELOG"
 	    targetdir="$INSTALL_PATH/docs"/>
     </pack>
+
     <pack name="Sources" required="no">
       <description>The sources</description>
-      <file src="@{release_dir}/@{versioned_src_zipfile}"
-	    targetdir="$INSTALL_PATH"/>
+      <!--
+          WARNING: This file set is essentially a duplicate of the
+          sources.fileset <zipfileset>, earlier in this file. There's no
+          way around that, unfortunately.
+
+	  KLUDGE: For some reason, the IzPack <fileset> element doesn't
+	  properly include properties files with @{src.top}/**/*.properties,
+	  and exclusion via @{build} doesn't work, either. (It's not quite
+	  like the Ant <fileset>, no matter what the docs say.) So, we'll
+	  clean up the incorrectly copied build directory in the final panel.
+      -->
+      <fileset dir="." targetdir="$INSTALL_PATH/sources">
+	<include name="**/*.java"/>
+	<include name="**/package.html"/>
+	<include name="overview.html"/>
+	<include name="build.xml"/>
+	<include name="**/*.xml"/>
+	<include name="**/*.properties"/>
+	<exclude name="@{dist}/**"/>
+	<exclude name="@{build}/**/*.properties"/>
+	<exclude name="**/CVS"/>
+      </fileset>
     </pack>
   </packs>
 </installation>
       ]]></config>
     </izpack>
+
+    <delete dir="${install.tmp}"/>
   </target>
 
   <!--
@@ -458,5 +569,7 @@
     <delete failonerror="false" includeEmptyDirs="true">
       <fileset dir="${dist}"/>
     </delete>
+
+    <delete dir="${install.tmp}"/>
   </target>
 </project>
