@@ -317,22 +317,6 @@
   ***************************************************************************
   -->
 
-  <!--
-      WARNING: This file set is essentially duplicated in the installer's
-      config file, below. There's no way around that, unfortunately.
-  -->
-  <zipfileset dir="." id="sources.fileset"
-	      prefix="${zip_dir_prefix}" casesensitive="yes">
-    <exclude name="${dist}/**"/>
-    <exclude name="${build}"/>
-    <exclude name="**/CVS"/>
-    <include name="**/*.java"/>
-    <include name="**/package.html"/>
-    <include name="overview.html"/>
-    <include name="**/*.xml"/>
-    <include name="**/*.properties"/>
-  </zipfileset>
-
   <target name="-set.version.properties" depends="-get.version">
     <property name="versioned_src_zipfile"
               value="src-${api.version}.zip"/>
@@ -364,7 +348,20 @@
           description="Generate the source zip">
     <mkdir dir="${release_dir}"/>
     <zip destfile="${release_dir}/${versioned_src_zipfile}">
-      <zipfileset refid="source.fileset"/>
+      <!--
+	  WARNING: This file set is essentially duplicated in the installer's
+	  config file, below. There's no way around that, unfortunately.
+      -->
+      <zipfileset dir="." prefix="${zip_dir_prefix}" casesensitive="yes">
+	<exclude name="${dist}/**"/>
+	<exclude name="${build}"/>
+	<exclude name="**/CVS"/>
+	<include name="**/*.java"/>
+	<include name="**/package.html"/>
+	<include name="overview.html"/>
+	<include name="**/*.xml"/>
+	<include name="**/*.properties"/>
+      </zipfileset>
     </zip>
   </target>
 
@@ -523,7 +520,7 @@
       <description>The sources</description>
       <!--
           WARNING: This file set is essentially a duplicate of the
-          sources.fileset <zipfileset>, earlier in this file. There's no
+          sources <zipfileset>, earlier in this file. There's no
           way around that, unfortunately.
 
 	  KLUDGE: For some reason, the IzPack <fileset> element doesn't
