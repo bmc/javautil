@@ -710,12 +710,30 @@ public final class TextUtil
 
         if (objects.size() > 0)
         {
-            String[] array = new String[objects.size()];
+            String[] array;
             int      i;
             Iterator it;
 
-            for (i = 0, it = objects.iterator(); it.hasNext(); i++)
-                array[i] = it.next().toString();
+            i = 0;
+            for (it = objects.iterator(); it.hasNext();)
+            {
+                Object o = it.next();
+                if (o == null)
+                    continue;
+
+                i++;
+            }
+
+            array = new String[i];
+            i = 0;
+            for (it = objects.iterator(); it.hasNext();)
+            {
+                Object o = it.next();
+                if (o == null)
+                    continue;
+                
+                array[i++] = o.toString();
+            }
 
             result = join (array, delim);
         }
