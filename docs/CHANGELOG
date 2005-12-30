@@ -4,14 +4,19 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
-Version 2.1.2 (...)
+Version 2.1.2 (29 December, 2005)
 
 - The library can now be installed (along with all dependent jars,
   documentation, sources, and a wrapper shell or BAT script) via a
-  graphical installer.
+  graphical installer. The graphical installer is based on the
+  IzPack installer framework (http://www.izforge.com/izpack/).
 
 - The Ant build.xml file wasn't properly constructing the source zip file.
   In particular, it was omitting properties files.
+
+- Fixed bug in TextUtil.join() method taking a java.util.Collection: No 
+  longer craps out with a NullPointerException if it encounters a null
+  entry in the Collection.
 
 
 Version 2.1.1 (13 December, 2005)
