@@ -436,7 +436,7 @@
 
     <!-- Build the installer -->
 
-    <izpack output="${release_dir}/install-ocutil.jar"
+    <izpack output="${release_dir}/install-ocutil-${api.version}.jar"
 	    installerType="standard"
 	    basedir="."
 	    izPackDir="${izpack.home}">
