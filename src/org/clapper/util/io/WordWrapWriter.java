@@ -911,9 +911,12 @@ public class WordWrapWriter extends PrintWriter
 
                 if ((wordLength + currentLength + 1) > this.lineLength)
                 {
-                    writer.println();
-                    currentLength = 0;
-                    lastWasNewline = true;
+                    if (! lastWasNewline)
+                    {
+                        writer.println();
+                        currentLength = 0;
+                        lastWasNewline = true;
+                    }
                 }
 
                 if (lastWasNewline)
