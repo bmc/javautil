@@ -4,6 +4,17 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
+Version 2.1.3 (...)
+
+- Fixed a bug in the org.clapper.util.io.WordWrapWriter class: When writing
+  a new line (i.e., when the last thing written was a newline character),
+  if the first token to be written exceeded the line length, the
+  WordWrapWriter.flushBuffer() method would put out a spurious newline
+  before writing the token. That is, it did not properly recognize that the
+  line was *already* wrapped, since the *last* thing it had written was a
+  newline.
+
+
 Version 2.1.2 (2 January, 2006)
 
 - The library can now be installed (along with all dependent jars,
