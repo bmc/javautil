@@ -622,7 +622,7 @@ public final class TextUtil
      */
     public static String join (String[] strings, String delim)
     {
-        StringBuffer  result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         String        sep    = "";
 
         for (int i = 0; i < strings.length; i++)
@@ -654,8 +654,8 @@ public final class TextUtil
     }
 
     /**
-     * Join a set of strings into one string, putting the specified delimiter
-     * between adjacent strings.
+     * Join an array of strings into one string, putting the specified
+     * delimiter between adjacent strings.
      *
      * @param strings  the strings to be joined
      * @param delim    the delimiter character
@@ -668,6 +668,67 @@ public final class TextUtil
     public static String join (String[] strings, char delim)
     {
         return join (strings, "" + delim);
+    }
+
+    /**
+     * Join an array of strings into one string, putting the specified
+     * delimiter between adjacent strings, starting at a specified index.
+     *
+     * @param strings  the strings to be joined
+     * @param start    starting index
+     * @param end      one past the ending index
+     * @param delim    the delimiter character
+     *
+     * @return the joined string, or "" if the array is empty.
+     *
+     * @throws ArrayIndexOutOfBoundsException bad value for <tt>start</tt>
+     *                                        or <tt>end</tt>
+     *
+     * @see #split(String,char)
+     * @see #join(String[],String)
+     */
+    public static String join (String[] strings,
+                               int      start,
+                               int      end,
+                               char     delim)
+    {
+        return join (strings, start, end, "" + delim);
+    }
+
+    /**
+     * Join an array of strings into one string, putting the specified
+     * delimiter between adjacent strings, starting at a specified index.
+     *
+     * @param strings  the strings to be joined
+     * @param start    starting index
+     * @param end      one past the ending index
+     * @param delim    the delimiter string
+     *
+     * @return the joined string, or "" if the array is empty.
+     *
+     * @throws ArrayIndexOutOfBoundsException bad value for <tt>start</tt>
+     *                                        or <tt>end</tt>
+     *
+     * @see #split(String,char)
+     * @see #join(String[],String)
+     */
+    public static String join (String[] strings,
+                               int      start,
+                               int      end,
+                               String   delim)
+    {
+        StringBuilder result = new StringBuilder();
+        String        sep    = "";
+
+        while (start < end)
+        {
+            result.append (sep);
+            result.append (strings[start]);
+            sep = delim;
+            start++;
+        }
+
+        return result.toString();
     }
 
     /**
