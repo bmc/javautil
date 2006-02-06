@@ -4,7 +4,7 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
-Version 2.1.3 (...)
+Version 2.1.3 (5 February, 2006)
 
 - Fixed a bug in the org.clapper.util.io.WordWrapWriter class: When writing
   a new line (i.e., when the last thing written was a newline character),
@@ -13,6 +13,22 @@ Version 2.1.3 (...)
   before writing the token. That is, it did not properly recognize that the
   line was *already* wrapped, since the *last* thing it had written was a
   newline.
+
+- The org.clapper.util.config.Configuration class now honors double quoted
+  fields in a configuration file. Double quotes can be used to escape the
+  special meaning of white space, while still permitting metacharacters and
+  variable references to be expanded. (Metacharacter and variable
+  references are not expanded between single quotes.) When retrieving a
+  variable's value via Configuration.getConfigurationValue(), a program
+  will not be able to tell whether double quotes were used or not, since
+  getConfigurationValue() returns the "cooked" value as a single string.
+  There's a new Configuration.getConfigurationTokens() method that programs
+  can call to retrieve the parsed tokens that comprise a configuration value.
+  Double- and single-quoted strings are returned as individual tokens.
+  See the javadocs for the Configuration class for additional details.
+
+- Added two new versions of the TextUtil.join() method that allow the caller to
+  specify a starting array index and length.
 
 
 Version 2.1.2 (2 January, 2006)
