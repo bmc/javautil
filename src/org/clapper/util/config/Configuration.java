@@ -895,13 +895,13 @@ public class Configuration
     /**
      * Get the value for a variable as a series of tokens. This is the
      * method to use if you need to retain any white space between quotes.
-     * With the {@link #getValue} method, it's impossible to tell where
-     * quoted substrings appeared. For example, if the configuration line
-     * looks like this:
+     * With the {@link #getConfigurationValue} method, it's impossible to
+     * tell where quoted substrings appeared. For example, if the
+     * configuration line looks like this:
      *
      * <blockquote><pre>foo: abc "def ghi" jkl</pre></blockquote>
      *
-     * {@link #getValue} will return the string
+     * {@link #getConfigurationValue} will return the string
      *
      * <blockquote><pre>abc def ghi jkl</pre></blockquote>
      *
@@ -929,7 +929,7 @@ public class Configuration
      * @throws NoSuchSectionException  the named section does not exist
      * @throws NoSuchVariableException the section has no such variable
      *
-     * @see #getValue
+     * @see #getConfigurationValue
      *
      * @since Version 2.1.3
      */
