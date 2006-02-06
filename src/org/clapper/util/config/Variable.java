@@ -42,7 +42,8 @@ class Variable
                                  Constants
     \*----------------------------------------------------------------------*/
 
-    private static final char   LITERAL_QUOTE              = '\'';
+    private static final char LITERAL_QUOTE = '\'';
+    private static final char SUBST_QUOTE   = '"';
 
     /*----------------------------------------------------------------------*\
                                Instance Data
@@ -50,6 +51,7 @@ class Variable
 
     private String         name;
     private String         cookedValue;
+    private String[]       cookedTokens = null;
     private String         rawValue;
     private int            lineWhereDefined = 0; // 0 means unknown
     private ValueSegment[] valueSegments    = null;
@@ -137,18 +139,40 @@ class Variable
     }
 
     /**
-     * Get the cooked value for the variable. The raw value is the value
+     * Get the cooked value for the variable. The cooked value is the value
      * after any metacharacter expansion and variable substitution.
      *
-     * @return the raw value
+     * @return the cooked value
      *
      * @see #getRawValue
+     * @see #getCookedTokens
      * @see #setCookedValue
      * @see #setValue
      */
     String getCookedValue()
     {
         return cookedValue;
+    }
+
+    /**
+     * Get the cooked tokens for the variable. The cooked tokens are the
+     * individual tokens, assembled from <tt>ValueSegment</tt> objects,
+     * that result from parsing and from honoring quotes, with
+     * metacharacters and variables expanded. NOTE: Do NOT assume that
+     * these are white space-delimited tokens! Tokens are broken up based
+     * on quoted fields. A value without any quoted strings is treated as a
+     * single token.
+     *
+     * @return the cooked tokens
+     *
+     * @see #getRawValue
+     * @see #getCookedValue
+     * @see #setCookedValue
+     * @see #setValue
+     */
+    String[] getCookedTokens()
+    {
+        return cookedTokens;
     }
 
     /**
@@ -168,14 +192,13 @@ class Variable
     }
 
     /**
-     * Get the cooked value, broken into separate literal and non-literal
-     * segments. The segments are stored internally. The cooked value is
-     * not updated until a call to {@link #reassembleCookedValueFromSegments}.
-     * Calling this method multiple times will not hamper efficiency. If
-     * the internal list of segments is null (as it will be after construction
-     * or after a call to <tt>reassembleCookedValueFromSegments()</tt>),
-     * then this method creates the segments; otherwise, it just returns
-     * the existing ones.
+     * Get the cooked value, broken into separate segments. The segments
+     * are stored internally. The cooked value is not updated until a call
+     * to {@link #reassembleCookedValueFromSegments}. Calling this method
+     * multiple times will not hamper efficiency. If the internal list of
+     * segments is null (as it will be after construction or after a call
+     * to <tt>reassembleCookedValueFromSegments()</tt>), then this method
+     * creates the segments; otherwise, it just returns the existing ones.
      *
      * @return the segments
      *
@@ -207,15 +230,16 @@ class Variable
         {
             Collection<ValueSegment> segments = new ArrayList<ValueSegment>();
             char                     ch;
-            char                     lastCh;
+            char                     last;
             char[]                   chars;
             boolean                  literal;
             ValueSegment             currentSegment = new ValueSegment();
             int                      i;
 
-            chars   = cookedValue.toCharArray();
-            lastCh  = '\0';
+            chars = cookedValue.toCharArray();
+            last  = '\0';
             currentSegment.isLiteral = false;
+            currentSegment.isWhiteSpaceEscaped = false;
 
             for (i = 0; i < chars.length; i++)
             {
@@ -223,7 +247,8 @@ class Variable
                 switch (ch)
                 {
                     case LITERAL_QUOTE:
-                        if (lastCh == XStringBufBase.METACHAR_SEQUENCE_START)
+                        if ((last == XStringBufBase.METACHAR_SEQUENCE_START) ||
+                            (currentSegment.isWhiteSpaceEscaped))
                         {
                             // Escaped quote. Pass as literal.
                             currentSegment.append (ch);
@@ -258,18 +283,66 @@ class Variable
                         }
                         break;
 
+                    case SUBST_QUOTE:
+                        if ((last == XStringBufBase.METACHAR_SEQUENCE_START) ||
+                            (currentSegment.isLiteral))
+                        {
+                            // Escaped quote. Pass as literal.
+                            currentSegment.append (ch);
+                        }
+
+                        else if (currentSegment.isWhiteSpaceEscaped)
+                        {
+                            // End of white-space escaped sequence. Thus,
+                            // end of segment.
+
+                            if (currentSegment.length() > 0)
+                            {
+                                segments.add (currentSegment);
+                                currentSegment = new ValueSegment();
+                            }
+
+                            currentSegment.isWhiteSpaceEscaped = false;
+                        }
+
+                        else
+                        {
+                            // Start of literal sequence. Any previously
+                            // buffered characters are part of the previous
+                            // sequence and must be saved.
+
+                            if (currentSegment.length() > 0)
+                            {
+                                segments.add (currentSegment);
+                                currentSegment = new ValueSegment();
+                            }
+
+                            currentSegment.isWhiteSpaceEscaped = true;
+                        }
+                        break;
+
                     default:
                         currentSegment.append (ch);
                 }
-                lastCh = ch;
+                last = ch;
             }
 
             if (currentSegment.isLiteral)
             {
-                throw new ConfigurationException
-                    ("Unterminated quoted string in variable \""
-                   + this.name
-                   + "\"");
+                throw new ConfigurationException ("Unmatched "
+                                                + LITERAL_QUOTE
+                                                + " in variable \""
+                                                + this.name
+                                                + "\"");
+            }
+
+            else if (currentSegment.isWhiteSpaceEscaped)
+            {
+                throw new ConfigurationException ("Unmatched "
+                                                + SUBST_QUOTE
+                                                + " in variable \""
+                                                + this.name
+                                                + "\"");
             }
 
             if (currentSegment.length() > 0)
@@ -278,7 +351,6 @@ class Variable
             if (segments.size() > 0)
             {
                 valueSegments = new ValueSegment [segments.size()];
-
                 i = 0;
                 for (ValueSegment vs : segments)
                     valueSegments[i++] = vs;
@@ -299,13 +371,16 @@ class Variable
         if (valueSegments != null)
         {
             StringBuilder buf = new StringBuilder();
+            cookedTokens = new String[valueSegments.length];
 
             for (int i = 0; i < valueSegments.length; i++)
             {
                 ValueSegment segment;
 
                 segment = valueSegments[i];
-                buf.append (segment.segmentBuf.toString());
+                String s = segment.segmentBuf.toString();
+                buf.append (s);
+                cookedTokens[i] = s;
                 valueSegments[i] = null;
             }
 

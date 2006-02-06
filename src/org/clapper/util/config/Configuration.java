@@ -50,6 +50,8 @@ import java.util.StringTokenizer;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.clapper.util.logging.Logger;
+
 import org.clapper.util.text.TextUtil;
 import org.clapper.util.text.UnixShellVariableSubstituter;
 import org.clapper.util.text.VariableDereferencer;
@@ -367,6 +369,19 @@ import org.clapper.util.io.FileUtil;
  * {@link UnixShellVariableSubstituter} class. In general, you're better off
  * just sticking with single quotes.</p>
  *
+ * <h5>Double Quotes</h5>
+ *
+ * <p>Double quotes can be used to escape the special meaning of white
+ * space, while still permitting metacharacters and variable references to
+ * be expanded. (Metacharacter and variable references are not expanded
+ * between single quotes.) When retrieving a variable's value via
+ * {@link #getConfigurationValue}, a program will not be able to tell whether
+ * double quotes were used or not, since {@link #getConfigurationValue}
+ * returns the "cooked" value as a single string. However, callers can use
+ * the {@link #getConfigurationTokens} method to retrieve the parsed tokens
+ * that comprise a configuration value. Double- and single-quoted strings are
+ * returned as individual tokens.</p>
+ *
  * <h4>Includes</h4>
  *
  * <p>A special include directive permits inline inclusion of another
@@ -546,6 +561,11 @@ public class Configuration
      * Section ID values.
      */
     private int nextSectionID = 1;
+
+    /**
+     * For logging
+     */
+    private static Logger log = new Logger (Configuration.class);
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -774,7 +794,29 @@ public class Configuration
     }
     
     /**
-     * Get the value for a variable.
+     * Get the value for a variable. This method returns a "collapsed"
+     * value, with any quotes stripped. It's impossible to tell where
+     * quoted substrings appeared. If you need to know where individual
+     * tokens begin and end, use the {@link #getConfigurationTokens}
+     * method. For example, if the configuration line looks like this:
+     *
+     * <blockquote><pre>foo: abc "def ghi" jkl</pre></blockquote>
+     *
+     * this method will return the string
+     *
+     * <blockquote><pre>abc def ghi jkl</pre></blockquote>
+     *
+     * whereas {@link #getConfigurationTokens} will return the following
+     * individual tokens:
+     *
+     * <blockquote><pre>
+     * abc
+     * def ghi
+     * jkl
+     * </pre></blockquote>
+     *
+     * Getting the tokens preserves the white space-escaping properties of
+     * the double quotes.
      *
      * @param sectionName   the name of the section containing the variable
      * @param variableName  the variable name
@@ -783,6 +825,8 @@ public class Configuration
      *
      * @throws NoSuchSectionException  the named section does not exist
      * @throws NoSuchVariableException the section has no such variable
+     *
+     * @see #getConfigurationTokens
      */
     public String getConfigurationValue (String sectionName,
                                          String variableName)
@@ -808,6 +852,117 @@ public class Configuration
             throw new NoSuchVariableException (sectionName, variableName);
 
         return variable.getCookedValue();
+    }
+
+    /**
+     * Get the raw value (i.e., without any substitutions) for a variable.
+     *
+     * @param sectionName   the name of the section containing the variable
+     * @param variableName  the variable name
+     *
+     * @return the value for the variable (which may be the empty string)
+     *
+     * @throws NoSuchSectionException  the named section does not exist
+     * @throws NoSuchVariableException the section has no such variable
+     *
+     * @see #getConfigurationValue
+     */
+    public String getRawValue (String sectionName, String variableName)
+        throws NoSuchSectionException,
+               NoSuchVariableException
+    {
+        Section section = (Section) sectionsByName.get (sectionName);
+        if (section == null)
+            throw new NoSuchSectionException (sectionName);
+
+        Variable variable = null;
+
+        try
+        {
+            variable = section.getVariable (variableName);
+        }
+
+        catch (ConfigurationException ex)
+        {
+        }
+
+        if (variable == null)
+            throw new NoSuchVariableException (sectionName, variableName);
+
+        return variable.getRawValue();
+    }
+
+    /**
+     * Get the value for a variable as a series of tokens. This is the
+     * method to use if you need to retain any white space between quotes.
+     * With the {@link #getValue} method, it's impossible to tell where
+     * quoted substrings appeared. For example, if the configuration line
+     * looks like this:
+     *
+     * <blockquote><pre>foo: abc "def ghi" jkl</pre></blockquote>
+     *
+     * {@link #getValue} will return the string
+     *
+     * <blockquote><pre>abc def ghi jkl</pre></blockquote>
+     *
+     * whereas this method will return the following individual tokens:
+     *
+     * <blockquote><pre>
+     * abc
+     * def ghi
+     * jkl
+     * </pre></blockquote>
+     *
+     * <p>Getting the tokens preserves the white space-escaping properties of
+     * the double quotes.</p>
+     *
+     * <p>WARNING: The tokens are <b>not</b> broken on white space! Tokens
+     * are broken up based on quoted fields only. A value without any
+     * quoted strings is treated as a single token.</p>
+     *
+     * @param sectionName   the name of the section containing the variable
+     * @param variableName  the variable name
+     *
+     * @return the value tokens for the variable, or null if the value
+     *         exists but was empty
+     *
+     * @throws NoSuchSectionException  the named section does not exist
+     * @throws NoSuchVariableException the section has no such variable
+     *
+     * @see #getValue
+     *
+     * @since Version 2.1.3
+     */
+    public String[] getConfigurationTokens (String sectionName,
+                                            String variableName)
+        throws NoSuchSectionException,
+               NoSuchVariableException
+    {
+        Section section = (Section) sectionsByName.get (sectionName);
+        if (section == null)
+            throw new NoSuchSectionException (sectionName);
+
+        Variable variable = null;
+
+        try
+        {
+            variable = section.getVariable (variableName);
+        }
+
+        catch (ConfigurationException ex)
+        {
+            log.error ("Can't get value for variable \""
+                     + variableName
+                     + "\" in section \""
+                     + sectionName
+                     + "\"",
+                       ex);
+        }
+
+        if (variable == null)
+            throw new NoSuchVariableException (sectionName, variableName);
+
+        return variable.getCookedTokens();
     }
 
     /**

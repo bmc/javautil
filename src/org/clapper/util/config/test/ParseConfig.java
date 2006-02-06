@@ -29,6 +29,7 @@ package org.clapper.util.config.test;
 import java.util.*;
 import org.clapper.util.text.*;
 import org.clapper.util.io.*;
+import org.clapper.util.logging.*;
 import org.clapper.util.config.*;
 import java.io.*;
 import java.net.*;
@@ -78,6 +79,7 @@ public class ParseConfig
 
         try
         {
+            Logger.enableLogging();
             ParseConfig tester = new ParseConfig();
             tester.runTest (args[0], vars);
             System.exit (0);
@@ -159,6 +161,36 @@ public class ParseConfig
             config.setVariable (section, varName, value, true);
         }
 
+        System.out.println ("Configuration, tokenized:");
+        System.out.println ("---------------------------------------"
+                          + "---------------------------------------");
+
+
+        for (String sectionName : config.getSectionNames())
+        {
+            System.out.println ("[" + sectionName + "]");
+
+            for (String variableName : config.getVariableNames (sectionName))
+            {
+                System.out.print (variableName + ": ");
+
+                String[] tokens = config.getConfigurationTokens (sectionName,
+                                                                 variableName);
+
+                if (tokens != null)
+                {
+                    for (int i = 0; i < tokens.length; i++)
+                        System.out.print ("<" + tokens[i] + ">");
+                }
+
+                System.out.println();
+            }
+        }
+
+        System.out.println ();
+        System.out.println ("Configuration, cooked:");
+        System.out.println ("---------------------------------------"
+                          + "---------------------------------------");
         config.write (System.out);
     }
 }

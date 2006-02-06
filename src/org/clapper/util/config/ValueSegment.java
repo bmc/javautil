@@ -30,12 +30,13 @@ import org.clapper.util.text.XStringBuilder;
 
 /**
  * A variable value segment. This is just a substring, with a flag that
- * indicates whether the segment is literal or not.
+ * indicates whether the segment is literal, white space-escaped or not.
  */
 class ValueSegment
 {
-    XStringBuilder segmentBuf = new XStringBuilder();
-    boolean        isLiteral  = false;
+    XStringBuilder segmentBuf          = new XStringBuilder();
+    boolean        isLiteral           = false;
+    boolean        isWhiteSpaceEscaped = false;
 
     ValueSegment()
     {
