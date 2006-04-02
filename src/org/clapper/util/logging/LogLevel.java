@@ -26,8 +26,6 @@
 
 package org.clapper.util.logging;
 
-import java.util.logging.Level;
-
 /**
  * Encodes legal logging level constants for the {@link Logger} class.
  *
@@ -42,67 +40,30 @@ public enum LogLevel
     /**
      * Log message at "debug" level
      */
-    DEBUG (Level.FINE),
+    DEBUG,
 
     /**
      * Log message at "error" level
      */
-    ERROR (Level.SEVERE),
+    ERROR,
 
     /**
      * Log message at "fatal error" level
      */
-    FATAL (Level.SEVERE),
+    FATAL,
 
     /**
      * Log message at "informational message" level
      */
-    INFO (Level.INFO),
+    INFO,
 
     /**
      * Log message at "trace" level
      */
-    TRACE (Level.FINEST),
+    TRACE,
 
     /**
      * Log message at "warning" level
      */
-    WARNING (Level.WARNING);
-
-    /*----------------------------------------------------------------------*\
-                           Private Instance Data
-    \*----------------------------------------------------------------------*/
-
-    /**
-     * The level.
-     */
-    private Level level;
-
-    /*----------------------------------------------------------------------*\
-                                Constructor
-    \*----------------------------------------------------------------------*/
-
-    /**
-     * Construct a new <tt>LogLevel</tt> object.
-     *
-     * @param level the level
-     */
-    LogLevel (Level level)
-    {
-        this.level = level;
-    }
-
-    /*----------------------------------------------------------------------*\
-                          Package-visible Methods
-    \*----------------------------------------------------------------------*/
-
-    /**
-     * Get this object's <tt>Level</tt>
-     *
-     * @return the associated <tt>Level</tt> object
-     */
-    Level getLevel()
-    {
-        return level;
-    }
+    WARNING;
 }
