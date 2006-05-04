@@ -33,7 +33,7 @@
 
   <!--
   ***************************************************************************
-				Properties
+                                Properties
   ***************************************************************************
   -->
 
@@ -42,7 +42,7 @@
   <property name="src.top" location="src"/>
   <property name="src.dir" location="${src.top}/${pkg.path}"/>
 
-  <!-- 
+  <!--
        <javac> uses a different source directory to prevent constant
        recompilation. See "http://ant.apache.org/faq.html#always-recompiles"
        for details.
@@ -54,7 +54,7 @@
   <property name="javac.source" value="1.5"/>
   <property name="javac_lint_unchecked_opt" value="-Xlint:unchecked"/>
   <property name="javac_lint_deprecation_opt" value="-Xlint:deprecation"/>
-  <property name="build.info.file" 
+  <property name="build.info.file"
             value="${build}/org/clapper/util/misc/BuildInfoBundle.properties"/>
   <property name="code_jar_name" value="ocutil"/>
   <property name="code_jar_file" value="${code_jar_name}.jar"/>
@@ -66,7 +66,7 @@
 
   <!--
   ***************************************************************************
-			    Paths and Patterns
+                            Paths and Patterns
   ***************************************************************************
   -->
 
@@ -78,7 +78,7 @@
 
   <!--
   ***************************************************************************
-			  Initialization Targets
+                          Initialization Targets
   ***************************************************************************
   -->
 
@@ -95,7 +95,7 @@
 
   <!--
   ***************************************************************************
-			       Code Targets
+                               Code Targets
   ***************************************************************************
   -->
 
@@ -113,12 +113,12 @@
   <target name="lib" depends="lib.unconditional,lib.conditional"/>
 
   <target name="lib.unconditional" depends="init">
-    <javac srcdir="${javac.src.dir}" 
-	   source="${javac.source}"
-	   debug="${javac.debug}"
-	   listfiles="${javac.listfiles}"
-	   deprecation="yes"
-	   destdir="${build}">
+    <javac srcdir="${javac.src.dir}"
+           source="${javac.source}"
+           debug="${javac.debug}"
+           listfiles="${javac.listfiles}"
+           deprecation="yes"
+           destdir="${build}">
 
       <compilerarg compiler="jikes" value="+Peffective-java"/>
       <compilerarg compiler="jikes" value="+Punused-type-imports"/>
@@ -156,7 +156,7 @@
     </condition>
   </target>
 
-  <target name="-check.javamail" 
+  <target name="-check.javamail"
           depends="-check.javamail.exists"
           unless="javamail.exists">
     <echo>
@@ -170,11 +170,11 @@
 
   <target name="mail" depends="-check.javamail" if="javamail.exists">
     <echo level="verbose">Found Java Mail API. Compiling mail classes.</echo>
-    <javac srcdir="${javac.src.dir}" 
-	   source="${javac.source}"
-	   debug="${javac.debug}"
-	   listfiles="${javac.listfiles}"
-	   destdir="${build}">
+    <javac srcdir="${javac.src.dir}"
+           source="${javac.source}"
+           debug="${javac.debug}"
+           listfiles="${javac.listfiles}"
+           destdir="${build}">
 
       <compilerarg compiler="jikes" value="+Peffective-java"/>
       <compilerarg compiler="jikes" value="+Punused-type-imports"/>
@@ -205,7 +205,7 @@
   <target name="-build.info" depends="-get.version"
           description="Create build info properties file">
 
-    <taskdef name="make_build_info" 
+    <taskdef name="make_build_info"
              classname="org.clapper.util.ant.MakeBuildInfoTask"
              classpath="${build}"/>
 
@@ -219,20 +219,20 @@
       </not>
     </condition>
 
-    <make_build_info file="${build.info.file}" 
+    <make_build_info file="${build.info.file}"
                      antversion="${ant.version}"
                      compiler="${compiler}"/>
   </target>
 
   <target name="mail.testers" depends="-check.javamail,lib"
           if="javamail.exists"
-	  description="compile the mail testers">
+          description="compile the mail testers">
     <!-- Create the distribution directory -->
-    <javac srcdir="${javac.src.dir}" 
-	   source="${javac.source}"
-	   debug="${javac.debug}"
-	   listfiles="${javac.listfiles}"
-	   destdir="${build}">
+    <javac srcdir="${javac.src.dir}"
+           source="${javac.source}"
+           debug="${javac.debug}"
+           listfiles="${javac.listfiles}"
+           destdir="${build}">
 
       <compilerarg compiler="jikes" value="+Peffective-java"/>
       <compilerarg compiler="jikes" value="+Punused-type-imports"/>
@@ -253,13 +253,13 @@
   </target>
 
   <target name="lib.testers"
-	  description="compile the testers">
+          description="compile the testers">
     <!-- Create the distribution directory -->
-    <javac srcdir="${javac.src.dir}" 
-	   source="${javac.source}"
-	   debug="${javac.debug}"
-	   listfiles="${javac.listfiles}"
-	   destdir="${build}">
+    <javac srcdir="${javac.src.dir}"
+           source="${javac.source}"
+           debug="${javac.debug}"
+           listfiles="${javac.listfiles}"
+           destdir="${build}">
 
       <compilerarg compiler="jikes" value="+Peffective-java"/>
       <compilerarg compiler="jikes" value="+Punused-type-imports"/>
@@ -282,26 +282,26 @@
 
   <!--
   ***************************************************************************
-			      Javadoc targets
+                              Javadoc targets
   ***************************************************************************
   -->
 
   <target name="doc"
           description="Generate API Javadocs">
     <mkdir dir="dist/docs/api"/>
-    <javadoc 
+    <javadoc
              destdir="dist/docs/api"
-	     sourcepath="${src.top}"
-	     source="${javac.source}"
+             sourcepath="${src.top}"
+             source="${javac.source}"
              author="true"
              version="true"
-	     breakiterator="true"
-	     splitindex="true"
+             breakiterator="true"
+             splitindex="true"
              use="true"
-	     overview="overview.html"
-	     excludepackagenames="org.clapper.util.*.test"
-	     packagenames="org.clapper.util.*"
-	     classpathref="project.class.path"
+             overview="overview.html"
+             excludepackagenames="org.clapper.util.*.test"
+             packagenames="org.clapper.util.*"
+             classpathref="project.class.path"
              windowtitle="clapper.org Utility API">
       <doctitle><![CDATA[<h1>clapper.org Utility API Documentation</h1>]]></doctitle>
       <bottom><![CDATA[<i>Copyright &#169; 2004 Brian M. Clapper. All Rights Reserved.</i>]]></bottom>
@@ -313,7 +313,7 @@
 
   <!--
   ***************************************************************************
-			     Packaging Targets
+                             Packaging Targets
   ***************************************************************************
   -->
 
@@ -321,10 +321,10 @@
     <property name="versioned_src_zipfile"
               value="src-${api.version}.zip"/>
 
-    <property name="versioned_code_jar_file" 
+    <property name="versioned_code_jar_file"
               value="${code_jar_name}-${api.version}.jar"/>
 
-    <property name="versioned_docs_zipfile" 
+    <property name="versioned_docs_zipfile"
               value="javadocs-${api.version}.zip"/>
   </target>
 
@@ -349,32 +349,32 @@
     <mkdir dir="${release_dir}"/>
     <zip destfile="${release_dir}/${versioned_src_zipfile}">
       <!--
-	  WARNING: This file set is essentially duplicated in the installer's
-	  config file, below. There's no way around that, unfortunately.
+          WARNING: This file set is essentially duplicated in the installer's
+          config file, below. There's no way around that, unfortunately.
       -->
       <zipfileset dir="." prefix="${zip_dir_prefix}" casesensitive="yes">
-	<exclude name="${dist}/**"/>
-	<exclude name="${build}"/>
-	<exclude name="**/CVS"/>
-	<include name="**/*.java"/>
-	<include name="**/package.html"/>
-	<include name="overview.html"/>
-	<include name="**/*.xml"/>
-	<include name="**/*.properties"/>
+        <exclude name="${dist}/**"/>
+        <exclude name="${build}"/>
+        <exclude name="**/CVS"/>
+        <include name="**/*.java"/>
+        <include name="**/package.html"/>
+        <include name="overview.html"/>
+        <include name="**/*.xml"/>
+        <include name="**/*.properties"/>
       </zipfileset>
     </zip>
   </target>
 
-  <target name="fulldist" 
+  <target name="fulldist"
           depends="dist,-set.version.properties,-srczip,-doczip"
           description="Generate the distribution and source jars">
-    <copy file="${code_jar_path}" 
+    <copy file="${code_jar_path}"
           tofile="${release_dir}/${versioned_code_jar_file}"/>
   </target>
 
   <!--
   ***************************************************************************
-			     Installer Target
+                             Installer Target
   ***************************************************************************
   -->
 
@@ -387,7 +387,7 @@
   <property name="src.install" value="${src.top}/installer"/>
 
   <target name="installer"
-	  depends="-set.version.properties">
+          depends="-set.version.properties">
 
     <!-- Define the IzPack task -->
 
@@ -399,9 +399,9 @@
     <mkdir dir="${install.tmp}"/>
 
     <!--
-	Copy the LICENSE file and "unwrap" it so it's not wrapped weirdly
-	in the installer's License GUI screen. Oddly enough, this isn't an
-	issue with the README file
+        Copy the LICENSE file and "unwrap" it so it's not wrapped weirdly
+        in the installer's License GUI screen. Oddly enough, this isn't an
+        issue with the README file
     -->
 
     <copy todir="${install.tmp}" file="LICENSE"/>
@@ -437,9 +437,9 @@
     <!-- Build the installer -->
 
     <izpack output="${release_dir}/install-ocutil-${api.version}.jar"
-	    installerType="standard"
-	    basedir="."
-	    izPackDir="${izpack.home}">
+            installerType="standard"
+            basedir="."
+            izPackDir="${izpack.home}">
       <config><![CDATA[
 <installation version="1.0">
   <info>
@@ -471,7 +471,7 @@
     <panel classname="InfoPanel"/>
     -->
     <panel classname="LicencePanel"/>
-    <panel classname="TargetPanel"/> 
+    <panel classname="TargetPanel"/>
     <panel classname="PacksPanel"/>
     <panel classname="InstallPanel"/>
     <panel classname="ProcessPanel"/>
@@ -483,16 +483,16 @@
       <description>The jar file</description>
       <file src="LICENSE" targetdir="$INSTALL_PATH"/>
       <file src="@{release_dir}/@{versioned_code_jar_file}"
-	    targetdir="$INSTALL_PATH"/>
+            targetdir="$INSTALL_PATH"/>
 
       <!-- for cleaning up -->
 
       <singlefile src="@{src.top}/installer/cleanup.sh"
                   target="$INSTALL_PATH/scripts/cleanup.sh">
-	<os family="unix"/>
+        <os family="unix"/>
       </singlefile>
       <parsable targetfile="$INSTALL_PATH/scripts/cleanup.sh">
-	<os family="unix"/>
+        <os family="unix"/>
       </parsable>
       <executable targetfile="$INSTALL_PATH/scripts/cleanup.sh"
                   stage="never" os="unix"/>
@@ -502,7 +502,7 @@
         <os family="windows"/>
       </singlefile>
       <parsable targetfile="$INSTALL_PATH/scripts/cleanup.bat">
-	<os family="windows"/>
+        <os family="windows"/>
       </parsable>
       <executable targetfile="$INSTALL_PATH/scripts/cleanup.bat" stage="never"
                   os="windows"/>
@@ -511,9 +511,9 @@
     <pack name="Docs" required="no">
       <description>The API Javadocs</description>
       <file src="dist/docs/api"
-	    targetdir="$INSTALL_PATH/docs"/>
+            targetdir="$INSTALL_PATH/docs"/>
       <file src="docs/CHANGELOG"
-	    targetdir="$INSTALL_PATH/docs"/>
+            targetdir="$INSTALL_PATH/docs"/>
     </pack>
 
     <pack name="Sources" required="no">
@@ -523,22 +523,22 @@
           sources <zipfileset>, earlier in this file. There's no
           way around that, unfortunately.
 
-	  KLUDGE: For some reason, the IzPack <fileset> element doesn't
-	  properly include properties files with @{src.top}/**/*.properties,
-	  and exclusion via @{build} doesn't work, either. (It's not quite
-	  like the Ant <fileset>, no matter what the docs say.) So, we'll
-	  clean up the incorrectly copied build directory in the final panel.
+          KLUDGE: For some reason, the IzPack <fileset> element doesn't
+          properly include properties files with @{src.top}/**/*.properties,
+          and exclusion via @{build} doesn't work, either. (It's not quite
+          like the Ant <fileset>, no matter what the docs say.) So, we'll
+          clean up the incorrectly copied build directory in the final panel.
       -->
       <fileset dir="." targetdir="$INSTALL_PATH/sources">
-	<include name="**/*.java"/>
-	<include name="**/package.html"/>
-	<include name="overview.html"/>
-	<include name="build.xml"/>
-	<include name="**/*.xml"/>
-	<include name="**/*.properties"/>
-	<exclude name="@{dist}/**"/>
-	<exclude name="@{build}/**/*.properties"/>
-	<exclude name="**/CVS"/>
+        <include name="**/*.java"/>
+        <include name="**/package.html"/>
+        <include name="overview.html"/>
+        <include name="build.xml"/>
+        <include name="**/*.xml"/>
+        <include name="**/*.properties"/>
+        <exclude name="@{dist}/**"/>
+        <exclude name="@{build}/**/*.properties"/>
+        <exclude name="**/CVS"/>
       </fileset>
     </pack>
   </packs>
@@ -551,7 +551,7 @@
 
   <!--
   ***************************************************************************
-			     Clean-up Targets
+                             Clean-up Targets
   ***************************************************************************
   -->
 
