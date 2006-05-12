@@ -48,6 +48,8 @@ import java.io.File;
  * <p>The contained filters are applied in the order they were added to
  * the <tt>CombinationFileFilter</tt> object.</p>
  *
+ * @deprecated Use {@link AndFileFilter} and {@link OrFileFilter}
+ *
  * @see FileFilter
  * @see CombinationFilenameFilter
  * @see MultipleRegexFilenameFilter

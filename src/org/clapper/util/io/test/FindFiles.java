@@ -153,33 +153,39 @@ public class FindFiles
                               Private Methods
     \*----------------------------------------------------------------------*/
 
-    private void findFiles (Collection acceptPatterns,
-			    Collection rejectPatterns)
+    private void findFiles (Collection<String> acceptPatterns,
+			    Collection<String> rejectPatterns)
         throws PatternSyntaxException
     {
-        MultipleRegexFilenameFilter filter;
-        Iterator                    it;
-	RecursiveFileFinder         finder = new RecursiveFileFinder();
-	Collection<File>            files  = new ArrayList<File>();
+	RecursiveFileFinder finder = new RecursiveFileFinder();
+	Collection<File>    files  = new ArrayList<File>();
 
         System.out.println ("*** Using match type of " + matchType);
 
-	filter = new MultipleRegexFilenameFilter (matchType);
+        AndFilenameFilter masterFilter = new AndFilenameFilter();
 
-        for (it = acceptPatterns.iterator(); it.hasNext(); )
-            filter.addAcceptPattern ((String) it.next());
+        for (String pattern : acceptPatterns)
+        {
+            masterFilter.addFilter
+                (new RegexFilenameFilter (pattern, matchType));
+        }
 
-        for (it = rejectPatterns.iterator(); it.hasNext(); )
-            filter.addRejectPattern ((String) it.next());
+        for (String pattern : rejectPatterns)
+        {
+            masterFilter.addFilter
+                (new NotFilenameFilter
+                    (new RegexFilenameFilter (pattern, matchType)));
+        }
 
-        finder.findFiles (new File (directory), filter, files);
+        finder.findFiles (new File (directory), masterFilter, files);
 
 	if (files.size() == 0)
 	    System.out.println ("*** No matches.");
+
 	else
         {
-            for (it = files.iterator(); it.hasNext(); )
-                System.out.println (it.next());
+            for (File file : files)
+                System.out.println (file);
 	}    
     }
 }
