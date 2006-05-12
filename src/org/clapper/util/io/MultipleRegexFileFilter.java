@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-  $Id$
+  $Id: MultipleRegexFilenameFilter.java 5812 2006-05-12 00:38:16Z bmc $
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
@@ -26,14 +26,14 @@
 
 package org.clapper.util.io;
 
-import java.io.FilenameFilter;
+import java.io.FileFilter;
 import java.io.File;
 
 /**
- * <p><tt>MultipleRegexFilenameFilter</tt> implements a
- * <tt>java.io.FilenameFilter</tt> that matches file names and path names
+ * <p><tt>MultipleRegexFileFilter</tt> implements a
+ * <tt>java.io.FileFilter</tt> that matches file names and path names
  * using one or more regular expressions. A
- * <tt>MultipleRegexFilenameFilter</tt> contains two sets of regular
+ * <tt>MultipleRegexFileFilter</tt> contains two sets of regular
  * expressions, an <i>accept</i> set and a <i>reject</i> set. To be
  * accepted, a file name must not match any of the patterns in the
  * <i>reject</i> set, and it <b>must</b> match at least one of the patterns
@@ -42,35 +42,35 @@ import java.io.File;
  * then all files are assumed to be accepted. (i.e., It's as if the
  * <i>accept</i> set contained a single "^.*$" pattern.)</p>
  *
- * <p>A <tt>MultipleRegexFilenameFilter</tt> can be configured to operate
+ * <p>A <tt>MultipleRegexFileFilter</tt> can be configured to operate
  * on just the simple file name, or on the file's path.</p>
  *
- * <p><tt>MultipleRegexFilenameFilter</tt> uses the <tt>java.util.regex</tt>
+ * <p><tt>MultipleRegexFileFilter</tt> uses the <tt>java.util.regex</tt>
  * regular expression classes, so it requires JDK 1.4 or newer.</p>
  *
- * @see MultipleRegexFilFilter
- * @see CombinationFilenameFilter
+ * @see MultipleRegexFilenameFilter
+ * @see CombinationFileFilter
  *
- * @version <tt>$Revision$</tt>
+ * @version <tt>$Revision: 5812 $</tt>
  *
  * @author Copyright &copy; 2004-2006 Brian M. Clapper
  */
-public class MultipleRegexFilenameFilter
+public class MultipleRegexFileFilter
     extends AbstractMultipleRegexFileFilter
-    implements FilenameFilter
+    implements FileFilter
 {
     /*----------------------------------------------------------------------*\
                             Constructor
     \*----------------------------------------------------------------------*/
 
     /**
-     * Construct a new <tt>MultipleRegexFilenameFilter</tt>.
+     * Construct a new <tt>MultipleRegexFileFilter</tt>.
      *
      * @param matchType <tt>FileFilterMatchType.FILENAME</tt> to match just the
      *                  filename, <tt>FileFilterMatchType.PATH</tt> to match
      *                  the path (via <tt>java.io.File.getPath()</tt>)
      */
-    public MultipleRegexFilenameFilter (FileFilterMatchType matchType)
+    public MultipleRegexFileFilter (FileFilterMatchType matchType)
     {
         super (matchType);
     }
@@ -83,16 +83,15 @@ public class MultipleRegexFilenameFilter
      * Determine whether a file is to be accepted or not, based on the
      * regular expressions in the <i>reject</i> and <i>accept</i> lists.
      *
-     * @param dir   The directory containing the file. Ignored if
+     * @param path  The directory containing the file. Ignored if
      *              the match type is <tt>MatchType.FILENAME</tt>. Used to
      *              build the path to match when the match type is
      *              <tt>MatchType.PATH</tt>
-     * @param name  the file name
      *
      * @return <tt>true</tt> if the file matches, <tt>false</tt> if it doesn't
      */
-    public boolean accept (File dir, String name)
+    public boolean accept (File path)
     {
-        return acceptFilename (dir, name);
+        return acceptFile (path);
     }
 }

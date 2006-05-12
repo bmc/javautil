@@ -162,8 +162,7 @@ public class FindFiles
 	RecursiveFileFinder         finder = new RecursiveFileFinder();
 	Collection<File>            files  = new ArrayList<File>();
 
-	filter = new MultipleRegexFilenameFilter
-	                       (MultipleRegexFilenameFilter.MatchType.PATH);
+	filter = new MultipleRegexFilenameFilter (FileFilterMatchType.PATH);
 
         for (it = acceptPatterns.iterator(); it.hasNext(); )
             filter.addAcceptPattern ((String) it.next());
