@@ -189,7 +189,7 @@ public abstract class AbstractMultipleRegexFileFilter
         {
             Matcher matcher = pattern.matcher (nameOrPath);
 
-            if (matcher.matches())
+            if (matcher.find())
             {
                 match = false;
                 found = true;
