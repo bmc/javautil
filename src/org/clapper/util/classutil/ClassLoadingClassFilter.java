@@ -28,78 +28,100 @@ package org.clapper.util.classutil;
 
 import org.clapper.util.logging.Logger;
 
-import java.lang.reflect.Modifier;
-
 /**
- * <p><tt>ClassModifiersClassFilter</tt> implements a
- * {@link ClassFilter} that matches class names that (a) can be loaded
- * and (b) match a set of class modifiers (as defined by the constants
- * in the <tt>java.lang.reflect.Modifier</tt> class). For instance, the
- * the following code fragment defines a filter that will match only
- * public final classes:</p>
- *
- * <blockquote><pre>
- * import java.lang.reflect.Modifier;
- *
- * ...
- *
- * ClassFilter = new ClassModifiersClassFilter (Modifier.PUBLIC | Modifier.FINAL);
- * </pre></blockquote>
- *
- * <p>This class uses the Reflection API, so it actually has to load each
- * class it tests. For maximum flexibility, a
- * <tt>ClassModifiersClassFilter</tt> object can be configured to use a
- * specific class loader.</p>
- *
- * @see ClassFilter
- * @see ClassFinder
- * @see Modifier
+ * <p>This abstract base class implements the {@link ClassFilter} interface
+ * and simplifies the task of writing a <tt>ClassFilter</tt> that must load
+ * the class to determine whether to accept it or not. This method provides
+ * the required {@link #accept(String) accept()} method, taking the class
+ * name. The <tt>accept()</tt> method attempts to load the class; if
+ * the load succeeeds, <tt>accept()</tt> then calls the (abstract)
+ * {@link #acceptClass acceptClass()} method to perform whatever acceptance
+ * tests are necessary.</p>
  *
  * @version <tt>$Revision: 5812 $</tt>
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
-public class ClassModifiersClassFilter
-    extends ClassLoadingClassFilter
+public abstract class ClassLoadingClassFilter
+    implements ClassFilter
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private int modifiers   = 0;
+    private ClassLoader classLoader = null;
+
+    /**
+     * For logging
+     */
+    private static final Logger log =
+        new Logger (ClassLoadingClassFilter.class);
 
     /*----------------------------------------------------------------------*\
                             Constructor
     \*----------------------------------------------------------------------*/
 
     /**
-     * Construct a new <tt>ClassModifiersClassFilter</tt> that will accept
-     * any classes with the specified modifiers.
-     *
-     * @param modifiers  the bit-field of modifier flags. See the
-     *                   <tt>java.lang.reflect.Modifier</tt> class for
-     *                   legal values.
+     * Construct a new <tt>ClassLoadingClassFilter</tt> that will accept
+     * only classes that are interfaces.
      */
-    public ClassModifiersClassFilter (int modifiers)
+    protected ClassLoadingClassFilter()
     {
-        super();
-        this.modifiers = modifiers;
+        this.classLoader = ClassLoadingClassFilter.class.getClassLoader();
     }
 
     /**
-     * Construct a new <tt>ClassModifiersClassFilter</tt> that will only
-     * accept only abstract classes, and will use the specified class
-     * loader to load the classes it finds.
+     * Construct a new <tt>ClassLoadingClassFilter</tt> that will
+     * accept only classes that are interfaces and will use the specified
+     * class loader to load the classes it finds.
      *
-     * @param modifiers   the bit-field of modifier flags. See the
-     *                    <tt>java.lang.reflect.Modifier</tt> class for
-     *                    legal values.
      * @param classLoader the class loader to use
      */
-    public ClassModifiersClassFilter (int modifiers, ClassLoader classLoader)
+    protected ClassLoadingClassFilter (ClassLoader classLoader)
     {
-        super (classLoader);
-        this.modifiers = modifiers;
+        this.classLoader = classLoader;
+    }
+
+    /*----------------------------------------------------------------------*\
+                              Public Methods
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * Determine whether a class name is to be accepted or not, based on
+     * whether it implements the interface that was pass to the
+     * constructor.
+     *
+     * @param className  the class name
+     *
+     * @return <tt>true</tt> if the class name matches,
+     *         <tt>false</tt> if it doesn't
+     */
+    public final boolean accept (String className)
+    {
+        boolean match = false;
+
+        try
+        {
+            Class cls = classLoader.loadClass (className);
+            match = acceptClass (cls);
+        }
+
+        catch (ClassNotFoundException ex)
+        {
+            log.warn ("Can't load class \""
+                    + className
+                    + "\": class not found");
+        }
+        
+        catch (Throwable ex)
+        {
+            log.warn ("Can't load class \""
+                    + className
+                    + "\""
+                    + ex.toString());
+        }
+
+        return match;
     }
 
     /*----------------------------------------------------------------------*\
@@ -114,8 +136,5 @@ public class ClassModifiersClassFilter
      * @return <tt>true</tt> if the class name matches,
      *         <tt>false</tt> if it doesn't
      */
-    protected boolean acceptClass (Class cls)
-    {
-        return ((cls.getModifiers() & modifiers) != 0);
-    }
+    protected abstract boolean acceptClass (Class cls);
 }

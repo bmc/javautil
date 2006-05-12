@@ -33,7 +33,8 @@ import java.net.URLClassLoader;
 import java.net.MalformedURLException;
 
 import java.util.Collection;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.StringTokenizer;
 
 import org.clapper.util.logging.Logger;
 
@@ -53,7 +54,7 @@ public class ClassLoaderBuilder
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private Collection<URL> urlList = new ArrayList<URL>();
+    private Collection<URL> urlList = new LinkedHashSet<URL>();
 
     /**
      * For logging
@@ -126,6 +127,30 @@ public class ClassLoaderBuilder
     }
 
     /**
+     * Add the contents of the classpath.
+     */
+    public void addClassPath()
+    {
+        String path = null;
+
+        try
+        {
+            path = System.getProperty ("java.class.path");
+        }
+
+        catch (Exception ex)
+        {
+            path= "";
+            log.error ("Unable to get class path", ex);
+        }
+    
+        StringTokenizer tok = new StringTokenizer (path, File.pathSeparator);
+
+        while (tok.hasMoreTokens())
+            add (new File (tok.nextToken()));
+    }
+
+    /**
      * Clear the stored files in this object.
      */
     public void clear()
@@ -145,7 +170,8 @@ public class ClassLoaderBuilder
     public ClassLoader createClassLoader()
         throws SecurityException
     {
-        return new URLClassLoader (urlList.toArray (new URL[urlList.size()]));
+        return new URLClassLoader (urlList.toArray (new URL[urlList.size()]),
+                                   getClass().getClassLoader());
     }
 
     /**

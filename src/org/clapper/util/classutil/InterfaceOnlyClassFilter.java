@@ -40,20 +40,8 @@ import org.clapper.util.logging.Logger;
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
 public class InterfaceOnlyClassFilter
-    implements ClassFilter
+    extends ClassLoadingClassFilter
 {
-    /*----------------------------------------------------------------------*\
-                            Private Data Items
-    \*----------------------------------------------------------------------*/
-
-    private ClassLoader classLoader = null;
-
-    /**
-     * For logging
-     */
-    private static final Logger log =
-        new Logger (InterfaceOnlyClassFilter.class);
-
     /*----------------------------------------------------------------------*\
                             Constructor
     \*----------------------------------------------------------------------*/
@@ -64,7 +52,7 @@ public class InterfaceOnlyClassFilter
      */
     public InterfaceOnlyClassFilter()
     {
-        this.classLoader = InterfaceOnlyClassFilter.class.getClassLoader();
+        super();
     }
 
     /**
@@ -76,40 +64,23 @@ public class InterfaceOnlyClassFilter
      */
     public InterfaceOnlyClassFilter (ClassLoader classLoader)
     {
-        this.classLoader = classLoader;
+        super (classLoader);
     }
 
     /*----------------------------------------------------------------------*\
-                              Public Methods
+                             Protected Methods
     \*----------------------------------------------------------------------*/
 
     /**
-     * Determine whether a class name is to be accepted or not, based on
-     * whether it implements the interface that was pass to the
-     * constructor.
+     * Perform the acceptance test on the loaded <tt>Class</tt> object.
      *
-     * @param className  the class name
+     * @param cls  the loaded <tt>Class</tt> object
      *
      * @return <tt>true</tt> if the class name matches,
      *         <tt>false</tt> if it doesn't
      */
-    public boolean accept (String className)
+    protected boolean acceptClass (Class cls)
     {
-        boolean match = false;
-
-        try
-        {
-            Class cls = classLoader.loadClass (className);
-            match = cls.isInterface();
-        }
-
-        catch (ClassNotFoundException ex)
-        {
-            log.error ("Can't load class \""
-                     + className
-                     + "\": class not found");
-        }
-        
-        return match;
+        return cls.isInterface();
     }
 }

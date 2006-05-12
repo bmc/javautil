@@ -42,20 +42,13 @@ import org.clapper.util.logging.Logger;
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
 public class SubclassClassFilter
-    implements ClassFilter
+    extends ClassLoadingClassFilter
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private Class       baseClass;
-    private ClassLoader classLoader = null;
-
-    /**
-     * For logging
-     */
-    private static final Logger log =
-        new Logger (SubclassClassFilter.class);
+    private Class baseClass;
 
     /*----------------------------------------------------------------------*\
                             Constructor
@@ -70,8 +63,8 @@ public class SubclassClassFilter
      */
     public SubclassClassFilter (Class baseClassOrInterface)
     {
-        this.baseClass   = baseClassOrInterface;
-        this.classLoader = baseClass.getClassLoader();
+        super();
+        this.baseClass = baseClassOrInterface;
     }
 
     /**
@@ -86,44 +79,24 @@ public class SubclassClassFilter
     public SubclassClassFilter (Class       baseClassOrInterface,
                                 ClassLoader classLoader)
     {
-        this.baseClass   = baseClassOrInterface;
-        this.classLoader = classLoader;
+        super (classLoader);
+        this.baseClass = baseClassOrInterface;
     }
 
     /*----------------------------------------------------------------------*\
-                              Public Methods
+                             Protected Methods
     \*----------------------------------------------------------------------*/
 
     /**
-     * Determine whether a class name is to be accepted or not, based on
-     * whether it implements the interface that was pass to the
-     * constructor.
+     * Perform the acceptance test on the loaded <tt>Class</tt> object.
      *
-     * @param className  the class name
+     * @param cls  the loaded <tt>Class</tt> object
      *
      * @return <tt>true</tt> if the class name matches,
      *         <tt>false</tt> if it doesn't
      */
-    public boolean accept (String className)
+    protected boolean acceptClass (Class cls)
     {
-        boolean match = false;
-
-        if (! className.equals (baseClass))
-        {
-            try
-            {
-                Class cls = classLoader.loadClass (className);
-                match = baseClass.isAssignableFrom (cls);
-            }
-
-            catch (ClassNotFoundException ex)
-            {
-                log.error ("Can't load class \""
-                         + className
-                         + "\": class not found");
-            }
-        }
-        
-        return match;
+        return baseClass.isAssignableFrom (cls);
     }
 }
