@@ -109,7 +109,7 @@ public class ImplementsInterfaceClassNameFilter
 
         catch (ClassNotFoundException ex)
         {
-            log.debug ("Can't load class \""
+            log.error ("Can't load class \""
                      + className
                      + "\": class not found");
         }
