@@ -3,7 +3,7 @@
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
-  Copyright (c) 2004-2005 Brian M. Clapper. All rights reserved.
+  Copyright (c) 2004-2006 Brian M. Clapper. All rights reserved.
 
   Redistribution and use in source and binary forms are permitted provided
   that: (1) source distributions retain this entire copyright notice and
@@ -26,6 +26,7 @@
 
 package org.clapper.util.io;
 
+import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.File;
 
@@ -61,9 +62,10 @@ import java.util.regex.PatternSyntaxException;
  *
  * @version <tt>$Revision$</tt>
  *
- * @author Copyright &copy; 2004 Brian M. Clapper
+ * @author Copyright &copy; 2004-2006 Brian M. Clapper
  */
-public class MultipleRegexFilenameFilter implements FilenameFilter
+public class MultipleRegexFilenameFilter
+    implements FilenameFilter, FileFilter
 {
     /*----------------------------------------------------------------------*\
                              Public Constants
@@ -154,6 +156,24 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
      * Determine whether a file is to be accepted or not, based on the
      * regular expressions in the <i>reject</i> and <i>accept</i> lists.
      *
+     * @param path  The directory containing the file. Ignored if
+     *              the match type is <tt>MatchType.FILENAME</tt>. Used to
+     *              build the path to match when the match type is
+     *              <tt>MatchType.PATH</tt>
+     * @param name  the file name
+     *
+     * @return <tt>true</tt> if the file matches, <tt>false</tt> if it doesn't
+     */
+    public boolean accept (File path)
+    {
+        return accept (new File (FileUtil.dirname (path)),
+                       FileUtil.basename (path));
+    }
+
+    /**
+     * Determine whether a file is to be accepted or not, based on the
+     * regular expressions in the <i>reject</i> and <i>accept</i> lists.
+     *
      * @param dir   The directory containing the file. Ignored if
      *              the match type is <tt>MatchType.FILENAME</tt>. Used to
      *              build the path to match when the match type is
@@ -202,7 +222,7 @@ public class MultipleRegexFilenameFilter implements FilenameFilter
                 {
                     Matcher matcher = pattern.matcher (name);
 
-                    if (matcher.matches())
+                    if (matcher.find())
                     {
                         match = true;
                         break;
