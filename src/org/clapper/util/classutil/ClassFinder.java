@@ -79,7 +79,7 @@ public class ClassFinder
      * Create a new <tt>ClassFinder</tt> that will search for classes
      * using the default class loader.
      */
-    private ClassFinder()
+    public ClassFinder()
     {
     }
 
@@ -178,7 +178,7 @@ public class ClassFinder
 
         for (File file : placesToSearch)
         {
-            String name = file.getName();
+            String name = file.getPath();
 
             if (name.endsWith (".jar"))
                 total += processJar (name, filter, classNames);
