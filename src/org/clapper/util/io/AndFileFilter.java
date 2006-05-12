@@ -78,18 +78,16 @@ public class AndFileFilter implements FileFilter
     }
 
     /**
-     * Construct a new <tt>AndFileFilter</tt> with two contained filters.
+     * Construct a new <tt>AndFileFilter</tt> with a set of contained filters.
      * Additional filters may be added later, via calls to the
      * {@link #addFilter addFilter()} method.
      *
-     * @param filter1  first filter to add
-     * @param filter2  second filter to add
+     * @param filters  filters to add
      */
-    public AndFileFilter (FileFilter filter1,
-                               FileFilter filter2)
+    public AndFileFilter (FileFilter... filters)
     {
-        addFilter (filter1);
-        addFilter (filter2);
+        for (FileFilter filter : filters)
+            addFilter (filter);
     }
 
     /*----------------------------------------------------------------------*\

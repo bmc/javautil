@@ -78,18 +78,16 @@ public class AndFilenameFilter implements FilenameFilter
     }
 
     /**
-     * Construct a new <tt>AndFilenameFilter</tt> with two contained filters.
-     * Additional filters may be added later, via calls to the
+     * Construct a new <tt>AndFilenameFilter</tt> with a set of contained
+     * filters. Additional filters may be added later, via calls to the
      * {@link #addFilter addFilter()} method.
      *
-     * @param filter1  first filter to add
-     * @param filter2  second filter to add
+     * @param filters  filters to use
      */
-    public AndFilenameFilter (FilenameFilter filter1,
-                               FilenameFilter filter2)
+    public AndFilenameFilter (FilenameFilter... filters)
     {
-        addFilter (filter1);
-        addFilter (filter2);
+        for (FilenameFilter filter : filters)
+            addFilter (filter);
     }
 
     /*----------------------------------------------------------------------*\
