@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-  $Id: SubclassClassNameFilter.java 5812 2006-05-12 00:38:16Z bmc $
+  $Id: SubclassClassFilter.java 5812 2006-05-12 00:38:16Z bmc $
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
@@ -31,17 +31,17 @@ import org.clapper.util.logging.Logger;
 import java.lang.reflect.Modifier;
 
 /**
- * <p><tt>AbstractClassNameFilter</tt> implements a {@link ClassNameFilter}
+ * <p><tt>AbstractClassFilter</tt> implements a {@link ClassFilter}
  * that matches class names that (a) can be loaded and (b) are abstract. It
  * uses the Reflection API, so it actually has to load each class it tests.
- * For maximum flexibility, an <tt>AbstractClassNameFilter</tt> can be
+ * For maximum flexibility, an <tt>AbstractClassFilter</tt> can be
  * configured to use a specific class loader.</p>
  *
  * <p>This class is really just a convenient specialization of the
- * {@link ClassModifiersClassNameFilter} class.</p>
+ * {@link ClassModifiersClassFilter} class.</p>
  *
- * @see ClassNameFilter
- * @see ClassModifiersClassNameFilter
+ * @see ClassFilter
+ * @see ClassModifiersClassFilter
  * @see ClassFinder
  * @see Modifier
  *
@@ -49,30 +49,30 @@ import java.lang.reflect.Modifier;
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
-public class AbstractClassNameFilter
-    extends ClassModifiersClassNameFilter
+public class AbstractClassFilter
+    extends ClassModifiersClassFilter
 {
     /*----------------------------------------------------------------------*\
                             Constructor
     \*----------------------------------------------------------------------*/
 
     /**
-     * Construct a new <tt>AbstractClassNameFilter</tt> that will accept
+     * Construct a new <tt>AbstractClassFilter</tt> that will accept
      * only abstract classes.
      */
-    public AbstractClassNameFilter()
+    public AbstractClassFilter()
     {
         super (Modifier.ABSTRACT);
     }
 
     /**
-     * Construct a new <tt>AbstractClassNameFilter</tt> that will only
+     * Construct a new <tt>AbstractClassFilter</tt> that will only
      * accept only abstract classes, and will use the specified class
      * loader to load the classes it finds.
      *
      * @param classLoader the class loader to use
      */
-    public AbstractClassNameFilter (ClassLoader classLoader)
+    public AbstractClassFilter (ClassLoader classLoader)
     {
         super (Modifier.ABSTRACT, classLoader);
     }

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-  $Id: RegexClassNameFilter.java 5812 2006-05-12 00:38:16Z bmc $
+  $Id: SubclassClassFilter.java 5812 2006-05-12 00:38:16Z bmc $
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
@@ -26,75 +26,57 @@
 
 package org.clapper.util.classutil;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
+import org.clapper.util.logging.Logger;
 
 /**
- * <p><tt>RegexClassNameFilter</tt> implements a {@link ClassNameFilter}
- * that matches class names using a regular expression. Multiple regular
- * expression filters can be combined using {@link AndClassNameFilter}
- * and/or {@link OrClassNameFilter} objects.</p>
- *
- * <p><tt>RegexClassNameFilter</tt> uses the <tt>java.util.regex</tt>
- * regular expression classes.</p>
- *
- * @see ClassNameFilter
- * @see AndClassNameFilter
- * @see OrClassNameFilter
- * @see NotClassNameFilter
- * @see ClassFinder
+ * <p><tt>InterfaceOnlyClassFilter</tt> implements a
+ * {@link ClassFilter} that matches class names that are interfaces.
+ * It uses reflection, so it actually has to load each class it tests. For
+ * maximum flexibility, a <tt>InterfaceOnlyClassFilter</tt> can be
+ * configured to use a specific class loader.</p>
  *
  * @version <tt>$Revision: 5812 $</tt>
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
-public class RegexClassNameFilter
-    implements ClassNameFilter
+public class InterfaceOnlyClassFilter
+    implements ClassFilter
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private Pattern pattern;
+    private ClassLoader classLoader = null;
+
+    /**
+     * For logging
+     */
+    private static final Logger log =
+        new Logger (InterfaceOnlyClassFilter.class);
 
     /*----------------------------------------------------------------------*\
                             Constructor
     \*----------------------------------------------------------------------*/
 
     /**
-     * Construct a new <tt>RegexClassNameFilter</tt> using the specified
-     * pattern.
-     *
-     * @param regex  the regular expression to add
-     *
-     * @throws PatternSyntaxException  bad regular expression
+     * Construct a new <tt>InterfaceOnlyClassFilter</tt> that will accept
+     * only classes that are interfaces.
      */
-    public RegexClassNameFilter (String regex)
-        throws PatternSyntaxException
+    public InterfaceOnlyClassFilter()
     {
-        pattern = Pattern.compile (regex);
+        this.classLoader = InterfaceOnlyClassFilter.class.getClassLoader();
     }
 
     /**
-     * Construct a new <tt>RegexClassNameFilter</tt> using the specified
-     * pattern.
+     * Construct a new <tt>InterfaceOnlyClassFilter</tt> that will
+     * accept only classes that are interfaces and will use the specified
+     * class loader to load the classes it finds.
      *
-     * @param regex      the regular expression to add
-     * @param regexFlags regular expression compilation flags (e.g.,
-     *                   <tt>Pattern.CASE_INSENSITIVE</tt>). See
-     *                   the Javadocs for <tt>java.util.regex</tt> for
-     *                   legal values.
-     *
-     * @throws PatternSyntaxException  bad regular expression
+     * @param classLoader the class loader to use
      */
-    public RegexClassNameFilter (String regex, int regexFlags)
-        throws PatternSyntaxException
+    public InterfaceOnlyClassFilter (ClassLoader classLoader)
     {
-        pattern = Pattern.compile (regex, regexFlags);
+        this.classLoader = classLoader;
     }
 
     /*----------------------------------------------------------------------*\
@@ -103,7 +85,8 @@ public class RegexClassNameFilter
 
     /**
      * Determine whether a class name is to be accepted or not, based on
-     * the regular expression specified to the constructor.
+     * whether it implements the interface that was pass to the
+     * constructor.
      *
      * @param className  the class name
      *
@@ -112,6 +95,21 @@ public class RegexClassNameFilter
      */
     public boolean accept (String className)
     {
-        return pattern.matcher (className).find();
+        boolean match = false;
+
+        try
+        {
+            Class cls = classLoader.loadClass (className);
+            match = cls.isInterface();
+        }
+
+        catch (ClassNotFoundException ex)
+        {
+            log.error ("Can't load class \""
+                     + className
+                     + "\": class not found");
+        }
+        
+        return match;
     }
 }

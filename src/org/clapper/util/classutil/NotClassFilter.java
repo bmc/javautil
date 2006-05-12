@@ -1,9 +1,9 @@
 /*---------------------------------------------------------------------------*\
-  $Id: SubclassClassNameFilter.java 5812 2006-05-12 00:38:16Z bmc $
+  $Id: ClassUtil.java 5812 2006-05-12 00:38:16Z bmc $
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
-  Copyright (c) 2006 Brian M. Clapper. All rights reserved.
+  Copyright (c) 2004-2006 Brian M. Clapper. All rights reserved.
 
   Redistribution and use in source and binary forms are permitted provided
   that: (1) source distributions retain this entire copyright notice and
@@ -26,90 +26,66 @@
 
 package org.clapper.util.classutil;
 
-import org.clapper.util.logging.Logger;
-
 /**
- * <p><tt>InterfaceOnlyClassNameFilter</tt> implements a
- * {@link ClassNameFilter} that matches class names that are interfaces.
- * It uses reflection, so it actually has to load each class it tests. For
- * maximum flexibility, a <tt>InterfaceOnlyClassNameFilter</tt> can be
- * configured to use a specific class loader.</p>
+ * <tt>NotClassFilter</tt> is a {@link ClassFilter} that
+ * wraps another {@link ClassFilter} and negates the sense of the
+ * wrapped filter's {@link ClassFilter#accept accept()} method. This
+ * class conceptually provides a logical "NOT" operator for class name
+ * filters. For example, the following code fragment will create a filter
+ * that finds all classes that are not interfaces.
+ *
+ * <blockquote><pre>
+ * NotClassFilter filter = new NotClassFilter (new InterfaceOnlyClassFilter());
+ * </pre></blockquote>
+ *
+ * @see ClassFilter
+ * @see AndClassFilter
+ * @see OrClassFilter
+ * @see ClassFinder
+ * @see InterfaceOnlyClassFilter
  *
  * @version <tt>$Revision: 5812 $</tt>
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
-public class InterfaceOnlyClassNameFilter
-    implements ClassNameFilter
+public class NotClassFilter implements ClassFilter
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private ClassLoader classLoader = null;
-
-    /**
-     * For logging
-     */
-    private static final Logger log =
-        new Logger (InterfaceOnlyClassNameFilter.class);
+    private ClassFilter filter;
 
     /*----------------------------------------------------------------------*\
                             Constructor
     \*----------------------------------------------------------------------*/
 
     /**
-     * Construct a new <tt>InterfaceOnlyClassNameFilter</tt> that will accept
-     * only classes that are interfaces.
-     */
-    public InterfaceOnlyClassNameFilter()
-    {
-        this.classLoader = InterfaceOnlyClassNameFilter.class.getClassLoader();
-    }
-
-    /**
-     * Construct a new <tt>InterfaceOnlyClassNameFilter</tt> that will
-     * accept only classes that are interfaces and will use the specified
-     * class loader to load the classes it finds.
+     * Create a new <tt>NotClassFilter</tt> that wraps the
+     * specified {@link ClassFilter}.
      *
-     * @param classLoader the class loader to use
+     * @param filter  The {@link ClassFilter} to wrap.
      */
-    public InterfaceOnlyClassNameFilter (ClassLoader classLoader)
+    public NotClassFilter (ClassFilter filter)
     {
-        this.classLoader = classLoader;
+        this.filter = filter;
     }
 
     /*----------------------------------------------------------------------*\
-                              Public Methods
+                            Constructor
     \*----------------------------------------------------------------------*/
 
     /**
-     * Determine whether a class name is to be accepted or not, based on
-     * whether it implements the interface that was pass to the
-     * constructor.
+     * Tests whether a class name should be included in a class name
+     * list.
      *
-     * @param className  the class name
+     * @param className  the name of the class
      *
-     * @return <tt>true</tt> if the class name matches,
-     *         <tt>false</tt> if it doesn't
+     * @return <tt>true</tt> if and only if the name should be included
+     *         in the list; <tt>false</tt> otherwise
      */
     public boolean accept (String className)
     {
-        boolean match = false;
-
-        try
-        {
-            Class cls = classLoader.loadClass (className);
-            match = cls.isInterface();
-        }
-
-        catch (ClassNotFoundException ex)
-        {
-            log.error ("Can't load class \""
-                     + className
-                     + "\": class not found");
-        }
-        
-        return match;
+        return ! this.filter.accept (className);
     }
 }

@@ -154,7 +154,7 @@ public class ClassFinder
     public int findClasses (Collection<String> classNames)
     {
         return findClasses (classNames,
-                            new ClassNameFilter()
+                            new ClassFilter()
                             {
                                 public boolean accept (String className)
                                 {
@@ -173,7 +173,7 @@ public class ClassFinder
      * @return the number of matched classes added to the collection
      */
     public int findClasses (Collection<String> classNames,
-                            ClassNameFilter    filter)
+                            ClassFilter    filter)
     {
         int total = 0;
 
@@ -197,7 +197,7 @@ public class ClassFinder
     \*----------------------------------------------------------------------*/
 
     private int processJar (String             jarName,
-                            ClassNameFilter    filter,
+                            ClassFilter    filter,
                             Collection<String> classNames)
     {
         int total = 0;
@@ -216,7 +216,7 @@ public class ClassFinder
     }
 
     private int processZip (String             zipName,
-                            ClassNameFilter    filter,
+                            ClassFilter    filter,
                             Collection<String> classNames)
     {
         int total = 0;
@@ -235,7 +235,7 @@ public class ClassFinder
     }
 
     private int processOpenZip (ZipFile            zip,
-                                ClassNameFilter    filter,
+                                ClassFilter    filter,
                                 Collection<String> classNames)
     {
         int total = 0;
@@ -261,7 +261,7 @@ public class ClassFinder
     }
 
     private int processDirectory (File               dir,
-                                  ClassNameFilter    classFilter,
+                                  ClassFilter    classFilter,
                                   Collection<String> classNames)
     {
         int total = 0;

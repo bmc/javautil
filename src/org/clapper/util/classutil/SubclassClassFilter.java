@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-  $Id: SubclassClassNameFilter.java 5812 2006-05-12 00:38:16Z bmc $
+  $Id: SubclassClassFilter.java 5812 2006-05-12 00:38:16Z bmc $
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
@@ -28,86 +28,65 @@ package org.clapper.util.classutil;
 
 import org.clapper.util.logging.Logger;
 
-import java.lang.reflect.Modifier;
-
 /**
- * <p><tt>ClassModifiersClassNameFilter</tt> implements a
- * {@link ClassNameFilter} that matches class names that (a) can be loaded
- * and (b) match a set of class modifiers (as defined by the constants
- * in the <tt>java.lang.reflect.Modifier</tt> class). For instance, the
- * the following code fragment defines a filter that will match only
- * public final classes:</p>
- *
- * <blockquote><pre>
- * import java.lang.reflect.Modifier;
- *
- * ...
- *
- * ClassNameFilter = new ClassModifiersClassNameFilter (Modifier.PUBLIC | Modifier.FINAL);
- * </pre></blockquote>
- *
- * <p>This class uses the Reflection API, so it actually has to load each
- * class it tests. For maximum flexibility, a
- * <tt>ClassModifiersClassNameFilter</tt> object can be configured to use a
- * specific class loader.</p>
- *
- * @see ClassNameFilter
- * @see ClassFinder
- * @see Modifier
+ * <p><tt>SubclassClassFilter</tt> implements a {@link ClassFilter}
+ * that matches class names that (a) can be loaded and (b) extend a given
+ * subclass or implement a specified interface, directly or indirectly. It
+ * uses the <tt>java.lang.Class.isAssignableFrom()</p> method, so it actually
+ * has to load each class it tests. For maximum flexibility, a
+ * <tt>SubclassClassFilter</tt> can be configured to use a specific
+ * class loader.</p>
  *
  * @version <tt>$Revision: 5812 $</tt>
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
-public class ClassModifiersClassNameFilter
-    implements ClassNameFilter
+public class SubclassClassFilter
+    implements ClassFilter
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
+    private Class       baseClass;
     private ClassLoader classLoader = null;
-    private int         modifiers   = 0;
 
     /**
      * For logging
      */
     private static final Logger log =
-        new Logger (ClassModifiersClassNameFilter.class);
+        new Logger (SubclassClassFilter.class);
 
     /*----------------------------------------------------------------------*\
                             Constructor
     \*----------------------------------------------------------------------*/
 
     /**
-     * Construct a new <tt>ClassModifiersClassNameFilter</tt> that will accept
-     * any classes with the specified modifiers.
+     * Construct a new <tt>SubclassClassFilter</tt> that will accept
+     * only classes that extend the specified class or implement the
+     * specified interface.
      *
-     * @param modifiers  the bit-field of modifier flags. See the
-     *                   <tt>java.lang.reflect.Modifier</tt> class for
-     *                   legal values.
+     * @param baseClassOrInterface  the base class or interface
      */
-    public ClassModifiersClassNameFilter (int modifiers)
+    public SubclassClassFilter (Class baseClassOrInterface)
     {
-        this.modifiers = modifiers;
-        this.classLoader =
-            ClassModifiersClassNameFilter.class.getClassLoader();
+        this.baseClass   = baseClassOrInterface;
+        this.classLoader = baseClass.getClassLoader();
     }
 
     /**
-     * Construct a new <tt>ClassModifiersClassNameFilter</tt> that will only
-     * accept only abstract classes, and will use the specified class
-     * loader to load the classes it finds.
+     * Construct a new <tt>SubclassClassFilter</tt> that will only
+     * accept classes that extend the specified class or implement the
+     * specified interface, and will use the specified class loader to load
+     * the classes it finds.
      *
-     * @param modifiers   the bit-field of modifier flags. See the
-     *                    <tt>java.lang.reflect.Modifier</tt> class for
-     *                    legal values.
-     * @param classLoader the class loader to use
+     * @param baseClassOrInterface  the base class or interface
+     * @param classLoader           the class loader to use
      */
-    public ClassModifiersClassNameFilter (int         modifiers,
-                                          ClassLoader classLoader)
+    public SubclassClassFilter (Class       baseClassOrInterface,
+                                ClassLoader classLoader)
     {
-        this.modifiers   = modifiers;
+        this.baseClass   = baseClassOrInterface;
         this.classLoader = classLoader;
     }
 
@@ -129,17 +108,20 @@ public class ClassModifiersClassNameFilter
     {
         boolean match = false;
 
-        try
+        if (! className.equals (baseClass))
         {
-            Class cls = classLoader.loadClass (className);
-            match = ((cls.getModifiers() & modifiers) != 0);
-        }
+            try
+            {
+                Class cls = classLoader.loadClass (className);
+                match = baseClass.isAssignableFrom (cls);
+            }
 
-        catch (ClassNotFoundException ex)
-        {
-            log.error ("Can't load class \""
-                     + className
-                     + "\": class not found");
+            catch (ClassNotFoundException ex)
+            {
+                log.error ("Can't load class \""
+                         + className
+                         + "\": class not found");
+            }
         }
         
         return match;

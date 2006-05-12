@@ -38,7 +38,7 @@ package org.clapper.util.classutil;
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
-public interface ClassNameFilter
+public interface ClassFilter
 {
     /**
      * Tests whether a class name should be included in a class name

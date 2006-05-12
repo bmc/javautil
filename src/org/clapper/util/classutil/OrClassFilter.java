@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-  $Id: CombinationClassNameFilter.java 5596 2005-08-18 15:34:24Z bmc $
+  $Id: CombinationClassFilter.java 5596 2005-08-18 15:34:24Z bmc $
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
@@ -31,61 +31,59 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * <p>A <tt>OrClassNameFilter</tt> contains one or more
- * {@link ClassNameFilter} objects. When its {@link #accept accept()} 
- * method is called, the <tt>OrClassNameFilter</tt> object passes
+ * <p>A <tt>OrClassFilter</tt> contains one or more
+ * {@link ClassFilter} objects. When its {@link #accept accept()} 
+ * method is called, the <tt>OrClassFilter</tt> object passes
  * the class name through the contained filters. The class name is
  * accepted if it is accepted by any one of the contained filters. This
  * class conceptually provides a logical "OR" operator for class name
  * filters.</p>
  *
  * <p>The contained filters are applied in the order they were added to
- * the <tt>OrClassNameFilter</tt> object. This class's
+ * the <tt>OrClassFilter</tt> object. This class's
  * {@link #accept accept()} method stops looping over the contained filters
  * as soon as it encounters one whose <tt>accept()</tt> method returns
  * <tt>true</tt> (implementing a "short-circuited OR" operation.) </p>
  *
- * @see ClassNameFilter
- * @see OrClassNameFilter
- * @see NotClassNameFilter
+ * @see ClassFilter
+ * @see OrClassFilter
+ * @see NotClassFilter
  * @see ClassFinder
  *
  * @version <tt>$Revision: 5596 $</tt>
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
-public class OrClassNameFilter implements ClassNameFilter
+public class OrClassFilter implements ClassFilter
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private List<ClassNameFilter> filters = new LinkedList<ClassNameFilter>();
+    private List<ClassFilter> filters = new LinkedList<ClassFilter>();
 
     /*----------------------------------------------------------------------*\
                             Constructor
     \*----------------------------------------------------------------------*/
 
     /**
-     * Construct a new <tt>OrClassNameFilter</tt> with no contained filters.
+     * Construct a new <tt>OrClassFilter</tt> with no contained filters.
      */
-    public OrClassNameFilter()
+    public OrClassFilter()
     {
     }
 
     /**
-     * Construct a new <tt>OrClassNameFilter</tt> with two contained filters.
+     * Construct a new <tt>OrClassFilter</tt> with two contained filters.
      * Additional filters may be added later, via calls to the
      * {@link #addFilter addFilter()} method.
      *
-     * @param filter1  first filter to add
-     * @param filter2  second filter to add
+     * @param filters  filters to add
      */
-    public OrClassNameFilter (ClassNameFilter filter1,
-                              ClassNameFilter filter2)
+    public OrClassFilter (ClassFilter... filters)
     {
-        addFilter (filter1);
-        addFilter (filter2);
+        for (ClassFilter filter : filters)
+            addFilter (filter);
     }
 
     /*----------------------------------------------------------------------*\
@@ -95,13 +93,13 @@ public class OrClassNameFilter implements ClassNameFilter
     /**
      * Add a filter to the set of contained filters.
      *
-     * @param filter the <tt>ClassNameFilter</tt> to add.
+     * @param filter the <tt>ClassFilter</tt> to add.
      *
      * @return this object, to permit chained calls.
      *
      * @see #removeFilter
      */
-    public OrClassNameFilter addFilter (ClassNameFilter filter)
+    public OrClassFilter addFilter (ClassFilter filter)
     {
         filters.add (filter);
         return this;
@@ -110,11 +108,11 @@ public class OrClassNameFilter implements ClassNameFilter
     /**
      * Remove a filter from the set of contained filters.
      *
-     * @param filter the <tt>ClassNameFilter</tt> to remove.
+     * @param filter the <tt>ClassFilter</tt> to remove.
      *
      * @see #addFilter
      */
-    public void removeFilter (ClassNameFilter filter)
+    public void removeFilter (ClassFilter filter)
     {
         filters.remove (filter);
     }
@@ -124,7 +122,7 @@ public class OrClassNameFilter implements ClassNameFilter
      * the contained filters. The class name name is accepted if any
      * one of the contained filters accepts it. This method stops
      * looping over the contained filters as soon as it encounters one
-     * whose {@link ClassNameFilter#accept accept()} method returns
+     * whose {@link ClassFilter#accept accept()} method returns
      * <tt>true</tt> (implementing a "short-circuited OR" operation.)</p>
      *
      * <p>If the set of contained filters is empty, then this method
@@ -143,7 +141,7 @@ public class OrClassNameFilter implements ClassNameFilter
 
         else
         {
-            for (ClassNameFilter filter : filters)
+            for (ClassFilter filter : filters)
             {
                 accepted = filter.accept (className);
                 if (accepted)

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-  $Id: AndClassNameFilter.java 5596 2005-08-18 15:34:24Z bmc $
+  $Id: AndClassFilter.java 5596 2005-08-18 15:34:24Z bmc $
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
@@ -31,58 +31,58 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * <p>A <tt>AndClassNameFilter</tt> contains one or more
- * {@link ClassNameFilter} objects. When its {@link #accept accept()} 
- * method is called, the <tt>AndClassNameFilter</tt> object passes
+ * <p>A <tt>AndClassFilter</tt> contains one or more
+ * {@link ClassFilter} objects. When its {@link #accept accept()} 
+ * method is called, the <tt>AndClassFilter</tt> object passes
  * the class name through the contained filters. The class name is only
  * accepted if it is accepted by all contained filters. This
  * class conceptually provides a logical "AND" operator for class name
  * filters.</p>
  *
  * <p>The contained filters are applied in the order they were added to
- * the <tt>AndClassNameFilter</tt> object. This class's
+ * the <tt>AndClassFilter</tt> object. This class's
  * {@link #accept accept()} method stops looping over the contained filters
  * as soon as it encounters one whose <tt>accept()</tt> method returns
  * <tt>false</tt> (implementing a "short-circuited AND" operation.) </p>
  *
- * @see ClassNameFilter
- * @see OrClassNameFilter
- * @see NotClassNameFilter
+ * @see ClassFilter
+ * @see OrClassFilter
+ * @see NotClassFilter
  * @see ClassFinder
  *
  * @version <tt>$Revision: 5596 $</tt>
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
-public class AndClassNameFilter implements ClassNameFilter
+public class AndClassFilter implements ClassFilter
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private List<ClassNameFilter> filters = new LinkedList<ClassNameFilter>();
+    private List<ClassFilter> filters = new LinkedList<ClassFilter>();
 
     /*----------------------------------------------------------------------*\
                             Constructor
     \*----------------------------------------------------------------------*/
 
     /**
-     * Construct a new <tt>AndClassNameFilter</tt> with no contained filters.
+     * Construct a new <tt>AndClassFilter</tt> with no contained filters.
      */
-    public AndClassNameFilter()
+    public AndClassFilter()
     {
     }
 
     /**
-     * Construct a new <tt>AndClassNameFilter</tt> with a set of contained
+     * Construct a new <tt>AndClassFilter</tt> with a set of contained
      * filters. Additional filters may be added later, via calls to the
      * {@link #addFilter addFilter()} method.
      *
      * @param filters  filters to add
      */
-    public AndClassNameFilter (ClassNameFilter... filters)
+    public AndClassFilter (ClassFilter... filters)
     {
-        for (ClassNameFilter filter : filters)
+        for (ClassFilter filter : filters)
             addFilter (filter);
     }
 
@@ -93,13 +93,13 @@ public class AndClassNameFilter implements ClassNameFilter
     /**
      * Add a filter to the set of contained filters.
      *
-     * @param filter the <tt>ClassNameFilter</tt> to add.
+     * @param filter the <tt>ClassFilter</tt> to add.
      *
      * @return this object, to permit chained calls.
      *
      * @see #removeFilter
      */
-    public AndClassNameFilter addFilter (ClassNameFilter filter)
+    public AndClassFilter addFilter (ClassFilter filter)
     {
         filters.add (filter);
         return this;
@@ -108,11 +108,11 @@ public class AndClassNameFilter implements ClassNameFilter
     /**
      * Remove a filter from the set of contained filters.
      *
-     * @param filter the <tt>ClassNameFilter</tt> to remove.
+     * @param filter the <tt>ClassFilter</tt> to remove.
      *
      * @see #addFilter
      */
-    public void removeFilter (ClassNameFilter filter)
+    public void removeFilter (ClassFilter filter)
     {
         filters.remove (filter);
     }
@@ -122,7 +122,7 @@ public class AndClassNameFilter implements ClassNameFilter
      * the contained filters. The class name is accepted if any one of the
      * contained filters accepts it. This method stops looping over the
      * contained filters as soon as it encounters one whose
-     * {@link ClassNameFilter#accept accept()} method returns
+     * {@link ClassFilter#accept accept()} method returns
      * <tt>false</tt> (implementing a "short-circuited AND" operation.)</p>
      *
      * <p>If the set of contained filters is empty, then this method
@@ -136,7 +136,7 @@ public class AndClassNameFilter implements ClassNameFilter
     {
         boolean accepted = true;
 
-        for (ClassNameFilter filter : filters)
+        for (ClassFilter filter : filters)
         {
             accepted = filter.accept (className);
             if (! accepted)
