@@ -34,22 +34,19 @@ Version 2.2 (...)
 - Created new org.clapper.io.classutil package with some class-related
   classes:
 
-      ClassFinder                   locate classes in classpath, jars, etc.
-      ClassNameFilter               used with ClassFinder to filter classes
-                                    (akin to java.io.FilenameFilter)
-      RegexClassNameFilter          ClassNameFilter that matches classes by
-                                    regular expression
-      SubclassClassNameFilter       ClassNameFilter that matches classes that
-                                    subclass a specific class or interface
-      InterfaceOnlyClassNameFilter  ClassNameFilter that matches only
-                                    interface classes
-      AndClassNameFilter            combines ClassNameFilters with an AND
-                                    operator
-      NotClassNameFilter            negates the sense of a ClassNameFilter
-      AndClassNameFilter            combines ClassNameFilters with an OR
-                                    operator
-      ClassLoaderBuilder            helps build a java.net.URLClassLoader
-      ClassUtil                     misc. utility methods
+      ClassFinder               locate classes in classpath, jars, etc.
+      ClassFilter               used with ClassFinder to filter classes
+                                (akin to java.io.FilenameFilter)
+      RegexClassFilter          ClassFilter that matches classes by
+                                regular expression
+      SubclassClassFilter       ClassFilter that matches classes that
+                                subclass a specific class or interface
+      InterfaceOnlyClassFilter  ClassFilter that matches only interfaces
+      AndClassFilter            combines ClassFilters with an AND operator
+      NotClassFilter            negates the sense of a ClassFilter
+      AndClassFilter            combines ClassFilters with an OR operator
+      ClassLoaderBuilder        helps build a java.net.URLClassLoader
+      ClassUtil                 misc. utility methods
 
 
 
