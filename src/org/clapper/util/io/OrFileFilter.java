@@ -100,7 +100,7 @@ public class OrFileFilter implements FileFilter
      *
      * @param filter the <tt>FileFilter</tt> to add.
      *
-     * @returns this object, to permit chained calls.
+     * @return this object, to permit chained calls.
      *
      * @see #removeFilter
      */

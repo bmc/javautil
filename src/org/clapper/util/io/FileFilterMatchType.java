@@ -34,11 +34,10 @@ import org.clapper.util.text.TextUtil;
 
 /**
  * <p>The <tt>FileFilterMatchType</tt> enumeration spells out the legal
- * match types for  {@link MultipleRegexFilenameFilter} and
- * {@link MultipleRegexFileFilter}.
+ * match types for  {@link RegexFilenameFilter} and {@link RegexFileFilter}.
  *
- * @see MultipleRegexFileFilter
- * @see MultipleRegexFilenameFilter
+ * @see RegexFileFilter
+ * @see RegexFilenameFilter
  *
  * @version $Revision: 5812 $
  *

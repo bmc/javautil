@@ -128,18 +128,18 @@ public class RegexFileFilter
      *
      * @return <tt>true</tt> if the file matches, <tt>false</tt> if it doesn't
      */
-    public boolean accept (File path)
+    public boolean accept (File file)
     {
         String name = null;
 
         switch (matchType)
         {
             case PATH:
-                name = path.getPath();
+                name = file.getPath();
                 break;
 
             case FILENAME:
-                name = path.getName();
+                name = file.getName();
                 break;
 
             default:

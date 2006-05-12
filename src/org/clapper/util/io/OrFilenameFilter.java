@@ -100,7 +100,7 @@ public class OrFilenameFilter implements FilenameFilter
      *
      * @param filter the <tt>FilenameFilter</tt> to add.
      *
-     * @returns this object, to permit chained calls.
+     * @return this object, to permit chained calls.
      *
      * @see #removeFilter
      */
