@@ -32,31 +32,26 @@ import java.lang.reflect.Modifier;
 
 /**
  * <p><tt>AbstractClassNameFilter</tt> implements a {@link ClassNameFilter}
- * that matches class names that (a) can be loaded and (b) are abstract.
- * subclass or implement a specified interface, directly or indirectly. It
+ * that matches class names that (a) can be loaded and (b) are abstract. It
  * uses the Reflection API, so it actually has to load each class it tests.
- * For maximum flexibility, a <tt>AbstractClassNameFilter</tt> can be
+ * For maximum flexibility, an <tt>AbstractClassNameFilter</tt> can be
  * configured to use a specific class loader.</p>
+ *
+ * <p>This class is really just a convenient specialization of the
+ * {@link ClassModifiersClassNameFilter} class.</p>
+ *
+ * @see ClassNameFilter
+ * @see ClassModifiersClassNameFilter
+ * @see ClassFinder
+ * @see Modifier
  *
  * @version <tt>$Revision: 5812 $</tt>
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
 public class AbstractClassNameFilter
-    implements ClassNameFilter
+    extends ClassModifiersClassNameFilter
 {
-    /*----------------------------------------------------------------------*\
-                            Private Data Items
-    \*----------------------------------------------------------------------*/
-
-    private ClassLoader classLoader = null;
-
-    /**
-     * For logging
-     */
-    private static final Logger log =
-        new Logger (AbstractClassNameFilter.class);
-
     /*----------------------------------------------------------------------*\
                             Constructor
     \*----------------------------------------------------------------------*/
@@ -67,7 +62,7 @@ public class AbstractClassNameFilter
      */
     public AbstractClassNameFilter()
     {
-        this.classLoader = AbstractClassNameFilter.class.getClassLoader();
+        super (Modifier.ABSTRACT);
     }
 
     /**
@@ -79,40 +74,6 @@ public class AbstractClassNameFilter
      */
     public AbstractClassNameFilter (ClassLoader classLoader)
     {
-        this.classLoader = classLoader;
-    }
-
-    /*----------------------------------------------------------------------*\
-                              Public Methods
-    \*----------------------------------------------------------------------*/
-
-    /**
-     * Determine whether a class name is to be accepted or not, based on
-     * whether it implements the interface that was pass to the
-     * constructor.
-     *
-     * @param className  the class name
-     *
-     * @return <tt>true</tt> if the class name matches,
-     *         <tt>false</tt> if it doesn't
-     */
-    public boolean accept (String className)
-    {
-        boolean match = false;
-
-        try
-        {
-            Class cls = classLoader.loadClass (className);
-            match = ((cls.getModifiers() & Modifier.ABSTRACT) != 0);
-        }
-
-        catch (ClassNotFoundException ex)
-        {
-            log.error ("Can't load class \""
-                     + className
-                     + "\": class not found");
-        }
-        
-        return match;
+        super (Modifier.ABSTRACT, classLoader);
     }
 }
