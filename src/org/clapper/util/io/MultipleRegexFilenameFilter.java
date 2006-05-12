@@ -3,7 +3,7 @@
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
-  Copyright (c) 2004-2006 Brian M. Clapper. All rights reserved.
+  Copyright (c) 2004 Brian M. Clapper. All rights reserved.
 
   Redistribution and use in source and binary forms are permitted provided
   that: (1) source distributions retain this entire copyright notice and
@@ -29,6 +29,14 @@ package org.clapper.util.io;
 import java.io.FilenameFilter;
 import java.io.File;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 /**
  * <p><tt>MultipleRegexFilenameFilter</tt> implements a
  * <tt>java.io.FilenameFilter</tt> that matches file names and path names
@@ -48,17 +56,36 @@ import java.io.File;
  * <p><tt>MultipleRegexFilenameFilter</tt> uses the <tt>java.util.regex</tt>
  * regular expression classes, so it requires JDK 1.4 or newer.</p>
  *
- * @see MultipleRegexFilFilter
  * @see CombinationFilenameFilter
+ * @see CombinationFileFilter
  *
  * @version <tt>$Revision$</tt>
  *
- * @author Copyright &copy; 2004-2006 Brian M. Clapper
+ * @author Copyright &copy; 2004 Brian M. Clapper
  */
-public class MultipleRegexFilenameFilter
-    extends AbstractMultipleRegexFileFilter
-    implements FilenameFilter
+public class MultipleRegexFilenameFilter implements FilenameFilter
 {
+    /*----------------------------------------------------------------------*\
+                             Public Constants
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * Match types
+     */
+    public enum MatchType
+    {
+        FILENAME, PATH
+    }
+
+    /*----------------------------------------------------------------------*\
+                            Private Data Items
+    \*----------------------------------------------------------------------*/
+
+    private Collection<Pattern>  acceptPatterns = null;
+    private Collection<Pattern>  rejectPatterns = null;
+    private int                  regexOptions;
+    private MatchType            matchType = MatchType.FILENAME;
+
     /*----------------------------------------------------------------------*\
                             Constructor
     \*----------------------------------------------------------------------*/
@@ -66,18 +93,62 @@ public class MultipleRegexFilenameFilter
     /**
      * Construct a new <tt>MultipleRegexFilenameFilter</tt>.
      *
-     * @param matchType <tt>FileFilterMatchType.FILENAME</tt> to match just the
-     *                  filename, <tt>FileFilterMatchType.PATH</tt> to match
-     *                  the path (via <tt>java.io.File.getPath()</tt>)
+     * @param matchType <tt>MatchType.FILENAME</tt> to match just the
+     *                  filename, <tt>MatchType.PATH</tt> to match the path
      */
-    public MultipleRegexFilenameFilter (FileFilterMatchType matchType)
+    public MultipleRegexFilenameFilter (MatchType matchType)
     {
-        super (matchType);
+        this.matchType = matchType;
+        regexOptions   = Pattern.CASE_INSENSITIVE;
+        acceptPatterns = new ArrayList<Pattern>();
+        rejectPatterns = new ArrayList<Pattern>();
     }
 
     /*----------------------------------------------------------------------*\
                               Public Methods
     \*----------------------------------------------------------------------*/
+
+    /**
+     * Add an "accept" pattern to this filter. For a file to be accepted:
+     *
+     * <ul>
+     *   <li> it must not match one of the <i>reject</i> patterns, and
+     *   <li> either the <i>accept</i> pattern list must be empty, or the
+     *        file name must match one of the <i>accept</i> patterns
+     * </ul>
+     *
+     * @param pattern  the regular expression to add
+     *
+     * @throws PatternSyntaxException  bad regular expression
+     *
+     * @see #addRejectPattern
+     */
+    public void addAcceptPattern (String pattern)
+        throws PatternSyntaxException
+    {
+        acceptPatterns.add (Pattern.compile (pattern, regexOptions));
+    }
+
+    /**
+     * Add an "accept" pattern to this filter. For a file to be accepted:
+     *
+     * <ul>
+     *   <li> it must not match one of the <i>reject</i> patterns, and
+     *   <li> either the <i>accept</i> pattern list must be empty, or the
+     *        file name must match one of the <i>accept</i> patterns
+     * </ul>
+     *
+     * @param pattern  the regular expression to add
+     *
+     * @throws PatternSyntaxException  bad regular expression
+     *
+     * @see #addAcceptPattern
+     */
+    public void addRejectPattern (String pattern)
+        throws PatternSyntaxException
+    {
+        rejectPatterns.add (Pattern.compile (pattern, regexOptions));
+    }
 
     /**
      * Determine whether a file is to be accepted or not, based on the
@@ -93,6 +164,53 @@ public class MultipleRegexFilenameFilter
      */
     public boolean accept (File dir, String name)
     {
-        return acceptFilename (dir, name);
+        Iterator  it;
+        boolean   match = false;
+        boolean   found = false;
+
+        if (matchType == MatchType.PATH)
+        {
+            name = dir.getPath()
+                 + System.getProperty ("file.separator")
+                 + name;
+        }
+
+        // Check for rejects first.
+
+        for (Pattern pattern : rejectPatterns)
+        {
+            Matcher matcher = pattern.matcher (name);
+
+            if (matcher.matches())
+            {
+                match = false;
+                found = true;
+                break;
+            }
+        }
+
+        if (! found)
+        {
+            // Check for accepts.
+
+            if (acceptPatterns.size() == 0)
+                match = true;
+
+            else
+            {
+                for (Pattern pattern : acceptPatterns)
+                {
+                    Matcher matcher = pattern.matcher (name);
+
+                    if (matcher.matches())
+                    {
+                        match = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return match;
     }
 }
