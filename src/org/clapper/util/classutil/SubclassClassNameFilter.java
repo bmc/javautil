@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-  $Id: ImplementsInterfaceClassNameFilter.java 5812 2006-05-12 00:38:16Z bmc $
+  $Id: SubclassClassNameFilter.java 5812 2006-05-12 00:38:16Z bmc $
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
@@ -29,15 +29,19 @@ package org.clapper.util.classutil;
 import org.clapper.util.logging.Logger;
 
 /**
- * <p><tt>ImplementsInterfaceClassNameFilter</tt> implements a
- * {@link ClassNameFilter} that matches class names that (a) can be loaded
- * and (b) implement a specified interface.</p>
+ * <p><tt>SubclassClassNameFilter</tt> implements a {@link ClassNameFilter}
+ * that matches class names that (a) can be loaded and (b) extend a given
+ * subclass or implement a specified interface, directly or indirectly. It
+ * uses the <tt>java.lang.Class.isAssignableFrom()</p> method, so it actually
+ * has to load each class it tests. For maximum flexibility, a
+ * <tt>SubclassClassNameFilter</tt> can be configured to use a specific
+ * class loader.</p>
  *
  * @version <tt>$Revision: 5812 $</tt>
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
-public class ImplementsInterfaceClassNameFilter
+public class SubclassClassNameFilter
     implements ClassNameFilter
 {
     /*----------------------------------------------------------------------*\
@@ -57,27 +61,27 @@ public class ImplementsInterfaceClassNameFilter
     \*----------------------------------------------------------------------*/
 
     /**
-     * Construct a new <tt>ImplementsInterfaceClassNameFilter</tt>
+     * Construct a new <tt>SubclassClassNameFilter</tt>
      * that will filter on the specified interface.
      *
      * @param interfaceClass the interface class
      */
-    public ImplementsInterfaceClassNameFilter (Class interfaceClass)
+    public SubclassClassNameFilter (Class interfaceClass)
     {
         this.theInterface = interfaceClass;
         this.classLoader  = interfaceClass.getClassLoader();
     }
 
     /**
-     * Construct a new <tt>ImplementsInterfaceClassNameFilter</tt>
+     * Construct a new <tt>SubclassClassNameFilter</tt>
      * that will filter on the specified interface and will use the
      * specified class loader to load the classes it finds.
      *
      * @param interfaceClass the interface class
      * @param classLoader    the class loader to use
      */
-    public ImplementsInterfaceClassNameFilter (Class       interfaceClass,
-                                               ClassLoader classLoader)
+    public SubclassClassNameFilter (Class       interfaceClass,
+                                    ClassLoader classLoader)
     {
         this.theInterface = interfaceClass;
         this.classLoader  = classLoader;
