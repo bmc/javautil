@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-  $Id: SubclassClassNameFilter.java 5812 2006-05-12 00:38:16Z bmc $
+  $Id: RegexClassNameFilter.java 5812 2006-05-12 00:38:16Z bmc $
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
@@ -26,68 +26,75 @@
 
 package org.clapper.util.classutil;
 
-import org.clapper.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
- * <p><tt>SubclassClassNameFilter</tt> implements a {@link ClassNameFilter}
- * that matches class names that (a) can be loaded and (b) extend a given
- * subclass or implement a specified interface, directly or indirectly. It
- * uses the <tt>java.lang.Class.isAssignableFrom()</p> method, so it actually
- * has to load each class it tests. For maximum flexibility, a
- * <tt>SubclassClassNameFilter</tt> can be configured to use a specific
- * class loader.</p>
+ * <p><tt>RegexClassNameFilter</tt> implements a {@link ClassNameFilter}
+ * that matches class names using a regular expression. Multiple regular
+ * expression filters can be combined using {@link AndClassNameFilter}
+ * and/or {@link OrClassNameFilter} objects.</p>
+ *
+ * <p><tt>RegexClassNameFilter</tt> uses the <tt>java.util.regex</tt>
+ * regular expression classes.</p>
+ *
+ * @see ClassNameFilter
+ * @see AndClassNameFilter
+ * @see OrClassNameFilter
+ * @see NotClassNameFilter
+ * @see ClassFinder
  *
  * @version <tt>$Revision: 5812 $</tt>
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
-public class SubclassClassNameFilter
+public class RegexClassNameFilter
     implements ClassNameFilter
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private Class       baseClass;
-    private ClassLoader classLoader = null;
-
-    /**
-     * For logging
-     */
-    private static final Logger log =
-        new Logger (SubclassClassNameFilter.class);
+    private Pattern pattern;
 
     /*----------------------------------------------------------------------*\
                             Constructor
     \*----------------------------------------------------------------------*/
 
     /**
-     * Construct a new <tt>SubclassClassNameFilter</tt> that will accept
-     * only classes that extend the specified class or implement the
-     * specified interface.
+     * Construct a new <tt>RegexClassNameFilter</tt> using the specified
+     * pattern.
      *
-     * @param baseClassOrInterface  the base class or interface
+     * @param regex  the regular expression to add
+     *
+     * @throws PatternSyntaxException  bad regular expression
      */
-    public SubclassClassNameFilter (Class baseClassOrInterface)
+    public RegexClassNameFilter (String regex)
+        throws PatternSyntaxException
     {
-        this.baseClass   = baseClassOrInterface;
-        this.classLoader = baseClass.getClassLoader();
+        pattern = Pattern.compile (regex);
     }
 
     /**
-     * Construct a new <tt>SubclassClassNameFilter</tt> that will only
-     * accept classes that extend the specified class or implement the
-     * specified interface, and will use the specified class loader to load
-     * the classes it finds.
+     * Construct a new <tt>RegexClassNameFilter</tt> using the specified
+     * pattern.
      *
-     * @param baseClassOrInterface  the base class or interface
-     * @param classLoader           the class loader to use
+     * @param regex      the regular expression to add
+     * @param regexFlags regular expression compilation flags (e.g.,
+     *                   <tt>Pattern.CASE_INSENSITIVE</tt>). See
+     *                   the Javadocs for <tt>java.util.regex</tt> for
+     *                   legal values.
+     *
+     * @throws PatternSyntaxException  bad regular expression
      */
-    public SubclassClassNameFilter (Class       baseClassOrInterface,
-                                    ClassLoader classLoader)
+    public RegexClassNameFilter (String regex, int regexFlags)
+        throws PatternSyntaxException
     {
-        this.baseClass   = baseClassOrInterface;
-        this.classLoader = classLoader;
+        pattern = Pattern.compile (regex, regexFlags);
     }
 
     /*----------------------------------------------------------------------*\
@@ -96,8 +103,7 @@ public class SubclassClassNameFilter
 
     /**
      * Determine whether a class name is to be accepted or not, based on
-     * whether it implements the interface that was pass to the
-     * constructor.
+     * the regular expression specified to the constructor.
      *
      * @param className  the class name
      *
@@ -106,24 +112,6 @@ public class SubclassClassNameFilter
      */
     public boolean accept (String className)
     {
-        boolean match = false;
-
-        if (! className.equals (baseClass))
-        {
-            try
-            {
-                Class cls = classLoader.loadClass (className);
-                match = baseClass.isAssignableFrom (cls);
-            }
-
-            catch (ClassNotFoundException ex)
-            {
-                log.error ("Can't load class \""
-                         + className
-                         + "\": class not found");
-            }
-        }
-        
-        return match;
+        return pattern.matcher (className).find();
     }
 }

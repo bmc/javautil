@@ -29,64 +29,53 @@ package org.clapper.util.classutil;
 import org.clapper.util.logging.Logger;
 
 /**
- * <p><tt>SubclassClassNameFilter</tt> implements a {@link ClassNameFilter}
- * that matches class names that (a) can be loaded and (b) extend a given
- * subclass or implement a specified interface, directly or indirectly. It
- * uses the <tt>java.lang.Class.isAssignableFrom()</p> method, so it actually
- * has to load each class it tests. For maximum flexibility, a
- * <tt>SubclassClassNameFilter</tt> can be configured to use a specific
- * class loader.</p>
+ * <p><tt>InterfaceOnlyClassNameFilter</tt> implements a
+ * {@link ClassNameFilter} that matches class names that are interfaces.
+ * It uses reflection, so it actually has to load each class it tests. For
+ * maximum flexibility, a <tt>InterfaceOnlyClassNameFilter</tt> can be
+ * configured to use a specific class loader.</p>
  *
  * @version <tt>$Revision: 5812 $</tt>
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
-public class SubclassClassNameFilter
+public class InterfaceOnlyClassNameFilter
     implements ClassNameFilter
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private Class       baseClass;
     private ClassLoader classLoader = null;
 
     /**
      * For logging
      */
     private static final Logger log =
-        new Logger (SubclassClassNameFilter.class);
+        new Logger (InterfaceOnlyClassNameFilter.class);
 
     /*----------------------------------------------------------------------*\
                             Constructor
     \*----------------------------------------------------------------------*/
 
     /**
-     * Construct a new <tt>SubclassClassNameFilter</tt> that will accept
-     * only classes that extend the specified class or implement the
-     * specified interface.
-     *
-     * @param baseClassOrInterface  the base class or interface
+     * Construct a new <tt>InterfaceOnlyClassNameFilter</tt> that will accept
+     * only classes that are interfaces.
      */
-    public SubclassClassNameFilter (Class baseClassOrInterface)
+    public InterfaceOnlyClassNameFilter()
     {
-        this.baseClass   = baseClassOrInterface;
-        this.classLoader = baseClass.getClassLoader();
+        this.classLoader = InterfaceOnlyClassNameFilter.class.getClassLoader();
     }
 
     /**
-     * Construct a new <tt>SubclassClassNameFilter</tt> that will only
-     * accept classes that extend the specified class or implement the
-     * specified interface, and will use the specified class loader to load
-     * the classes it finds.
+     * Construct a new <tt>InterfaceOnlyClassNameFilter</tt> that will
+     * accept only classes that are interfaces and will use the specified
+     * class loader to load the classes it finds.
      *
-     * @param baseClassOrInterface  the base class or interface
-     * @param classLoader           the class loader to use
+     * @param classLoader the class loader to use
      */
-    public SubclassClassNameFilter (Class       baseClassOrInterface,
-                                    ClassLoader classLoader)
+    public InterfaceOnlyClassNameFilter (ClassLoader classLoader)
     {
-        this.baseClass   = baseClassOrInterface;
         this.classLoader = classLoader;
     }
 
@@ -108,20 +97,17 @@ public class SubclassClassNameFilter
     {
         boolean match = false;
 
-        if (! className.equals (baseClass))
+        try
         {
-            try
-            {
-                Class cls = classLoader.loadClass (className);
-                match = baseClass.isAssignableFrom (cls);
-            }
+            Class cls = classLoader.loadClass (className);
+            match = cls.isInterface();
+        }
 
-            catch (ClassNotFoundException ex)
-            {
-                log.error ("Can't load class \""
-                         + className
-                         + "\": class not found");
-            }
+        catch (ClassNotFoundException ex)
+        {
+            log.error ("Can't load class \""
+                     + className
+                     + "\": class not found");
         }
         
         return match;

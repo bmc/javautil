@@ -42,16 +42,16 @@ import java.util.zip.ZipFile;
 
 import org.clapper.util.logging.Logger;
 
+import org.clapper.util.io.AndFileFilter;
 import org.clapper.util.io.FileOnlyFilter;
-import org.clapper.util.io.MultipleRegexFileFilter;
 import org.clapper.util.io.FileFilterMatchType;
+import org.clapper.util.io.RegexFileFilter;
 import org.clapper.util.io.RecursiveFileFinder;
-import org.clapper.util.io.CombinationFileFilter;
 
 /**
  * A <tt>ClassFinder</tt> object is used to find classes. By default, an
  * instantiated <tt>ClassFinder</tt> won't find any classes; you have to
- * add the classpath (via a call to {@link #searchClasspath}), add jar
+ * add the classpath (via a call to {@link #addClassPath}), add jar
  * files, add zip files, and/or add directories to the <tt>ClassFinder</tt>
  * so it knows where to look.
  *
@@ -267,12 +267,10 @@ public class ClassFinder
         int total = 0;
 
         RecursiveFileFinder finder = new RecursiveFileFinder();
-        MultipleRegexFileFilter nameFilter =
-            new MultipleRegexFileFilter (FileFilterMatchType.FILENAME);
-        nameFilter.addAcceptPattern ("^.*\\.class$");
-        CombinationFileFilter fileFilter = new CombinationFileFilter();
-        fileFilter.addFilter (nameFilter);
-        fileFilter.addFilter (new FileOnlyFilter());
+        RegexFileFilter nameFilter =
+            new RegexFileFilter ("\\.class$", FileFilterMatchType.FILENAME);
+        AndFileFilter fileFilter = new AndFileFilter (nameFilter,
+                                                      new FileOnlyFilter());
         Collection<File> files = new ArrayList<File>();
         finder.findFiles (dir, fileFilter, files);
 
