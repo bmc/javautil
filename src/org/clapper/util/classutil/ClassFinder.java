@@ -43,7 +43,8 @@ import java.util.zip.ZipFile;
 import org.clapper.util.logging.Logger;
 
 import org.clapper.util.io.FileOnlyFilter;
-import org.clapper.util.io.MultipleRegexFilenameFilter;
+import org.clapper.util.io.MultipleRegexFileFilter;
+import org.clapper.util.io.FileFilterMatchType;
 import org.clapper.util.io.RecursiveFileFinder;
 import org.clapper.util.io.CombinationFileFilter;
 
@@ -266,9 +267,8 @@ public class ClassFinder
         int total = 0;
 
         RecursiveFileFinder finder = new RecursiveFileFinder();
-        MultipleRegexFilenameFilter nameFilter =
-            new MultipleRegexFilenameFilter
-                (MultipleRegexFilenameFilter.MatchType.FILENAME);
+        MultipleRegexFileFilter nameFilter =
+            new MultipleRegexFileFilter (FileFilterMatchType.FILENAME);
         nameFilter.addAcceptPattern ("^.*\\.class$");
         CombinationFileFilter fileFilter = new CombinationFileFilter();
         fileFilter.addFilter (nameFilter);
