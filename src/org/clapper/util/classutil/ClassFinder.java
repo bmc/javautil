@@ -195,6 +195,7 @@ public class ClassFinder
         {
             String name = file.getPath();
 
+            log.debug ("Finding classes in " + name);
             if (name.endsWith (".jar"))
                 total += processJar (name, filter, foundClasses);
             else if (name.endsWith (".zip"))
