@@ -31,7 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * <p>A <tt>OrClassFilter</tt> contains one or more
+ * <p>A <tt>OrClassFilter</tt> contains logically ORs other
  * {@link ClassFilter} objects. When its {@link #accept accept()} 
  * method is called, the <tt>OrClassFilter</tt> object passes
  * the class name through the contained filters. The class name is

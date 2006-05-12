@@ -35,12 +35,12 @@ import java.io.FileFilter;
 import java.io.File;
 
 /**
- * <p>A <tt>AndFileFilter</tt> contains one or more <tt>java.io.FileFilter</tt>
- * objects. When its {@link #accept accept()} method is called, the
- * <tt>AndFileFilter</tt> object passes the file through the contained
- * filters. The file is only accepted if it is accepted by all contained
- * filters. This class conceptually provides a logical "AND" operator for
- * file filters.</p>
+ * <p>A <tt>AndFileFilter</tt> contains logically ANDs other
+ * <tt>java.io.FileFilter</tt> objects. When its {@link #accept accept()}
+ * method is called, the <tt>AndFileFilter</tt> object passes the file
+ * through the contained filters. The file is only accepted if it is
+ * accepted by all contained filters. This class conceptually provides a
+ * logical "AND" operator for file filters.</p>
  *
  * <p>The contained filters are applied in the order they were added to the
  * <tt>AndFileFilter</tt> object. This class's {@link #accept accept()}

@@ -35,12 +35,12 @@ import java.io.FilenameFilter;
 import java.io.File;
 
 /**
- * <p>A <tt>OrFilenameFilter</tt> contains one or more <tt>java.io.FilenameFilter</tt>
- * objects. When its {@link #accept accept()} method is called, the
- * <tt>OrFilenameFilter</tt> object passes the file through the contained
- * filters. The file is accepted if it is accepted by any of the contained
- * filters. This class conceptually provides a logical "OR" operator for
- * file filters.</p>
+ * <p>A <tt>OrFilenameFilter</tt> logically ORs other
+ * <tt>java.io.FilenameFilter</tt> objects. When its
+ * {@link #accept accept()} method is called, the <tt>OrFilenameFilter</tt>
+ * object passes the file through the contained filters. The file is
+ * accepted if it is accepted by any of the contained filters. This class
+ * conceptually provides a logical "OR" operator for file filters.</p>
  *
  * <p>The contained filters are applied in the order they were added to the
  * <tt>OrFilenameFilter</tt> object. This class's {@link #accept accept()}
