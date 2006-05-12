@@ -42,14 +42,7 @@ public class FindFiles
     \*----------------------------------------------------------------------*/
 
     private static String directory = ".";
-
-    /*----------------------------------------------------------------------*\
-                             Private Constants
-    \*----------------------------------------------------------------------*/
-
-    /*----------------------------------------------------------------------*\
-                            Private Data Items
-    \*----------------------------------------------------------------------*/
+    private static FileFilterMatchType matchType = FileFilterMatchType.PATH;
 
     /*----------------------------------------------------------------------*\
                                Main Program
@@ -89,6 +82,12 @@ public class FindFiles
 
                 else if (args[i].equals ("-i"))
                     acceptPatterns.add (args[++i]);
+
+                else if (args[i].equals ("-p"))
+                    matchType = FileFilterMatchType.PATH;
+
+                else if (args[i].equals ("-n"))
+                    matchType = FileFilterMatchType.FILENAME;
 
                 else
                     throw new IllegalArgumentException (args[i]);
@@ -130,6 +129,7 @@ public class FindFiles
                           + FindFiles.class.getName()
                           + " [-e exclude_pattern] ... "
                           + " [-i include_pattern] ... "
+                          + " [-n|-p] "
                           + "[directory]");
     }
 
@@ -162,7 +162,9 @@ public class FindFiles
 	RecursiveFileFinder         finder = new RecursiveFileFinder();
 	Collection<File>            files  = new ArrayList<File>();
 
-	filter = new MultipleRegexFilenameFilter (FileFilterMatchType.PATH);
+        System.out.println ("*** Using match type of " + matchType);
+
+	filter = new MultipleRegexFilenameFilter (matchType);
 
         for (it = acceptPatterns.iterator(); it.hasNext(); )
             filter.addAcceptPattern ((String) it.next());
