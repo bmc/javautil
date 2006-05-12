@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import java.util.jar.JarFile;
@@ -65,7 +67,8 @@ public class ClassFinder
 			    Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private LinkedHashSet<File> placesToSearch = new LinkedHashSet<File>();
+    private LinkedHashMap<String,File> placesToSearch =
+        new LinkedHashMap<String,File>();
 
     /**
      * For logging
@@ -128,7 +131,10 @@ public class ClassFinder
 
 	if (ClassUtil.fileCanContainClasses (file))
         {
-	    placesToSearch.add (file);
+            String absPath = file.getAbsolutePath();
+            if (placesToSearch.get (absPath) == null)
+                placesToSearch.put (absPath, file);
+
             added = true;
         }
 
@@ -173,22 +179,31 @@ public class ClassFinder
      * @return the number of matched classes added to the collection
      */
     public int findClasses (Collection<String> classNames,
-                            ClassFilter    filter)
+                            ClassFilter        filter)
     {
         int total = 0;
 
-        for (File file : placesToSearch)
+        // Dump them into a set, so we don't put the same class in the set
+        // twice, even if we find it twice. Can't use the caller's
+        // Collection, because it might not be a Set. Use a LinkedHashSet,
+        // because we want to maintain the order of the classes as we find
+        // them. (Let the caller re-order them, if desired.)
+
+        Set<String> foundClasses = new LinkedHashSet<String>();
+
+        for (File file : placesToSearch.values())
         {
             String name = file.getPath();
 
             if (name.endsWith (".jar"))
-                total += processJar (name, filter, classNames);
+                total += processJar (name, filter, foundClasses);
             else if (name.endsWith (".zip"))
-                total += processZip (name, filter, classNames);
+                total += processZip (name, filter, foundClasses);
             else
-                total += processDirectory (file, filter, classNames);
+                total += processDirectory (file, filter, foundClasses);
         }
 
+        classNames.addAll (foundClasses);
         return total;
     }
 
@@ -197,7 +212,7 @@ public class ClassFinder
     \*----------------------------------------------------------------------*/
 
     private int processJar (String             jarName,
-                            ClassFilter    filter,
+                            ClassFilter        filter,
                             Collection<String> classNames)
     {
         int total = 0;
@@ -216,7 +231,7 @@ public class ClassFinder
     }
 
     private int processZip (String             zipName,
-                            ClassFilter    filter,
+                            ClassFilter        filter,
                             Collection<String> classNames)
     {
         int total = 0;
@@ -235,7 +250,7 @@ public class ClassFinder
     }
 
     private int processOpenZip (ZipFile            zip,
-                                ClassFilter    filter,
+                                ClassFilter        filter,
                                 Collection<String> classNames)
     {
         int total = 0;
@@ -261,7 +276,7 @@ public class ClassFinder
     }
 
     private int processDirectory (File               dir,
-                                  ClassFilter    classFilter,
+                                  ClassFilter        classFilter,
                                   Collection<String> classNames)
     {
         int total = 0;
