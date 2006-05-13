@@ -34,10 +34,13 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import java.util.jar.Attributes;
 
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -51,11 +54,50 @@ import org.clapper.util.io.RegexFileFilter;
 import org.clapper.util.io.RecursiveFileFinder;
 
 /**
- * A <tt>ClassFinder</tt> object is used to find classes. By default, an
+ * <p>A <tt>ClassFinder</tt> object is used to find classes. By default, an
  * instantiated <tt>ClassFinder</tt> won't find any classes; you have to
- * add the classpath (via a call to {@link #addClassPath}), add jar
- * files, add zip files, and/or add directories to the <tt>ClassFinder</tt>
- * so it knows where to look.
+ * add the classpath (via a call to {@link #addClassPath}), add jar files,
+ * add zip files, and/or add directories to the <tt>ClassFinder</tt> so it
+ * knows where to look. Adding a jar file to a <tt>ClassFinder</tt> causes
+ * the <tt>ClassFinder</tt> to look at the jar's manifest for a
+ * "Class-Path" entry; if the <tt>ClassFinder</tt> finds such an entry, it
+ * adds the contents to the search path, as well.</p>
+ *
+ * <p>The following example illustrates how you might use a
+ * <tt>ClassFinder</tt> to locate all non-abstract classes that implement
+ * the <tt>ClassFilter</tt> interface, searching the classpath as well
+ * as anything specified on the command line.</p>
+ *
+ * <blockqutoe><pre>
+ * import org.clapper.util.classutil.*;
+ *
+ * public class Test
+ * {
+ *     public static void main (String[] args) throws Throwable
+ *     {
+ *         ClassFinder finder = new ClassFinder();
+ *         for (String arg : args)
+ *             finder.add (arg);
+ *
+ *         ClassFilter filter =
+ *             new AndClassFilter
+ *                 // Must not be an interface
+ *                 (new NotClassFilter (new InterfaceOnlyClassFilter()),
+ *
+ *                 // Must implement the interface class
+ *                 new SubclassClassFilter (ClassFilter.class),
+ *
+ *                 // Must not be abstract
+ *                 new NotClassFilter (new AbstractClassFilter()));
+ *
+ *         Collection<String> classNames = new ArrayList<String>();
+ *         finder.findClasses (classNames, filter);
+ *
+ *         for (String className : classNames)
+ *             System.out.println ("Found " + className);
+ *     }
+ * }
+ * </pre></blockquote>
  *
  * @version <tt>$Revision: 5607 $</tt>
  *
@@ -108,7 +150,7 @@ public class ClassFinder
             path= "";
             log.error ("Unable to get class path", ex);
         }
-    
+
         StringTokenizer tok = new StringTokenizer (path, File.pathSeparator);
 
         while (tok.hasMoreTokens())
@@ -133,7 +175,11 @@ public class ClassFinder
         {
             String absPath = file.getAbsolutePath();
             if (placesToSearch.get (absPath) == null)
+            {
                 placesToSearch.put (absPath, file);
+                if (isJar (absPath))
+                    loadJarClassPathEntries (file);
+            }
 
             added = true;
         }
@@ -196,9 +242,9 @@ public class ClassFinder
             String name = file.getPath();
 
             log.debug ("Finding classes in " + name);
-            if (name.endsWith (".jar"))
+            if (isJar (name))
                 total += processJar (name, filter, foundClasses);
-            else if (name.endsWith (".zip"))
+            else if (isZip (name))
                 total += processZip (name, filter, foundClasses);
             else
                 total += processDirectory (file, filter, foundClasses);
@@ -305,10 +351,75 @@ public class ClassFinder
         return total;
     }
 
+    private void loadJarClassPathEntries (File jarFile)
+    {
+        try
+        {
+            JarFile jar = new JarFile (jarFile);
+            Manifest manifest = jar.getManifest();
+            if (manifest == null)
+                return;
+
+            Map map = manifest.getEntries();
+            Attributes attrs = manifest.getMainAttributes();
+            Set<Object> keys = attrs.keySet();
+
+            for (Object key : keys)
+            {
+                String value = (String) attrs.get (key);
+
+                if (key.toString().equals ("Class-Path"))
+                {
+                    String jarName = jar.getName();
+                    log.debug ("Adding Class-Path from jar " + jarName);
+
+                    StringBuilder buf = new StringBuilder();
+                    StringTokenizer tok = new StringTokenizer (value);
+                    while (tok.hasMoreTokens())
+                    {
+                        buf.setLength (0);
+                        String element = tok.nextToken();
+                        String parent = jarFile.getParent();
+                        if (parent != null)
+                        {
+                            buf.append (parent);
+                            buf.append (File.separator);
+                        }
+
+                        buf.append (element);
+                    }
+
+                    String element = buf.toString();
+                    log.debug ("From " + jarName + ": " + element);
+
+                    add (new File (element));
+                }
+            }
+        }
+
+        catch (IOException ex)
+        {
+            log.error ("I/O error processing jar file \""
+                     + jarFile.getPath()
+                     + "\"",
+                       ex);
+        }
+    }
+
     private String getClassNameFrom (String entryName)
     {
         String s = new String (entryName).replace ('/', '.');
         s = s.replace ('\\', '.');
         return s.substring (0, s.lastIndexOf ( '.' ));
+    }
+
+    private boolean isJar (String fileName)
+    {
+        return fileName.toLowerCase().endsWith (".jar");
+    }
+
+    private boolean isZip (String fileName)
+    {
+        return fileName.toLowerCase().endsWith (".zip");
     }
 }
