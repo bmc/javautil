@@ -31,12 +31,12 @@ import org.clapper.util.logging.Logger;
 import java.lang.reflect.Modifier;
 
 /**
- * <p><tt>ClassModifiersClassFilter</tt> implements a
- * {@link ClassFilter} that matches class names that (a) can be loaded
- * and (b) match a set of class modifiers (as defined by the constants
- * in the <tt>java.lang.reflect.Modifier</tt> class). For instance, the
- * the following code fragment defines a filter that will match only
- * public final classes:</p>
+ * <p><tt>ClassModifiersClassFilter</tt> is a {@link ClassFilter} that
+ * matches class names that (a) can be loaded and (b) match a set of class
+ * modifiers (as defined by the constants in the
+ * <tt>java.lang.reflect.Modifier</tt> class). For instance, the the
+ * following code fragment defines a filter that will match only public
+ * final classes:</p>
  *
  * <blockquote><pre>
  * import java.lang.reflect.Modifier;

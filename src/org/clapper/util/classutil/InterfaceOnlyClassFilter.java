@@ -29,11 +29,11 @@ package org.clapper.util.classutil;
 import org.clapper.util.logging.Logger;
 
 /**
- * <p><tt>InterfaceOnlyClassFilter</tt> implements a
- * {@link ClassFilter} that matches class names that are interfaces.
- * It uses reflection, so it actually has to load each class it tests. For
- * maximum flexibility, a <tt>InterfaceOnlyClassFilter</tt> can be
- * configured to use a specific class loader.</p>
+ * <p><tt>InterfaceOnlyClassFilter</tt> is a {@link ClassFilter} that
+ * matches class names that are interfaces. It uses reflection, so it
+ * actually has to load each class it tests. For maximum flexibility, a
+ * <tt>InterfaceOnlyClassFilter</tt> can be configured to use a specific
+ * class loader.</p>
  *
  * @version <tt>$Revision: 5812 $</tt>
  *

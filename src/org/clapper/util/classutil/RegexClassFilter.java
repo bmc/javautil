@@ -34,10 +34,10 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * <p><tt>RegexClassFilter</tt> implements a {@link ClassFilter}
- * that matches class names using a regular expression. Multiple regular
- * expression filters can be combined using {@link AndClassFilter}
- * and/or {@link OrClassFilter} objects.</p>
+ * <p><tt>RegexClassFilter</tt> is a {@link ClassFilter} that matches class
+ * names using a regular expression. Multiple regular expression filters
+ * can be combined using {@link AndClassFilter} and/or
+ * {@link OrClassFilter} objects.</p>
  *
  * <p>This class does not have to load the classes it's filtering; it
  * matches on the class name only.</p>
