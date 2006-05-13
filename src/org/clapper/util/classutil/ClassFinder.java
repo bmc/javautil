@@ -63,7 +63,7 @@ import org.clapper.util.io.RecursiveFileFinder;
  * "Class-Path" entry; if the <tt>ClassFinder</tt> finds such an entry, it
  * adds the contents to the search path, as well. After the
  * <tt>ClassFinder</tt> has been "primed" with things to search, you call
- * its {@link findClasses findClasses()} method to have it search for
+ * its {@link #findClasses findClasses()} method to have it search for
  * the classes, optionally passing a {@link ClassFilter} that can be used
  * to filter out classes you're not interested in.</p>
  *
