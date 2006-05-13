@@ -61,7 +61,22 @@ import org.clapper.util.io.RecursiveFileFinder;
  * knows where to look. Adding a jar file to a <tt>ClassFinder</tt> causes
  * the <tt>ClassFinder</tt> to look at the jar's manifest for a
  * "Class-Path" entry; if the <tt>ClassFinder</tt> finds such an entry, it
- * adds the contents to the search path, as well.</p>
+ * adds the contents to the search path, as well. After the
+ * <tt>ClassFinder</tt> has been "primed" with things to search, you call
+ * its {@link findClasses findClasses()} method to have it search for
+ * the classes, optionally passing a {@link ClassFilter} that can be used
+ * to filter out classes you're not interested in.</p>
+ *
+ * <p>This package also contains a rich set of {@link ClassFilter}
+ * implementations, including:</p>
+ *
+ * <ul>
+ *  <li>A {@link RegexClassFilter} for filtering class names on a regular
+ *      expression
+ *  <li>Filters for testing various class attributes (such as whether a
+ *      class is an interface, or a subclass of a known class, etc.
+ *  <li>Filters that can combine other filters in logical operations
+ * </ul>
  *
  * <p>The following example illustrates how you might use a
  * <tt>ClassFinder</tt> to locate all non-abstract classes that implement
@@ -84,7 +99,7 @@ import org.clapper.util.io.RecursiveFileFinder;
  *                 // Must not be an interface
  *                 (new NotClassFilter (new InterfaceOnlyClassFilter()),
  *
- *                 // Must implement the interface class
+ *                 // Must implement the ClassFilter interface
  *                 new SubclassClassFilter (ClassFilter.class),
  *
  *                 // Must not be abstract
