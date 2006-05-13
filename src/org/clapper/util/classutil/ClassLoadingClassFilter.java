@@ -117,7 +117,7 @@ public abstract class ClassLoadingClassFilter
         {
             log.warn ("Can't load class \""
                     + className
-                    + "\""
+                    + "\": "
                     + ex.toString());
         }
 
