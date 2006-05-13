@@ -29,13 +29,13 @@ package org.clapper.util.classutil;
 import org.clapper.util.logging.Logger;
 
 /**
- * <p><tt>SubclassClassFilter</tt> implements a {@link ClassFilter}
- * that matches class names that (a) can be loaded and (b) extend a given
- * subclass or implement a specified interface, directly or indirectly. It
- * uses the <tt>java.lang.Class.isAssignableFrom()</p> method, so it actually
- * has to load each class it tests. For maximum flexibility, a
- * <tt>SubclassClassFilter</tt> can be configured to use a specific
- * class loader.</p>
+ * <p><tt>SubclassClassFilter</tt> is a {@link ClassFilter} that matches
+ * class names that (a) can be loaded and (b) extend a given subclass or
+ * implement a specified interface, directly or indirectly. It uses the
+ * <tt>java.lang.Class.isAssignableFrom()</p> method, so it actually has to
+ * load each class it tests. For maximum flexibility, a
+ * <tt>SubclassClassFilter</tt> can be configured to use a specific class
+ * loader.</p>
  *
  * @version <tt>$Revision: 5812 $</tt>
  *
