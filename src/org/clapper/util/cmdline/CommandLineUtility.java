@@ -1247,7 +1247,10 @@ public abstract class CommandLineUtility
         }
 
         if ( (s = usageInfo.getUsageTrailer()) != null)
+        {
+            out.println ();
             out.println (s);
+        }
 
         out.flush();
     }
