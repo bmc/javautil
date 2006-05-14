@@ -54,8 +54,7 @@ public abstract class ClassLoadingClassFilter
     /**
      * For logging
      */
-    private static final Logger log =
-        new Logger (ClassLoadingClassFilter.class);
+    private Logger log = null;
 
     /*----------------------------------------------------------------------*\
                             Constructor
@@ -68,6 +67,7 @@ public abstract class ClassLoadingClassFilter
     protected ClassLoadingClassFilter()
     {
         this.classLoader = ClassLoadingClassFilter.class.getClassLoader();
+        this.log = new Logger (getClass());
     }
 
     /**
