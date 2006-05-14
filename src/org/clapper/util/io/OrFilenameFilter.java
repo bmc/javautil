@@ -82,13 +82,12 @@ public class OrFilenameFilter implements FilenameFilter
      * Additional filters may be added later, via calls to the
      * {@link #addFilter addFilter()} method.
      *
-     * @param filter1  first filter to add
-     * @param filter2  second filter to add
+     * @param filters  filters to add
      */
-    public OrFilenameFilter (FilenameFilter filter1, FilenameFilter filter2)
+    public OrFilenameFilter (FilenameFilter... filters)
     {
-        addFilter (filter1);
-        addFilter (filter2);
+        for (FilenameFilter filter : filters)
+            addFilter (filter);
     }
 
     /*----------------------------------------------------------------------*\
