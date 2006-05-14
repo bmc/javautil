@@ -27,6 +27,7 @@
 package org.clapper.util.classutil;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -115,6 +116,27 @@ public class AndClassFilter implements ClassFilter
     public void removeFilter (ClassFilter filter)
     {
         filters.remove (filter);
+    }
+
+    /**
+     * Get the contained filters, as an unmodifiable collection.
+     *
+     * @return the unmodifable <tt>Collection</tt>
+     */
+    public Collection<ClassFilter> getFilters()
+    {
+        return Collections.unmodifiableCollection (filters);
+    }
+
+    /**
+     * Get the total number of contained filter objects (not counting any
+     * filter objects <i>they</i>, in turn, contain).
+     *
+     * @return the total
+     */
+    public int getTotalFilters()
+    {
+        return filters.size();
     }
 
     /**
