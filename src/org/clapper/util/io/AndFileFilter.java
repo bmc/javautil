@@ -35,7 +35,7 @@ import java.io.FileFilter;
 import java.io.File;
 
 /**
- * <p>A <tt>AndFileFilter</tt> contains logically ANDs other
+ * <p>An <tt>AndFileFilter</tt> contains logically ANDs other
  * <tt>java.io.FileFilter</tt> objects. When its {@link #accept accept()}
  * method is called, the <tt>AndFileFilter</tt> object passes the file
  * through the contained filters. The file is only accepted if it is

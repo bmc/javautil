@@ -35,7 +35,7 @@ import java.io.FileFilter;
 import java.io.File;
 
 /**
- * <p>A <tt>OrFileFilter</tt> logically ORs other <tt>java.io.FileFilter</tt>
+ * <p>An <tt>OrFileFilter</tt> logically ORs other <tt>java.io.FileFilter</tt>
  * objects. When its {@link #accept accept()} method is called, the
  * <tt>OrFileFilter</tt> object passes the file through the contained
  * filters. The file is accepted if it is accepted by any of the contained

@@ -30,7 +30,13 @@ import java.io.*;
 
 /**
  * <tt>FileOnlyFilter</tt> implements a
- * <tt>java.io.FileFilter</tt> that matches only directories.
+ * <tt>java.io.FileFilter</tt> that matches anything that isn't a directory.
+ * Note that the following two lines produce semantically equivalent filters:
+ *
+ * <blockquote><pre>
+ * FileFilter f1 = new FileOnlyFilter();
+ * FileFilter f1 = new NotFileFilter (new DirectoryFilter());
+ * </pre></blockquote>
  *
  * @version <tt>$Revision: 5582 $</tt>
  *
