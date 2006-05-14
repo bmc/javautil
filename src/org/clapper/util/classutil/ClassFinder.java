@@ -220,14 +220,7 @@ public class ClassFinder
      */
     public int findClasses (Collection<String> classNames)
     {
-        return findClasses (classNames,
-                            new ClassFilter()
-                            {
-                                public boolean accept (String className)
-                                {
-                                    return true;
-                                }
-                            });
+        return findClasses (classNames, null);
     }
 
     /**
@@ -235,7 +228,7 @@ public class ClassFinder
      * pass the specified filter.
      *
      * @param classNames where to store the resulting matches
-     * @param filter     the filter
+     * @param filter     the filter, or null for no filter
      *
      * @return the number of matched classes added to the collection
      */
@@ -256,7 +249,7 @@ public class ClassFinder
         {
             String name = file.getPath();
 
-            log.debug ("Finding classes in " + name);
+            log.info ("Finding classes in " + name);
             if (isJar (name))
                 total += processJar (name, filter, foundClasses);
             else if (isZip (name))
@@ -279,14 +272,31 @@ public class ClassFinder
     {
         int total = 0;
 
+        JarFile jar = null;
         try
         {
-            total = processOpenZip (new JarFile (jarName), filter, classNames);
+            jar = new JarFile (jarName);
+            total = processOpenZip (jar, filter, classNames);
         }
 
         catch (IOException ex)
         {
             log.error ("Can't open jar file \"" + jarName + "\"", ex);
+        }
+
+        finally
+        {
+            try
+            {
+                jar.close();
+            }
+
+            catch (IOException ex)
+            {
+                log.error ("Can't close " + jarName, ex);
+            }
+
+            jar = null;
         }
 
         return total;
@@ -297,15 +307,32 @@ public class ClassFinder
                             Collection<String> classNames)
     {
         int total = 0;
+        ZipFile zip = null;
 
         try
         {
-            total = processOpenZip (new ZipFile (zipName), filter, classNames);
+            zip = new ZipFile (zipName);
+            total = processOpenZip (zip, filter, classNames);
         }
 
         catch (IOException ex)
         {
             log.error ("Can't open jar file \"" + zipName + "\"", ex);
+        }
+
+        finally
+        {
+            try
+            {
+                zip.close();
+            }
+
+            catch (IOException ex)
+            {
+                log.error ("Can't close " + zipName, ex);
+            }
+
+            zip = null;
         }
 
         return total;
@@ -317,6 +344,7 @@ public class ClassFinder
     {
         int total = 0;
 
+        String zipName = zip.getName();
         for (Enumeration<? extends ZipEntry> e = zip.entries();
              e.hasMoreElements(); )
         {
@@ -326,7 +354,9 @@ public class ClassFinder
                 (entry.getName().toLowerCase().endsWith (".class")))
             {
                 String className = getClassNameFrom (entry.getName());
-                if (filter.accept (className))
+                log.debug ("Looking at " + zipName + " (" + className + ")");
+
+                if ((filter == null) || (filter.accept (className)))
                 {
                     classNames.add (className);
                     total++;
@@ -356,7 +386,8 @@ public class ClassFinder
             String path = f.getPath();
             path = path.replaceFirst ("^" + dir.getPath() + "/?", "");
             String className = getClassNameFrom (path);
-            if (classFilter.accept (className))
+            log.debug ("Looking at " + path + File.separator + className);
+            if ((classFilter == null) || (classFilter.accept (className)))
             {
                 classNames.add (className);
                 total++;
