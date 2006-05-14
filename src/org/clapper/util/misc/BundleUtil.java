@@ -57,6 +57,19 @@ public final class BundleUtil
      *
      * @param bundleName the bundle name
      * @param key        the key to look up
+     *
+     * @return the value for the key, or the default value
+     */
+    public static final String getString (String bundleName, String key)
+    {
+        return getMessage (bundleName, null, key, (String) null);
+    }
+
+    /**
+     * Get a string from a bundle, using the default locale.
+     *
+     * @param bundleName the bundle name
+     * @param key        the key to look up
      * @param defaultMsg the default value, or null
      *
      * @return the value for the key, or the default value
@@ -84,6 +97,22 @@ public final class BundleUtil
                                            String defaultMsg)
     {
         return getMessage (bundleName, locale, key, defaultMsg, null);
+    }
+
+    /**
+     * Get a message from the bundle using the default locale.
+     *
+     * @param bundleName the name of the resource bundle
+     * @param key        the key
+     * @param params     parameters for the message
+     *
+     * @return the message, or the default
+     */
+    public static final String getMessage (String   bundleName,
+                                           String   key,
+                                           Object[] params)
+    {
+        return getMessage (bundleName, Locale.getDefault(), key, params);
     }
 
     /**
@@ -129,6 +158,45 @@ public final class BundleUtil
 
         if (result == null)
             result = defaultMsg;
+
+        return result;
+    }
+
+    /**
+     * Get a localized message from the bundle.
+     *
+     * @param bundleName the name of the resource bundle
+     * @param locale     the locale
+     * @param key        the key
+     * @param params     parameters for the message
+     *
+     * @return the message, or the default
+     */
+    public static final String getMessage (String   bundleName,
+                                           Locale   locale,
+                                           String   key,
+                                           Object[] params)
+    {
+        ResourceBundle bundle;
+        String         result = null;
+
+        if (locale == null)
+            locale = Locale.getDefault();
+
+        bundle = ResourceBundle.getBundle (bundleName, locale);
+        if (bundle != null)
+        {
+            try
+            {
+                String fmt = bundle.getString (key);
+                if (fmt != null)
+                    result = MessageFormat.format (fmt, params);
+            }
+
+            catch (MissingResourceException ex)
+            {
+            }
+        }
 
         return result;
     }
