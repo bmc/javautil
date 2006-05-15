@@ -135,12 +135,13 @@
 
       <include name="**/*.java"/>
       <exclude name="${pkg.path}/mail/*.java"/>
+      <exclude name="${pkg.path}/classutil/*.java"/>
       <exclude name="**/test/*.java"/>
 
     </javac>
   </target>
 
-  <target name="lib.conditional" depends="mail"/>
+  <target name="lib.conditional" depends="mail,classutil"/>
 
   <!--
   Can only build the "mail" component if the Java Mail API and
@@ -191,6 +192,54 @@
       <classpath refid="project.class.path"/>
 
       <include name="${pkg.path}/mail/*.java"/>
+    </javac>
+  </target>
+
+  <!--
+  Can only build the "classutil" component if the ASM API is available.
+  -->
+
+  <target name="-check.asm.exists">
+    <condition property="asm.exists">
+      <and>
+        <available classname="org.objectweb.asm.ClassReader"/>
+      </and>
+    </condition>
+  </target>
+
+  <target name="-check.asm"
+          depends="-check.asm.exists"
+          unless="asm.exists">
+    <echo>
+*** Ant cannot find the ASM API. All components that require the ASM API
+*** will be skipped. To enable, install the ASM API, and make it available
+*** in your CLASSPATH. ASM can be found at http://asm.objecweb.org/
+    </echo>
+  </target>
+
+  <target name="classutil" depends="-check.asm" if="asm.exists">
+    <echo level="verbose">Found ASM API. Compiling classutil classes.</echo>
+    <javac srcdir="${javac.src.dir}"
+           source="${javac.source}"
+           debug="${javac.debug}"
+           listfiles="${javac.listfiles}"
+           deprecation="yes"
+           destdir="${build}">
+
+      <compilerarg compiler="jikes" value="+Peffective-java"/>
+      <compilerarg compiler="jikes" value="+Punused-type-imports"/>
+      <compilerarg compiler="jikes" value="+Punused-package-imports"/>
+      <compilerarg compiler="jikes" value="+Pmodifier-order"/>
+      <compilerarg compiler="jikes" value="+Pserial"/>
+
+      <compilerarg compiler="javac1.5" value="${javac_lint_unchecked_opt}"/>
+      <!--
+      <compilerarg compiler="javac1.5" value="${javac_lint_deprecation_opt}"/>
+      -->
+
+      <classpath refid="project.class.path"/>
+
+      <include name="${pkg.path}/classutil/*.java"/>
     </javac>
   </target>
 
@@ -446,7 +495,7 @@
 <installation version="1.0">
   <info>
     <appname>clapper.org Java Utility Library</appname>
-    <appversion>@{curn.version}</appversion>
+    <appversion>@{api.version}</appversion>
     <appsubpath>ocutil</appsubpath>
     <authors>
       <author name="Brian Clapper" email="bmc@clapper.org"/>
@@ -484,6 +533,7 @@
     <pack name="Base" required="yes">
       <description>The jar file</description>
       <file src="LICENSE" targetdir="$INSTALL_PATH"/>
+
       <file src="@{release_dir}/@{versioned_code_jar_file}"
             targetdir="$INSTALL_PATH"/>
 
