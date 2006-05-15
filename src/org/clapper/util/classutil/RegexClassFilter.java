@@ -108,7 +108,8 @@ public class RegexClassFilter
      * Determine whether a class name is to be accepted or not, based on
      * the regular expression specified to the constructor.
      *
-     * @param className  the class name
+     * @param classInfo   the {@link ClassInfo} object to test
+     * @param classFinder the invoking {@link ClassFinder} object
      *
      * @return <tt>true</tt> if the class name matches,
      *         <tt>false</tt> if it doesn't

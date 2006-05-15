@@ -72,14 +72,15 @@ public class NotClassFilter implements ClassFilter
     }
 
     /*----------------------------------------------------------------------*\
-                            Constructor
+                              Public Methods
     \*----------------------------------------------------------------------*/
 
     /**
      * Tests whether a class name should be included in a class name
      * list.
      *
-     * @param className  the name of the class
+     * @param classInfo   the {@link ClassInfo} object to test
+     * @param classFinder the invoking {@link ClassFinder} object
      *
      * @return <tt>true</tt> if and only if the name should be included
      *         in the list; <tt>false</tt> otherwise

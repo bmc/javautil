@@ -150,7 +150,8 @@ public class OrClassFilter implements ClassFilter
      * <p>If the set of contained filters is empty, then this method
      * returns <tt>true</tt>.</p>
      *
-     * @param className  the class name
+     * @param classInfo   the {@link ClassInfo} object to test
+     * @param classFinder the invoking {@link ClassFinder} object
      *
      * @return <tt>true</tt> if the name matches, <tt>false</tt> if it doesn't
      */
