@@ -68,6 +68,10 @@ public class SubclassClassFilter implements ClassFilter
         this.baseClass = baseClassOrInterface;
     }
 
+    /*----------------------------------------------------------------------*\
+                              Public Methods
+    \*----------------------------------------------------------------------*/
+
     /**
      * Perform the acceptance test on the loaded <tt>Class</tt> object.
      *
