@@ -522,20 +522,22 @@ public class ClassFinder
 
         ClassVisitor classVisitor = new ASMClassVisitor (foundClasses, dir);
 
+        String dirPath = dir.getPath();
         for (File f : files)
         {
             String path = f.getPath();
-            path = path.replaceFirst ("^" + dir.getPath() + "/?", "");
-            String className = getClassNameFrom (path);
-            log.debug ("Looking at " + path + File.separator + className);
+            String className =
+                getClassNameFrom
+                    (path.replaceFirst ("^" + dirPath + "/?", ""));
+            log.debug ("Looking at " + f.getPath());
             try
             {
-                loadClassData (new FileInputStream (path), classVisitor);
+                loadClassData (new FileInputStream (f), classVisitor);
             }
 
             catch (IOException ex)
             {
-                log.error ("Can't open \"" + path + "\": ", ex);
+                log.error ("Can't open \"" + f.getPath() + "\": ", ex);
             }
 
             catch (ClassUtilException ex)
