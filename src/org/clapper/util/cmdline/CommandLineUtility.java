@@ -1064,7 +1064,7 @@ public abstract class CommandLineUtility
      */
     private void usage (String prefixMsg)
     {
-        WordWrapWriter   out = new WordWrapWriter (System.err);
+        WordWrapWriter   out = new WordWrapWriter (System.err, 78);
         String[]         strings;
         int              i;
         int              maxParamLength = 0;
