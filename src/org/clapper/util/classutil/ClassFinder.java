@@ -492,8 +492,18 @@ public class ClassFinder
                              + entry.getName()
                              + "\" in zip file \""
                              + zipName
-                             + "\": "
-                             + ex);
+                             + "\": ",
+                               ex);
+                }
+
+                catch (ClassUtilException ex)
+                {
+                    log.error ("Can't open \""
+                             + entry.getName()
+                             + "\" in zip file \""
+                             + zipName
+                             + "\": ",
+                               ex);
                 }
             }
         }
@@ -525,7 +535,12 @@ public class ClassFinder
 
             catch (IOException ex)
             {
-                log.error ("Can't open \"" + path + "\": " + ex);
+                log.error ("Can't open \"" + path + "\": ", ex);
+            }
+
+            catch (ClassUtilException ex)
+            {
+                log.error ("Can't open \"" + path + "\": ", ex);
             }
         }
     }
@@ -586,10 +601,22 @@ public class ClassFinder
     }
 
     private void loadClassData (InputStream is, ClassVisitor classVisitor)
-        throws IOException
+        throws ClassUtilException
     {
-        ClassReader cr = new ClassReader (is);
-        cr.accept (classVisitor, true);
+        try
+        {
+            ClassReader cr = new ClassReader (is);
+            cr.accept (classVisitor, true);
+        }
+
+        catch (Exception ex)
+        {
+            throw new ClassUtilException (ClassUtil.BUNDLE_NAME,
+                                          "ClassFinder.cantReadClassStream",
+                                          "Unable to load class from open "
+                                        + "input stream",
+                                          ex);
+        }
     }
 
     private String getClassNameFrom (String entryName)
