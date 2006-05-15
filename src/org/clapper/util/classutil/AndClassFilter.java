@@ -154,13 +154,13 @@ public class AndClassFilter implements ClassFilter
      *
      * @return <tt>true</tt> if the name matches, <tt>false</tt> if it doesn't
      */
-    public boolean accept (String className)
+    public boolean accept (ClassInfo classInfo, ClassFinder classFinder)
     {
         boolean accepted = true;
 
         for (ClassFilter filter : filters)
         {
-            accepted = filter.accept (className);
+            accepted = filter.accept (classInfo, classFinder);
             if (! accepted)
                 break;
         }

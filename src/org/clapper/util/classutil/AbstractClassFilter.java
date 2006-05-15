@@ -64,16 +64,4 @@ public class AbstractClassFilter
     {
         super (Modifier.ABSTRACT);
     }
-
-    /**
-     * Construct a new <tt>AbstractClassFilter</tt> that will only
-     * accept only abstract classes, and will use the specified class
-     * loader to load the classes it finds.
-     *
-     * @param classLoader the class loader to use
-     */
-    public AbstractClassFilter (ClassLoader classLoader)
-    {
-        super (Modifier.ABSTRACT, classLoader);
-    }
 }

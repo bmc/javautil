@@ -27,7 +27,9 @@
 package org.clapper.util.classutil;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,6 +54,11 @@ import org.clapper.util.io.FileOnlyFilter;
 import org.clapper.util.io.FileFilterMatchType;
 import org.clapper.util.io.RegexFileFilter;
 import org.clapper.util.io.RecursiveFileFinder;
+
+import org.objectweb.asm.commons.EmptyVisitor;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.Opcodes;
 
 /**
  * <p>A <tt>ClassFinder</tt> object is used to find classes. By default, an
@@ -114,6 +121,8 @@ import org.clapper.util.io.RecursiveFileFinder;
  * }
  * </pre></blockquote>
  *
+ * <p><b>WARNING: This class is not thread-safe.</b></p>
+ *
  * @version <tt>$Revision: 5607 $</tt>
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
@@ -124,8 +133,17 @@ public class ClassFinder
 			    Private Data Items
     \*----------------------------------------------------------------------*/
 
+    /**
+     * Places to search.
+     */
     private LinkedHashMap<String,File> placesToSearch =
         new LinkedHashMap<String,File>();
+
+    /**
+     * Found classes. Cleared after every call to findClasses()
+     */
+    private Map<String,ClassInfo> foundClasses =
+        new LinkedHashMap<String,ClassInfo>();
 
     /**
      * For logging
@@ -238,36 +256,32 @@ public class ClassFinder
      * Find all classes in the search areas, implicitly accepting all of
      * them.
      *
-     * @param classNames where to store the resulting matches
+     * @param classes where to store the resulting matches
      *
      * @return the number of matched classes added to the collection
      */
-    public int findClasses (Collection<String> classNames)
+    public int findClasses (Collection<ClassInfo> classes)
     {
-        return findClasses (classNames, null);
+        return findClasses (classes, null);
     }
 
     /**
      * Search all classes in the search areas, keeping only those that
      * pass the specified filter.
      *
-     * @param classNames where to store the resulting matches
-     * @param filter     the filter, or null for no filter
+     * @param classes where to store the resulting matches
+     * @param filter  the filter, or null for no filter
      *
      * @return the number of matched classes added to the collection
      */
-    public int findClasses (Collection<String> classNames,
-                            ClassFilter        filter)
+    public int findClasses (Collection<ClassInfo> classes,
+                            ClassFilter           filter)
     {
         int total = 0;
 
-        // Dump them into a set, so we don't put the same class in the set
-        // twice, even if we find it twice. Can't use the caller's
-        // Collection, because it might not be a Set. Use a LinkedHashSet,
-        // because we want to maintain the order of the classes as we find
-        // them. (Let the caller re-order them, if desired.)
+        foundClasses.clear();
 
-        Set<String> foundClasses = new LinkedHashSet<String>();
+        // Load all the classes first.
 
         for (File file : placesToSearch.values())
         {
@@ -275,14 +289,101 @@ public class ClassFinder
 
             log.info ("Finding classes in " + name);
             if (isJar (name))
-                total += processJar (name, filter, foundClasses);
+                processJar (name, foundClasses);
             else if (isZip (name))
-                total += processZip (name, filter, foundClasses);
+                processZip (name, foundClasses);
             else
-                total += processDirectory (file, filter, foundClasses);
+                processDirectory (file, foundClasses);
         }
 
-        classNames.addAll (foundClasses);
+        log.info ("Loaded " + foundClasses.size() + " classes.");
+
+        // Next, weed out the ones we don't want.
+
+        for (ClassInfo classInfo : foundClasses.values())
+        {
+            String className = classInfo.getClassName();
+            String locationName = classInfo.getClassLocation().getPath();
+            log.debug ("Looking at " + locationName + " (" + className + ")");
+
+            if ((filter == null) || (filter.accept (classInfo, this)))
+            {
+                total++;
+                classes.add (classInfo);
+            }
+        }
+
+        log.info ("Returning " + total + " total classes");
+        foundClasses.clear();
+        return total;
+    }
+
+    /**
+     * Intended to be called only from a {@link ClassFilter} object's
+     * {@link ClassFilter#accept accept()} method, this method attempts to
+     * find all the superclasses (except <tt>java.lang.Object</tt>for a
+     * given class, by checking all the currently-loaded class data.
+     *
+     * @param classInfo     the {@link ClassInfo} objects for the class
+     * @param superClasses  where to store the {@link ClassInfo} objects
+     *                      for the superclasses. The map is indexed by
+     *                      class name.
+     *
+     * @return the number of superclasses found
+     */
+    public int findAllSuperClasses (ClassInfo             classInfo,
+                                    Map<String,ClassInfo> superClasses)
+    {
+        int total = 0;
+
+        String superClassName = classInfo.getSuperClassName();
+        if (superClassName != null)
+        {
+            ClassInfo superClassInfo = foundClasses.get (superClassName);
+            if (superClassInfo != null)
+            {
+                superClasses.put (superClassName, superClassInfo);
+                total++;
+                total += findAllSuperClasses (superClassInfo, superClasses);
+            }
+        }
+
+        return total;
+    }
+
+    /**
+     * Intended to be called only from a {@link ClassFilter} object's
+     * {@link ClassFilter#accept accept()} method, this method attempts to
+     * find all the interfaces implemented by given class (directly and
+     * indirectly), by checking all the currently-loaded class data.
+     *
+     * @param classInfo     the {@link ClassInfo} objects for the class
+     * @param interfaces    where to store the {@link ClassInfo} objects
+     *                      for the interfaces. The map is indexed by
+     *                      class name
+     *
+     * @return the number of interfaces found
+     */
+    public int findAllInterfaces (ClassInfo             classInfo,
+                                  Map<String,ClassInfo> interfaces)
+    {
+        int total = 0;
+
+        String[] interfaceNames = classInfo.getInterfaces();
+        if (interfaces != null)
+        {
+            for (String interfaceName : interfaceNames)
+            {
+                ClassInfo intfClassInfo = foundClasses.get (interfaceName);
+                if (intfClassInfo != null)
+                {
+                    interfaces.put (interfaceName, intfClassInfo);
+                    total++;
+                    total += findAllInterfaces (intfClassInfo, interfaces);
+                }
+            }
+        }
+
         return total;
     }
 
@@ -290,17 +391,16 @@ public class ClassFinder
                               Private Methods
     \*----------------------------------------------------------------------*/
 
-    private int processJar (String             jarName,
-                            ClassFilter        filter,
-                            Collection<String> classNames)
+    private void processJar (String                jarName,
+                             Map<String,ClassInfo> foundClasses)
     {
-        int total = 0;
-
         JarFile jar = null;
         try
         {
             jar = new JarFile (jarName);
-            total = processOpenZip (jar, filter, classNames);
+            File jarFile = new File (jarName);
+            processOpenZip (jar, jarFile, new ASMClassVisitor (foundClasses,
+                                                               jarFile));
         }
 
         catch (IOException ex)
@@ -322,21 +422,19 @@ public class ClassFinder
 
             jar = null;
         }
-
-        return total;
     }
 
-    private int processZip (String             zipName,
-                            ClassFilter        filter,
-                            Collection<String> classNames)
+    private void processZip (String                zipName,
+                             Map<String,ClassInfo> foundClasses)
     {
-        int total = 0;
         ZipFile zip = null;
 
         try
         {
             zip = new ZipFile (zipName);
-            total = processOpenZip (zip, filter, classNames);
+            File zipFile = new File (zipName);
+            processOpenZip (zip, zipFile, new ASMClassVisitor (foundClasses,
+                                                               zipFile));
         }
 
         catch (IOException ex)
@@ -358,17 +456,13 @@ public class ClassFinder
 
             zip = null;
         }
-
-        return total;
     }
 
-    private int processOpenZip (ZipFile            zip,
-                                ClassFilter        filter,
-                                Collection<String> classNames)
+    private void processOpenZip (ZipFile      zip,
+                                 File         zipFile,
+                                 ClassVisitor classVisitor)
     {
-        int total = 0;
-
-        String zipName = zip.getName();
+        String zipName = zipFile.getPath();
         for (Enumeration<? extends ZipEntry> e = zip.entries();
              e.hasMoreElements(); )
         {
@@ -377,26 +471,31 @@ public class ClassFinder
             if ((! entry.isDirectory()) &&
                 (entry.getName().toLowerCase().endsWith (".class")))
             {
-                String className = getClassNameFrom (entry.getName());
-                log.debug ("Looking at " + zipName + " (" + className + ")");
-
-                if ((filter == null) || (filter.accept (className)))
+                try
                 {
-                    classNames.add (className);
-                    total++;
+                    log.debug ("Looking at "
+                             + zipName
+                             + "(" + entry.getName()
+                             + ")");
+                    loadClassData (zip.getInputStream (entry), classVisitor);
+                }
+
+                catch (IOException ex)
+                {
+                    log.error ("Can't open \""
+                             + entry.getName()
+                             + "\" in zip file \""
+                             + zipName
+                             + "\": "
+                             + ex);
                 }
             }
         }
-
-        return total;
     }
 
-    private int processDirectory (File               dir,
-                                  ClassFilter        classFilter,
-                                  Collection<String> classNames)
+    private void processDirectory (File                  dir,
+                                   Map<String,ClassInfo> foundClasses)
     {
-        int total = 0;
-
         RecursiveFileFinder finder = new RecursiveFileFinder();
         RegexFileFilter nameFilter =
             new RegexFileFilter ("\\.class$", FileFilterMatchType.FILENAME);
@@ -405,20 +504,24 @@ public class ClassFinder
         Collection<File> files = new ArrayList<File>();
         finder.findFiles (dir, fileFilter, files);
 
+        ClassVisitor classVisitor = new ASMClassVisitor (foundClasses, dir);
+
         for (File f : files)
         {
             String path = f.getPath();
             path = path.replaceFirst ("^" + dir.getPath() + "/?", "");
             String className = getClassNameFrom (path);
             log.debug ("Looking at " + path + File.separator + className);
-            if ((classFilter == null) || (classFilter.accept (className)))
+            try
             {
-                classNames.add (className);
-                total++;
+                loadClassData (new FileInputStream (path), classVisitor);
+            }
+
+            catch (IOException ex)
+            {
+                log.error ("Can't open \"" + path + "\": " + ex);
             }
         }
-
-        return total;
     }
 
     private void loadJarClassPathEntries (File jarFile)
@@ -474,6 +577,14 @@ public class ClassFinder
                      + "\"",
                        ex);
         }
+    }
+
+    private void loadClassData (InputStream is, ClassVisitor classVisitor)
+        throws IOException
+    {
+log.debug ("loadClassData()");
+        ClassReader cr = new ClassReader (is);
+        cr.accept (classVisitor, true);
     }
 
     private String getClassNameFrom (String entryName)

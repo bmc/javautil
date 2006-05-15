@@ -28,6 +28,8 @@ package org.clapper.util.classutil;
 
 import org.clapper.util.logging.Logger;
 
+import java.lang.reflect.Modifier;
+
 /**
  * <p><tt>InterfaceOnlyClassFilter</tt> is a {@link ClassFilter} that
  * matches class names that are interfaces. It uses reflection, so it
@@ -40,7 +42,7 @@ import org.clapper.util.logging.Logger;
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
 public class InterfaceOnlyClassFilter
-    extends ClassLoadingClassFilter
+    extends ClassModifiersClassFilter
 {
     /*----------------------------------------------------------------------*\
                             Constructor
@@ -52,35 +54,6 @@ public class InterfaceOnlyClassFilter
      */
     public InterfaceOnlyClassFilter()
     {
-        super();
-    }
-
-    /**
-     * Construct a new <tt>InterfaceOnlyClassFilter</tt> that will
-     * accept only classes that are interfaces and will use the specified
-     * class loader to load the classes it finds.
-     *
-     * @param classLoader the class loader to use
-     */
-    public InterfaceOnlyClassFilter (ClassLoader classLoader)
-    {
-        super (classLoader);
-    }
-
-    /*----------------------------------------------------------------------*\
-                             Protected Methods
-    \*----------------------------------------------------------------------*/
-
-    /**
-     * Perform the acceptance test on the loaded <tt>Class</tt> object.
-     *
-     * @param cls  the loaded <tt>Class</tt> object
-     *
-     * @return <tt>true</tt> if the class name matches,
-     *         <tt>false</tt> if it doesn't
-     */
-    protected boolean acceptClass (Class cls)
-    {
-        return cls.isInterface();
+        super (Modifier.INTERFACE);
     }
 }

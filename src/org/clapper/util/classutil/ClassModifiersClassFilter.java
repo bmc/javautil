@@ -59,8 +59,7 @@ import java.lang.reflect.Modifier;
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
-public class ClassModifiersClassFilter
-    extends ClassLoadingClassFilter
+public class ClassModifiersClassFilter implements ClassFilter
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
@@ -87,35 +86,19 @@ public class ClassModifiersClassFilter
     }
 
     /**
-     * Construct a new <tt>ClassModifiersClassFilter</tt> that will only
-     * accept only abstract classes, and will use the specified class
-     * loader to load the classes it finds.
+     * Tests whether a class name should be included in a class name
+     * list.
      *
-     * @param modifiers   the bit-field of modifier flags. See the
-     *                    <tt>java.lang.reflect.Modifier</tt> class for
-     *                    legal values.
-     * @param classLoader the class loader to use
+     * @param classInfo   the loaded information about the class
+     * @param classFinder the {@link ClassFinder} that called this filter
+     *                    (mostly for access to <tt>ClassFinder</tt>
+     *                    utility methods)
+     *
+     * @return <tt>true</tt> if and only if the name should be included
+     *         in the list; <tt>false</tt> otherwise
      */
-    public ClassModifiersClassFilter (int modifiers, ClassLoader classLoader)
+    public boolean accept (ClassInfo classInfo, ClassFinder classFinder)
     {
-        super (classLoader);
-        this.modifiers = modifiers;
-    }
-
-    /*----------------------------------------------------------------------*\
-                             Protected Methods
-    \*----------------------------------------------------------------------*/
-
-    /**
-     * Perform the acceptance test on the loaded <tt>Class</tt> object.
-     *
-     * @param cls  the loaded <tt>Class</tt> object
-     *
-     * @return <tt>true</tt> if the class name matches,
-     *         <tt>false</tt> if it doesn't
-     */
-    protected boolean acceptClass (Class cls)
-    {
-        return ((cls.getModifiers() & modifiers) != 0);
+        return ((classInfo.getModifier() & modifiers) != 0);
     }
 }

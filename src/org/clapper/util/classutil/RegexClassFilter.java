@@ -113,8 +113,8 @@ public class RegexClassFilter
      * @return <tt>true</tt> if the class name matches,
      *         <tt>false</tt> if it doesn't
      */
-    public boolean accept (String className)
+    public boolean accept (ClassInfo classInfo, ClassFinder classFinder)
     {
-        return pattern.matcher (className).find();
+        return pattern.matcher (classInfo.getClassName()).find();
     }
 }
