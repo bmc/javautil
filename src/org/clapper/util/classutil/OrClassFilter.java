@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-  $Id: CombinationClassFilter.java 5596 2005-08-18 15:34:24Z bmc $
+  $Id$
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
@@ -51,7 +51,7 @@ import java.util.List;
  * @see NotClassFilter
  * @see ClassFinder
  *
- * @version <tt>$Revision: 5596 $</tt>
+ * @version <tt>$Revision$</tt>
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */

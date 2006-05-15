@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-  $Id: ClassUtil.java 5607 2005-11-25 04:32:30Z bmc $
+  $Id$
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
@@ -129,7 +129,7 @@ import org.objectweb.asm.Opcodes;
  *
  * <p><b>WARNING: This class is not thread-safe.</b></p>
  *
- * @version <tt>$Revision: 5607 $</tt>
+ * @version <tt>$Revision$</tt>
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-  $Id: ClassUtil.java 5607 2005-11-25 04:32:30Z bmc $
+  $Id$
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
@@ -36,7 +36,12 @@ import org.objectweb.asm.Opcodes;
  * <p>Holds information about a loaded class in a way that doesn't rely on
  * the underlying API used to load the class information.</p>
  *
- * @version <tt>$Revision: 5607 $</tt>
+ * <p>This class relies on the ASM byte-code manipulation library. If that
+ * library is not available, this package will not work. See
+ * <a href="http://asm.objectweb.org"><i>asm.objectweb.org</i></a> for
+ * details on ASM.</p>
+ *
+ * @version <tt>$Revision$</tt>
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
@@ -75,8 +80,11 @@ public class ClassInfo
         this.className = translateInternalClassName (name);
         this.locationFound = location;
 
-        if (! superClassName.equals ("java/lang/Object"))
+        if ((superClassName != null) && 
+             (! superClassName.equals ("java/lang/Object")))
+        {
             this.superClassName = translateInternalClassName (superClassName);
+        }
 
         if (interfaces != null)
         {

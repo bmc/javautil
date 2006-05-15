@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-  $Id: ClassUtil.java 5607 2005-11-25 04:32:30Z bmc $
+  $Id$
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
@@ -36,6 +36,11 @@ import java.util.Map;
  * An ASM <tt>ClassVisitor</tt> that records the appropriate class information
  * for a {@link ClassFinder} object.
  *
+ * <p>This class relies on the ASM byte-code manipulation library. If that
+ * library is not available, this package will not work. See
+ * <a href="http://asm.objectweb.org"><i>asm.objectweb.org</i></a>
+ * for details on ASM.</p>
+ *
  * @version <tt>$Revision$</tt>
  *
  * @see ClassFinder
@@ -48,8 +53,6 @@ import java.util.Map;
 
      private Map<String,ClassInfo> foundClasses;
      private File                  location;
-
-private static org.clapper.util.logging.Logger log = new org.clapper.util.logging.Logger (ASMClassVisitor.class);
 
      /*----------------------------------------------------------------------*\
                                 Constructor

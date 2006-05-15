@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-  $Id: SubclassClassFilter.java 5812 2006-05-12 00:38:16Z bmc $
+  $Id$
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
@@ -37,7 +37,7 @@ import java.lang.reflect.Modifier;
  * <tt>InterfaceOnlyClassFilter</tt> can be configured to use a specific
  * class loader.</p>
  *
- * @version <tt>$Revision: 5812 $</tt>
+ * @version <tt>$Revision$</tt>
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
