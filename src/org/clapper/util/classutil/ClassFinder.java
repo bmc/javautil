@@ -121,6 +121,12 @@ import org.objectweb.asm.Opcodes;
  * }
  * </pre></blockquote>
  *
+ * <p>This class, and the {@link ClassInfo} class, rely on the ASM
+ * byte-code manipulation library. If that library is not available, this
+ * package will not work. See
+ * <a href="http://asm.objectweb.org"><i>asm.objectweb.org</i></a>
+ * for details on ASM.</p>
+ *
  * <p><b>WARNING: This class is not thread-safe.</b></p>
  *
  * @version <tt>$Revision: 5607 $</tt>
@@ -582,7 +588,6 @@ public class ClassFinder
     private void loadClassData (InputStream is, ClassVisitor classVisitor)
         throws IOException
     {
-log.debug ("loadClassData()");
         ClassReader cr = new ClassReader (is);
         cr.accept (classVisitor, true);
     }
