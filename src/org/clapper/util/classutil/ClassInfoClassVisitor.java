@@ -30,11 +30,10 @@ import org.objectweb.asm.commons.EmptyVisitor;
 import org.objectweb.asm.ClassVisitor;
 
 import java.io.File;
-import java.util.Map;
 
 /**
- * An ASM <tt>ClassVisitor</tt> that records the appropriate class information
- * for a {@link ClassFinder} object.
+ * <p>An ASM <tt>ClassVisitor</tt> that records the appropriate class
+ * information for a {@link ClassFinder} object.</p>
  *
  * <p>This class relies on the ASM byte-code manipulation library. If that
  * library is not available, this package will not work. See
@@ -45,14 +44,14 @@ import java.util.Map;
  *
  * @see ClassFinder
  */
- class ASMClassVisitor extends EmptyVisitor
+ class ClassInfoClassVisitor extends EmptyVisitor
  {
      /*----------------------------------------------------------------------*\
                             Private Data Items
      \*----------------------------------------------------------------------*/
 
-     private Map<String,ClassInfo> foundClasses;
-     private File                  location;
+     private ClassInfoStore store;
+     private File           location;
 
      /*----------------------------------------------------------------------*\
                                 Constructor
@@ -66,10 +65,10 @@ import java.util.Map;
       *                      being processed by this visitor
       * 
       */
-     ASMClassVisitor (Map<String,ClassInfo> foundClasses, File location)
+     ClassInfoClassVisitor (ClassInfoStore store, File location)
      {
-         this.foundClasses = foundClasses;
-         this.location     = location;
+         this.store    = store;
+         this.location = location;
      }
 
      /*----------------------------------------------------------------------*\
@@ -94,12 +93,11 @@ import java.util.Map;
                         String   superName,
                         String[] interfaces)
      {
-         ClassInfo ci = new ClassInfo (name,
-                                       superName,
-                                       interfaces,
-                                       access,
-                                       location);
-         foundClasses.put (ci.getClassName(), ci);
+         store.add (new ClassInfo (name,
+                                   superName,
+                                   interfaces,
+                                   access,
+                                   location));
      }
 
     /**
@@ -112,5 +110,4 @@ import java.util.Map;
     {
         return location;
     }
-
  }
