@@ -27,9 +27,15 @@
 package org.clapper.util.classutil;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import java.lang.reflect.Modifier;
 
+import org.objectweb.asm.commons.EmptyVisitor;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 
 /**
@@ -45,7 +51,7 @@ import org.objectweb.asm.Opcodes;
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
-public class ClassInfo
+public class ClassInfo extends EmptyVisitor
 {
     /*----------------------------------------------------------------------*\
 			    Private Data Items
@@ -60,6 +66,56 @@ public class ClassInfo
     /*----------------------------------------------------------------------*\
                                 Constructor
     \*----------------------------------------------------------------------*/
+
+    /**
+     * Create a <tt>ClassInfo</tt> object from a file.
+     *
+     * @param classFile  the abstract path to the class file to load
+     *
+     * @throws ClassUtilException load error
+     */
+    public ClassInfo (File classFile) throws ClassUtilException
+    {
+        try
+        {
+            ClassReader cr = new ClassReader (new FileInputStream (classFile));
+            cr.accept (this, true);
+        }
+
+        catch (IOException ex)
+        {
+            throw new ClassUtilException (ClassUtil.BUNDLE_NAME,
+                                          "ClassInfo.cantReadClassFile",
+                                          "Unable to load class file \"{0}\"",
+                                          new Object[] {classFile.getPath()},
+                                          ex);
+        }
+    }
+
+    /**
+     * Create a <tt>ClassInfo</tt> object from an <tt>InputStream</tt>.
+     *
+     * @param is  the open <tt>InputStream</tt> containing the class bytes
+     *
+     * @throws ClassUtilException load error
+     */
+    public ClassInfo (InputStream is) throws ClassUtilException
+    {
+        try
+        {
+            ClassReader cr = new ClassReader (is);
+            cr.accept (this, true);
+        }
+
+        catch (IOException ex)
+        {
+            throw new ClassUtilException (ClassUtil.BUNDLE_NAME,
+                                          "ClassInfo.cantReadClassStream",
+                                          "Unable to load class from open "
+                                        + "input stream",
+                                          ex);
+        }
+    }
 
     /**
      * Create a new <tt>ClassInfo</tt> object.
@@ -77,62 +133,7 @@ public class ClassInfo
                int      asmAccessMask,
                File     location)
     {
-        this.className = translateInternalClassName (name);
-        this.locationFound = location;
-
-        if ((superClassName != null) && 
-             (! superClassName.equals ("java/lang/Object")))
-        {
-            this.superClassName = translateInternalClassName (superClassName);
-        }
-
-        if (interfaces != null)
-        {
-            this.implementedInterfaces = new String[interfaces.length];
-            for (int i = 0; i < interfaces.length; i++)
-            {
-                this.implementedInterfaces[i] =
-                    translateInternalClassName (interfaces[i]);
-            }
-        }
-
-        // Convert the ASM access info into Reflection API modifiers.
-
-        if ((asmAccessMask & Opcodes.ACC_FINAL) != 0)
-            modifier |= Modifier.FINAL;
-
-        if ((asmAccessMask & Opcodes.ACC_NATIVE) != 0)
-            modifier |= Modifier.NATIVE;
-
-        if ((asmAccessMask & Opcodes.ACC_INTERFACE) != 0)
-            modifier |= Modifier.INTERFACE;
-
-        if ((asmAccessMask & Opcodes.ACC_ABSTRACT) != 0)
-            modifier |= Modifier.ABSTRACT;
-
-        if ((asmAccessMask & Opcodes.ACC_PRIVATE) != 0)
-            modifier |= Modifier.PRIVATE;
-
-        if ((asmAccessMask & Opcodes.ACC_PROTECTED) != 0)
-            modifier |= Modifier.PROTECTED;
-
-        if ((asmAccessMask & Opcodes.ACC_PUBLIC) != 0)
-            modifier |= Modifier.PUBLIC;
-
-        if ((asmAccessMask & Opcodes.ACC_STATIC) != 0)
-            modifier |= Modifier.STATIC;
-
-        if ((asmAccessMask & Opcodes.ACC_STRICT) != 0)
-            modifier |= Modifier.STRICT;
-
-        if ((asmAccessMask & Opcodes.ACC_SYNCHRONIZED) != 0)
-            modifier |= Modifier.SYNCHRONIZED;
-
-        if ((asmAccessMask & Opcodes.ACC_TRANSIENT) != 0)
-            modifier |= Modifier.TRANSIENT;
-
-        if ((asmAccessMask & Opcodes.ACC_VOLATILE) != 0)
-            modifier |= Modifier.VOLATILE;
+        setFields (name, superClassName, interfaces, asmAccessMask, location);
     }
 
     /*----------------------------------------------------------------------*\
@@ -245,6 +246,31 @@ public class ClassInfo
     }
 
     /*----------------------------------------------------------------------*\
+                  Public Methods Required by ClassVisitor
+    \*----------------------------------------------------------------------*/
+
+     /**
+      * "Visit" a class. Required by ASM <tt>ClassVisitor</tt> interface.
+      *
+      * @param version     class version
+      * @param access      class access modifiers, etc.
+      * @param name        internal class name
+      * @param signature   class signature (not used here)
+      * @param superName   internal super class name
+      * @param interfaces  internal names of all directly implemented
+      *                    interfaces
+      */
+     public void visit (int      version,
+                        int      access,
+                        String   name,
+                        String   signature,
+                        String   superName,
+                        String[] interfaces)
+     {
+         setFields (name, superName, interfaces, access, null);
+     }
+
+    /*----------------------------------------------------------------------*\
                               Private Methods
     \*----------------------------------------------------------------------*/
 
@@ -258,5 +284,79 @@ public class ClassInfo
     private String translateInternalClassName (String internalName)
     {
         return internalName.replaceAll ("/", ".");
+    }
+
+    /**
+     * Set the fields in this object.
+     *
+     * @param name           the class name
+     * @param superClassName the parent class name, or null
+     * @param interfaces     the names of interfaces the class implements,
+     *                       or null
+     * @param asmAccessMask  ASM API's access mask for the class
+     * @param location       File (jar, zip) or directory where class was found
+     */
+    private void setFields (String   name,
+                            String   superClassName,
+                            String[] interfaces,
+                            int      asmAccessMask,
+                            File     location)
+    {
+        this.className = translateInternalClassName (name);
+        this.locationFound = location;
+
+        if ((superClassName != null) && 
+             (! superClassName.equals ("java/lang/Object")))
+        {
+            this.superClassName = translateInternalClassName (superClassName);
+        }
+
+        if (interfaces != null)
+        {
+            this.implementedInterfaces = new String[interfaces.length];
+            for (int i = 0; i < interfaces.length; i++)
+            {
+                this.implementedInterfaces[i] =
+                    translateInternalClassName (interfaces[i]);
+            }
+        }
+
+        // Convert the ASM access info into Reflection API modifiers.
+
+        if ((asmAccessMask & Opcodes.ACC_FINAL) != 0)
+            modifier |= Modifier.FINAL;
+
+        if ((asmAccessMask & Opcodes.ACC_NATIVE) != 0)
+            modifier |= Modifier.NATIVE;
+
+        if ((asmAccessMask & Opcodes.ACC_INTERFACE) != 0)
+            modifier |= Modifier.INTERFACE;
+
+        if ((asmAccessMask & Opcodes.ACC_ABSTRACT) != 0)
+            modifier |= Modifier.ABSTRACT;
+
+        if ((asmAccessMask & Opcodes.ACC_PRIVATE) != 0)
+            modifier |= Modifier.PRIVATE;
+
+        if ((asmAccessMask & Opcodes.ACC_PROTECTED) != 0)
+            modifier |= Modifier.PROTECTED;
+
+        if ((asmAccessMask & Opcodes.ACC_PUBLIC) != 0)
+            modifier |= Modifier.PUBLIC;
+
+        if ((asmAccessMask & Opcodes.ACC_STATIC) != 0)
+            modifier |= Modifier.STATIC;
+
+        if ((asmAccessMask & Opcodes.ACC_STRICT) != 0)
+            modifier |= Modifier.STRICT;
+
+        if ((asmAccessMask & Opcodes.ACC_SYNCHRONIZED) != 0)
+            modifier |= Modifier.SYNCHRONIZED;
+
+        if ((asmAccessMask & Opcodes.ACC_TRANSIENT) != 0)
+            modifier |= Modifier.TRANSIENT;
+
+        if ((asmAccessMask & Opcodes.ACC_VOLATILE) != 0)
+            modifier |= Modifier.VOLATILE;
     }
 }
