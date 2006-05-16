@@ -251,6 +251,29 @@ public class ClassFinder
     }
 
     /**
+     * Add a <tt>Collection</tt> of jar files, zip files and/or directories
+     * to the list of places to search for classes.
+     *
+     * @param files  the collection of jar files, zip files and/or directories.
+     *
+     * @return the total number of items from the collection that were actually
+     *         added. (Elements that aren't jars, zip files or directories
+     *         are skipped.)
+     */
+    public int add (Collection<File> files)
+    {
+        int totalAdded = 0;
+
+        for (File file : files)
+        {
+            if (add (file))
+                totalAdded++;
+        }
+
+        return totalAdded;
+    }
+
+    /**
      * Clear the finder's notion of where to search.
      */
     public void clear()
