@@ -149,6 +149,31 @@ public class ClassLoaderBuilder
         return total;
     }
 
+
+    /**
+     * Add a <tt>Collection</tt> of jar files, zip files or directories to
+     * the list of places the not-yet-constructed class loader will search.
+     * If the directory or file does not exist, or isn't a jar file, zip
+     * file, or directory, this method just ignores it and returns
+     * <tt>false</tt>.
+     *
+     * @param files  the collection
+     *
+     * @return the number of entries from the array that actually were added
+     */
+    public int add (Collection<File> files)
+    {
+        int total = 0;
+
+        for (File f : files)
+        {
+            if (add (f))
+                total++;
+        }
+
+        return total;
+    }
+
     /**
      * Add the contents of the classpath.
      */
