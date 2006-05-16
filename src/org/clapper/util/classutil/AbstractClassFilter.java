@@ -33,9 +33,8 @@ import java.lang.reflect.Modifier;
 /**
  * <p><tt>AbstractClassFilter</tt> implements a {@link ClassFilter}
  * that matches class names that (a) can be loaded and (b) are abstract. It
- * uses the Reflection API, so it actually has to load each class it tests.
- * For maximum flexibility, an <tt>AbstractClassFilter</tt> can be
- * configured to use a specific class loader.</p>
+ * relies on the pool of classes read by a {@link ClassFinder}; it's
+ * not really useful by itself.</p>
  *
  * <p>This class is really just a convenient specialization of the
  * {@link ClassModifiersClassFilter} class.</p>

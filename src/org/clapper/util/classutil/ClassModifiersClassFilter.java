@@ -46,10 +46,8 @@ import java.lang.reflect.Modifier;
  * ClassFilter = new ClassModifiersClassFilter (Modifier.PUBLIC | Modifier.FINAL);
  * </pre></blockquote>
  *
- * <p>This class uses the Reflection API, so it actually has to load each
- * class it tests. For maximum flexibility, a
- * <tt>ClassModifiersClassFilter</tt> object can be configured to use a
- * specific class loader.</p>
+ * <p>This class relies on the pool of classes read by a
+ * {@link ClassFinder}; it's not really useful by itself.</p>
  *
  * @see ClassFilter
  * @see ClassFinder

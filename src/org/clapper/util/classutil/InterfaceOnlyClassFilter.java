@@ -31,11 +31,13 @@ import org.clapper.util.logging.Logger;
 import java.lang.reflect.Modifier;
 
 /**
- * <p><tt>InterfaceOnlyClassFilter</tt> is a {@link ClassFilter} that
- * matches class names that are interfaces. It uses reflection, so it
- * actually has to load each class it tests. For maximum flexibility, a
- * <tt>InterfaceOnlyClassFilter</tt> can be configured to use a specific
- * class loader.</p>
+ * <p><tt>AbstractClassFilter</tt> implements a {@link ClassFilter}
+ * that matches class names that (a) can be loaded and (b) are abstract. It
+ * relies on the pool of classes read by a {@link ClassFinder}; it's
+ * not really useful by itself.</p>
+ *
+ * <p>This class is really just a convenient specialization of the
+ * {@link ClassModifiersClassFilter} class.</p>
  *
  * @version <tt>$Revision$</tt>
  *
