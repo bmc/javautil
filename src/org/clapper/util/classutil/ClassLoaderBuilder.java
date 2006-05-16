@@ -134,7 +134,7 @@ public class ClassLoaderBuilder
      *
      * @param files  the array
      *
-     * @return the number of entries from the array that actually were added
+     * @return the number of entries from the array that were actually added
      */
     public int add (File[] files)
     {
@@ -159,7 +159,8 @@ public class ClassLoaderBuilder
      *
      * @param files  the collection
      *
-     * @return the number of entries from the array that actually were added
+     * @return the number of entries from the collection that were
+     *         actually added
      */
     public int add (Collection<File> files)
     {
