@@ -337,8 +337,14 @@ public class ClassFinder
 
             if ((filter == null) || (filter.accept (classInfo, this)))
             {
+                log.debug ("Filter accepted " + className);
                 total++;
                 classes.add (classInfo);
+            }
+
+            else
+            {
+                log.debug ("Filter rejected " + className);
             }
         }
 
@@ -397,6 +403,14 @@ public class ClassFinder
                                   Map<String,ClassInfo> interfaces)
     {
         int total = 0;
+
+        String superClassName = classInfo.getSuperClassName();
+        if (superClassName != null)
+        {
+            ClassInfo superClassInfo = foundClasses.get (superClassName);
+            if (superClassInfo != null)
+                total += findAllInterfaces (superClassInfo, interfaces);
+        }
 
         String[] interfaceNames = classInfo.getInterfaces();
         if (interfaces != null)
@@ -502,7 +516,7 @@ public class ClassFinder
             {
                 try
                 {
-                    log.debug ("Looking at "
+                    log.debug ("Loading "
                              + zipName
                              + "(" + entry.getName()
                              + ")");
@@ -552,7 +566,7 @@ public class ClassFinder
             String className =
                 getClassNameFrom
                     (path.replaceFirst ("^" + dirPath + "/?", ""));
-            log.debug ("Looking at " + f.getPath());
+            log.debug ("Loading " + f.getPath());
             try
             {
                 loadClassData (new FileInputStream (f), classVisitor);
