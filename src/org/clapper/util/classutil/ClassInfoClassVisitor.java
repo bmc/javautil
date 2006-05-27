@@ -30,6 +30,7 @@ import org.objectweb.asm.commons.EmptyVisitor;
 import org.objectweb.asm.ClassVisitor;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * <p>An ASM <tt>ClassVisitor</tt> that records the appropriate class
@@ -50,8 +51,8 @@ import java.io.File;
                             Private Data Items
      \*----------------------------------------------------------------------*/
 
-     private ClassInfoStore store;
-     private File           location;
+     private Map<String,ClassInfo> foundClasses;
+     private File                  location;
 
      /*----------------------------------------------------------------------*\
                                 Constructor
@@ -60,14 +61,16 @@ import java.io.File;
      /**
       * Constructor
       *
-      * @param foundClasses  where to store the class information
+      * @param foundClasses  where to store the class information. The
+      *                      {@link ClassInfo} records are stored in the map,
+      *                      indexed by class name.
       * @param location      file (jar, zip) or directory containing classes
       *                      being processed by this visitor
       * 
       */
-     ClassInfoClassVisitor (ClassInfoStore store, File location)
+     ClassInfoClassVisitor (Map<String,ClassInfo> foundClasses, File location)
      {
-         this.store    = store;
+         this.foundClasses = foundClasses;
          this.location = location;
      }
 
@@ -93,11 +96,12 @@ import java.io.File;
                         String   superName,
                         String[] interfaces)
      {
-         store.add (new ClassInfo (name,
-                                   superName,
-                                   interfaces,
-                                   access,
-                                   location));
+         ClassInfo classInfo = new ClassInfo (name,
+                                              superName,
+                                              interfaces,
+                                              access,
+                                              location);
+         foundClasses.put (name, classInfo);
      }
 
     /**

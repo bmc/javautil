@@ -442,8 +442,8 @@ public class ClassFinder
         {
             jar = new JarFile (jarName);
             File jarFile = new File (jarName);
-            processOpenZip (jar, jarFile, new ASMClassVisitor (foundClasses,
-                                                               jarFile));
+            processOpenZip (jar, jarFile,
+                            new ClassInfoClassVisitor (foundClasses, jarFile));
         }
 
         catch (IOException ex)
@@ -476,8 +476,8 @@ public class ClassFinder
         {
             zip = new ZipFile (zipName);
             File zipFile = new File (zipName);
-            processOpenZip (zip, zipFile, new ASMClassVisitor (foundClasses,
-                                                               zipFile));
+            processOpenZip (zip, zipFile,
+                            new ClassInfoClassVisitor (foundClasses, zipFile));
         }
 
         catch (IOException ex)
@@ -557,7 +557,8 @@ public class ClassFinder
         Collection<File> files = new ArrayList<File>();
         finder.findFiles (dir, fileFilter, files);
 
-        ClassVisitor classVisitor = new ASMClassVisitor (foundClasses, dir);
+        ClassVisitor classVisitor = new ClassInfoClassVisitor (foundClasses,
+                                                               dir);
 
         String dirPath = dir.getPath();
         for (File f : files)
