@@ -1,0 +1,119 @@
+<!-- IzPack installer configuration file template. Edited by build.xml. -->
+
+<!-- $Id$ -->
+
+<installation version="1.0">
+  <info>
+    <appname>clapper.org Java Utility Library</appname>
+    <appversion>@OCUTIL_VERSION@</appversion>
+    <appsubpath>ocutil</appsubpath>
+    <authors>
+      <author name="Brian Clapper" email="bmc@clapper.org"/>
+    </authors>
+    <url>http://www.clapper.org/software/java/util/</url>
+    <javaversion>1.5</javaversion>
+  </info>
+
+  <guiprefs width="800" height="600" resizable="no"/>
+
+  <locale>
+    <langpack iso3="eng"/>
+  </locale>
+
+  <resources>
+    <res id="LicencePanel.licence" src="@INSTALL_TMP@/LICENSE"/>
+    <res id="Installer.image" src="@SRC_INSTALL@/clapper-logo.png"/>
+    <res id="ProcessPanel.Spec.xml" src="@SRC_INSTALL@/cleanup.xml"/>
+  </resources>
+
+  <panels>
+    <panel classname="HelloPanel"/>
+    <!--
+    <panel classname="InfoPanel"/>
+    -->
+    <panel classname="LicencePanel"/>
+    <panel classname="TargetPanel"/>
+    <panel classname="PacksPanel"/>
+    <panel classname="InstallPanel"/>
+    <panel classname="ProcessPanel"/>
+    <panel classname="FinishPanel"/>
+  </panels>
+
+  <packs>
+    <pack name="Base" required="yes">
+      <description>The jar file</description>
+      <file src="LICENSE" targetdir="$INSTALL_PATH"/>
+
+      <file src="@RELEASE_DIR@/@VERSIONED_CODE_JAR_FILE@"
+            targetdir="$INSTALL_PATH/lib"/>
+
+      <!-- third-party jars -->
+
+      <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/activation.jar"
+            targetdir="$INSTALL_PATH/lib"/>
+      <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/mail.jar"
+            targetdir="$INSTALL_PATH/lib"/>
+      <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/asm-2.2.1.jar"
+            targetdir="$INSTALL_PATH/lib"/>
+      <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/asm-commons-2.2.1.jar"
+            targetdir="$INSTALL_PATH/lib"/>
+      <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/asm-util-2.2.1.jar"
+            targetdir="$INSTALL_PATH/lib"/>
+
+      <!-- for cleaning up -->
+
+      <singlefile src="@SRC_TOP@/installer/cleanup.sh"
+                  target="$INSTALL_PATH/scripts/cleanup.sh">
+        <os family="unix"/>
+      </singlefile>
+      <parsable targetfile="$INSTALL_PATH/scripts/cleanup.sh">
+        <os family="unix"/>
+      </parsable>
+      <executable targetfile="$INSTALL_PATH/scripts/cleanup.sh"
+                  stage="never" os="unix"/>
+      <singlefile src="@SRC_TOP@/installer/cleanup.bat"
+                  target="$INSTALL_PATH/scripts/cleanup.bat">
+        <os family="windows"/>
+      </singlefile>
+      <parsable targetfile="$INSTALL_PATH/scripts/cleanup.bat">
+        <os family="windows"/>
+      </parsable>
+      <executable targetfile="$INSTALL_PATH/scripts/cleanup.bat" stage="never"
+                  os="windows"/>
+    </pack>
+
+    <pack name="Docs" required="no">
+      <description>The API Javadocs</description>
+      <file src="dist/docs/api"
+            targetdir="$INSTALL_PATH/docs"/>
+      <file src="docs/CHANGELOG"
+            targetdir="$INSTALL_PATH/docs"/>
+    </pack>
+
+    <pack name="Sources" required="no">
+      <description>The sources</description>
+      <!--
+          WARNING: This file set is essentially a duplicate of the
+          sources <zipfileset>, earlier in this file. There's no
+          way around that, unfortunately.
+
+          KLUDGE: For some reason, the IzPack <fileset> element doesn't
+          properly include properties files with @SRC_TOP@/**/*.properties,
+          and exclusion via @BUILD_DIR@ doesn't work, either. (It's not quite
+          like the Ant <fileset>, no matter what the docs say.) So, we'll
+          clean up the incorrectly copied build directory in the final panel.
+      -->
+      <fileset dir="." targetdir="$INSTALL_PATH/sources">
+        <include name="**/*.java"/>
+        <include name="**/package.html"/>
+        <include name="overview.html"/>
+        <include name="build.xml"/>
+        <include name="**/*.xml"/>
+        <include name="**/*.properties"/>
+        <exclude name="@DIST_DIR@/**"/>
+        <exclude name="@BUILD_DIR@/**/*.properties"/>
+        <exclude name="**/CVS"/>
+      </fileset>
+    </pack>
+  </packs>
+</installation>
