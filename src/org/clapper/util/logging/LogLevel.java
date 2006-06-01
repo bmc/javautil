@@ -38,9 +38,24 @@ public enum LogLevel
     \*----------------------------------------------------------------------*/
 
     /**
+     * Log message at "trace" level
+     */
+    TRACE (org.apache.log4j.Level.TRACE),
+
+    /**
      * Log message at "debug" level
      */
     DEBUG (org.apache.log4j.Level.DEBUG),
+
+    /**
+     * Log message at "informational message" level
+     */
+    INFO (org.apache.log4j.Level.INFO),
+
+    /**
+     * Log message at "warning" level
+     */
+    WARNING (org.apache.log4j.Level.WARN);
 
     /**
      * Log message at "error" level
@@ -51,21 +66,6 @@ public enum LogLevel
      * Log message at "fatal error" level
      */
     FATAL (org.apache.log4j.Level.FATAL),
-
-    /**
-     * Log message at "informational message" level
-     */
-    INFO (org.apache.log4j.Level.INFO),
-
-    /**
-     * Log message at "trace" level
-     */
-    TRACE (org.apache.log4j.Level.TRACE),
-
-    /**
-     * Log message at "warning" level
-     */
-    WARNING (org.apache.log4j.Level.WARN);
 
     private org.apache.log4j.Level realLevel;
 
