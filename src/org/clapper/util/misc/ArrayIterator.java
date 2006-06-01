@@ -114,7 +114,7 @@ public class ArrayIterator<T> implements Iterator<T>
      */
     public boolean hasNext()
     {
-        return (next < array.length);
+        return (array != null) && (next < array.length);
     }
 
     /**
@@ -138,6 +138,11 @@ public class ArrayIterator<T> implements Iterator<T>
         }
 
         catch (ArrayIndexOutOfBoundsException ex)
+        {
+            throw new NoSuchElementException();
+        }
+
+        catch (NullPointerException ex)
         {
             throw new NoSuchElementException();
         }
@@ -170,6 +175,12 @@ public class ArrayIterator<T> implements Iterator<T>
         {
             throw new NoSuchElementException();
         }
+
+        catch (NullPointerException ex)
+        {
+            throw new NoSuchElementException();
+        }
+
 
         return result;
     }

@@ -45,64 +45,67 @@ import java.util.Map;
  *
  * @see ClassFinder
  */
- class ClassInfoClassVisitor extends EmptyVisitor
- {
-     /*----------------------------------------------------------------------*\
+class ClassInfoClassVisitor extends EmptyVisitor
+{
+    /*----------------------------------------------------------------------*\
                             Private Data Items
-     \*----------------------------------------------------------------------*/
+    \*----------------------------------------------------------------------*/
 
-     private Map<String,ClassInfo> foundClasses;
-     private File                  location;
+    private Map<String,ClassInfo> foundClasses;
+    private File                  location;
 
-     /*----------------------------------------------------------------------*\
-                                Constructor
-     \*----------------------------------------------------------------------*/
+    /*----------------------------------------------------------------------*\
+                               Constructor
+    \*----------------------------------------------------------------------*/
 
-     /**
-      * Constructor
-      *
-      * @param foundClasses  where to store the class information. The
-      *                      {@link ClassInfo} records are stored in the map,
-      *                      indexed by class name.
-      * @param location      file (jar, zip) or directory containing classes
-      *                      being processed by this visitor
-      * 
-      */
-     ClassInfoClassVisitor (Map<String,ClassInfo> foundClasses, File location)
-     {
-         this.foundClasses = foundClasses;
-         this.location = location;
-     }
+    /**
+     * Constructor
+     *
+     * @param foundClasses  where to store the class information. The
+     *                      {@link ClassInfo} records are stored in the map,
+     *                      indexed by class name.
+     * @param location      file (jar, zip) or directory containing classes
+     *                      being processed by this visitor
+     * 
+     */
+    ClassInfoClassVisitor (Map<String,ClassInfo> foundClasses, File location)
+    {
+        this.foundClasses = foundClasses;
+        this.location = location;
+    }
 
-     /*----------------------------------------------------------------------*\
+    /*----------------------------------------------------------------------*\
                               Public Methods
-     \*----------------------------------------------------------------------*/
+    \*----------------------------------------------------------------------*/
 
-     /**
-      * "Visit" a class. Required by ASM <tt>ClassVisitor</tt> interface.
-      *
-      * @param version     class version
-      * @param access      class access modifiers, etc.
-      * @param name        internal class name
-      * @param signature   class signature (not used here)
-      * @param superName   internal super class name
-      * @param interfaces  internal names of all directly implemented
-      *                    interfaces
-      */
-     public void visit (int      version,
-                        int      access,
-                        String   name,
-                        String   signature,
-                        String   superName,
-                        String[] interfaces)
-     {
-         ClassInfo classInfo = new ClassInfo (name,
-                                              superName,
-                                              interfaces,
-                                              access,
-                                              location);
-         foundClasses.put (name, classInfo);
-     }
+    /**
+     * "Visit" a class. Required by ASM <tt>ClassVisitor</tt> interface.
+     *
+     * @param version     class version
+     * @param access      class access modifiers, etc.
+     * @param name        internal class name
+     * @param signature   class signature (not used here)
+     * @param superName   internal super class name
+     * @param interfaces  internal names of all directly implemented
+     *                    interfaces
+     */
+    public void visit (int      version,
+                       int      access,
+                       String   name,
+                       String   signature,
+                       String   superName,
+                       String[] interfaces)
+    {
+        ClassInfo classInfo = new ClassInfo (name,
+                                             superName,
+                                             interfaces,
+                                             access,
+                                             location);
+        // Be sure to use the converted name from classInfo.getName(), not
+        // the internal value in "name".
+
+        foundClasses.put (classInfo.getClassName(), classInfo);
+    }
 
     /**
      * Get the location (the jar file, zip file or directory) containing
@@ -114,4 +117,4 @@ import java.util.Map;
     {
         return location;
     }
- }
+}

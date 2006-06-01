@@ -48,7 +48,7 @@ import java.io.Serializable;
  * 
  * @version <tt>$Revision$</tt>
  *
- * @author Copyright &copy; 2004-2006-2006-2005 Brian M. Clapper
+ * @author Copyright &copy; 2004-2006 Brian M. Clapper
  */
 public class PropertiesMap
     extends AbstractMap<String,String>

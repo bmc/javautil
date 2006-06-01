@@ -279,6 +279,7 @@ public class ClassFinder
     public void clear()
     {
         placesToSearch.clear();
+        foundClasses.clear();
     }
 
     /**
@@ -403,13 +404,14 @@ public class ClassFinder
                                   Map<String,ClassInfo> interfaces)
     {
         int total = 0;
-
         String superClassName = classInfo.getSuperClassName();
         if (superClassName != null)
         {
             ClassInfo superClassInfo = foundClasses.get (superClassName);
             if (superClassInfo != null)
+            {
                 total += findAllInterfaces (superClassInfo, interfaces);
+            }
         }
 
         String[] interfaceNames = classInfo.getInterfaces();

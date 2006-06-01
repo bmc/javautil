@@ -193,10 +193,14 @@ public class ClassLoaderBuilder
             log.error ("Unable to get class path", ex);
         }
     
-        StringTokenizer tok = new StringTokenizer (path, File.pathSeparator);
+        if (path != null)
+        {
+            StringTokenizer tok = new StringTokenizer (path,
+                                                       File.pathSeparator);
 
-        while (tok.hasMoreTokens())
-            add (new File (tok.nextToken()));
+            while (tok.hasMoreTokens())
+                add (new File (tok.nextToken()));
+        }
     }
 
     /**

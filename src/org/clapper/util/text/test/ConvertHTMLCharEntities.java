@@ -3,7 +3,7 @@
   ---------------------------------------------------------------------------
   This software is released under a Berkeley-style license:
 
-  Copyright (c) 2004-2005 Brian M. Clapper. All rights reserved.
+  Copyright (c) 2004-2006 Brian M. Clapper. All rights reserved.
 
   Redistribution and use in source and binary forms are permitted provided
   that: (1) source distributions retain this entire copyright notice and
