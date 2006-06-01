@@ -361,6 +361,7 @@
 
   <target name="docs" depends="doc"/>
   <target name="javadocs" depends="doc"/>
+  <target name="javadoc" depends="doc"/>
 
   <!--
   ***************************************************************************
