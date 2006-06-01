@@ -34,6 +34,7 @@ import org.apache.log4j.Level;
 
 /**
  * <p><tt>Logger</tt> wraps the
+ * <a href="http://logging.apache.org/log4j/docs/">Log4J</a>
  * <a href="http://logging.apache.org/">Log4J</a>
  * API and provides a slightly simpler, but similar, interface. This
  * class supports most of the logging methods, but it doesn't actually
