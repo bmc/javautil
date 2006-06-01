@@ -55,7 +55,7 @@ public enum LogLevel
     /**
      * Log message at "warning" level
      */
-    WARNING (org.apache.log4j.Level.WARN);
+    WARNING (org.apache.log4j.Level.WARN),
 
     /**
      * Log message at "error" level
@@ -65,7 +65,7 @@ public enum LogLevel
     /**
      * Log message at "fatal error" level
      */
-    FATAL (org.apache.log4j.Level.FATAL),
+    FATAL (org.apache.log4j.Level.FATAL);
 
     private org.apache.log4j.Level realLevel;
 
