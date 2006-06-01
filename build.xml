@@ -5,7 +5,7 @@
   ===========================================================================
   This software is released under a Berkeley-style license:
 
-  Copyright (c) 2004-2005 Brian M. Clapper. All rights reserved.
+  Copyright (c) 2004-2006 Brian M. Clapper. All rights reserved.
 
   Redistribution and use in source and binary forms are permitted provided
   that: (1) source distributions retain this entire copyright notice and
@@ -37,6 +37,7 @@
   ***************************************************************************
   -->
 
+  <property environment="env"/>
   <property name="build" location="classes"/>
   <property name="pkg.path" value="org/clapper/util"/>
   <property name="src.top" location="src"/>
@@ -355,7 +356,7 @@
              classpathref="project.class.path"
              windowtitle="clapper.org Utility API">
       <doctitle><![CDATA[<h1>clapper.org Utility API Documentation</h1>]]></doctitle>
-      <bottom><![CDATA[<i>Copyright &#169; 2004 Brian M. Clapper. All Rights Reserved.</i>]]></bottom>
+      <bottom><![CDATA[<i>Copyright &#169; 2004-2006 Brian M. Clapper. All Rights Reserved.</i>]]></bottom>
     </javadoc>
   </target>
 
@@ -438,8 +439,7 @@
   <property name="izpack.home" value="/usr/local/java/IzPack"/>
   <property name="src.install" value="${src.top}/installer"/>
 
-  <target name="installer"
-          depends="-set.version.properties">
+  <target name="-installer.prep">
 
     <!-- Define the IzPack task -->
 
@@ -448,7 +448,25 @@
     <!-- Create a temporary installation directory -->
 
     <property name="install.tmp" location="${dist}/install"/>
+    <delete dir="${install.tmp}"/>
     <mkdir dir="${install.tmp}"/>
+
+    <!-- Edit the installer template -->
+
+    <copy file="${src.install}/install.xml" todir="${install.tmp}">
+      <filterset>
+        <filter token="OCUTIL_VERSION" value="${api.version}"/>
+        <filter token="INSTALL_TMP" value="${install.tmp}"/>
+        <filter token="SRC_INSTALL" value="${src.install}"/>
+        <filter token="RELEASE_DIR" value="${release_dir}"/>
+        <filter token="THIRD_PARTY_JAR_DIR" value="${env.wwwtest}"/>
+        <filter token="SRC_TOP" value="${src.top}"/>
+        <filter token="DIST_DIR" value="${dist}"/>
+        <filter token="BUILD_DIR" value="${build}"/>
+        <filter token="VERSIONED_CODE_JAR_FILE"
+                value="${versioned_code_jar_file}"/>
+      </filterset>
+    </copy>
 
     <!--
         Copy the LICENSE file and "unwrap" it so it's not wrapped weirdly
@@ -485,118 +503,18 @@
 
 ]]></replacevalue>
     </replace>
+  </target>
+
+  <target name="installer"
+          depends="-set.version.properties, -installer.prep">
 
     <!-- Build the installer -->
 
-    <izpack output="${release_dir}/install-ocutil-${api.version}.jar"
+    <izpack input="${install.tmp}/install.xml"
+            output="${release_dir}/install-ocutil.jar"
             installerType="standard"
             basedir="."
             izPackDir="${izpack.home}">
-      <config><![CDATA[
-<installation version="1.0">
-  <info>
-    <appname>clapper.org Java Utility Library</appname>
-    <appversion>@{api.version}</appversion>
-    <appsubpath>ocutil</appsubpath>
-    <authors>
-      <author name="Brian Clapper" email="bmc@clapper.org"/>
-    </authors>
-    <url>http://www.clapper.org/software/java/util/</url>
-    <javaversion>1.5</javaversion>
-  </info>
-
-  <guiprefs width="800" height="600" resizable="no"/>
-
-  <locale>
-    <langpack iso3="eng"/>
-  </locale>
-
-  <resources>
-    <res id="LicencePanel.licence" src="@{install.tmp}/LICENSE"/>
-    <res id="Installer.image" src="@{src.install}/clapper-logo.png"/>
-    <res id="ProcessPanel.Spec.xml" src="@{src.install}/cleanup.xml"/>
-  </resources>
-
-  <panels>
-    <panel classname="HelloPanel"/>
-    <!--
-    <panel classname="InfoPanel"/>
-    -->
-    <panel classname="LicencePanel"/>
-    <panel classname="TargetPanel"/>
-    <panel classname="PacksPanel"/>
-    <panel classname="InstallPanel"/>
-    <panel classname="ProcessPanel"/>
-    <panel classname="FinishPanel"/>
-  </panels>
-
-  <packs>
-    <pack name="Base" required="yes">
-      <description>The jar file</description>
-      <file src="LICENSE" targetdir="$INSTALL_PATH"/>
-
-      <file src="@{release_dir}/@{versioned_code_jar_file}"
-            targetdir="$INSTALL_PATH"/>
-
-      <!-- for cleaning up -->
-
-      <singlefile src="@{src.top}/installer/cleanup.sh"
-                  target="$INSTALL_PATH/scripts/cleanup.sh">
-        <os family="unix"/>
-      </singlefile>
-      <parsable targetfile="$INSTALL_PATH/scripts/cleanup.sh">
-        <os family="unix"/>
-      </parsable>
-      <executable targetfile="$INSTALL_PATH/scripts/cleanup.sh"
-                  stage="never" os="unix"/>
-
-      <singlefile src="@{src.top}/installer/cleanup.bat"
-                  target="$INSTALL_PATH/scripts/cleanup.bat">
-        <os family="windows"/>
-      </singlefile>
-      <parsable targetfile="$INSTALL_PATH/scripts/cleanup.bat">
-        <os family="windows"/>
-      </parsable>
-      <executable targetfile="$INSTALL_PATH/scripts/cleanup.bat" stage="never"
-                  os="windows"/>
-    </pack>
-
-    <pack name="Docs" required="no">
-      <description>The API Javadocs</description>
-      <file src="dist/docs/api"
-            targetdir="$INSTALL_PATH/docs"/>
-      <file src="docs/CHANGELOG"
-            targetdir="$INSTALL_PATH/docs"/>
-    </pack>
-
-    <pack name="Sources" required="no">
-      <description>The sources</description>
-      <!--
-          WARNING: This file set is essentially a duplicate of the
-          sources <zipfileset>, earlier in this file. There's no
-          way around that, unfortunately.
-
-          KLUDGE: For some reason, the IzPack <fileset> element doesn't
-          properly include properties files with @{src.top}/**/*.properties,
-          and exclusion via @{build} doesn't work, either. (It's not quite
-          like the Ant <fileset>, no matter what the docs say.) So, we'll
-          clean up the incorrectly copied build directory in the final panel.
-      -->
-      <fileset dir="." targetdir="$INSTALL_PATH/sources">
-        <include name="**/*.java"/>
-        <include name="**/package.html"/>
-        <include name="overview.html"/>
-        <include name="build.xml"/>
-        <include name="**/*.xml"/>
-        <include name="**/*.properties"/>
-        <exclude name="@{dist}/**"/>
-        <exclude name="@{build}/**/*.properties"/>
-        <exclude name="**/CVS"/>
-      </fileset>
-    </pack>
-  </packs>
-</installation>
-      ]]></config>
     </izpack>
 
     <delete dir="${install.tmp}"/>
