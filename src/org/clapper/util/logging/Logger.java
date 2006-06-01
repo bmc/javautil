@@ -26,19 +26,18 @@
 
 package org.clapper.util.logging;
 
-import org.apache.commons.logging.LogFactory;
-
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.logging.Level;
+
+import org.apache.log4j.Level;
 
 /**
  * <p><tt>Logger</tt> wraps the
- * <a href="http://jakarta.apache.org/commons/logging/guide.html">Jakarta Commons Logging</a>
+ * <a href="http://logging.apache.org/">Log4J</a>
  * API and provides a slightly simpler, but similar, interface. This
  * class supports most of the logging methods, but it doesn't actually
- * instantiate an underlying <tt>java.util.logging.Logger</tt> object until
+ * instantiate an underlying Log4J <tt>Logger</tt> object until
  * (or unless) a thread explicitly calls the {@link #enableLogging} method.
  * The first call to <tt>enableLogging()</tt> traverses the list of
  * instantiated <tt>org.clapper.util.Logger</tt> objects and creates
@@ -55,34 +54,44 @@ import java.util.logging.Level;
  *
  * <p>However, this class can be reimplemented in terms of other logging
  * layers (and, in fact, has been implemented solely in terms of the JDK
- * 1.4 native logging library in the past).</p> This object's main purpose
- * now is to insulate applications from the underlying logging technology,
- * so that technology can be changed, if necessary, without having an
- * impact on applications that use this class.</p>
+ * 1.4 <tt>java.util.logging</tt> library and Jakarta Commons Logging in
+ * the past).</p> This object's main purpose now is to insulate
+ * applications from the underlying logging technology, so that technology
+ * can be changed, if necessary, without having an impact on applications
+ * that use this class.</p>
  *
- * <p>The level mappings used by this class are identical to those used
- * by Commons Logging. (e.g.,, a "debug" message uses the same level as
- * a Commons Logging "debug" message.) Those mappings are:</p>
+ * <p>This API wraps Log4J, rather than <tt>java.util.logging</tt> or
+ * Jakarta Commons Logging, because the Log4J doesn't play odd games with
+ * class loaders, as the other two APIs do. If you use your own class loader,
+ * or you're running within a framework that substitutes its own class loader,
+ * you can have problems with <tt>java.util.logging</tt> (which insists on
+ * invoking the system class loader directly) and with Jakarta Commons Logging
+ * (which misuses class loaders in its attempt to discover a suitable logging
+ * API).</p>
+ *
+ * <p>The level mappings used by this class are identical to those used by
+ * Log4J. (e.g.,, a "debug" message uses the same level as a Log4J "debug"
+ * message.) Those mappings are:</p>
  *
  * <table border="1">
  *   <tr valign="top">
  *     <th><tt>org.clapper.util.logging.Logger</tt> method</th>
- *     <th>Corresponding <tt>java.util.logging.Level</tt> value</th>
+ *     <th>Corresponding Log4J <tt>Level</tt> value</th>
  *   </tr>
  *
  *   <tr valign="top">
  *     <td><tt>debug()</tt></td>
- *     <td><tt>FINE</tt></td>
+ *     <td><tt>DEBUG</tt></td>
  *   </tr>
  *
  *   <tr valign="top">
  *     <td><tt>error()</tt></td>
- *     <td><tt>SEVERE</tt></td>
+ *     <td><tt>ERROR</tt></td>
  *   </tr>
  *
  *   <tr valign="top">
  *     <td><tt>fatal()</tt></td>
- *     <td><tt>SEVERE</tt></td>
+ *     <td><tt>FATAL</tt></td>
  *   </tr>
  *
  *   <tr valign="top">
@@ -92,7 +101,7 @@ import java.util.logging.Level;
  *
  *   <tr valign="top">
  *     <td><tt>trace()</tt></td>
- *     <td><tt>FINEST</tt></td>
+ *     <td><tt>TRACE</tt></td>
  *   </tr>
  *
  *   <tr valign="top">
@@ -101,11 +110,7 @@ import java.util.logging.Level;
  *   </tr>
  * </table>
  *
- * <p>If you prefer to use Commons Logging directly, then, by all means,
- * use it for your applications.</p>
- *
  * @see #enableLogging
- * @see <a href="http://jakarta.apache.org/commons/logging/index.html">Jakarta Commons Logging API</a>
  *
  * @version <tt>$Revision$</tt>
  *
@@ -172,7 +177,7 @@ public class Logger
     /**
      * The real logging object. Not instantiated unless asked for.
      */
-    private org.apache.commons.logging.Log realLogger = null;
+    private org.apache.log4j.Logger realLogger = null;
 
     /**
      * The class name to use when instantiating the underlying Log object.
@@ -260,7 +265,7 @@ public class Logger
     public void debug (Object message)
     {
         if (realLogger != null)
-            realLogger.debug (message.toString());
+            realLogger.debug (message);
     }
 
     /**
@@ -273,7 +278,7 @@ public class Logger
     public void debug (Object message, Throwable ex)
     {
         if (realLogger != null)
-            realLogger.debug (message.toString(), ex);
+            realLogger.debug (message, ex);
     }
 
     /**
@@ -284,7 +289,7 @@ public class Logger
     public void error (Object message)
     {
         if (realLogger != null)
-            realLogger.error (message.toString());
+            realLogger.error (message);
     }
 
     /**
@@ -297,7 +302,7 @@ public class Logger
     public void error (Object message, Throwable ex)
     {
         if (realLogger != null)
-            realLogger.error (message.toString(), ex);
+            realLogger.error (message, ex);
     }
 
     /**
@@ -308,7 +313,7 @@ public class Logger
     public void fatal (Object message)
     {
         if (realLogger != null)
-            realLogger.fatal (message.toString());
+            realLogger.fatal (message);
     }
 
     /**
@@ -321,7 +326,7 @@ public class Logger
     public void fatal (Object message, Throwable ex)
     {
         if (realLogger != null)
-            realLogger.fatal (message.toString(), ex);
+            realLogger.fatal (message, ex);
     }
 
     /**
@@ -332,7 +337,7 @@ public class Logger
     public void info (Object message)
     {
         if (realLogger != null)
-            realLogger.info (message.toString());
+            realLogger.info (message);
     }
 
     /**
@@ -345,7 +350,7 @@ public class Logger
     public void info (Object message, Throwable ex)
     {
         if (realLogger != null)
-            realLogger.info (message.toString(), ex);
+            realLogger.info (message, ex);
     }
 
     /**
@@ -356,6 +361,8 @@ public class Logger
      */
     public void message (LogLevel level, Object message)
     {
+        if (realLogger != null)
+            realLogger.log (level.getLevel(), message);
         switch (level)
         {
             case DEBUG:
@@ -435,7 +442,7 @@ public class Logger
     public void trace (Object message)
     {
         if (realLogger != null)
-            realLogger.trace (message.toString());
+            realLogger.trace (message);
     }
 
     /**
@@ -448,7 +455,7 @@ public class Logger
     public void trace (Object message, Throwable ex)
     {
         if (realLogger != null)
-            realLogger.trace (message.toString(), ex);
+            realLogger.trace (message, ex);
     }
 
     /**
@@ -459,7 +466,7 @@ public class Logger
     public void warn (Object message)
     {
         if (realLogger != null)
-            realLogger.warn (message.toString());
+            realLogger.warn (message);
     }
 
     /**
@@ -472,7 +479,7 @@ public class Logger
     public void warn (Object message, Throwable ex)
     {
         if (realLogger != null)
-            realLogger.warn (message.toString(), ex);
+            realLogger.warn (message, ex);
     }
 
     /**
@@ -495,8 +502,9 @@ public class Logger
      */
     public boolean isErrorEnabled()
     {
-        return (realLogger == null) ? false
-                                    : realLogger.isErrorEnabled();
+        return (realLogger == null)
+            ? false
+            : realLogger.isEnabledFor(LogLevel.ERROR.getLevel());
     }
 
     /**
@@ -507,8 +515,9 @@ public class Logger
      */
     public boolean isFatalEnabled()
     {
-        return (realLogger == null) ? false
-                                    : realLogger.isFatalEnabled();
+        return (realLogger == null)
+            ? false
+            : realLogger.isEnabledFor(LogLevel.FATAL.getLevel());
     }
 
     /**
@@ -519,8 +528,9 @@ public class Logger
      */
     public boolean isInfoEnabled()
     {
-        return (realLogger == null) ? false
-                                    : realLogger.isInfoEnabled();
+        return (realLogger == null)
+            ? false
+            : realLogger.isEnabledFor(LogLevel.INFO.getLevel());
     }
 
     /**
@@ -531,8 +541,9 @@ public class Logger
      */
     public boolean isTraceEnabled()
     {
-        return (realLogger == null) ? false
-                                    : realLogger.isTraceEnabled();
+        return (realLogger == null)
+            ? false
+            : realLogger.isEnabledFor(LogLevel.TRACE.getLevel());
     }
 
     /**
@@ -543,8 +554,9 @@ public class Logger
      */
     public boolean isWarningEnabled()
     {
-        return (realLogger == null) ? false
-                                    : realLogger.isWarnEnabled();
+        return (realLogger == null)
+            ? false
+            : realLogger.isEnabledFor(LogLevel.WARNING.getLevel());
     }
 
     /*----------------------------------------------------------------------*\
@@ -557,7 +569,10 @@ public class Logger
         synchronized (logger)
         {
             if (logger.realLogger == null)
-                logger.realLogger = LogFactory.getLog (logger.className);
+            {
+                logger.realLogger =
+                    org.apache.log4j.Logger.getLogger (logger.className);
+            }
         }
     }
 }
