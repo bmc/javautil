@@ -47,6 +47,13 @@ Version 2.2 (...)
       ClassLoaderBuilder        helps build a java.net.URLClassLoader
       ClassUtil                 misc. utility methods
 
+- Added new org.clapper.util.misc.XDate class, a subclass of
+  java.util.Date. XDate contains some utility methods to aid in time zone
+  conversion.
+
+- org.clapper.util.misc.BuildInfo now produces build info properties files
+  with a build ID (consisting of the date and time, with milliseconds, in
+  UTC).
 
 
 Version 2.1.3 (5 February, 2006)
