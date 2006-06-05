@@ -38,9 +38,10 @@
   -->
 
   <property environment="env"/>
-  <property name="build" location="classes"/>
   <property name="pkg.path" value="org/clapper/util"/>
-  <property name="src.top" location="src"/>
+  <dirname property="top.dir" file="${ant.file}"/> <!-- path to this dir -->
+  <property name="src.top.relative" value="src"/>
+  <property name="src.top" location="${src.top.relative}"/>
   <property name="src.dir" location="${src.top}/${pkg.path}"/>
 
   <!--
@@ -49,21 +50,26 @@
        for details.
   -->
   <property name="javac.src.dir" location="${src.top}"/>
-  <property name="dist"  location="dist"/>
+  <property name="build.dir.relative" value="build"/>
+  <property name="build.dir"  location="${build.dir.relative}"/>
+  <property name="compiled.classes.dir" location="${build.dir}/classes"/>
+  <property name="docs.dir" value="${top.dir}/docs"/>
+  <property name="javadocs.dir" value="${build.dir}/javadocs"/>
+  <property name="javadocs.api.dir" value="${javadocs.dir}/api"/>
   <property name="javac.debug" value="true"/>
   <property name="javac.listfiles" value="no"/>
   <property name="javac.source" value="1.5"/>
   <property name="javac_lint_unchecked_opt" value="-Xlint:unchecked"/>
   <property name="javac_lint_deprecation_opt" value="-Xlint:deprecation"/>
   <property name="build.info.file"
-            value="${build}/org/clapper/util/misc/BuildInfoBundle.properties"/>
+            value="${compiled.classes.dir}/org/clapper/util/misc/BuildInfoBundle.properties"/>
   <property name="code_jar_name" value="ocutil"/>
   <property name="code_jar_file" value="${code_jar_name}.jar"/>
-  <property name="code_jar_path" value="${dist}/lib/${code_jar_file}"/>
-  <property name="docs_top_dir" value="${dist}/docs"/>
+  <property name="code_jar_path" value="${build.dir}/lib/${code_jar_file}"/>
+  <property name="docs_top_dir" value="${top.dir}/docs"/>
   <property name="docs_api_dir" value="${docs_top_dir}/api"/>
   <property name="zip_dir_prefix" value="util/"/>
-  <property name="release_dir" value="${dist}/release"/>
+  <property name="release_dir" value="${build.dir}/release"/>
 
   <!--
   ***************************************************************************
@@ -90,8 +96,8 @@
               locale="en"/>
     </tstamp>
     <!-- Create the build directory structure used by compile -->
-    <mkdir dir="${build}"/>
-    <depend srcdir="${src.dir}" destdir="${build}"/>
+    <mkdir dir="${compiled.classes.dir}"/>
+    <depend srcdir="${src.dir}" destdir="${compiled.classes.dir}"/>
   </target>
 
   <!--
@@ -103,7 +109,7 @@
   <target name="all" depends="init,lib,bundles,-build.info,testers"/>
 
   <target name="bundles">
-    <copy todir="${build}">
+    <copy todir="${compiled.classes.dir}">
       <fileset dir="${src.top}">
         <include name="**/*.properties"/>
       </fileset>
@@ -119,7 +125,7 @@
            debug="${javac.debug}"
            listfiles="${javac.listfiles}"
            deprecation="yes"
-           destdir="${build}">
+           destdir="${compiled.classes.dir}">
 
       <compilerarg compiler="jikes" value="+Peffective-java"/>
       <compilerarg compiler="jikes" value="+Punused-type-imports"/>
@@ -177,7 +183,7 @@
            debug="${javac.debug}"
            listfiles="${javac.listfiles}"
            deprecation="yes"
-           destdir="${build}">
+           destdir="${compiled.classes.dir}">
 
       <compilerarg compiler="jikes" value="+Peffective-java"/>
       <compilerarg compiler="jikes" value="+Punused-type-imports"/>
@@ -225,7 +231,7 @@
            debug="${javac.debug}"
            listfiles="${javac.listfiles}"
            deprecation="yes"
-           destdir="${build}">
+           destdir="${compiled.classes.dir}">
 
       <compilerarg compiler="jikes" value="+Peffective-java"/>
       <compilerarg compiler="jikes" value="+Punused-type-imports"/>
@@ -247,7 +253,7 @@
   <!-- Load the API version from the appropriate resource bundle -->
 
   <target name="-get.version" description="Get the version stamp">
-    <property file="${build}/org/clapper/util/misc/Bundle.properties"/>
+    <property file="${compiled.classes.dir}/org/clapper/util/misc/Bundle.properties"/>
     <echo>API Version: ${api.version}</echo>
   </target>
 
@@ -258,7 +264,7 @@
 
     <taskdef name="make_build_info"
              classname="org.clapper.util.ant.MakeBuildInfoTask"
-             classpath="${build}"/>
+             classpath="${compiled.classes.dir}"/>
 
     <condition property="compiler" value="${build.compiler}">
       <isset property="build.compiler"/>
@@ -284,7 +290,7 @@
            debug="${javac.debug}"
            listfiles="${javac.listfiles}"
            deprecation="yes"
-           destdir="${build}">
+           destdir="${compiled.classes.dir}">
 
       <compilerarg compiler="jikes" value="+Peffective-java"/>
       <compilerarg compiler="jikes" value="+Punused-type-imports"/>
@@ -311,7 +317,7 @@
            source="${javac.source}"
            debug="${javac.debug}"
            listfiles="${javac.listfiles}"
-           destdir="${build}">
+           destdir="${compiled.classes.dir}">
 
       <compilerarg compiler="jikes" value="+Peffective-java"/>
       <compilerarg compiler="jikes" value="+Punused-type-imports"/>
@@ -340,9 +346,9 @@
 
   <target name="doc"
           description="Generate API Javadocs">
-    <mkdir dir="dist/docs/api"/>
+    <mkdir dir="${javadocs.api.dir}"/>
     <javadoc
-             destdir="dist/docs/api"
+             destdir="${javadocs.api.dir}"
              sourcepath="${src.top}"
              source="${javac.source}"
              author="true"
@@ -383,10 +389,10 @@
 
   <target name="code.jar" depends="all"
           description="Generate the distribution">
-    <mkdir dir="${dist}/lib"/>
-    <jar jarfile="${code_jar_path}" basedir="${build}"/>
+    <mkdir dir="${build.dir}/lib"/>
+    <jar jarfile="${code_jar_path}" basedir="${compiled.classes.dir}"/>
   </target>
-  <target name="dist" depends="code.jar"/>
+  <target name="build" depends="code.jar"/>
 
   <target name="-doczip" depends="doc"
           description="Builds the javadocs zip file">
@@ -406,8 +412,8 @@
           config file, below. There's no way around that, unfortunately.
       -->
       <zipfileset dir="." prefix="${zip_dir_prefix}" casesensitive="yes">
-        <exclude name="${dist}/**"/>
-        <exclude name="${build}"/>
+        <exclude name="${build.dir}/**"/>
+        <exclude name="${compiled.classes.dir}"/>
         <exclude name="**/CVS"/>
         <include name="**/*.java"/>
         <include name="**/package.html"/>
@@ -418,8 +424,8 @@
     </zip>
   </target>
 
-  <target name="fulldist"
-          depends="dist,-set.version.properties,-srczip,-doczip"
+  <target name="release"
+          depends="build,-set.version.properties,-srczip,-doczip"
           description="Generate the distribution and source jars">
     <copy file="${code_jar_path}"
           tofile="${release_dir}/${versioned_code_jar_file}"/>
@@ -447,7 +453,7 @@
 
     <!-- Create a temporary installation directory -->
 
-    <property name="install.tmp" location="${dist}/install"/>
+    <property name="install.tmp" location="${build.dir}/install"/>
     <delete dir="${install.tmp}"/>
     <mkdir dir="${install.tmp}"/>
 
@@ -460,9 +466,15 @@
         <filter token="SRC_INSTALL" value="${src.install}"/>
         <filter token="RELEASE_DIR" value="${release_dir}"/>
         <filter token="THIRD_PARTY_JAR_DIR" value="${env.wwwtest}"/>
+        <filter token="TOP_DIR" value="${top.dir}"/>
         <filter token="SRC_TOP" value="${src.top}"/>
-        <filter token="DIST_DIR" value="${dist}"/>
-        <filter token="BUILD_DIR" value="${build}"/>
+        <filter token="SRC_TOP_RELATIVE" value="${src.top.relative}"/>
+        <filter token="CLASSES_DIR" value="${compiled.classes.dir}"/>
+        <filter token="BUILD_DIR" value="${build.dir}"/>
+        <filter token="BUILD_DIR_RELATIVE" value="${build.dir.relative}"/>
+        <filter token="DOCS_DIR" value="${docs.dir}"/>
+        <filter token="JAVADOCS_DIR" value="${javadocs.dir}"/>
+        <filter token="JAVADOCS_API_DIR" value="${javadocs.api.dir}"/>
         <filter token="VERSIONED_CODE_JAR_FILE"
                 value="${versioned_code_jar_file}"/>
       </filterset>
@@ -516,8 +528,6 @@
             basedir="."
             izPackDir="${izpack.home}">
     </izpack>
-
-    <delete dir="${install.tmp}"/>
   </target>
 
   <!--
@@ -528,14 +538,9 @@
 
   <target name="clean"
         description="clean up" >
-    <!-- Delete the ${build} and ${dist} directory trees -->
 
     <delete failonerror="false" includeEmptyDirs="true">
-      <fileset dir="${build}"/>
-    </delete>
-
-    <delete failonerror="false" includeEmptyDirs="true">
-      <fileset dir="${dist}"/>
+      <fileset dir="${build.dir}"/>
     </delete>
 
     <delete dir="${install.tmp}"/>
