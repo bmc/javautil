@@ -84,10 +84,9 @@ public final class Version
         System.out.println ("org.clapper.util library, version " +
                             getVersion());
         System.out.println ();
-        System.out.println ("Build date:     " +
-                            buildInfo.getBuildDate());
-        System.out.println ("Built by:       " +
-                            buildInfo.getBuildUserID());
+        System.out.println ("Build ID:       " + buildInfo.getBuildID());
+        System.out.println ("Build date:     " + buildInfo.getBuildDate());
+        System.out.println ("Built by:       " + buildInfo.getBuildUserID());
         System.out.println ("Built on:       " +
                             buildInfo.getBuildOperatingSystem());
         System.out.println ("Build Java VM:  " +

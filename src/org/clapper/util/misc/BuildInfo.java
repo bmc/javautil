@@ -26,8 +26,6 @@
 
 package org.clapper.util.misc;
 
-import java.util.Date;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -35,9 +33,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.util.Properties;
+import java.util.TimeZone;
 
 import java.net.InetAddress;
 
@@ -87,11 +87,23 @@ public class BuildInfo
     public static final String BUILT_BY_KEY = "built.by";
 
     /**
+     * The build ID, really just the time in a compressed format.
+     */
+    public static final String BUILD_ID_KEY = "build.id";
+
+    /**
      * The date format, used with <tt>java.text.SimpleDateFormat</tt>,
      * used to write the date string to the build file. This format
      * can also be used to parse the date string, if necessary.
      */
     public static final String DATE_FORMAT_STRING = "yyyy/MM/dd HH:mm:ss z";
+
+    /**
+     * The date format, used with <tt>java.text.SimpleDateFormat</tt>,
+     * used to create the build ID.
+     */
+    public static final String BUILD_ID_DATE_FORMAT_STRING
+        = "yyyyMMdd.HHmmss.SSS";
 
     /*----------------------------------------------------------------------*\
                                 Data Items
@@ -148,6 +160,16 @@ public class BuildInfo
     public String getBuildOperatingSystem()
     {
         return getBundleString (BUILD_OS_KEY);
+    }
+
+    /**
+     * Get the build ID string.
+     *
+     * @return the build ID string
+     */
+    public String getBuildID()
+    {
+        return getBundleString (BUILD_ID_KEY);
     }
 
     /**
@@ -231,9 +253,16 @@ public class BuildInfo
 
         // BUILD_DATE_KEY
 
-        Date now = new Date();
+        XDate now = new XDate();
         DateFormat dateFmt = new SimpleDateFormat (DATE_FORMAT_STRING);
         props.setProperty (BUILD_DATE_KEY, dateFmt.format (now));
+
+        // BUILD_ID_KEY
+
+        props.setProperty
+            (BUILD_ID_KEY,
+             now.formatInTimeZone (BUILD_ID_DATE_FORMAT_STRING,
+                                   TimeZone.getTimeZone ("UTC")));
 
         // BUILT_BY_KEY
 
