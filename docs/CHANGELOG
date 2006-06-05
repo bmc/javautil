@@ -6,12 +6,8 @@ $Id$
 
 Version 2.2 (...)
 
-- org.clapper.util.logging API is now implemented in terms of Log4J, rather
-  than java.util.logging (or, for that matter, Jakarta Commons Logging).
-  Both java.util.logging and Jakarta Commons Logging do strange things with
-  class loaders, which make them unusable or problematic in some
-  applications that install their own class loaders. Log4J doesn't appear
-  to have those problems.
+- org.clapper.util.logging API is now implemented in terms of Jakarta
+  Commons Logging, rather than java.util.logging.
 
 - Added new org.clapper.util.io.FileOnlyFilter, a complement to the
   org.clapper.util.io.DirectoryFilter class. Like DirectoryFilter,
