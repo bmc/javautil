@@ -30,6 +30,12 @@
     -->
     <res id="TargetPanel.dir.windows" src="@SRC_INSTALL@/path_windows.txt"/>
     <res id="TargetPanel.dir.unix" src="@SRC_INSTALL@/path_unix.txt"/>
+
+    <!--
+        Points to a (deliberately) empty text file. Specifies that native
+        look and feel should be used, if at all possible.
+    -->
+    <res id="useNativeLAF" src="@SRC_INSTALL@/nativelook.txt"/>
   </resources>
 
   <panels>
