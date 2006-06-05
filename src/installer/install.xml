@@ -24,6 +24,12 @@
     <res id="LicencePanel.licence" src="@INSTALL_TMP@/LICENSE"/>
     <res id="Installer.image" src="@SRC_INSTALL@/clapper-logo.png"/>
     <res id="ProcessPanel.Spec.xml" src="@SRC_INSTALL@/cleanup.xml"/>
+    <!--
+        Default target installation directories are defined in the
+        src/install/path_windows.txt and src/install/path_unix.txt files.
+    -->
+    <res id="TargetPanel.dir.windows" src="@SRC_INSTALL@/path_windows.txt"/>
+    <res id="TargetPanel.dir.unix" src="@SRC_INSTALL@/path_unix.txt"/>
   </resources>
 
   <panels>
@@ -42,7 +48,7 @@
   <packs>
     <pack name="Base" required="yes">
       <description>The jar file</description>
-      <file src="LICENSE" targetdir="$INSTALL_PATH"/>
+      <file src="@TOP_DIR@/LICENSE" targetdir="$INSTALL_PATH"/>
 
       <file src="@RELEASE_DIR@/@VERSIONED_CODE_JAR_FILE@"
             targetdir="$INSTALL_PATH/lib"/>
@@ -84,9 +90,9 @@
 
     <pack name="Docs" required="no">
       <description>The API Javadocs</description>
-      <file src="dist/docs/api"
+      <file src="@JAVADOCS_API_DIR@"
             targetdir="$INSTALL_PATH/docs"/>
-      <file src="docs/CHANGELOG"
+      <file src="@DOCS_DIR@/CHANGELOG"
             targetdir="$INSTALL_PATH/docs"/>
     </pack>
 
@@ -103,16 +109,16 @@
           like the Ant <fileset>, no matter what the docs say.) So, we'll
           clean up the incorrectly copied build directory in the final panel.
       -->
-      <fileset dir="." targetdir="$INSTALL_PATH/sources">
+      <fileset dir="@TOP_DIR@" targetdir="$INSTALL_PATH/sources">
+        <exclude name="**/.svn"/>
+        <exclude name="@BUILD_DIR_RELATIVE@/**"/>
+
         <include name="**/*.java"/>
         <include name="**/package.html"/>
         <include name="overview.html"/>
         <include name="build.xml"/>
         <include name="**/*.xml"/>
         <include name="**/*.properties"/>
-        <exclude name="@DIST_DIR@/**"/>
-        <exclude name="@BUILD_DIR@/**/*.properties"/>
-        <exclude name="**/CVS"/>
       </fileset>
     </pack>
   </packs>
