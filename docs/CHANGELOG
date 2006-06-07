@@ -55,7 +55,14 @@ Version 2.2 (...)
   with a build ID (consisting of the date and time, with milliseconds, in
   UTC).
 
+- The CommandLineUtility and UsageInfo classes (in org.clapper.util.cmdline) 
+  now permit an option to be specified with a null explanation, denoting a
+  "hidden" option that isn't shown in the usage display. This is useful,
+  for instance, when you've deprecated an option but are retaining it for
+  backward compatibility.
 
+
+---------------------------------------------------------------------------
 Version 2.1.3 (5 February, 2006)
 
 - Fixed a bug in the org.clapper.util.io.WordWrapWriter class: When writing
@@ -83,6 +90,7 @@ Version 2.1.3 (5 February, 2006)
   specify a starting array index and length.
 
 
+---------------------------------------------------------------------------
 Version 2.1.2 (2 January, 2006)
 
 - The library can now be installed (along with all dependent jars,
@@ -98,6 +106,7 @@ Version 2.1.2 (2 January, 2006)
   entry in the Collection.
 
 
+---------------------------------------------------------------------------
 Version 2.1.1 (13 December, 2005)
 
 - Added makeCharacterEntities() method to org.clapper.util.text.HTMLUtil
@@ -108,6 +117,7 @@ Version 2.1.1 (13 December, 2005)
   the default encoding of the VM.
 
 
+---------------------------------------------------------------------------
 Version 2.1 (25 November, 2005)
 
 - Added new RollingFileWriter class. Works like a FileWriter, but
@@ -124,6 +134,7 @@ Version 2.1 (25 November, 2005)
   file name, not the first.
 
 
+---------------------------------------------------------------------------
 Version 2.0.3 (19 August, 2005)
 
 - Some additional Java 5.0 (a.k.a., JDK 1.5) changes, specifically:
@@ -136,11 +147,13 @@ Version 2.0.3 (19 August, 2005)
      J2SE 5.0 (a.k.a., Java 1.5)
 
 
+---------------------------------------------------------------------------
 Version 2.0.2 (10 August, 2005)
 
 - Add versions of TextUtil.join() that take variable arguments.
 
 
+---------------------------------------------------------------------------
 Version 2.0.1 (29 July, 2005)
 
 - Some minor changes to the org.clapper.util.mail.EmailMessage class:
@@ -157,6 +170,7 @@ Version 2.0.1 (29 July, 2005)
      actual file name.
 
 
+---------------------------------------------------------------------------
 Version 2.0 (22 April, 2005)
 
 - Now requires Java 1.5.0 JDK/JRE.
@@ -204,6 +218,7 @@ Version 2.0 (22 April, 2005)
   XML output.
 
 
+---------------------------------------------------------------------------
 Version 1.1.9 (09 August, 2005) [MAINTENANCE RELEASE OF DEPRECATED CODE BRANCH]
 
 - Some minor changes to the org.clapper.util.mail.EmailMessage class:
@@ -220,6 +235,7 @@ Version 1.1.9 (09 August, 2005) [MAINTENANCE RELEASE OF DEPRECATED CODE BRANCH]
      actual file name.
 
 
+---------------------------------------------------------------------------
 Version 1.1.8 (21 April, 2005)
 
 - Fixed bug in org.clapper.util.cmdline.CommandLineUtility class: Default
@@ -229,11 +245,14 @@ Version 1.1.8 (21 April, 2005)
   expected no parameters and thus did not override the
   processPostOptionCommandLine() method. (Branch version fix.)
 
+
+---------------------------------------------------------------------------
 Version 1.1.7 (08 April, 2005)
 
 - Miscellaneous Javadoc clarifications
 
 
+---------------------------------------------------------------------------
 Version 1.1.6 (09 February, 2005)
 
 - Added TextUtil.split() methods that permit preserving empty strings. By
@@ -266,12 +285,14 @@ Version 1.1.6 (09 February, 2005)
   1.22 warnings.
 
 
+---------------------------------------------------------------------------
 Version 1.1.5 (02 December, 2004)
 
 - Added getOptionalCardinalValue() and getRequiredCardinalValue() utility
   methods to org.clapper.util.config.Configuration class.
 
 
+---------------------------------------------------------------------------
 Version 1.1.4 (10 November, 2004)
 
 - Added new methods in the org.clapper.util.mail.EmailAddress, allowing
@@ -286,6 +307,7 @@ Version 1.1.4 (10 November, 2004)
   provide).
 
 
+---------------------------------------------------------------------------
 Version 1.1.3 (30 October, 2004)
 
 - Added org.clapper.util.misc.FileHashMap class, a Map that keeps the keys
@@ -295,6 +317,7 @@ Version 1.1.3 (30 October, 2004)
 - Added message() method to org.clapper.util.logging.Logger class.
 
 
+---------------------------------------------------------------------------
 Version 1.1.2 (20 October, 2004)
 
 - Moved org.clapper.util.misc.JDK14TextLogFormatter and
@@ -306,6 +329,7 @@ Version 1.1.2 (20 October, 2004)
   the javadocs for org.clapper.logging.Logger for complete rationale.
 
 
+---------------------------------------------------------------------------
 Version 1.1.1 (12 October, 2004)
 
 - Added org.clapper.util.misc.JDK14TextLogFormatter class, a simple
@@ -317,6 +341,7 @@ Version 1.1.1 (12 October, 2004)
   bundle.
 
 
+---------------------------------------------------------------------------
 Version 1.1 (07 October, 2004):
 
 - Now requires JDK 1.4 or better. JDK 1.3 is no longer supported. Among
@@ -359,6 +384,7 @@ Version 1.1 (07 October, 2004):
 - Minor javadoc changes and adjustments.
 
 
+---------------------------------------------------------------------------
 Version 1.0.2 (24 September, 2004):
 
 - Drastically simplified word-wrapping logic in org.clapper.io.WordWrapWriter.
@@ -367,6 +393,7 @@ Version 1.0.2 (24 September, 2004):
 - Added org.clapper.util.io.JustifyTextWriter class.
 
 
+---------------------------------------------------------------------------
 Version 1.0.1 (16 September, 2004):
 
 - New methods (copyTextFile, copyReader, etc.) in org.clapper.util.io.FileUtil.
@@ -376,6 +403,7 @@ Version 1.0.1 (16 September, 2004):
 - Miscellaneous javadocs enhancements.
 
 
+---------------------------------------------------------------------------
 Version 1.0 (29 August, 2004):
 
 - First version posted to the web.
