@@ -55,12 +55,15 @@ Version 2.2 (...)
   with a build ID (consisting of the date and time, with milliseconds, in
   UTC).
 
-- The CommandLineUtility and UsageInfo classes (in org.clapper.util.cmdline) 
+- The CommandLineUtility and UsageInfo classes (in org.clapper.util.cmdline)
   now permit an option to be specified with a null explanation, denoting a
   "hidden" option that isn't shown in the usage display. This is useful,
   for instance, when you've deprecated an option but are retaining it for
   backward compatibility.
 
+- The UsageInfo class now permits the caller to set the command name, which
+  is then displayed in the usage message instead of "java full-class-name".
+  If not set, then "java full-class-name" is used, as before.
 
 ---------------------------------------------------------------------------
 Version 2.1.3 (5 February, 2006)
