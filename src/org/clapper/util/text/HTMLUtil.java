@@ -308,6 +308,8 @@ public final class HTMLUtil
      *        {@link #stripHTMLTags #stripHTMLTags()}
      *   <li> Uses {@link #convertCharacterEntities convertCharacterEntities()}
      *        to convert HTML entity codes to appropriate Unicode characters.
+     *   <li> Converts certain Unicode characters in a string to plain text
+     *        sequences.
      * </ul>
      *
      * @param s  the string to parse
@@ -319,7 +321,43 @@ public final class HTMLUtil
      */
     public static String textFromHTML (String s)
     {
-        return convertCharacterEntities (stripHTMLTags (s));
+        String        stripped = convertCharacterEntities (stripHTMLTags (s));
+        char[]        ch = stripped.toCharArray();
+        StringBuilder buf = new StringBuilder();
+
+        for (int i = 0; i < ch.length; i++)
+        {
+            switch (ch[i])
+            {
+                case Unicode.LEFT_SINGLE_QUOTE:
+                case Unicode.RIGHT_SINGLE_QUOTE:
+                    buf.append ('\'');
+                    break;
+
+                case Unicode.LEFT_DOUBLE_QUOTE:
+                case Unicode.RIGHT_DOUBLE_QUOTE:
+                    buf.append ('"');
+                    break;
+
+                case Unicode.EM_DASH:
+                    buf.append ("--");
+                    break;
+
+                case Unicode.EN_DASH:
+                    buf.append ('-');
+                    break;
+
+                case Unicode.TRADEMARK:
+                    buf.append ("[TM]");
+                    break;
+
+                default:
+                    buf.append (ch[i]);
+                    break;
+            }
+        }
+
+        return buf.toString();
     }
 
     /*----------------------------------------------------------------------*\
