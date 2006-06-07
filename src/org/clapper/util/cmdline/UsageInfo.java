@@ -83,6 +83,7 @@ public final class UsageInfo
     private String  usageLine = null;
     private String  usagePrologue = null;
     private String  usageTrailer = null;
+    private String  commandName = null;
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -98,6 +99,32 @@ public final class UsageInfo
     /*----------------------------------------------------------------------*\
                               Public Methods
     \*----------------------------------------------------------------------*/
+
+    /**
+     * Get the command name to be used in the usage output. If not specified,
+     * <tt>java classname</tt> is used.
+     *
+     * @return the command name, or null if not set
+     *
+     * @see #setCommandName
+     */
+    public String getCommandName()
+    {
+        return this.commandName;
+    }
+
+    /**
+     * Set the command name to be used in the usage output. If not specified,
+     * <tt>java classname</tt> is used.
+     *
+     * @param commandName the command name
+     *
+     * @see #getCommandName
+     */
+    public void setCommandName (String commandName)
+    {
+        this.commandName = commandName;
+    }
 
     /**
      * Add an option and its explanation to the usage information.

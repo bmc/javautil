@@ -1084,8 +1084,17 @@ public abstract class CommandLineUtility
 
         // Now, print the summary line.
 
-        usageLine.append ("java ");
-        usageLine.append (getClass().getName());
+        String commandName = usageInfo.getCommandName();
+        if (commandName != null)
+        {
+            usageLine.append (commandName);
+        }
+        else
+        {
+            usageLine.append ("java ");
+            usageLine.append (getClass().getName());
+        }
+
         usageLine.append (' ');
         usageLine.append (BundleUtil.getMessage (Package.BUNDLE_NAME,
                                                  locale,
