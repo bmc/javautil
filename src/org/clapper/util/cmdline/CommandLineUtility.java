@@ -1142,6 +1142,12 @@ public abstract class CommandLineUtility
         for (i = 0; i < options.length; i++)
         {
             opt = options[i];
+
+            // An option with a null explanation is hidden.
+
+            if (opt.explanation == null)
+                continue;
+
             if (opt.longOption != null)
             {
                 // Allow room for short option, long option and argument,
@@ -1179,10 +1185,16 @@ public abstract class CommandLineUtility
         StringBuffer optString = new StringBuffer();
         for (i = 0; i < options.length; i++)
         {
+            opt = options[i];
+
+            // An option with a null explanation is hidden.
+
+            if (opt.explanation == null)
+                continue;
+
             // If there's a short option, print it first. Then do the
             // long one.
 
-            opt = options[i];
             optString.setLength (0);
             String sep = "";
 

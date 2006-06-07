@@ -117,7 +117,11 @@ public final class UsageInfo
      *                     can be as long as you want, and can contain multiple
      *                     sentences, but it must not contain a newline.
      *                     It will be automatically broken up into multiple
-     *                     lines as necessary.
+     *                     lines as necessary. If the explanation is null,
+     *                     then the option is "hidden" (i.e., not displayed
+     *                     in the usage message). This is useful, for instance,
+     *                     when you've deprecated an option but are retaining
+     *                     it for backward compatibility.
      */ 
     public void addOption (char   shortOption,
                            String longOption,
@@ -150,7 +154,11 @@ public final class UsageInfo
      *                     can be as long as you want, and can contain multiple
      *                     sentences, but it must not contain a newline.
      *                     It will be automatically broken up into multiple
-     *                     lines as necessary.
+     *                     lines as necessary. If the explanation is null,
+     *                     then the option is "hidden" (i.e., not displayed
+     *                     in the usage message). This is useful, for instance,
+     *                     when you've deprecated an option but are retaining
+     *                     it for backward compatibility.
      */ 
     public void addOption (char   shortOption,
                            String longOption,
