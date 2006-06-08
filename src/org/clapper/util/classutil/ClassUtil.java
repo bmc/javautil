@@ -70,4 +70,37 @@ public class ClassUtil
 
         return can;
     }
+
+    /**
+     * Strip the package name from a fully-qualified class name and return
+     * just the short class name.
+     *
+     * @param fullClassName  the full class name
+     *
+     * @return the short name
+     */
+    public static String getShortClassName (String fullClassName)
+    {
+        String shortClassName = fullClassName;
+        int i = shortClassName.lastIndexOf ('.');
+
+        if ( (i != -1) && (++i < shortClassName.length()) )
+            shortClassName = shortClassName.substring (i);
+
+        return shortClassName;
+    }
+
+    /**
+     * Strip the package name from a fully-qualified class name and return
+     * just the short class name.
+     *
+     * @param cls  the <tt>Class</tt> object whose name is to be trimmed
+     *
+     * @return the short name
+     */
+    public static String getShortClassName (Class cls)
+    {
+        return getShortClassName (cls.getName());
+    }
+
 }
