@@ -69,8 +69,8 @@ public class NoSuchVariableException extends ConfigurationException
     {
         super (Package.BUNDLE_NAME,
                "noSuchVariable",
-               "Variable \"{0}\" does not exist in configuration section "
-             + "\"{1}\"",
+               "Variable \"{0}\" does not exist in configuration section " +
+               "\"{1}\"",
                new Object[] {variableName, sectionName});
 
         this.sectionName  = sectionName;

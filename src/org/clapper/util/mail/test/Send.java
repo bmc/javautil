@@ -244,8 +244,8 @@ public class Send extends CommandLineUtility
 
                     default:
                         // Should not happen.
-                        throw new IllegalStateException ("(BUG) Bad option. "
-                                                         + "Why am I here?");
+                        throw new IllegalStateException ("(BUG) Bad option. " +
+                                                           "Why am I here?");
                 }
             }
         }
@@ -331,47 +331,47 @@ public class Send extends CommandLineUtility
     protected void getCustomUsageInfo (UsageInfo info)
     {
         info.addOption (UsageInfo.NO_SHORT_OPTION, "alt",
-                        "Send message as \"multipart/atlernative\", instead "
-                      + "of \"multipart/mixed\".");
+                        "Send message as \"multipart/atlernative\", instead " +
+                        "of \"multipart/mixed\".");
         info.addOption ('A', null, "<file>",
-                        "Add the contents of <file> as an attachment. May be "
-                      + "specified multiple times");
+                        "Add the contents of <file> as an attachment. May " +
+                        "be specified multiple times");
         info.addOption ('a', null, "<string>",
-                        "Add the <string> as an attachment. May be specified "
-                      + "multiple times");
+                        "Add the <string> as an attachment. May be " +
+                        "specified multiple times");
         info.addOption (UsageInfo.NO_SHORT_OPTION, "bcc", "<address>",
-                        "Bcc: the specified email address. May be specified "
-                       + "multiple times.");
+                        "Bcc: the specified email address. May be specified " +
+                         "multiple times.");
         info.addOption (UsageInfo.NO_SHORT_OPTION, "cc", "<address>",
-                        "Cc: the specified email address. May be specified "
-                       + "multiple times.");
+                        "Cc: the specified email address. May be specified " +
+                         "multiple times.");
         info.addOption ('d', null, "Enable debug");
         info.addOption (UsageInfo.NO_SHORT_OPTION, "dt",
-                        "Dump the text part, after adding it to the message."
-                      + "This is useful primarily for debugging");
+                        "Dump the text part, after adding it to the message." +
+                        "This is useful primarily for debugging");
         info.addOption ('f', "from", "<address>",
                         "Use the specified address as the sender");
         info.addOption ('i', null,
-                        "For all files (attachments, text), use an "
-                      + "InputStream instead of a File object. (Tests "
-                      + "EmailMessage class's handling of InputStream)");
+                        "For all files (attachments, text), use an " +
+                        "InputStream instead of a File object. (Tests " +
+                        "EmailMessage class's handling of InputStream)");
         info.addOption ('m', "mime-type", "<mimeType>",
                         "Set the MIME type for the text part.");
         info.addOption ('s', "subject", "<string>",
                         "Set the message subject.");
         info.addOption ('t', "text", "<string>",
-                        "Use <string> as the text for the body of the "
-                      + "message");
+                        "Use <string> as the text for the body of the " +
+                        "message");
         info.addOption ('T', "text-file", "<file>",
-                        "Use the contents of <file> as the body of the "
-                      + "message.");
+                        "Use the contents of <file> as the body of the " +
+                        "message.");
 
         info.addParameter ("<smtphost>",
                            "The SMTP host through which to send the message.",
                            true);
         info.addParameter ("<address> ...",
-                           "One or more email addresses to receive the "
-                         + "message",
+                           "One or more email addresses to receive the " +
+                           "message",
                            true);
     }
 

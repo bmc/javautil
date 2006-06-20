@@ -95,9 +95,8 @@ public final class TextUtil
 
         else
         {
-            throw new IllegalArgumentException ("Bad boolean string: \""
-                                              + s
-                                              + "\"");
+            throw new IllegalArgumentException ("Bad boolean string: \"" +
+                                                s + "\"");
         }
 
         return result;

@@ -116,11 +116,11 @@ public class TestVariableSubstituter
 
     private static void usage()
     {
-        System.err.println ("Usage: java "
-                          + TestVariableSubstituter.class
-                          + " unix|windows properties_file string ...");
-        System.err.println ("Uses values from System.properties and "
-                          + "the specified properties files.");
+        System.err.println ("Usage: java " +
+                            TestVariableSubstituter.class +
+                            " unix|windows properties_file string ...");
+        System.err.println ("Uses values from System.properties and " +
+                            "the specified properties files.");
         System.exit (1);
     }
 

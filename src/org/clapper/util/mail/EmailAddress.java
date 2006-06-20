@@ -104,10 +104,10 @@ public class EmailAddress implements Cloneable, Comparable
 
             if (addresses.length != 1)
             {
-                throw new EmailException ("\""
-                                        + address
-                                        + "\" is an improperly formed "
-                                        + "email address");
+                throw new EmailException ("\"" +
+                                          address +
+                                          "\" is an improperly formed " +
+                                          "email address");
             }
 
             this.emailAddress = addresses[0];
@@ -115,10 +115,10 @@ public class EmailAddress implements Cloneable, Comparable
 
         catch (AddressException ex)
         {
-            throw new EmailException ("\""
-                                    + address
-                                    + "\" is an improperly formed "
-                                    + "email address",
+            throw new EmailException ("\"" +
+                                      address +
+                                      "\" is an improperly formed " +
+                                      "email address",
                                       ex);
         }
     }
@@ -239,10 +239,8 @@ public class EmailAddress implements Cloneable, Comparable
 
         catch (AddressException ex)
         {
-            throw new EmailException ("One or more email addresses in the "
-                                    + "string \""
-                                    + s
-                                    + "\" cannot be parsed.",
+            throw new EmailException ("One or more email addresses in the " +
+                                      "string \"" + s + "\" cannot be parsed.",
                                       ex);
         }
 

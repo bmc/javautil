@@ -105,8 +105,8 @@ public class TestMultiIterator extends CommandLineUtility
         throws CommandLineUsageException,
                NoSuchElementException
     {
-        throw new IllegalStateException ("(BUG) Unknown option: "
-                                       + shortOption);
+        throw new IllegalStateException ("(BUG) Unknown option: " +
+                                         shortOption);
     }
     
     protected void processPostOptionCommandLine (Iterator<String> it)

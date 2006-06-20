@@ -159,22 +159,20 @@ class ProgramSection extends Section
             if ((tokens.length != 2) && (tokens.length != 4))
             {
                 throw new ConfigurationException
-                                     (Package.BUNDLE_NAME,
-                                      "ProgramSection.badNowFieldCount",
-                                      "Section \"{0}\", variable reference "
-                                    + "\"{1}\": Incorrect number of fields in "
-                                    + "extended version of \"{2}\" variable. "
-                                    + "Found {3} fields, expected either "
-                                    + "{4} or {5}.",
-                                      new Object[]
-                                      {
-                                          this.getName(),
-                                          varName,
-                                          PROGRAM_NOW_VAR,
-                                          String.valueOf (tokens.length),
-                                          "2",
-                                          "4"
-                                      });
+                    (Package.BUNDLE_NAME, "ProgramSection.badNowFieldCount",
+                     "Section \"{0}\", variable reference \"{1}\": " +
+                     "Incorrect number of fields in extended version of " +
+                     "\"{2}\" variable. Found {3} fields, expected either " +
+                     "{4} or {5}.",
+                     new Object[]
+                     {
+                         this.getName(),
+                         varName,
+                         PROGRAM_NOW_VAR,
+                         String.valueOf (tokens.length),
+                         "2",
+                         "4"
+                     });
             }
 
             Locale locale = null;

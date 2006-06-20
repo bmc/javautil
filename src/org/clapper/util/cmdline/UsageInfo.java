@@ -195,17 +195,17 @@ public final class UsageInfo
         if ((longOption != null) && (longOption.startsWith ("-")))
         {
             throw new IllegalArgumentException
-                ("(BUG) Long option \""
-               + longOption
-               + "\", registered via UsageInfo.addOption(), starts "
-               + "with \"-\".");
+                ("(BUG) Long option \"" +
+                 longOption +
+                 "\", registered via UsageInfo.addOption(), starts " +
+                 "with \"-\".");
         }
 
         if ((shortOption == NO_SHORT_OPTION) && (longOption == null))
         {
             throw new IllegalArgumentException
-                ("(BUG) shortOption parameter is NO_SHORT_OPTION, and "
-               + "longOption parameter is null.");
+                ("(BUG) shortOption parameter is NO_SHORT_OPTION, and " +
+                 "longOption parameter is null.");
         }
 
         OptionInfo optionInfo = new OptionInfo (shortOption,
@@ -243,10 +243,10 @@ public final class UsageInfo
         if (param.startsWith ("-"))
         {
             throw new IllegalArgumentException
-                ("(BUG) Option \""
-               + param
-               + "\" registered via UsageInfo.addParameter(), instead of "
-               + "via UsageInfo.addOption().");
+                ("(BUG) Option \"" +
+                 param +
+                 "\" registered via UsageInfo.addParameter(), instead of " +
+                 "via UsageInfo.addOption().");
         }
 
         paramMap.put (param, explanation);

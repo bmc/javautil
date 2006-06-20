@@ -197,9 +197,9 @@ public class TestRegexUtil
                            "Substitution command to execute on strings",
                            true);
         info.addParameter ("[string] ...",
-                           "One or more strings to execute substitution "
-                         + "command line. If not present, then lines from "
-                         + "standard input are read, instead.",
+                           "One or more strings to execute substitution " +
+                           "command line. If not present, then lines from " +
+                           "standard input are read, instead.",
                            false);
     }
 }

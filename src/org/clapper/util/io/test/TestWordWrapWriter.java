@@ -188,9 +188,9 @@ public class TestWordWrapWriter
 
         catch (NumberFormatException ex)
         {
-            throw new IllegalArgumentException ("Bad argument to numeric "
-                                              + "option: "
-                                              + ex.toString());
+            throw new IllegalArgumentException ("Bad argument to numeric " +
+                                                "option: " +
+                                                ex.toString());
         }
 
         catch (IOException ex)
@@ -204,9 +204,8 @@ public class TestWordWrapWriter
         WordWrapWriter err = new WordWrapWriter (System.err);
 
         err.setPrefix ("Usage: ");
-        err.println ("java "
-                   + TestWordWrapWriter.class.getName()
-                   + " [OPTIONS]");
+        err.println ("java " + TestWordWrapWriter.class.getName() +
+                     " [OPTIONS]");
 
         err.setPrefix (null);
         String[] remainder = new String[]

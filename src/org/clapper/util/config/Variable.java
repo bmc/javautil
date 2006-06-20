@@ -329,20 +329,20 @@ class Variable
 
             if (currentSegment.isLiteral)
             {
-                throw new ConfigurationException ("Unmatched "
-                                                + LITERAL_QUOTE
-                                                + " in variable \""
-                                                + this.name
-                                                + "\"");
+                throw new ConfigurationException ("Unmatched " +
+                                                  LITERAL_QUOTE +
+                                                  " in variable \"" +
+                                                  this.name +
+                                                  "\"");
             }
 
             else if (currentSegment.isWhiteSpaceEscaped)
             {
-                throw new ConfigurationException ("Unmatched "
-                                                + SUBST_QUOTE
-                                                + " in variable \""
-                                                + this.name
-                                                + "\"");
+                throw new ConfigurationException ("Unmatched " +
+                                                  SUBST_QUOTE +
+                                                  " in variable \"" +
+                                                  this.name +
+                                                  "\"");
             }
 
             if (currentSegment.length() > 0)

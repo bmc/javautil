@@ -118,9 +118,9 @@ public class ClassLoaderBuilder
 
         if (! added)
         {
-            log.debug ("Skipping non-jar, non-zip, non-directory \""
-                     + fileName
-                     + "\"");
+            log.debug ("Skipping non-jar, non-zip, non-directory \"" +
+                       fileName +
+                       "\"");
         }
 
         return added;

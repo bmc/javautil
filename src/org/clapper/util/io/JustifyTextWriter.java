@@ -367,9 +367,9 @@ public class JustifyTextWriter extends PrintWriter
     {
         if (newLineLength < 0)
         {
-            throw new IndexOutOfBoundsException ( "Line length of "
-                                                + newLineLength
-                                                + " is negative.");
+            throw new IndexOutOfBoundsException ("Line length of " +
+                                                 newLineLength +
+                                                 " is negative.");
         }
 
         lineLength = newLineLength;

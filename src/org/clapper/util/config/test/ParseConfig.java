@@ -136,9 +136,9 @@ public class ParseConfig
             int i = s.indexOf (':');
             if (i == -1)
             {
-                throw new ConfigurationException ("Bad variable setting: \""
-                                                + s
-                                                + "\"");
+                throw new ConfigurationException ("Bad variable setting: \"" +
+                                                  s +
+                                                  "\"");
             }
 
             String section = s.substring (0, i);
@@ -147,9 +147,9 @@ public class ParseConfig
             int j = s.indexOf ('=', i);
             if (i == -1)
             {
-                throw new ConfigurationException ("Bad variable setting: \""
-                                                + s
-                                                + "\"");
+                throw new ConfigurationException ("Bad variable setting: \"" +
+                                                  s +
+                                                  "\"");
             }
 
             String varName = s.substring (i, j);
@@ -162,8 +162,8 @@ public class ParseConfig
         }
 
         System.out.println ("Configuration, tokenized:");
-        System.out.println ("---------------------------------------"
-                          + "---------------------------------------");
+        System.out.println ("---------------------------------------" +
+                            "---------------------------------------");
 
 
         for (String sectionName : config.getSectionNames())
@@ -189,8 +189,8 @@ public class ParseConfig
 
         System.out.println ();
         System.out.println ("Configuration, cooked:");
-        System.out.println ("---------------------------------------"
-                          + "---------------------------------------");
+        System.out.println ("---------------------------------------" +
+                            "---------------------------------------");
         config.write (System.out);
     }
 }

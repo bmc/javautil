@@ -146,13 +146,13 @@ class FileHashMapEntry<K>
      */
     public String toString()
     {
-        return ("FileHashMapEntry[filePosition="
-              + filePosition
-              + ", objectSize="
-              + objectSize
-              + ", key="
-              + ((key == null) ? "<null>" : key)
-              + "]");
+        return ("FileHashMapEntry[filePosition=" +
+                filePosition +
+                ", objectSize=" +
+                objectSize +
+                ", key=" +
+                ((key == null) ? "<null>" : key) +
+                "]");
     }
 
     /*----------------------------------------------------------------------*\

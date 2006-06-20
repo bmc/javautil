@@ -778,11 +778,11 @@ public class RollingFileWriter extends PrintWriter
             {
                 // Must roll over.
 
-                log.debug ("fileSize="
-                         + fileSize
-                         + ", maxSize="
-                         +  maxRolledFileSize
-                         + " -> must roll files over.");
+                log.debug ("fileSize=" +
+                           fileSize +
+                           ", maxSize=" +
+                            maxRolledFileSize +
+                           " -> must roll files over.");
                 super.out = rollFilesOver (this.primaryFile,
                                            this.filePattern,
                                            this.charsetName,
@@ -805,19 +805,19 @@ public class RollingFileWriter extends PrintWriter
     private static void renameFile (File sourceFile, File targetFile)
         throws IOExceptionExt
     {
-        log.debug ("Moving file \""
-                 + sourceFile.getName()
-                 + "\" to \""  
-                 + targetFile.getName()
-                 + "\"");
+        log.debug ("Moving file \"" +
+                   sourceFile.getName() +
+                   "\" to \""   +
+                   targetFile.getName() +
+                   "\"");
         try
         {
             if (! sourceFile.renameTo (targetFile))
             {
                 throw new IOExceptionExt (Package.BUNDLE_NAME,
                                           "RollingFileWriter.cantMoveFile",
-                                          "Unable to move file \"{0}\" to "
-                                        + "\"{1}\"",
+                                          "Unable to move file \"{0}\" to " +
+                                          "\"{1}\"",
                                           new Object[]
                                           {
                                               sourceFile.getPath(),
@@ -966,8 +966,8 @@ public class RollingFileWriter extends PrintWriter
             {
                 throw new IOExceptionExt (Package.BUNDLE_NAME,
                                           "RollingFileWriter.badPattern",
-                                          "File pattern \"{0}\" is missing "
-                                        + "the \"$\\{n\\}\" marker.",
+                                          "File pattern \"{0}\" is missing " +
+                                          "the \"$\\{n\\}\" marker.",
                                           new Object[] {fileNamePattern});
             }
 
@@ -1106,11 +1106,11 @@ public class RollingFileWriter extends PrintWriter
                 rollOverMsg = callback.getRollOverMessage();
                 if (rollOverMsg != null)
                 {
-                    log.debug ("Appending roll-over message \""
-                             + rollOverMsg
-                             + "\" to full primary file \""
-                             + primaryFile
-                             + "\"");
+                    log.debug ("Appending roll-over message \"" +
+                               rollOverMsg +
+                               "\" to full primary file \"" +
+                               primaryFile +
+                               "\"");
 
                     // Calling super.println (anything) will fail, because
                     // we've overridden the methods. But we haven't
@@ -1121,9 +1121,7 @@ public class RollingFileWriter extends PrintWriter
                 }
             }
 
-            log.debug ("Closing full primary file \""
-                     + primaryFile
-                     + "\".");
+            log.debug ("Closing full primary file \"" + primaryFile + "\".");
             rollingFileWriter.flush();
             rollingFileWriter.close();
         }
@@ -1146,11 +1144,11 @@ public class RollingFileWriter extends PrintWriter
         {
             try
             {
-                log.debug ("Writing roll-over message \""
-                         + rollOverMsg
-                         + "\" to top of new primary file \""
-                         + primaryFile
-                         + "\"");
+                log.debug ("Writing roll-over message \"" +
+                           rollOverMsg +
+                           "\" to top of new primary file \"" +
+                           primaryFile +
+                           "\"");
                 result.write (rollOverMsg);
                 result.write (newline);
                 result.flush();
@@ -1179,8 +1177,8 @@ public class RollingFileWriter extends PrintWriter
         {
             InputStream is = new FileInputStream (file);
             OutputStream os = new GZIPOutputStream 
-                                   (new FileOutputStream (file.getPath()
-                                                        + GZIP_EXTENSION));
+                                   (new FileOutputStream (file.getPath() +
+                                                          GZIP_EXTENSION));
             FileUtil.copyStream (is, os);
             is.close();
             os.close();

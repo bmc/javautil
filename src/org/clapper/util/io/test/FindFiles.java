@@ -125,12 +125,12 @@ public class FindFiles
 
     private static void usage()
     {
-        System.err.println ("Usage: "
-                          + FindFiles.class.getName()
-                          + " [-e exclude_pattern] ... "
-                          + " [-i include_pattern] ... "
-                          + " [-n|-p] "
-                          + "[directory]");
+        System.err.println ("Usage: " +
+                            FindFiles.class.getName() +
+                            " [-e exclude_pattern] ... " +
+                            " [-i include_pattern] ... " +
+                            " [-n|-p] " +
+                            "[directory]");
     }
 
     /*----------------------------------------------------------------------*\

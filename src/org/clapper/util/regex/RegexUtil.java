@@ -242,8 +242,8 @@ public class RegexUtil
         {
             throw new RegexException (Package.BUNDLE_NAME,
                                       "RegexUtil.substitutionCommandTooShort",
-                                      "Substitution command \"{0}\" is too "
-                                    + "short.",
+                                      "Substitution command \"{0}\" is too " +
+                                      "short.",
                                       new Object[]
                                           {
                                               substitutionCommand
@@ -254,8 +254,8 @@ public class RegexUtil
         {
             throw new RegexException (Package.BUNDLE_NAME,
                                       "RegexUtil.badSubstitutionSyntax",
-                                      "\"{0}\" is a syntactically incorrect "
-                                    + "substitution command.",
+                                      "\"{0}\" is a syntactically incorrect " +
+                                      "substitution command.",
                                       new Object[] {substitutionCommand});
         }
 
@@ -265,9 +265,9 @@ public class RegexUtil
         {
             throw new RegexException (Package.BUNDLE_NAME,
                                       "RegexUtil.badSubstitutionDelim",
-                                      "Substitution command \"{0}\" uses "
-                                    + "alphabetic or white-space delimiter "
-                                    + "\"{1}\".",
+                                      "Substitution command \"{0}\" uses " +
+                                      "alphabetic or white-space delimiter " +
+                                      "\"{1}\".",
                                       new Object[]
                                           {
                                               substitutionCommand,
@@ -280,8 +280,8 @@ public class RegexUtil
         {
             throw new RegexException (Package.BUNDLE_NAME,
                                       "RegexUtil.badSubstitutionSyntax",
-                                      "\"{0}\" is a syntactically incorrect "
-                                    + "substitution command.",
+                                      "\"{0}\" is a syntactically incorrect " +
+                                      "substitution command.",
                                       new Object[] {substitutionCommand});
         }
 
@@ -364,8 +364,8 @@ public class RegexUtil
                     throw new RegexException
                         (Package.BUNDLE_NAME,
                          "RegexUtil.badSubstitutionModifier",
-                         "Substitution command \"{0}\" has unknown modifier "
-                       + "character\"{1}\".",
+                         "Substitution command \"{0}\" has unknown modifier " +
+                         "character\"{1}\".",
                          new Object[]
                              {
                                  substitutionCommand,

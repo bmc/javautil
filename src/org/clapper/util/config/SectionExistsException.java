@@ -65,9 +65,9 @@ public class SectionExistsException extends ConfigurationException
      */
     public SectionExistsException (String sectionName)
     {
-        super (NoSuchSectionException.class.getName()
-             + ": section "
-             + sectionName);
+        super (NoSuchSectionException.class.getName() +
+               ": section " +
+               sectionName);
 
         this.sectionName = sectionName;
     }

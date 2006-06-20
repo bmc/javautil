@@ -482,9 +482,9 @@ public class WordWrapWriter extends PrintWriter
     {
         if (newIndentation < 0)
         {
-            throw new IndexOutOfBoundsException ( "Indentation of "
-                                                + newIndentation
-                                                + " is negative.");
+            throw new IndexOutOfBoundsException ("Indentation of " +
+                                                 newIndentation +
+                                                 " is negative.");
         }
 
         indentation = newIndentation;
@@ -516,9 +516,9 @@ public class WordWrapWriter extends PrintWriter
     {
         if (newLineLength < 0)
         {
-            throw new IndexOutOfBoundsException ( "Line length of "
-                                                + newLineLength
-                                                + " is negative.");
+            throw new IndexOutOfBoundsException ("Line length of " +
+                                                 newLineLength +
+                                                 " is negative.");
         }
 
         lineLength = newLineLength;

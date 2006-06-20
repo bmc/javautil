@@ -939,8 +939,8 @@ public class EmailMessage implements Serializable
     {
         if (attachments.size() > 0)
         {
-            throw new EmailException ("Can't set multipart subtype once "
-                                    + "message has attachments.");
+            throw new EmailException ("Can't set multipart subtype once " +
+                                      "message has attachments.");
         }
 
         this.multipartSubtype = subType;
@@ -999,15 +999,15 @@ public class EmailMessage implements Serializable
 
         catch (IOException ex)
         {
-            throw new EmailException ("Cannot retrieve text portion of email "
-                                    + "message",
+            throw new EmailException ("Cannot retrieve text portion of " +
+                                      "email message",
                                       ex);
         }
 
         catch (MessagingException ex)
         {
-            throw new EmailException ("Cannot retrieve text portion of email "
-                                    + "message",
+            throw new EmailException ("Cannot retrieve text portion of " +
+                                      "email message",
                                       ex);
         }
 
@@ -1535,10 +1535,10 @@ public class EmailMessage implements Serializable
             mainType = mimeType.substring (0, slash);
             if (! mainType.equals ("text"))
             {
-                throw new EmailException ("Bad MIME type (\""
-					+ mimeType
-					+ "\") for text "
-					+ "part of email message");
+                throw new EmailException ("Bad MIME type (\"" +
+					  mimeType +
+					  "\") for text " +
+					  "part of email message");
             }
 
             this.textPart = bodyPart;
@@ -1615,17 +1615,17 @@ public class EmailMessage implements Serializable
 
 	catch (IOException ex)
 	{
-	    throw new EmailException ("Cannot get attachment #"
-				    + String.valueOf (index)
-				    + " from message",
+	    throw new EmailException ("Cannot get attachment #" +
+				      String.valueOf (index) +
+				      " from message",
 				      ex);
         }
 
 	catch (MessagingException ex)
 	{
-	    throw new EmailException ("Cannot get attachment #"
-				    + String.valueOf (index)
-				    + " from message",
+	    throw new EmailException ("Cannot get attachment #" +
+				      String.valueOf (index) +
+				      " from message",
 				      ex);
         }
     }
@@ -1668,9 +1668,9 @@ public class EmailMessage implements Serializable
 
         catch (MessagingException ex)
 	{
-	    throw new EmailException ("Cannot get attachment #"
-				    + String.valueOf (index)
-				    + " from message",
+	    throw new EmailException ("Cannot get attachment #" +
+				      String.valueOf (index) +
+				      " from message",
 				      ex);
         }
     }
@@ -2364,9 +2364,8 @@ public class EmailMessage implements Serializable
             try
             {
                 InetAddress localhost = InetAddress.getLocalHost();
-                result = new EmailAddress (userName
-                                         + "@"
-                                         + localhost.getHostName());
+                result = new EmailAddress (userName + "@" +
+                                           localhost.getHostName());
             }
 
             catch (UnknownHostException ex)
@@ -2507,11 +2506,10 @@ public class EmailMessage implements Serializable
                 targetColl.add ((EmailAddress) o);
             else
             {
-                throw new EmailException ("BUG: Expected object of type "
-                                        + "\"String\" or \"EmailAddress\" "
-                                        + "in Collection of email addresses, "
-                                        + "but found object of type \""
-                                        + o.getClass().getName());
+                throw new EmailException
+                    ("BUG: Expected object of type \"String\" or " +
+                     "\"EmailAddress\" in Collection of email addresses, " +
+                     "but found object of type \"" + o.getClass().getName());
             }
         }
     }
@@ -2619,9 +2617,8 @@ public class EmailMessage implements Serializable
 
         if (! file.exists())
         {
-            throw new EmailException ("File \""
-                                    + file.getAbsolutePath()
-                                    + "\" does not exist");
+            throw new EmailException ("File \"" + file.getAbsolutePath() +
+                                      "\" does not exist");
         }
 
         MimeBodyPart    bodyPart    = new MimeBodyPart();

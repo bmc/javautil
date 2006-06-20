@@ -88,9 +88,9 @@ public class MetacharConversion
 
     private static void usage()
     {
-        System.err.println ("Usage: java "
-                          + MetacharConversion.class
-                          + " metachar_string ...");
+        System.err.println ("Usage: java " +
+                            MetacharConversion.class +
+                            " metachar_string ...");
         System.exit (1);
     }
 

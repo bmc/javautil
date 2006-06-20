@@ -127,8 +127,8 @@ public class StringDataSource implements DataSource
      */
     public OutputStream getOutputStream() throws IOException
     {
-        throw new IOException ( "Can't have an OutputStream with an "
-                              + "StringDataSource object.");
+        throw new IOException ("Can't have an OutputStream with an " +
+                               "StringDataSource object.");
     }
 
     /**

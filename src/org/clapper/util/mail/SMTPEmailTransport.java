@@ -123,10 +123,10 @@ public class SMTPEmailTransport implements EmailTransport
 
         catch (MessagingException ex)
         {
-            throw new EmailException ("Unable to initialize transport to "
-                                    + "SMTP host \""
-                                    + smtpHost
-                                    + "\"",
+            throw new EmailException ("Unable to initialize transport to " +
+                                      "SMTP host \"" +
+                                      smtpHost +
+                                      "\"",
                                       ex);
         }
     }

@@ -135,9 +135,9 @@ public class XString extends CommandLineUtility
                     type = Type.BUILDER;
                 else
                 {
-                    throw new CommandLineUsageException ("Bad value of \""
-                                                       + type
-                                                       + "\" for -t");
+                    throw new CommandLineUsageException ("Bad value of \"" +
+                                                         type +
+                                                         "\" for -t");
                 }
                 break;
 
@@ -160,12 +160,12 @@ public class XString extends CommandLineUtility
     protected void getCustomUsageInfo (UsageInfo info)
     {
         info.addOption ('t', "type", "XStringBuffer|XStringBuilder",
-                        "Specify the type of object to test. Defaults to "
-                      + "XStringBuilder");
+                        "Specify the type of object to test. Defaults to " +
+                        "XStringBuilder");
 
         info.addParameter ("string ...",
-                           "String to append to buffer. May be specified "
-                         + "more than once.",
+                           "String to append to buffer. May be specified " +
+                           "more than once.",
                            true);
     }
 

@@ -73,8 +73,8 @@ public class TestFileHashMap
 
         public String toString()
         {
-            return new String ("[value=\"" + value + "\", "
-                               + "padding=" + paddingSize + " bytes]");
+            return new String ("[value=\"" + value + "\", " +
+                               "padding=" + paddingSize + " bytes]");
         }
     }
 
@@ -195,56 +195,56 @@ public class TestFileHashMap
 
         else if ((fileHashMapFlags & FileHashMap.TRANSIENT) == 0)
         {
-            throw new CommandLineUsageException ("Must specify a file prefix "
-                                               + "unless -t is specified.");
+            throw new CommandLineUsageException
+                ("Must specify a file prefix unless -t is specified.");
         }
 
         if (readOnly && ((fileHashMapFlags & FileHashMap.TRANSIENT) != 0))
         {
-            throw new CommandLineUsageException ("You cannot specify both -r "
-                                               + "and -t");
+            throw new CommandLineUsageException
+                ("You cannot specify both -r and -t");
         }
     }
 
     protected void getCustomUsageInfo (UsageInfo info)
     {
         info.addOption ('c', "clear",
-                        "Clear the FileHashMap after loading it from disk "
-                      + "initially.");
+                        "Clear the FileHashMap after loading it from disk " +
+                        "initially.");
         info.addOption ('d', "disk-only",
-                        "Use a FileHashMap table only. Don't use an in-memory "
-                      + "hash table.");
+                        "Use a FileHashMap table only. Don't use an " +
+                        "in-memory hash table.");
         info.addOption ('g', "reuse-gaps",
-                        "Pass the RECLAIM_FILE_GAPS flag to the FileHashMap "
-                      + "constructor");
+                        "Pass the RECLAIM_FILE_GAPS flag to the FileHashMap " +
+                        "constructor");
         info.addOption ('m', "mem-only",
-                        "Use an in-memory hash table only. Don't use a "
-                      + "FileHashMap.");
+                        "Use an in-memory hash table only. Don't use a " +
+                        "FileHashMap.");
         info.addOption ('n', "no-create",
-                        "Pass the NO_CREATE flag to the FileHashMap "
-                      + "constructor");
+                        "Pass the NO_CREATE flag to the FileHashMap " +
+                        "constructor");
         info.addOption ('p', "padding", "<n>",
-                        "Specify the number of bytes by which to pad each "
-                      + "entry. This is useful for increasing the footprint "
-                      + "of each entry, to test the difference between an "
-                      + "in-memory and a disk resident map. Default value is "
-                      + DEFAULT_ENTRY_PADDING);
+                        "Specify the number of bytes by which to pad each " +
+                        "entry. This is useful for increasing the footprint " +
+                        "of each entry, to test the difference between an " +
+                        "in-memory and a disk resident map. Default value: " +
+                        DEFAULT_ENTRY_PADDING);
         info.addOption ('o', "overwrite",
-                        "Pass the FORCE_OVERWRITE flag to the FileHashMap "
-                      + "constructor");
+                        "Pass the FORCE_OVERWRITE flag to the FileHashMap " +
+                        "constructor");
         info.addOption ('r', "read-only",
-                        "Display the contents of an existing map, but don't "
-                      + "modify it. Cannot be specified with -t");
+                        "Display the contents of an existing map, but don't " +
+                        "modify it. Cannot be specified with -t");
         info.addOption ('t', "transient", "Use a transient hash map");
         info.addOption ('v', "verbose", "Enable verbose messages");
 
         info.addParameter ("totalEntries",
-                           "Total number of keys and synthesized values to "
-                         + "stuff in the hash table.",
+                           "Total number of keys and synthesized values to " +
+                           "stuff in the hash table.",
                            true);
         info.addParameter ("filePrefix",
-                           "File prefix to use. Required unless -t is "
-                         + "specified.",
+                           "File prefix to use. Required unless -t is " +
+                           "specified.",
                            false);
     }
 
@@ -374,12 +374,8 @@ public class TestFileHashMap
             long   ms;
             Entry  value = new Entry (key, paddingSize);
 
-            verboseln ("    Putting key=\""
-                       + key
-                       + "\", value="
-                       + value.toString()
-                       + " into "
-                       + mapName);
+            verboseln ("    Putting key=\"" + key + "\", value=" +
+                       value.toString() + " into " + mapName);
 
             startTimer();
             old = map.put (key, value);
@@ -394,8 +390,8 @@ public class TestFileHashMap
         msgln ("(Done.)");
         msgln ("Total entries:             " + totalValues);
         msgln ("Total insert time:         " + msAccum + " ms");
-        msgln ("Avg insert time per entry: "
-             + getAverage (msAccum, i) + " ms");
+        msgln ("Avg insert time per entry: " +
+               getAverage (msAccum, i) + " ms");
     }
 
     private void dumpTables (Map<String, Entry> memoryHash,
@@ -470,16 +466,16 @@ public class TestFileHashMap
             msgln ("");
             msgln ("Total entries:             " + i);
             msgln ("Total access time:         " + ms + " ms");
-            msgln ("Avg access time per entry: "
-                 + getAverage (ms, i) + " ms");
+            msgln ("Avg access time per entry: " +
+                   getAverage (ms, i) + " ms");
 
             if (map.size() != i)
             {
-                throw new IllegalStateException ("Dumped more values "
-                                                 + "than table says it "
-                                                 + "contains! map.size() "
-                                                 + "returns "
-                                                 + map.size());
+                throw new IllegalStateException ("Dumped more values " +
+                                                 "than table says it " +
+                                                 "contains! map.size() " +
+                                                 "returns " +
+                                                 map.size());
             }
         }
     }
@@ -511,16 +507,16 @@ public class TestFileHashMap
             msgln ("");
             msgln ("Total entries:             " + i);
             msgln ("Total access time:         " + ms + " ms");
-            msgln ("Avg access time per entry: "
-                 + getAverage (ms, i) + " ms");
+            msgln ("Avg access time per entry: " +
+                   getAverage (ms, i) + " ms");
 
             if (map.size() != i)
             {
-                throw new IllegalStateException ("Dumped more values "
-                                                 + "than table says it "
-                                                 + "contains! map.size() "
-                                                 + "returns "
-                                                 + map.size());
+                throw new IllegalStateException ("Dumped more values " +
+                                                 "than table says it " +
+                                                 "contains! map.size() " +
+                                                 "returns " +
+                                                 map.size());
             }
         }
     }
@@ -554,16 +550,16 @@ public class TestFileHashMap
             msgln ("");
             msgln ("Total entries:             " + i);
             msgln ("Total access time:         " + ms + " ms");
-            msgln ("Avg access time per entry: "
-                 + getAverage (ms, i) + " ms");
+            msgln ("Avg access time per entry: " +
+                   getAverage (ms, i) + " ms");
 
             if (map.size() != i)
             {
-                throw new IllegalStateException ("Dumped more values "
-                                                 + "than table says it "
-                                                 + "contains! map.size() "
-                                                 + "returns "
-                                                 + map.size());
+                throw new IllegalStateException ("Dumped more values " +
+                                                 "than table says it " +
+                                                 "contains! map.size() " +
+                                                 "returns " +
+                                                 map.size());
             }
         }
     }
@@ -592,8 +588,8 @@ public class TestFileHashMap
                 startTimer();
                 value = map.get (key);
                 ms += stopTimer();
-                verboseln ("(top) Key #" + top + "=\"" + key + "\" -> \""
-                           + value + "\"");
+                verboseln ("(top) Key #" + top + "=\"" + key + "\" -> \"" +
+                           value + "\"");
                 total++;
                 top++;
             }
@@ -604,8 +600,8 @@ public class TestFileHashMap
                 startTimer();
                 value = map.get (key);
                 ms += stopTimer();
-                verboseln ("(mid) Key #" + m + "=\"" + key + "\" -> \""
-                           + value + "\"");
+                verboseln ("(mid) Key #" + m + "=\"" + key + "\" -> \"" +
+                           value + "\"");
                 total++;
                 m++;
             }
@@ -613,12 +609,12 @@ public class TestFileHashMap
 
         if (total != keys.length)
         {
-            throw new IllegalStateException ("Dumped "
-                                             + total
-                                             + " values, but table "
-                                             + " contains "
-                                             + map.size()
-                                             + "entries.");
+            throw new IllegalStateException ("Dumped " +
+                                             total +
+                                             " values, but table " +
+                                             " contains " +
+                                             map.size() +
+                                             "entries.");
         }
 
         msgln ("");

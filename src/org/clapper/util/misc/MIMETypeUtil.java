@@ -452,11 +452,8 @@ public class MIMETypeUtil
 
                 if (mimeTypeToExtensionMap.get (type) == null)
                 {
-                    log.debug ("Internal: "
-                             + type
-                             + " -> \""
-                             + extensions[0]
-                             + "\"");
+                    log.debug ("Internal: " + type + " -> \"" + extensions[0] +
+                               "\"");
                     mimeTypeToExtensionMap.put (type, extensions[0]);
                 }
 
@@ -464,11 +461,8 @@ public class MIMETypeUtil
                 {
                     if (extensionToMIMETypeMap.get (extensions[i]) == null)
                     {
-                        log.debug ("Internal: "
-                                 + "\""
-                                 + extensions[i]
-                                 + "\" -> "
-                                 + type);
+                        log.debug ("Internal: " + "\"" + extensions[i] +
+                                   "\" -> " + type);
                         extensionToMIMETypeMap.put (extensions[i], type);
                     }
                 }
@@ -476,11 +470,10 @@ public class MIMETypeUtil
 
             catch (MissingResourceException ex)
             {
-                log.error ("While reading internal bundle \""
-                         + MIME_MAPPINGS_BUNDLE
-                         + "\", got unexpected error on key \""
-                         + type
-                         + "\"",
+                log.error ("While reading internal bundle \"" +
+                           MIME_MAPPINGS_BUNDLE +
+                           "\", got unexpected error on key \"" +
+                           type + "\"",
                            ex);
             }
         }
@@ -568,13 +561,8 @@ public class MIMETypeUtil
                     if (mimeTypeToExtensionMap.get (mimeType) == null)
                     {
                         extension = (String) extensions.get (0);
-                        log.debug ("File \""
-                                 + path
-                                 + "\": "
-                                 + mimeType
-                                 + " -> \""
-                                 + extension
-                                 + "\"");
+                        log.debug ("File \"" + path + "\": " + mimeType +
+                                   " -> \"" + extension + "\"");
 
                         mimeTypeToExtensionMap.put (mimeType, extension);
                     }
@@ -586,12 +574,8 @@ public class MIMETypeUtil
                         extension = (String) it.next();
                         if (extensionToMIMETypeMap.get (extension) == null)
                         {
-                            log.debug ("File \""
-                                     + path
-                                     + "\": \""
-                                     + extension
-                                     + "\" -> "
-                                     + mimeType);
+                            log.debug ("File \"" + path + "\": \"" +
+                                       extension + "\" -> " + mimeType);
                             extensionToMIMETypeMap.put (extension, mimeType);
                         }
                     }

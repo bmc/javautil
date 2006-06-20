@@ -91,10 +91,8 @@ public class MakeBuildInfoTask extends Task
 
         catch (IOException ex)
         {
-            throw new BuildException ("Can't create build info file \""
-                                    + file.getPath()
-                                    + "\": "
-                                    + ex.toString());
+            throw new BuildException ("Can't create build info file \"" +
+                                      file.getPath() + "\": " + ex.toString());
         }
     }
 

@@ -392,10 +392,10 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
                 }
 
                 file = null;
-                IOException ex3 = new IOException ("Unable to assert file "
-                                                 + "lock on file \""
-                                                 + f.getPath()
-                                                 + "\"");
+                IOException ex3 = new IOException ("Unable to assert file " +
+                                                   "lock on file \"" +
+                                                   f.getPath() +
+                                                   "\"");
                 ex3.initCause (ex);
                 throw ex3;
             }
@@ -1180,17 +1180,16 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
             if ((flags & FORCE_OVERWRITE) == 0)
             {
                 throw new ObjectExistsException
-                              (Package.BUNDLE_NAME,
-                               "FileHashMap.diskFilesExist",
-                               "One or both of the hash table files (\"{0}\" "
-                             + "and/or \"{1}\") already exists, but the "
-                             + "FileHashMap.FORCE_OVERWRITE constructor flag "
-                             + "was not set.",
-                               new Object[]
-                               {
-                                   valuesDBPath.getName(),
-                                   indexFilePath.getName()
-                               });
+                    (Package.BUNDLE_NAME, "FileHashMap.diskFilesExist",
+                     "One or both of the hash table files (\"{0}\" " +
+                     "and/or \"{1}\") already exists, but the " +
+                     "FileHashMap.FORCE_OVERWRITE constructor flag " +
+                     "was not set.",
+                     new Object[]
+                     {
+                         valuesDBPath.getName(),
+                         indexFilePath.getName()
+                     });
             }
 
             // FORCE_OVERWRITE is set. Wipe out the files, and reset the
@@ -1209,10 +1208,10 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
                     // Can't localize this one. It's not one of our exceptions.
 
                     throw new FileNotFoundException
-                                  ("On-disk hash table \""
-                                 + pathPrefix
-                                 + "\" does not exist, and the "
-                                 + "FileHashMap.NO_CREATE flag was set.");
+                                  ("On-disk hash table \"" +
+                                   pathPrefix +
+                                   "\" does not exist, and the " +
+                                   "FileHashMap.NO_CREATE flag was set.");
                 }
 
                 createNewMap (this.valuesDBPath);
@@ -1222,9 +1221,9 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
                 throw new ObjectExistsException
                               (Package.BUNDLE_NAME,
                                "FileHashMap.halfMissing",
-                               "One of the hash table files exists (\"{0}\" "
-                             + "or \"{1}\") exists, but the other one does "
-                             + "not.",
+                               "One of the hash table files exists (\"{0}\" " +
+                               "or \"{1}\") exists, but the other one does " +
+                               "not.",
                                new Object[]
                                {
                                    valuesDBPath.getName(),
@@ -1268,9 +1267,8 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
 
         catch (IOException ex)
         {
-            log.error ("Failed to truncate FileHashMap file \""
-                     + valuesDBPath.getPath()
-                     + "\"",
+            log.error ("Failed to truncate FileHashMap file \"" +
+                       valuesDBPath.getPath() + "\"",
                        ex);
             valid = false;
         }
@@ -1560,8 +1558,8 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
 
         catch (IOException ex)
         {
-            throw new IllegalArgumentException ("Error saving value: "
-                                              + ex.getMessage());
+            throw new IllegalArgumentException ("Error saving value: " +
+                                                ex.getMessage());
         }
 
         return result;
@@ -1598,13 +1596,13 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
                 // Have to recalculate gaps, since we may be able to coalesce
                 // this returned space with ones to either side of it.
 
-                log.debug ("Removed value for key \""
-                         + key
-                         + "\" at pos="
-                         + entry.getFilePosition()
-                         + ", size="
-                         + entry.getObjectSize()
-                         + ". Re-figuring gaps.");
+                log.debug ("Removed value for key \"" +
+                           key +
+                           "\" at pos=" +
+                           entry.getFilePosition() +
+                           ", size=" +
+                           entry.getObjectSize() +
+                           ". Re-figuring gaps.");
                 findFileGaps();
             }
         }
@@ -1756,10 +1754,8 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
                 {
                     int gapSize = (int) (pos - possibleGapPos);
 
-                    log.debug ("Gap at position "
-                             + possibleGapPos
-                             + " of size "
-                             + gapSize);
+                    log.debug ("Gap at position " + possibleGapPos +
+                               " of size " + gapSize);
                     fileGaps.add (new FileHashMapEntry<K> (possibleGapPos,
                                                            gapSize));
                 }
@@ -1814,9 +1810,9 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
             throw new VersionMismatchException
                           (Package.BUNDLE_NAME,
                            "FileHashMap.versionMismatch",
-                           "FileHashMap version mismatch in index file "
-                         + "\"{0}\". Expected version \"{1}\", found version "
-                         + "\"{2}\"",
+                           "FileHashMap version mismatch in index file " +
+                           "\"{0}\". Expected version \"{1}\", found " +
+                           "version \"{2}\"",
                            new Object[]
                            {
                                indexFilePath.getName(),
@@ -1869,12 +1865,12 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
             this.valuesDB.file.seek (entry.getFilePosition());
             if ( (sizeRead = this.valuesDB.file.read (byteBuf)) != size )
             {
-                throw new IOException ("Expected to read "
-                                     + size
-                                     + "-byte serialized object from on-disk "
-                                     + "data file. Got only "
-                                     + sizeRead
-                                     + " bytes.");
+                throw new IOException ("Expected to read " +
+                                       size +
+                                       "-byte serialized object from " +
+                                       " on-disk data file. Got only " +
+                                       sizeRead +
+                                       " bytes.");
             }
         }
 
@@ -2033,8 +2029,8 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
 
                 if (size > objectSize)
                 {
-                    log.debug ("Gap size is larger than required. Making "
-                             + "smaller gap.");
+                    log.debug ("Gap size is larger than required. Making " +
+                               "smaller gap.");
 
                     // Remove it and re-insert it, since the gap list is
                     // sorted by size.
@@ -2046,10 +2042,8 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
                     gap.setFilePosition (pos);
                     gap.setObjectSize (size);
 
-                    log.debug ("Saving new, smaller gap: pos="
-                             + pos
-                             + ", size="
-                             + size);
+                    log.debug ("Saving new, smaller gap: pos=" + pos +
+                               ", size=" + size);
 
                     fileGaps.add (gap);
                 }

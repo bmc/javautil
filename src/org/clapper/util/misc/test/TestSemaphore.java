@@ -82,10 +82,8 @@ public class TestSemaphore extends CommandLineUtility
             int holdTime = TestSemaphore.this.holdTime;
             int pendTime = TestSemaphore.this.pendTime;
 
-            message ("Acquiring "
-                   + semaphore.toString()
-                   + ", pendTime = "
-                   + pendTime);
+            message ("Acquiring " + semaphore.toString() +
+                     ", pendTime = " + pendTime);
 
             acquired = semaphore.acquire (pendTime);
             if (! acquired)
@@ -97,11 +95,8 @@ public class TestSemaphore extends CommandLineUtility
 
                 synchronized (TestSemaphore.class)
                 {
-                    message ("Got semaphore "
-                           + semaphore
-                           + ". Waiting "
-                           + holdTime
-                           + " milliseconds.");
+                    message ("Got semaphore " + semaphore + ". Waiting " +
+                             holdTime + " milliseconds.");
                 }
 
                 try
@@ -116,9 +111,7 @@ public class TestSemaphore extends CommandLineUtility
 
                 synchronized (TestSemaphore.class)
                 {
-                    message ("Releasing semaphore "
-                             + semaphore
-                             + ".");
+                    message ("Releasing semaphore " + semaphore + ".");
 
                 }
 
@@ -214,10 +207,8 @@ public class TestSemaphore extends CommandLineUtility
 
             if (val != semCount)
             {
-                throw new Exception ("Count mismatch: Value is "
-                                   + val
-                                   + ", expected "
-                                   + semCount);
+                throw new Exception ("Count mismatch: Value is " + val +
+                                     ", expected " + semCount);
             }
 
             message ("OK");
@@ -235,8 +226,8 @@ public class TestSemaphore extends CommandLineUtility
         throws CommandLineUsageException,
                NoSuchElementException
     {
-        throw new IllegalStateException ("(BUG) Unknown option: "
-                                       + shortOption);
+        throw new IllegalStateException ("(BUG) Unknown option: " +
+                                         shortOption);
     }
     
     protected void processPostOptionCommandLine (Iterator<String> it)
@@ -258,12 +249,12 @@ public class TestSemaphore extends CommandLineUtility
                            "Number of threads to spawn",
                            true);
         info.addParameter ("holdTime",
-                           "How long, in milliseconds, a thread should hold "
-                         + "a semaphore.",
+                           "How long, in milliseconds, a thread should hold " +
+                           "a semaphore.",
                            true);
         info.addParameter ("pendTime",
-                           "How long, in milliseconds, a thread should wait "
-                         + "to acquire a semaphore. 0 means forever.",
+                           "How long, in milliseconds, a thread should wait " +
+                           "to acquire a semaphore. 0 means forever.",
                            true);
     }
 
@@ -275,10 +266,10 @@ public class TestSemaphore extends CommandLineUtility
     private synchronized void message (String s)
     {
         SimpleDateFormat fmt = new SimpleDateFormat ("hh:mm:ss");
-        System.out.println ( fmt.format (new Date())
-                           + " ("
-                           + Thread.currentThread().getName()
-                           + ") "
-                           + s);
+        System.out.println ( fmt.format (new Date()) +
+                             " (" +
+                             Thread.currentThread().getName() +
+                             ") " +
+                             s);
     }
 }

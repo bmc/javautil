@@ -111,8 +111,8 @@ public class ClassInfo extends EmptyVisitor
         {
             throw new ClassUtilException (ClassUtil.BUNDLE_NAME,
                                           "ClassInfo.cantReadClassStream",
-                                          "Unable to load class from open "
-                                        + "input stream",
+                                          "Unable to load class from open " +
+                                          "input stream",
                                           ex);
         }
     }

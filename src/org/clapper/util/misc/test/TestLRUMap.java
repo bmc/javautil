@@ -95,10 +95,10 @@ public class TestLRUMap
     {
         Map.Entry entry = (Map.Entry) event.getSource();
 
-        System.out.println ("*** Removal of "
-                          + entry.getKey().toString()
-                          + "="
-                          + entry.getValue().toString());
+        System.out.println ("*** Removal of " +
+                            entry.getKey().toString() +
+                            "=" +
+                            entry.getValue().toString());
     }
 
     protected void runCommand()
@@ -175,10 +175,10 @@ public class TestLRUMap
             String[] fields = TextUtil.split (s, "=");
             if (fields.length != 2)
             {
-                throw new CommandLineUsageException ("Bad key=value pair: "
-                                                   + "\""
-                                                   + s
-                                                   + "\"");
+                throw new CommandLineUsageException ("Bad key=value pair: " +
+                                                     "\"" +
+                                                     s +
+                                                     "\"");
             }
 
             keyValuePairs.add (fields);
@@ -193,8 +193,8 @@ public class TestLRUMap
         info.addOption ('m', null, "<n>",
                         "Set the maximum capacity of the map to <n>.");
         info.addOption ('l', null, "<f>",
-                        "Set the load capacity of the map to <f> (a "
-                      + "floating point number)");
+                        "Set the load capacity of the map to <f> (a " +
+                        "floating point number)");
         info.addParameter ("key=value ...",
                            "One or more key=value pairs to put in the map.",
                            true);

@@ -518,30 +518,22 @@ public class ClassFinder
             {
                 try
                 {
-                    log.debug ("Loading "
-                             + zipName
-                             + "(" + entry.getName()
-                             + ")");
+                    log.debug ("Loading " + zipName + "(" + entry.getName() +
+                               ")");
                     loadClassData (zip.getInputStream (entry), classVisitor);
                 }
 
                 catch (IOException ex)
                 {
-                    log.error ("Can't open \""
-                             + entry.getName()
-                             + "\" in zip file \""
-                             + zipName
-                             + "\": ",
+                    log.error ("Can't open \"" + entry.getName() +
+                               "\" in zip file \"" + zipName + "\": ",
                                ex);
                 }
 
                 catch (ClassUtilException ex)
                 {
-                    log.error ("Can't open \""
-                             + entry.getName()
-                             + "\" in zip file \""
-                             + zipName
-                             + "\": ",
+                    log.error ("Can't open \"" + entry.getName() +
+                               "\" in zip file \"" + zipName + "\": ",
                                ex);
                 }
             }
@@ -635,9 +627,8 @@ public class ClassFinder
 
         catch (IOException ex)
         {
-            log.error ("I/O error processing jar file \""
-                     + jarFile.getPath()
-                     + "\"",
+            log.error ("I/O error processing jar file \"" +
+                       jarFile.getPath() + "\"",
                        ex);
         }
     }
@@ -655,8 +646,8 @@ public class ClassFinder
         {
             throw new ClassUtilException (ClassUtil.BUNDLE_NAME,
                                           "ClassFinder.cantReadClassStream",
-                                          "Unable to load class from open "
-                                        + "input stream",
+                                          "Unable to load class from open " +
+                                          "input stream",
                                           ex);
         }
     }

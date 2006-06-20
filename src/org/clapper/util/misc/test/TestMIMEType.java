@@ -141,8 +141,8 @@ public class TestMIMEType
     protected void getCustomUsageInfo (UsageInfo info)
     {
         info.addParameter ("mimeType|filename ...",
-                           "A MIME or file name type to test. "
-                         + "May be specified multiple times.",
+                           "A MIME or file name type to test. " +
+                           "May be specified multiple times.",
                            true);
     }
 }

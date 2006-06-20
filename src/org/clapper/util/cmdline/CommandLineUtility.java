@@ -262,11 +262,10 @@ public abstract class CommandLineUtility
                NoSuchElementException
     {
         throw new CommandLineUsageException
-                                   (Package.BUNDLE_NAME,
-                                    "CommandLineUtility.parseCustomOption",
-                                    "(BUG) custom option found, but class {0} "
-                                  + "provides no parseCustomOption method.",
-                                    new Object[] {this.getClass().getName()});
+            (Package.BUNDLE_NAME, "CommandLineUtility.parseCustomOption",
+             "(BUG) custom option found, but class {0} provides no " +
+             "parseCustomOption method.",
+             new Object[] {this.getClass().getName()});
     }
 
     /**
@@ -406,8 +405,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.numericParamTooSmall",
-                             "Numeric parameter {0} is less than the "
-                           + "minimum legal value of {1}",
+                             "Numeric parameter {0} is less than the " +
+                             "minimum legal value of {1}",
                              new Object[]
                              {
                                  value,
@@ -420,8 +419,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.numericParamTooLarge",
-                             "Numeric parameter {0} is greater than the "
-                           + "maximum legal value of {1}",
+                             "Numeric parameter {0} is greater than the " +
+                             "maximum legal value of {1}",
                              new Object[]
                              {
                                  value,
@@ -464,8 +463,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.badIntegerOption",
-                             "Bad integer command line parameter \"{0}\" for "
-                           + "option {1}",
+                             "Bad integer command line parameter \"{0}\" " +
+                             "for option {1}",
                              new Object[]
                              {
                                  value,
@@ -509,8 +508,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.numericOptionParamTooSmall",
-                             "Numeric parameter {0} for option {1} is less "
-                           + "than the minimum legal value of {2}",
+                             "Numeric parameter {0} for option {1} is less " +
+                             "than the minimum legal value of {2}",
                              new Object[]
                              {
                                  value,
@@ -525,8 +524,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.numericOptionParamTooLarge",
-                             "Numeric parameter {0} for option {1} is greater "
-                           + "than the maximum legal value of {2}",
+                             "Numeric parameter {0} for option {1} is " +
+                             "greater than the maximum legal value of {2}",
                              new Object[]
                              {
                                  value,
@@ -568,8 +567,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.badFloatParam",
-                             "Bad floating point command line parameter "
-                           + "\"{0}\"",
+                             "Bad floating point command line parameter " +
+                             "\"{0}\"",
                              new Object[] {value});
         }
     }
@@ -603,8 +602,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.numericParamTooSmall",
-                             "Numeric parameter {0} is less than the "
-                           + "minimum legal value of {1}",
+                             "Numeric parameter {0} is less than the " +
+                             "minimum legal value of {1}",
                              new Object[]
                              {
                                  value,
@@ -617,8 +616,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.numericParamTooLarge",
-                             "Numeric parameter {0} is greater than the "
-                           + "maximum legal value of {1}",
+                             "Numeric parameter {0} is greater than the " +
+                             "maximum legal value of {1}",
                              new Object[]
                              {
                                  value,
@@ -661,8 +660,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.badFloatParam",
-                             "Bad floating point command line parameter "
-                           + "\"{0}\" for option {1}",
+                             "Bad floating point command line parameter " +
+                             "\"{0}\" for option {1}",
                              new Object[]
                              {
                                  value,
@@ -708,8 +707,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.numericOptionParamTooSmall",
-                             "Numeric parameter {0} for option {1} is less "
-                           + "than the minimum legal value of {2}",
+                             "Numeric parameter {0} for option {1} is less " +
+                             "than the minimum legal value of {2}",
                              new Object[]
                              {
                                  value,
@@ -724,8 +723,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.numericOptionParamTooLarge",
-                             "Numeric parameter {0} for option {1} is greater "
-                           + "than the maximum legal value of {2}",
+                             "Numeric parameter {0} for option {1} is " +
+                             "greater than the maximum legal value of {2}",
                              new Object[]
                              {
                                  value,
@@ -767,8 +766,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.badDoubleParam",
-                             "Bad double floating point command line "
-                           + "parameter \"{0}\"",
+                             "Bad double floating point command line " +
+                             "parameter \"{0}\"",
                              new Object[] {value});
         }
     }
@@ -804,8 +803,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.numericParamTooSmall",
-                             "Numeric parameter {0} is less than the "
-                           + "minimum legal value of {1}",
+                             "Numeric parameter {0} is less than the " +
+                             "minimum legal value of {1}",
                              new Object[]
                              {
                                  value,
@@ -818,8 +817,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.numericParamTooLarge",
-                             "Numeric parameter {0} is greater than the "
-                           + "maximum legal value of {1}",
+                             "Numeric parameter {0} is greater than the " +
+                             "maximum legal value of {1}",
                              new Object[]
                              {
                                  value,
@@ -862,8 +861,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.badDoubleOption",
-                             "Bad double command line parameter "
-                           + "\"{0}\" for option {1}",
+                             "Bad double command line parameter " +
+                             "\"{0}\" for option {1}",
                              new Object[]
                              {
                                  value,
@@ -909,8 +908,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.numericOptionParamTooSmall",
-                             "Numeric parameter {0} for option {1} is less "
-                           + "than the minimum legal value of {2}",
+                             "Numeric parameter {0} for option {1} is less " +
+                             "than the minimum legal value of {2}",
                              new Object[]
                              {
                                  value,
@@ -925,8 +924,8 @@ public abstract class CommandLineUtility
             throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.numericOptionParamTooSmall",
-                             "Numeric parameter {0} for option {1} is greater "
-                           + "than the maximum legal value of {2}",
+                             "Numeric parameter {0} for option {1} is " +
+                             "greater than the maximum legal value of {2}",
                              new Object[]
                              {
                                  value,
@@ -992,9 +991,9 @@ public abstract class CommandLineUtility
                         throw new CommandLineUsageException
                             (Package.BUNDLE_NAME,
                              "CommandLineUtility.badLongOption",
-                             "Option \"{0}\" is not a single-character short "
-                           + "option, but it does not start with \"{1}\", as "
-                           + "long options must.",
+                             "Option \"{0}\" is not a single-character " +
+                             "short option, but it does not start with " +
+                             "\"{1}\", as long options must.",
                              new Object[] {arg, UsageInfo.LONG_OPTION_PREFIX});
                     }
 
@@ -1292,8 +1291,8 @@ public abstract class CommandLineUtility
                         BundleUtil.getMessage (Package.BUNDLE_NAME,
                                                Locale.getDefault(),
                                                "CommandLineUtility.logging",
-                                               "Enable logging via the "
-                                             + "java.util.logging API."));
+                                               "Enable logging via the " +
+                                               "java.util.logging API."));
 
         return info;
     }

@@ -951,11 +951,11 @@ public class Configuration
 
         catch (ConfigurationException ex)
         {
-            log.error ("Can't get value for variable \""
-                     + variableName
-                     + "\" in section \""
-                     + sectionName
-                     + "\"",
+            log.error ("Can't get value for variable \"" +
+                       variableName +
+                       "\" in section \"" +
+                       sectionName +
+                       "\"",
                        ex);
         }
 
@@ -1029,17 +1029,17 @@ public class Configuration
 
         catch (NumberFormatException ex)
         {
-            throw new ConfigurationException (Package.BUNDLE_NAME,
-                                              "Configuration.badNumericValue",
-                                              "Bad numeric value \"{0}\" for "
-                                            + "variable \"{1}\" in section "
-                                            + "\"{2}\"",
-                                              new Object[]
-                                              {
-                                                  sNum,
-                                                  variableName,
-                                                  sectionName
-                                              });
+            throw new ConfigurationException
+                (Package.BUNDLE_NAME,
+                 "Configuration.badNumericValue",
+                 "Bad numeric value \"{0}\" for variable \"{1}\" in section " +
+                 "\"{2}\"",
+                 new Object[]
+                 {
+                     sNum,
+                     variableName,
+                     sectionName
+                 });
         }
     }
 
@@ -1110,8 +1110,8 @@ public class Configuration
             throw new ConfigurationException
                                (Package.BUNDLE_NAME,
                                 "Configuration.negativeCardinalValue",
-                                "Bad negative numeric value \"{0}\" "
-                              + "for variable \"{1}\" in section \"{2}\"",
+                                "Bad negative numeric value \"{0}\" " +
+                                "for variable \"{1}\" in section \"{2}\"",
                                 new Object[]
                                 {
                                     sNum,
@@ -1184,9 +1184,9 @@ public class Configuration
         {
             throw new ConfigurationException (Package.BUNDLE_NAME,
                                               "Configuration.badFloatValue",
-                                              "Bad floating point value "
-                                            + "\"{0}\" for variable \"{1}\" "
-                                            + "in section \"{2}\"",
+                                              "Bad floating point value " +
+                                              "\"{0}\" for variable \"{1}\" " +
+                                              "in section \"{2}\"",
                                               new Object[]
                                               {
                                                   sNum,
@@ -1348,8 +1348,8 @@ public class Configuration
             throw new VariableSubstitutionException
                                  (Package.BUNDLE_NAME,
                                   "Configuration.recursiveSubst",
-                                  "Attempt to substitute value for variable "
-                                + "\"{0}\" within itself.",
+                                  "Attempt to substitute value for variable " +
+                                  "\"{0}\" within itself.",
                                   new Object[] {varName});
         }
 
@@ -1391,10 +1391,10 @@ public class Configuration
                 throw new VariableSubstitutionException
                     (Package.BUNDLE_NAME,
                      "Configuration.badSectionRef",
-                     "Variable \"{0}\" in section \"{1}\" cannot substitute "
-                   + "the value of variable \"{2}\" from section \"{3}\", "
-                   + "because section \"{3}\" appears after section \"{1}\" "
-                   + "in the configuration file.",
+                     "Variable \"{0}\" in section \"{1}\" cannot substitute " +
+                     "the value of variable \"{2}\" from section \"{3}\", " +
+                     "because section \"{3}\" appears after section \"{1}\" " +
+                     "in the configuration file.",
                      new Object[]
                      {
                          substContext.currentVariable.getName(),
@@ -1704,8 +1704,8 @@ public class Configuration
             throw new ConfigurationException
                               (Package.BUNDLE_NAME,
                                "Configuration.recursiveInclude",
-                               "{0}, line {1}: Attempt to include \"{2}\" "
-                             + "from itself, either directly or indirectly.",
+                               "{0}, line {1}: Attempt to include \"{2}\" " +
+                               "from itself, either directly or indirectly.",
                                new Object[]
                                {
                                    url.toExternalForm(),
@@ -1745,8 +1745,8 @@ public class Configuration
                             throw new ConfigurationException
                                      (Package.BUNDLE_NAME,
                                       "Configuration.varBeforeSection",
-                                      "{0}, line {1}: Variable assignment "
-                                    + "before first section.",
+                                      "{0}, line {1}: Variable assignment " +
+                                      "before first section.",
                                       new Object[]
                                       {
                                           url.toExternalForm(),
@@ -1766,8 +1766,8 @@ public class Configuration
             catch (IOException ex)
             {
                 throw new ConfigurationException
-                                     (getExceptionPrefix (line, url)
-                                    + ex.toString());
+                                     (getExceptionPrefix (line, url) +
+                                      ex.toString());
             }
         }
 
@@ -1848,9 +1848,9 @@ public class Configuration
         {
             throw new ConfigurationException (Package.BUNDLE_NAME,
                                               "Configuration.missingAssignOp",
-                                              "{0}, line {1}: Missing \"=\" "
-                                            + "or \":\" for variable "
-                                            + "definition.",
+                                              "{0}, line {1}: Missing \"=\" " +
+                                              "or \":\" for variable " +
+                                              "definition.",
                                               new Object[]
                                               {
                                                   url.toExternalForm(),
@@ -1862,9 +1862,9 @@ public class Configuration
         {
             throw new ConfigurationException (Package.BUNDLE_NAME,
                                               "Configuration.noVariablName",
-                                              "{0}, line {1}: Missing "
-                                            + "variable name for variable "
-                                            + "definition.",
+                                              "{0}, line {1}: Missing " +
+                                              "variable name for variable " +
+                                              "definition.",
                                               new Object[]
                                               {
                                                   url.toExternalForm(),
@@ -1884,9 +1884,9 @@ public class Configuration
         {
             throw new ConfigurationException (Package.BUNDLE_NAME,
                                               "Configuration.noVariablName",
-                                              "{0}, line {1}: Missing "
-                                            + "variable name for variable "
-                                            + "definition.",
+                                              "{0}, line {1}: Missing " +
+                                              "variable name for variable " +
+                                              "definition.",
                                               new Object[]
                                               {
                                                   url.toExternalForm(),
@@ -1899,9 +1899,9 @@ public class Configuration
         {
             throw new ConfigurationException (Package.BUNDLE_NAME,
                                               "Configuration.noVariablName",
-                                              "{0}, line {1}: Missing "
-                                            + "variable name for variable "
-                                            + "definition.",
+                                              "{0}, line {1}: Missing " +
+                                              "variable name for variable " +
+                                              "definition.",
                                               new Object[]
                                               {
                                                   url.toExternalForm(),
@@ -1922,10 +1922,10 @@ public class Configuration
             throw new ConfigurationException
                               (Package.BUNDLE_NAME,
                                "Configuration.duplicateVar",
-                               "{0}, line {1}: Section \"{2}\" has a "
-                             + "duplicate definition for variable "
-                             + "\"{3}\". The first instance was defined "
-                             + "on line {4}.",
+                               "{0}, line {1}: Section \"{2}\" has a " +
+                               "duplicate definition for variable " +
+                               "\"{3}\". The first instance was defined " +
+                               "on line {4}.",
                                new Object[]
                                {
                                    url.toExternalForm(),
@@ -2004,8 +2004,8 @@ public class Configuration
             throw new ConfigurationException
                                 (Package.BUNDLE_NAME,
                                  "Configuration.maxNestedIncludeExceeded",
-                                 "{0}, line {1}: Exceeded maximum nested "
-                               + "include level of {2}.",
+                                 "{0}, line {1}: Exceeded maximum nested " +
+                                 "include level of {2}.",
                                  new Object[]
                                  {
                                      url.toExternalForm(),
@@ -2049,8 +2049,8 @@ public class Configuration
             throw new ConfigurationException
                                  (Package.BUNDLE_NAME,
                                   "Configuration.includeMissingFile",
-                                  "{0}, line {1}: Missing file name or URL in "
-                                + "\"{2}\" directive",
+                                  "{0}, line {1}: Missing file name or URL " +
+                                  "in \"{2}\" directive",
                                   new Object[]
                                   {
                                       url.toExternalForm(),

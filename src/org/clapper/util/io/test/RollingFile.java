@@ -176,13 +176,13 @@ public class RollingFile
 
             default:
                 throw new CommandLineUsageException
-                    ("Unknown option: "
-                   + UsageInfo.LONG_OPTION_PREFIX
-                   + longOption
-                   + " ("
-                   + UsageInfo.SHORT_OPTION_PREFIX
-                   + shortOption
-                   + ")");
+                    ("Unknown option: " +
+                     UsageInfo.LONG_OPTION_PREFIX +
+                     longOption +
+                     " (" +
+                     UsageInfo.SHORT_OPTION_PREFIX +
+                     shortOption +
+                     ")");
         }
     }
     
@@ -201,9 +201,9 @@ public class RollingFile
 
         catch (NumberFormatException ex)
         {
-            throw new CommandLineUsageException ("Bad value (\""
-                                               + s
-                                               + "\" for maximum file size.");
+            throw new CommandLineUsageException ("Bad value (\"" +
+                                                 s +
+                                                 "\" for maximum file size.");
         }
 
         s = it.next();
@@ -214,9 +214,9 @@ public class RollingFile
 
         catch (NumberFormatException ex)
         {
-            throw new CommandLineUsageException ("Bad value of \""
-                                               + s
-                                               + "\" for max number of files.");
+            throw new CommandLineUsageException ("Bad value of \"" + s +
+                                                 "\" for maximum number " +
+                                                 "of files.");
         }
 
         if (it.hasNext())

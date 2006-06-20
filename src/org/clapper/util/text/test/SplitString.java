@@ -175,20 +175,20 @@ public class SplitString extends CommandLineUtility
     protected void getCustomUsageInfo (UsageInfo info)
     {
         info.addOption ('l', "limit", "n",
-                        "Set the split limit to <n>. If not specified, all "
-                      + "instances of the pattern are used. Only applicable "
-                      + "when -r is used.");
+                        "Set the split limit to <n>. If not specified, all " +
+                        "instances of the pattern are used. Only applicable " +
+                        "when -r is used.");
         info.addOption ('r', "regexp", "regexp",
-                        "Regular expression to use to split the string. "
-                      + "If neither -r nor -s is specified, white space "
-                      + "is used.");
+                        "Regular expression to use to split the string. " +
+                        "If neither -r nor -s is specified, white space " +
+                        "is used.");
         info.addOption ('p', "preserve",
-                        "Preserve empty strings (i.e., don't parse through "
-                      + "adjacent delimiters). Defaults to off.");
+                        "Preserve empty strings (i.e., don't parse through " +
+                        "adjacent delimiters). Defaults to off.");
         info.addOption ('d', "delims", "delims",
-                        "Set of delimiters to use to split the strings. "
-                      + "If neither -r nor -s is specified, white space "
-                      + "is used.");
+                        "Set of delimiters to use to split the strings. " +
+                        "If neither -r nor -s is specified, white space " +
+                        "is used.");
 
         info.addParameter ("string ...",
                            "String to split. May be specified more than once.",
@@ -237,12 +237,9 @@ public class SplitString extends CommandLineUtility
             }
 
             System.out.println ();
-            System.out.println ("String:   \""
-                              + strings[i]
-                              + "\"");
-            System.out.print ("Split by: \""
-                            + printableDelims.toString()
-                            + "\"");
+            System.out.println ("String:   \"" + strings[i] + "\"");
+            System.out.print ("Split by: \"" + printableDelims.toString() +
+                              "\"");
             if (useRegexp)
                 System.out.print (" (regular expression)");
             System.out.println();

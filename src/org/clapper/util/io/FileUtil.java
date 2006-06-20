@@ -96,10 +96,8 @@ public class FileUtil
 
         else
         {
-            throw new IOException ("Can't determine operating system from "
-                                 + "file separator \""
-                                 + fileSep
-                                 + "\"");
+            throw new IOException ("Can't determine operating system from " +
+                                   "file separator \"" + fileSep + "\"");
         }
 
         return isAbsolute;
