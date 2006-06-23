@@ -90,7 +90,7 @@ import org.objectweb.asm.Opcodes;
  * the <tt>ClassFilter</tt> interface, searching the classpath as well
  * as anything specified on the command line.</p>
  *
- * <blockqutoe><pre>
+ * <blockquote><pre>
  * import org.clapper.util.classutil.*;
  *
  * public class Test
