@@ -70,17 +70,34 @@
   <property name="docs_api_dir" value="${docs_top_dir}/api"/>
   <property name="zip_dir_prefix" value="util/"/>
   <property name="release_dir" value="${build.dir}/release"/>
-
+  <property file="build.properties"/>
   <!--
   ***************************************************************************
                             Paths and Patterns
   ***************************************************************************
   -->
 
+  <condition property="third.party.jar.dir" value="/usr/local/java/classes">
+      <not>
+          <isset property="third.party.jar.dir"/>
+      </not>
+  </condition>
+
   <path id="project.class.path">
     <pathelement location="lib/"/>
-    <pathelement path="${java.class.path}/"/>
+    <pathelement location="${third.party.jar.dir}/activation.jar"/>
+    <pathelement location="${third.party.jar.dir}/mail.jar"/>
+    <pathelement location="${third.party.jar.dir}/asm-2.2.1.jar"/>
+    <pathelement location="${third.party.jar.dir}/asm-commons-2.2.1.jar"/>
+    <pathelement location="${third.party.jar.dir}/asm-util-2.2.1.jar"/>
+    <pathelement location="${third.party.jar.dir}/commons-logging.jar"/>
+    <pathelement location="${ant.home}/lib/ant.jar"/>
     <pathelement path="classes/"/>
+  </path>
+  
+  <path id="installer.class.path">
+      <path refid="project.class.path"/>
+      <pathelement location="${third.party.jar.dir}/izpack-compiler.jar"/>
   </path>
 
   <!--
@@ -120,6 +137,7 @@
   <target name="lib" depends="lib.unconditional,lib.conditional"/>
 
   <target name="lib.unconditional" depends="init">
+    <echo>third.party.jar.dir=${third.party.jar.dir}</echo>
     <javac srcdir="${javac.src.dir}"
            source="${javac.source}"
            debug="${javac.debug}"
@@ -158,8 +176,8 @@
   <target name="-check.javamail.exists">
     <condition property="javamail.exists">
       <and>
-        <available classname="javax.activation.DataHandler"/>
-        <available classname="javax.mail.Transport"/>
+        <available classname="javax.activation.DataHandler" classpathref="project.class.path"/>
+        <available classname="javax.mail.Transport" classpathref="project.class.path"/>
       </and>
     </condition>
   </target>
@@ -209,7 +227,7 @@
   <target name="-check.asm.exists">
     <condition property="asm.exists">
       <and>
-        <available classname="org.objectweb.asm.ClassReader"/>
+        <available classname="org.objectweb.asm.ClassReader" classpathref="project.class.path"/>
       </and>
     </condition>
   </target>
@@ -449,7 +467,8 @@
 
     <!-- Define the IzPack task -->
 
-    <taskdef name="izpack" classname="com.izforge.izpack.ant.IzPackTask"/>
+    <taskdef name="izpack" classname="com.izforge.izpack.ant.IzPackTask"
+             classpathref="installer.class.path"/>
 
     <!-- Create a temporary installation directory -->
 
