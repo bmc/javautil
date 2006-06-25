@@ -92,7 +92,6 @@
     <pathelement location="${third.party.jar.dir}/asm-util-2.2.1.jar"/>
     <pathelement location="${third.party.jar.dir}/commons-logging.jar"/>
     <pathelement location="${ant.home}/lib/ant.jar"/>
-    <pathelement path="classes/"/>
   </path>
   
   <path id="installer.class.path">
