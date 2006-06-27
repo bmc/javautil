@@ -78,9 +78,9 @@
   -->
 
   <condition property="third.party.jar.dir" value="/usr/local/java/classes">
-      <not>
-          <isset property="third.party.jar.dir"/>
-      </not>
+    <not>
+      <isset property="third.party.jar.dir"/>
+    </not>
   </condition>
 
   <path id="project.class.path">
@@ -95,8 +95,8 @@
   </path>
   
   <path id="installer.class.path">
-      <path refid="project.class.path"/>
-      <pathelement location="${third.party.jar.dir}/izpack-compiler.jar"/>
+    <path refid="project.class.path"/>
+    <pathelement location="${third.party.jar.dir}/izpack-compiler.jar"/>
   </path>
 
   <!--
@@ -175,8 +175,10 @@
   <target name="-check.javamail.exists">
     <condition property="javamail.exists">
       <and>
-        <available classname="javax.activation.DataHandler" classpathref="project.class.path"/>
-        <available classname="javax.mail.Transport" classpathref="project.class.path"/>
+        <available classname="javax.activation.DataHandler" 
+                   classpathref="project.class.path"/>
+        <available classname="javax.mail.Transport"
+                   classpathref="project.class.path"/>
       </and>
     </condition>
   </target>
