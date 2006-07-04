@@ -27,19 +27,35 @@ Before building this library, you'll need:
 BUILDING:
 ---------
 
-Type "ant dist" in the top-level directory. The code will be compiled to
-the "classes" subdirectory, and you'll get an "curn.jar" in "dist/lib".
+1. Normal build:
 
-Note: The Ant build.xml file is configured to use the default Java compiler
-(usually "modern"). However, I usually build with Jikes
-(http://www-124.ibm.com/developerworks/oss/jikes/). To use Jikes, simply
-run Ant as follows:
+   Type "ant build" in the top-level directory. The code will be compiled
+   to the "build" subdirectory, and you'll get an "ocutil.jar" file in
+   "build/lib".
+
+   Note: The Ant build.xml file is configured to use the default Java
+   compiler (usually "modern"). However, I usually build with Jikes
+   (http://www-124.ibm.com/developerworks/oss/jikes/). To use Jikes, simply
+   run Ant as follows:
 
 	ant -Dbuild.compiler=jikes dist
 
-See the Ant manual entry for the <javac> task
-(http://ant.apache.org/manual/CoreTasks/javac.html) task for more
-information on the valid values for build.compiler.
+   See the Ant manual entry for the <javac> task
+   (http://ant.apache.org/manual/CoreTasks/javac.html) task for more
+   information on the valid values for build.compiler.
+
+2. Release build:
+
+   To build the release distribution, use "ant release". This target builds
+   the jar file and bundles the documentation and source into zip files. The
+   results are written to version-stamped files in "build/release".
+
+3. Building the graphical installer:
+
+   You must first manually build the "release" target. Then, run
+   "ant installer". The resulting installer jar file is written to
+   "build/release".
+
 
 POSSIBLE BUILD ERRORS:
 
