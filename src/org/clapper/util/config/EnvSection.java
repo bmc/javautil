@@ -26,8 +26,8 @@
 
 package org.clapper.util.config;
 
-import java.util.Enumeration;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implements the special "env" section
@@ -50,6 +50,12 @@ class EnvSection extends Section
     EnvSection (String name, int id)
     {
         super (name, id);
-        super.addVariables (System.getenv());
+        
+        // Need a modifiable copy of the environment map, so we can
+        // escape any embedded backslashes. (That's necessary because the
+        // values from the environment will be subsituted pre-parse.)
+
+        Map<String,String> env = new HashMap<String,String> (System.getenv());
+        super.addVariables (escapeEmbeddedBackslashes (env));
     }
 }

@@ -30,8 +30,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.clapper.util.text.XStringBuilder;
 
 /**
  * Contains the contents of a section.
@@ -177,4 +179,41 @@ class Section
             addVariable (varName, value);
         }
     }
+
+    /*----------------------------------------------------------------------*\
+                               Protected Methods
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * Double any backslashes found in the values of a map, returning the
+     * possibly altered map.
+     *
+     * @param map  the map
+     *
+     * @return the <tt>map</tt> parameter
+     */
+    protected Map<String,String> 
+    escapeEmbeddedBackslashes (Map<String,String> map)
+    {
+        XStringBuilder buf = new XStringBuilder();
+        for (Iterator<String> it = map.keySet().iterator(); it.hasNext();)
+        {
+            String varName = it.next();
+            String varValue = map.get (varName);
+
+            if (varValue.indexOf ('\\') != -1)
+            {
+                // Have to map each backslash to four backslashes due to a 
+                // double-parse issue.
+
+                buf.clear();
+                buf.append(varValue);
+                buf.replaceAll("\\", "\\\\\\\\");
+                map.put (varName, buf.toString());
+            }
+        }
+        
+        return map;
+    }
 }
+        

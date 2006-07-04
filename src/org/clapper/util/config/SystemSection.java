@@ -26,10 +26,8 @@
 
 package org.clapper.util.config;
 
+import java.util.Map;
 import org.clapper.util.misc.PropertiesMap;
-
-import java.util.Enumeration;
-import java.util.Properties;
 
 /**
  * Implements the special "system" section
@@ -52,6 +50,15 @@ class SystemSection extends Section
     SystemSection (String name, int id)
     {
         super (name, id);
-        super.addVariables (new PropertiesMap (System.getProperties()));
+        
+        // Escape any embedded backslashes in variable values.
+        
+        Map<String,String> propMap = new PropertiesMap (System.getProperties());
+        super.addVariables (escapeEmbeddedBackslashes (propMap));
     }
+
+    /*----------------------------------------------------------------------*\
+                          Package-visible Methods
+    \*----------------------------------------------------------------------*/
+
 }
