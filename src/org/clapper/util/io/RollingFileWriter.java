@@ -961,7 +961,9 @@ public class RollingFileWriter extends PrintWriter
 
             String fileName = sub.substitute (fileNamePattern,
                                               deref,
-                                              fileNamePattern);
+                                              null,
+                                              fileNamePattern,
+                                              false);
             if (! deref.patternIsLegal())
             {
                 throw new IOExceptionExt (Package.BUNDLE_NAME,

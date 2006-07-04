@@ -197,6 +197,54 @@ public class UnixShellVariableSubstituter
                               Object               context)
         throws VariableSubstitutionException
     {
+        return substitute (s, deref, nameChecker, context, true);
+    }
+
+    /**
+     * <p>Substitute all variable references in the supplied string, using
+     * a Unix Bourne Shell-style variable syntax. This method uses a
+     * supplied <tt>VariableDereferencer</tt> object to resolve variable
+     * values. Note that this method throws no exceptions. Syntax errors in
+     * the variable references are silently ignored. Variables that have no
+     * value are substituted as the empty string. If the
+     * <tt>nameChecker</tt> parameter is not null, this method calls its
+     * {@link VariableNameChecker#legalVariableCharacter(char)} method to
+     * determine whether a given character is a legal part of a variable
+     * name. If <tt>nameChecker</tt> is null, then this method assumes that
+     * variable names may consist solely of alphanumeric characters,
+     * underscores and periods. This syntax is sufficient to substitute
+     * variables from <tt>System.properties</tt>, for instance.</p>
+     *
+     * @param s            the string containing possible variable references
+     * @param deref        the <tt>VariableDereferencer</tt> object
+     *                     to use to resolve the variables' values.
+     * @param nameChecker  the <tt>VariableNameChecker</tt> object to be
+     *                     used to check for legal variable name characters,
+     *                     or null
+     * @param context      an optional context object, passed through
+     *                     unmodified to the <tt>deref</tt> object's
+     *                     {@link VariableDereferencer#getVariableValue}
+     *                     method. This object can be anything at all (and,
+     *                     in fact, may be null if you don't care.) It's
+     *                     primarily useful for passing context information
+     *                     from the caller to the
+     *                     <tt>VariableDereferencer</tt>.
+     * @param allowEscapes whether or not to honor backslash escapes
+     *
+     * @return The (possibly) expanded string.
+     *
+     * @throws VariableSubstitutionException  substitution error
+     *
+     * @see #substitute(String,VariableDereferencer,Object)
+     * @see VariableDereferencer#getVariableValue(String,Object)
+     */
+    public String substitute (String               s,
+                              VariableDereferencer deref,
+                              VariableNameChecker  nameChecker,
+                              Object               context,
+                              boolean              allowEscapes)
+        throws VariableSubstitutionException
+    {
         StringBuffer  result        = new StringBuffer();
         int           len           = s.length();
         StringBuffer  var           = new StringBuffer();
@@ -229,7 +277,7 @@ public class UnixShellVariableSubstituter
 
                 if (c == VAR_START)          // Possible start of new variable.
                     inVar = true;
-                else if (c == '\\')          // escape; next char is literal
+                else if (allowEscapes && (c == '\\')) //next char is literal
                     nextIsLiteral = true;
                 else                         // Just a regular, old character.
                     result.append (c);
