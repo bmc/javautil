@@ -98,8 +98,9 @@
       <description>The API Javadocs</description>
       <file src="@JAVADOCS_API_DIR@"
             targetdir="$INSTALL_PATH/docs"/>
-      <file src="@DOCS_DIR@/CHANGELOG"
-            targetdir="$INSTALL_PATH/docs"/>
+      <fileset dir="@DOCS_DIR@"
+               include="*"
+               targetdir="$INSTALL_PATH/docs"/>
     </pack>
 
     <pack name="Sources" required="no">

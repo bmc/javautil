@@ -403,6 +403,9 @@
               value="${code_jar_name}-${api.version}.jar"/>
 
     <property name="versioned_docs_zipfile"
+              value="docs-${api.version}.zip"/>
+
+    <property name="versioned_javadocs_zipfile"
               value="javadocs-${api.version}.zip"/>
   </target>
 
@@ -418,6 +421,10 @@
     <mkdir dir="${release_dir}"/>
     <zip destfile="${release_dir}/${versioned_docs_zipfile}">
       <zipfileset dir="${docs_top_dir}"
+                  prefix="${zip_dir_prefix}"/>
+    </zip>
+    <zip destfile="${release_dir}/${versioned_javadocs_zipfile}">
+      <zipfileset dir="${javadocs.dir}"
                   prefix="${zip_dir_prefix}"/>
     </zip>
   </target>
