@@ -154,7 +154,7 @@ public class XStringBuffer extends XStringBufBase
      *
      * @throws StringIndexOutOfBoundsException if <tt>index</tt> is negative,
      *                                         or greater than or equal to
-     *                                         <tt>length()<tt>.
+     *                                         <tt>length()</tt>.
      */
     public XStringBuffer deleteCharAt (int index)
         throws StringIndexOutOfBoundsException
@@ -315,7 +315,7 @@ public class XStringBuffer extends XStringBufBase
      * @param end    The ending index, exclusive
      *
      * @throws IndexOutOfBoundsException  if <tt>start</tt> is negative,
-     *                                    greater than <tt>length()<tt>,
+     *                                    greater than <tt>length()</tt>,
      *                                    or greater than <tt>end</tt>
      */
     protected void deleteCharacters (int start, int end)
@@ -372,8 +372,8 @@ public class XStringBuffer extends XStringBufBase
      *
      * @throws IndexOutOfBoundsException if <tt>start</tt> is negative,
      *                                   or greater than
-     *                                   <tt>length()<tt>, or greater
-     *                                   than <tt>end<tt>
+     *                                   <tt>length()</tt>, or greater
+     *                                   than <tt>end</tt>
      */
     protected void replaceString (int start, int end, String str)
         throws IndexOutOfBoundsException
