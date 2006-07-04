@@ -866,14 +866,17 @@ public class RollingFileWriter extends PrintWriter
                                            RolloverCallback callback)
         throws IOExceptionExt
     {
-        File    primaryFile = resolveFilePattern (fileNamePattern,
-                                                  null,
-                                                  maxRolledOverFiles,
-                                                  null);
-        Writer  w           = null;
+        File primaryFile = resolveFilePattern (fileNamePattern,
+                                               null,
+                                               maxRolledOverFiles,
+                                               null);
+        log.debug ("primaryFile=" + primaryFile.getPath());
+
+        Writer w = null;
 
         if (primaryFile.exists())
         {
+            log.debug ("Primary file exists. Rolling...");
             w = rollFilesOver (primaryFile,
                                fileNamePattern,
                                charsetName,
@@ -885,6 +888,7 @@ public class RollingFileWriter extends PrintWriter
 
         else
         {
+            log.debug ("Primary file does not exist.");
             w = openFile (primaryFile, charsetName);
         }
 
