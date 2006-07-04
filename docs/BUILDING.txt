@@ -6,17 +6,23 @@ PREREQUISITES:
 
 Before building this library, you'll need:
 
-1. ant, version 1.5 or better, available at http://ant.apache.org/
+1. ant, version 1.6.5 or better, available at http://ant.apache.org/
 
-2. The Apache Jakarta ORO regular expression library. See
-   http://jakarta.apache.org/oro/
-
-3. The Java Mail API, which, in turn, requires the Java Activation Framework.
+2. The Java Mail API, which, in turn, requires the JavaBeans
+   Activation Framework.
    See http://java.sun.com/products/javamail/ 
    and http://java.sun.com/products/javabeans/jaf/index.jsp
 
    This component is optional. See OPTIONAL COMPONENTS, below.
 
+3. The following jars for the ASM bytecode manipulation library
+   (http://asm.objectweb.org/):
+
+   - asm-2.2.1.jar
+   - asm-util-2.2.1.jar
+   - asm-common-2.2.1.jar
+
+   This component is optional. See OPTIONAL COMPONENTS, below.
 
 BUILDING:
 ---------
@@ -75,3 +81,11 @@ The org.clapper.util library contains a set of classes that provide a
 simplified front-end to the Java Mail API (in the org.clapper.mail
 package). This package can only be built if the Java Mail API and the Java
 Activation Framework are present.
+
+B. Java Class Utilities
+
+The org.clapper.util library contains a set of classes that operate on
+compiled Java classes (in the org.clapper.classutil package). This package
+requires the ASM bytecode manipulation library. If that library is not
+present, the org.clapper.classutil package will be skipped in the build.
+
