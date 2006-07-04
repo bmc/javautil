@@ -4,7 +4,7 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
-Version 2.2 (...)
+Version 2.2 (4 July, 2006)
 
 - org.clapper.util.logging API is now implemented in terms of Jakarta
   Commons Logging, rather than java.util.logging.
