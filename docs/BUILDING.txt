@@ -24,6 +24,16 @@ Before building this library, you'll need:
 
    This component is optional. See OPTIONAL COMPONENTS, below.
 
+PREPARATION:
+------------
+
+Place the jar files from steps #2 and #3, above, in a directory somewhere.
+Then, in the source directory (the directory containing this API's "build.xml"
+file), create a file called "build.properties", with the following line:
+
+    third.party.jar.dir: /path/to/directory/containing/jars
+
+
 BUILDING:
 ---------
 
