@@ -87,9 +87,9 @@
     <pathelement location="lib/"/>
     <pathelement location="${third.party.jar.dir}/activation.jar"/>
     <pathelement location="${third.party.jar.dir}/mail.jar"/>
-    <pathelement location="${third.party.jar.dir}/asm-2.2.1.jar"/>
-    <pathelement location="${third.party.jar.dir}/asm-commons-2.2.1.jar"/>
-    <pathelement location="${third.party.jar.dir}/asm-util-2.2.1.jar"/>
+    <pathelement location="${third.party.jar.dir}/asm-2.2.3.jar"/>
+    <pathelement location="${third.party.jar.dir}/asm-commons-2.2.3.jar"/>
+    <pathelement location="${third.party.jar.dir}/asm-util-2.2.3.jar"/>
     <pathelement location="${third.party.jar.dir}/commons-logging.jar"/>
     <pathelement location="${ant.home}/lib/ant.jar"/>
   </path>
@@ -506,43 +506,7 @@
                 value="${versioned_code_jar_file}"/>
       </filterset>
     </copy>
-
-    <!--
-        Copy the LICENSE file and "unwrap" it so it's not wrapped weirdly
-        in the installer's License GUI screen. Oddly enough, this isn't an
-        issue with the README file
-    -->
-
-    <copy todir="${install.tmp}" file="LICENSE"/>
-
-    <!-- First, replace all double newlines with "@@@@" -->
-    <replace dir="${install.tmp}">
-      <include name="LICENSE"/>
-
-      <replacetoken><![CDATA[
-
-]]></replacetoken>
-      <replacevalue>@@@@</replacevalue>
-    </replace>
-
-    <!-- Next, replace single newlines with blanks -->
-    <replace dir="${install.tmp}">
-      <include name="LICENSE"/>
-
-      <replacetoken><![CDATA[
-]]></replacetoken>
-      <replacevalue> </replacevalue>
-    </replace>
-
-    <!-- Finally, restore the double newlines -->
-    <replace dir="${install.tmp}">
-      <include name="LICENSE"/>
-      <replacetoken>@@@@</replacetoken>
-      <replacevalue><![CDATA[
-
-]]></replacevalue>
-    </replace>
-  </target>
+ </target>
 
   <target name="installer"
           depends="-set.version.properties, -installer.prep">
