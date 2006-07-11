@@ -791,7 +791,7 @@ public final class TextUtil
                 Object o = it.next();
                 if (o == null)
                     continue;
-                
+
                 array[i++] = o.toString();
             }
 
@@ -824,7 +824,9 @@ public final class TextUtil
 
     /**
      * Determine whether a given string is empty. A string is empty if it
-     * is null, zero-length, or comprised entirely of white space.
+     * is null, zero-length, or comprised entirely of white space. This method
+     * is more efficient than calling <tt>s.trim().length()</tt>, because it
+     * does not create a new string just to test its length.
      *
      * @param s  the string to test
      *
@@ -832,7 +834,23 @@ public final class TextUtil
      */
     public static boolean stringIsEmpty (String s)
     {
-        return ((s == null) || (s.trim().length() == 0));
+        boolean isEmpty = true;
+
+        if (s != null)
+        {
+            char[] chars = s.toCharArray();
+
+            for (int i = 0; i < chars.length; i++)
+            {
+                if (! Character.isWhitespace (chars[i]))
+                {
+                    isEmpty = false;
+                    break;
+                }
+            }
+        }
+
+        return isEmpty;
     }
 
     /**
