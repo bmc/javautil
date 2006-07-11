@@ -4,6 +4,16 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
+Version 2.3 (...)
+
+- "Configuration" class (in org.clapper.util.config) constructors that
+  actually parse the configuration have been deprecated. They are unsafe,
+  since they invoke methods that could be overridden by a subclass (and
+  thus could be called on an incompletely constructed object). Use the
+  load() methods, instead.
+
+
+---------------------------------------------------------------------------
 Version 2.2 (4 July, 2006)
 
 - org.clapper.util.logging API is now implemented in terms of Jakarta
