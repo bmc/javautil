@@ -267,7 +267,7 @@ import org.clapper.util.io.FileUtil;
  *
  *   <tr valign="top">
  *     <td align="left" nowrap>
- *       <tt>now</tt> <i>delim</i> <i>fmt</i> [<i>delim</i> <i>lang delim country</i>]] 
+ *       <tt>now</tt> <i>delim</i> <i>fmt</i> [<i>delim</i> <i>lang delim country</i>]]
  *     </td>
  *     <td align="left">
  *        <p>The current date/time, formatted with the specified
@@ -410,7 +410,7 @@ import org.clapper.util.io.FileUtil;
  *
  * <p>Note: Attempting to include a file from itself, either directly or
  * indirectly, will cause the parser to throw an exception.</p>
- * 
+ *
  * <h4>Comments and Blank Lines</h4>
  *
  * <p>A comment line is a one whose first non-whitespace character is a "#"
@@ -606,6 +606,8 @@ public class Configuration
      * @throws FileNotFoundException   specified file doesn't exist
      * @throws IOException             can't open or read file
      * @throws ConfigurationException  error in configuration data
+     *
+     * @deprecated as of version 2.3 (unsafe)
      */
     public Configuration (String path)
         throws FileNotFoundException,
@@ -623,6 +625,8 @@ public class Configuration
      *
      * @throws IOException             can't open or read URL
      * @throws ConfigurationException  error in configuration data
+     *
+     * @deprecated as of version 2.3 (unsafe)
      */
     public Configuration (URL url)
         throws IOException,
@@ -639,6 +643,8 @@ public class Configuration
      *
      * @throws IOException             can't read from <tt>InputStream</tt>
      * @throws ConfigurationException  error in configuration data
+     *
+     * @deprecated as of version 2.3 (unsafe)
      */
     public Configuration (InputStream iStream)
         throws IOException,
@@ -728,7 +734,7 @@ public class Configuration
 
         return collection;
     }
-    
+
     /**
      * Get the names of the sections in this object, in the order they were
      * parsed and/or added.
@@ -741,7 +747,7 @@ public class Configuration
     {
         return getSectionNames (new ArrayList<String>());
     }
-    
+
     /**
      * Get the names of the all the variables in a section, in the order
      * they were parsed and/or added.
@@ -772,7 +778,7 @@ public class Configuration
 
         return collection;
     }
-    
+
     /**
      * Get the names of the all the variables in a section, in the order
      * they were parsed and/or added.
@@ -792,7 +798,7 @@ public class Configuration
     {
         return getVariableNames (sectionName, new ArrayList<String>());
     }
-    
+
     /**
      * Get the value for a variable. This method returns a "collapsed"
      * value, with any quotes stripped. It's impossible to tell where
@@ -1579,7 +1585,7 @@ public class Configuration
             }
         }
     }
-    
+
     /**
      * Writes the configuration data to a <tt>PrintWriter</tt>. The sections
      * and variables within the sections are written in the order they were
