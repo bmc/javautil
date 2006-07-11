@@ -692,7 +692,7 @@ public class Configuration
      * @see #getSectionNames
      * @see #addSection
      */
-    public boolean containsSection (String sectionName)
+    public final boolean containsSection (String sectionName)
     {
         return (sectionsByName.get (sectionName) != null);
     }
