@@ -17,6 +17,13 @@ Version 2.3 (...)
   has any non-blank characters. (String.trim() creates a new String
   instance, just to test its length; TextUtil.stringIsEmpty() does not.)
 
+- In org.clapper.util.classutil, AndClassFilter and OrClassFilter are now
+  final. This change avoids problems with the (useful) constructors for
+  those classes potentially calling methods that could be overridden.
+
+- Miscellaneous code cleanup based on output from PMD (pmd.sourceforge.net).
+
+
 ---------------------------------------------------------------------------
 Version 2.2 (4 July, 2006)
 

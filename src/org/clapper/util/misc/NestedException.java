@@ -85,7 +85,7 @@ public class NestedException extends Exception
      */
     public NestedException()
     {
-	super();
+        super();
     }
 
     /**
@@ -96,7 +96,7 @@ public class NestedException extends Exception
      */
     public NestedException (Throwable exception)
     {
-	super (exception);
+        super (exception);
     }
 
     /**
@@ -118,7 +118,7 @@ public class NestedException extends Exception
      */
     public NestedException (String message, Throwable exception)
     {
-	super (message, exception);
+        super (message, exception);
     }
 
     /**
@@ -286,7 +286,7 @@ public class NestedException extends Exception
      */
     public String getMessage (Locale locale)
     {
-	StringBuffer buf = new StringBuffer();
+        StringBuffer buf = new StringBuffer();
         String       msg = null;
 
         if ((resourceBundleName != null) && (bundleMessageKey != null))
@@ -305,10 +305,10 @@ public class NestedException extends Exception
                 msg = super.getMessage();
         }
 
-	if (msg != null)
-	    buf.append (msg);
+        if (msg != null)
+            buf.append (msg);
 
-	else
+        else
         {
             buf.append (this.getClass().getName());
             Throwable containedException = getCause();
@@ -470,9 +470,9 @@ public class NestedException extends Exception
      */
     public String toString()
     {
-	String s = getClass().getName();
-	String message = getMessage();
-	return (message != null) ? (s + ": " + message) : s;
+        String s = getClass().getName();
+        String message = getMessage();
+        return (message != null) ? (s + ": " + message) : s;
     }
 
     /**

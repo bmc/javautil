@@ -33,7 +33,7 @@ import java.util.List;
 
 /**
  * <p>An <tt>AndClassFilter</tt> logically ANDs other
- * {@link ClassFilter} objects. When its {@link #accept accept()} 
+ * {@link ClassFilter} objects. When its {@link #accept accept()}
  * method is called, the <tt>AndClassFilter</tt> object passes
  * the class name through the contained filters. The class name is only
  * accepted if it is accepted by all contained filters. This
@@ -55,7 +55,7 @@ import java.util.List;
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
-public class AndClassFilter implements ClassFilter
+public final class AndClassFilter implements ClassFilter
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
@@ -72,6 +72,7 @@ public class AndClassFilter implements ClassFilter
      */
     public AndClassFilter()
     {
+        // Nothing to do
     }
 
     /**

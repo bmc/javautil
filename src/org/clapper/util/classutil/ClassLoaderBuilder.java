@@ -59,7 +59,7 @@ public class ClassLoaderBuilder
     /**
      * For logging
      */
-    private static Logger log = new Logger (ClassLoaderBuilder.class);
+    private static final Logger log = new Logger (ClassLoaderBuilder.class);
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -70,6 +70,7 @@ public class ClassLoaderBuilder
      */
     public ClassLoaderBuilder()
     {
+        // Nothing to do
     }
 
     /*----------------------------------------------------------------------*\
@@ -97,13 +98,10 @@ public class ClassLoaderBuilder
         {
             if (ClassUtil.fileCanContainClasses (file))
             {
-                if (file.isDirectory())
+                if (file.isDirectory() && (! fileName.endsWith ("/")))
                 {
-                    if (! fileName.endsWith ("/"))
-                    {
-                        fileName = fileName + "/";
-                        file = new File (fileName);
-                    }
+                    fileName = fileName + "/";
+                    file = new File(fileName);
                 }
 
                 urlList.add (file.toURL());

@@ -26,10 +26,6 @@
 
 package org.clapper.util.classutil;
 
-import org.clapper.util.logging.Logger;
-
-import java.lang.reflect.Modifier;
-
 /**
  * <p><tt>ClassModifiersClassFilter</tt> is a {@link ClassFilter} that
  * matches class names that (a) can be loaded and (b) match a set of class
@@ -51,7 +47,7 @@ import java.lang.reflect.Modifier;
  *
  * @see ClassFilter
  * @see ClassFinder
- * @see Modifier
+ * @see java.lang.reflect.Modifier
  *
  * @version <tt>$Revision$</tt>
  *

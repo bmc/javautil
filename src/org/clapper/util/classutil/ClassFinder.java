@@ -34,7 +34,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -54,11 +53,8 @@ import org.clapper.util.io.FileOnlyFilter;
 import org.clapper.util.io.FileFilterMatchType;
 import org.clapper.util.io.RegexFileFilter;
 import org.clapper.util.io.RecursiveFileFinder;
-
-import org.objectweb.asm.commons.EmptyVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.Opcodes;
 
 /**
  * <p>A <tt>ClassFinder</tt> object is used to find classes. By default, an
@@ -136,7 +132,7 @@ import org.objectweb.asm.Opcodes;
 public class ClassFinder
 {
     /*----------------------------------------------------------------------*\
-			    Private Data Items
+                            Private Data Items
     \*----------------------------------------------------------------------*/
 
     /**
@@ -166,6 +162,7 @@ public class ClassFinder
      */
     public ClassFinder()
     {
+        // Nothing to do
     }
 
     /*----------------------------------------------------------------------*\
@@ -208,9 +205,9 @@ public class ClassFinder
      */
     public boolean add (File file)
     {
-	boolean added = false;
+        boolean added = false;
 
-	if (ClassUtil.fileCanContainClasses (file))
+        if (ClassUtil.fileCanContainClasses (file))
         {
             String absPath = file.getAbsolutePath();
             if (placesToSearch.get (absPath) == null)
@@ -558,9 +555,6 @@ public class ClassFinder
         for (File f : files)
         {
             String path = f.getPath();
-            String className =
-                getClassNameFrom
-                    (path.replaceFirst ("^" + dirPath + "/?", ""));
             log.debug ("Loading " + f.getPath());
             try
             {

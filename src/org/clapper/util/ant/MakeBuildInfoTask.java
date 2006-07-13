@@ -70,6 +70,18 @@ public class MakeBuildInfoTask extends Task
     private String  buildCompiler = null;
 
     /*----------------------------------------------------------------------*\
+                              Constructor
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * Default constructor
+     */
+    public MakeBuildInfoTask()
+    {
+        // Nothing to do
+    }
+
+    /*----------------------------------------------------------------------*\
                               Public Methods
     \*----------------------------------------------------------------------*/
 
@@ -92,7 +104,8 @@ public class MakeBuildInfoTask extends Task
         catch (IOException ex)
         {
             throw new BuildException ("Can't create build info file \"" +
-                                      file.getPath() + "\": " + ex.toString());
+                                      file.getPath() + "\": " + ex.toString(),
+                                      ex);
         }
     }
 

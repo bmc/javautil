@@ -55,7 +55,7 @@ import java.util.List;
  *
  * @author Copyright &copy; 2006 Brian M. Clapper
  */
-public class OrClassFilter implements ClassFilter
+public final class OrClassFilter implements ClassFilter
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
@@ -72,6 +72,7 @@ public class OrClassFilter implements ClassFilter
      */
     public OrClassFilter()
     {
+        // Nothing to do
     }
 
     /**

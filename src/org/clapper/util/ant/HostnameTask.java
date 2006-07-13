@@ -37,7 +37,7 @@ import org.apache.tools.ant.Task;
  * property. Example:
  *
  * <blockquote><pre>
- * &lt;taskdef name="host" 
+ * &lt;taskdef name="host"
  *          classname="org.clapper.util.ant.HostnameTask"
  *          classpath="${build}"/&gt;
  * &lt;host property="build.host"/&gt;
@@ -61,10 +61,21 @@ public class HostnameTask extends Task
     private String propertyName = null;
 
     /*----------------------------------------------------------------------*\
-                              Public Methods
+                              Constructor
     \*----------------------------------------------------------------------*/
 
     /**
+     * Default constructor
+     */
+    public HostnameTask()
+    {
+        // Nothing to do
+    }
+
+    /*----------------------------------------------------------------------*\
+                              Public Methods
+    \*----------------------------------------------------------------------*/
+   /**
      * Execute the Ant task, retrieving the host name and storing it in
      * the property.
      *

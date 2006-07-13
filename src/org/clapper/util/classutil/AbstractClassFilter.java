@@ -26,8 +26,6 @@
 
 package org.clapper.util.classutil;
 
-import org.clapper.util.logging.Logger;
-
 import java.lang.reflect.Modifier;
 
 /**
