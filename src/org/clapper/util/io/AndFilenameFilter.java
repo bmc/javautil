@@ -58,7 +58,7 @@ import java.io.File;
  *
  * @author Copyright &copy; 2004-2006 Brian M. Clapper
  */
-public class AndFilenameFilter implements FilenameFilter
+public final class AndFilenameFilter implements FilenameFilter
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
@@ -75,6 +75,7 @@ public class AndFilenameFilter implements FilenameFilter
      */
     public AndFilenameFilter()
     {
+        // nothing to do
     }
 
     /**

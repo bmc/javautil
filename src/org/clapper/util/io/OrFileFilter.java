@@ -58,7 +58,7 @@ import java.io.File;
  *
  * @author Copyright &copy; 2004-2006 Brian M. Clapper
  */
-public class OrFileFilter implements FileFilter
+public final class OrFileFilter implements FileFilter
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
@@ -75,6 +75,7 @@ public class OrFileFilter implements FileFilter
      */
     public OrFileFilter()
     {
+        // Nothing to do
     }
 
     /**

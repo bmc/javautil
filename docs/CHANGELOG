@@ -21,6 +21,11 @@ Version 2.3 (...)
   final. This change avoids problems with the (useful) constructors for
   those classes potentially calling methods that could be overridden.
 
+- In org.clapper.util.io, AndFileFilter, AndFilenameFilter, OrFileFilter
+  and OrFilenameFilter are now final. This change avoids problems with the
+  (useful) constructors for those classes potentially calling methods that
+  could be overridden.
+
 - Miscellaneous code cleanup based on output from PMD (pmd.sourceforge.net).
 
 

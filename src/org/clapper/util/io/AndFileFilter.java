@@ -26,10 +26,8 @@
 
 package org.clapper.util.io;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Iterator;
 
 import java.io.FileFilter;
 import java.io.File;
@@ -58,7 +56,7 @@ import java.io.File;
  *
  * @author Copyright &copy; 2004-2006 Brian M. Clapper
  */
-public class AndFileFilter implements FileFilter
+public final class AndFileFilter implements FileFilter
 {
     /*----------------------------------------------------------------------*\
                             Private Data Items
@@ -75,6 +73,7 @@ public class AndFileFilter implements FileFilter
      */
     public AndFileFilter()
     {
+        // nothing to do
     }
 
     /**
