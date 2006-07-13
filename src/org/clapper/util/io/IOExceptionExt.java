@@ -59,7 +59,7 @@ public class IOExceptionExt extends NestedException
      */
     public IOExceptionExt()
     {
-	super();
+        super();
     }
 
     /**
@@ -70,7 +70,7 @@ public class IOExceptionExt extends NestedException
      */
     public IOExceptionExt (Throwable exception)
     {
-	super (exception);
+        super (exception);
     }
 
     /**
@@ -92,7 +92,7 @@ public class IOExceptionExt extends NestedException
      */
     public IOExceptionExt (String message, Throwable exception)
     {
-	super (message, exception);
+        super (message, exception);
     }
 
     /**

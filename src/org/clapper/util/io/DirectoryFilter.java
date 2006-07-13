@@ -44,6 +44,7 @@ public class DirectoryFilter implements FileFilter
 
     public DirectoryFilter()
     {
+        // Nothing to do
     }
 
     /*----------------------------------------------------------------------*\

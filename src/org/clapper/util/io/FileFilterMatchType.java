@@ -26,12 +26,6 @@
 
 package org.clapper.util.io;
 
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.Writer;
-
-import org.clapper.util.text.TextUtil;
-
 /**
  * <p>The <tt>FileFilterMatchType</tt> enumeration spells out the legal
  * match types for  {@link RegexFilenameFilter} and {@link RegexFileFilter}.

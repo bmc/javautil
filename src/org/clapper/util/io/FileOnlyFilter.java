@@ -50,6 +50,7 @@ public class FileOnlyFilter implements FileFilter
 
     public FileOnlyFilter()
     {
+        // Nothing to do
     }
 
     /*----------------------------------------------------------------------*\

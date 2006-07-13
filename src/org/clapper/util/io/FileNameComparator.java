@@ -144,7 +144,7 @@ public class FileNameComparator implements Comparator<Object>
      *
      * @return the hash code
      */
-    public int hashCode()
+    public int hashCode()                                             // NOPMD
     {
         return super.hashCode();
     }

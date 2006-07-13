@@ -26,21 +26,15 @@
 
 package org.clapper.util.io;
 
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.Writer;
-
-import org.clapper.util.text.TextUtil;
-
 /**
  * <p>The <tt>JustifyStyle</tt> enumeration spells out the legal field
  * justification values for classes such as {@link JustifyTextWriter}. It
  * resides in a separate class for readability.</p>
  *
  * @see JustifyTextWriter
- * @see TextUtil#rightJustifyString(String,int)
- * @see TextUtil#leftJustifyString(String,int)
- * @see TextUtil#centerString(String,int)
+ * @see org.clapper.util.text.TextUtil#rightJustifyString(String,int)
+ * @see org.clapper.util.text.TextUtil#leftJustifyString(String,int)
+ * @see Torg.clapper.util.text.extUtil#centerString(String,int)
  *
  * @version $Revision$
  *
