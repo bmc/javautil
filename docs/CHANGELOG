@@ -12,6 +12,10 @@ Version 2.3 (...)
   thus could be called on an incompletely constructed object). Use the
   load() methods, instead.
 
+- TextUtil.stringIsEmpty() is now more efficient and is a good (and faster)
+  alternative to "String.trim().isEmpty()" for determining whether a string
+  has any non-blank characters. (String.trim() creates a new String
+  instance, just to test its length; TextUtil.stringIsEmpty() does not.)
 
 ---------------------------------------------------------------------------
 Version 2.2 (4 July, 2006)
