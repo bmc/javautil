@@ -26,10 +26,6 @@
 
 package org.clapper.util.classutil;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 

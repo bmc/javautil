@@ -27,7 +27,6 @@
 package org.clapper.util.classutil;
 
 import org.objectweb.asm.commons.EmptyVisitor;
-import org.objectweb.asm.ClassVisitor;
 
 import java.io.File;
 import java.util.Map;

@@ -50,7 +50,7 @@ class EnvSection extends Section
     EnvSection (String name, int id)
     {
         super (name, id);
-        
+
         // Need a modifiable copy of the environment map, so we can
         // escape any embedded backslashes. (That's necessary because the
         // values from the environment will be subsituted pre-parse.)

@@ -46,6 +46,7 @@ final class OptionComparator implements Comparator<OptionInfo>
 
     public OptionComparator()
     {
+        // Nothing to do
     }
 
     public OptionComparator (boolean ignoreCase)
@@ -66,7 +67,7 @@ final class OptionComparator implements Comparator<OptionInfo>
         return (this.getClass().isInstance (o));
     }
 
-    public int hashCode()
+    public int hashCode()                                            // NOPMD
     {
         return super.hashCode();
     }

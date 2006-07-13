@@ -55,7 +55,7 @@ public class CommandLineUsageException extends CommandLineException
      */
     public CommandLineUsageException()
     {
-	super();
+        super();
     }
 
     /**
@@ -66,7 +66,7 @@ public class CommandLineUsageException extends CommandLineException
      */
     public CommandLineUsageException (Throwable exception)
     {
-	super (exception);
+        super (exception);
     }
 
     /**
@@ -88,7 +88,7 @@ public class CommandLineUsageException extends CommandLineException
      */
     public CommandLineUsageException (String message, Throwable exception)
     {
-	super (message, exception);
+        super (message, exception);
     }
 
     /**

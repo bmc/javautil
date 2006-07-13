@@ -50,9 +50,9 @@ class SystemSection extends Section
     SystemSection (String name, int id)
     {
         super (name, id);
-        
+
         // Escape any embedded backslashes in variable values.
-        
+
         Map<String,String> propMap = new PropertiesMap (System.getProperties());
         super.addVariables (escapeEmbeddedBackslashes (propMap));
     }

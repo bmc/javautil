@@ -169,8 +169,6 @@ public abstract class CommandLineUtility
                            Private Data Elements
     \*----------------------------------------------------------------------*/
 
-    private static Logger log  = new Logger (CommandLineUtility.class);
-
     private UsageInfo usageInfo = null;
 
     /*----------------------------------------------------------------------*\
@@ -182,6 +180,7 @@ public abstract class CommandLineUtility
      */
     protected CommandLineUtility()
     {
+        // Nothing to do
     }
 
     /*----------------------------------------------------------------------*\
@@ -205,8 +204,6 @@ public abstract class CommandLineUtility
     public final void execute (String[] args)
         throws CommandLineException
     {
-        boolean ok = true;
-
         try
         {
             usageInfo = getUsageInfo();
@@ -331,6 +328,7 @@ public abstract class CommandLineUtility
      */
     protected void getCustomUsageInfo (UsageInfo info)
     {
+        // Default: does nothing
     }
 
     /**
@@ -1099,7 +1097,7 @@ public abstract class CommandLineUtility
                                                  locale,
                                                  "CommandLineUtility.options1",
                                                  "[options]"));
-        usageLine.append (" ");
+        usageLine.append (' ');
 
         // Add the parameter placeholders. We'll also calculate the maximum
         // parameter name length in this loop, to save an iteration later.

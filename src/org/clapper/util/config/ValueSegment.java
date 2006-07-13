@@ -40,6 +40,7 @@ class ValueSegment
 
     ValueSegment()
     {
+        // Nothing to do
     }
 
     void append (char ch)

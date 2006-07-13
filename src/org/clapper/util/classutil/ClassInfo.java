@@ -34,7 +34,6 @@ import java.io.InputStream;
 import java.lang.reflect.Modifier;
 
 import org.objectweb.asm.commons.EmptyVisitor;
-import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 
@@ -54,7 +53,7 @@ import org.objectweb.asm.Opcodes;
 public class ClassInfo extends EmptyVisitor
 {
     /*----------------------------------------------------------------------*\
-			    Private Data Items
+                            Private Data Items
     \*----------------------------------------------------------------------*/
 
     private int      modifier = 0;

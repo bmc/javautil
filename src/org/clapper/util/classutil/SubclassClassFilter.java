@@ -26,8 +26,6 @@
 
 package org.clapper.util.classutil;
 
-import org.clapper.util.logging.Logger;
-
 import java.util.Map;
 import java.util.HashMap;
 
@@ -83,7 +81,6 @@ public class SubclassClassFilter implements ClassFilter
      */
     public boolean accept (ClassInfo classInfo, ClassFinder classFinder)
     {
-        boolean               match = false;
         Map<String,ClassInfo> superClasses = new HashMap<String,ClassInfo>();
 
         if (baseClass.isInterface())

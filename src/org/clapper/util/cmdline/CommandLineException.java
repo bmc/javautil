@@ -57,7 +57,7 @@ public class CommandLineException extends NestedException
      */
     public CommandLineException()
     {
-	super();
+        super();
     }
 
     /**
@@ -68,7 +68,7 @@ public class CommandLineException extends NestedException
      */
     public CommandLineException (Throwable exception)
     {
-	super (exception);
+        super (exception);
     }
 
     /**
@@ -90,7 +90,7 @@ public class CommandLineException extends NestedException
      */
     public CommandLineException (String message, Throwable exception)
     {
-	super (message, exception);
+        super (message, exception);
     }
 
     /**

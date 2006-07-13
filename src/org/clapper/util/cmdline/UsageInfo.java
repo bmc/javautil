@@ -80,7 +80,6 @@ public final class UsageInfo
     private Map<String, String> paramMap = new HashMap<String, String>();
     private Set<String> requiredParams = new HashSet<String>();
     private List<String> paramNames = new ArrayList<String>();
-    private String  usageLine = null;
     private String  usagePrologue = null;
     private String  usageTrailer = null;
     private String  commandName = null;
@@ -94,6 +93,7 @@ public final class UsageInfo
      */
     UsageInfo()
     {
+        // Nothing to do
     }
 
     /*----------------------------------------------------------------------*\
@@ -192,7 +192,7 @@ public final class UsageInfo
                            String argToken,
                            String explanation)
     {
-        if ((longOption != null) && (longOption.startsWith ("-")))
+        if ((longOption != null) && (longOption.charAt(0) == '-'))
         {
             throw new IllegalArgumentException
                 ("(BUG) Long option \"" +
@@ -240,7 +240,7 @@ public final class UsageInfo
                               String  explanation,
                               boolean required)
     {
-        if (param.startsWith ("-"))
+        if (param.charAt(0) == '-')
         {
             throw new IllegalArgumentException
                 ("(BUG) Option \"" +

@@ -57,7 +57,7 @@ public class ClassUtilException extends NestedException
      */
     public ClassUtilException()
     {
-	super();
+        super();
     }
 
     /**
@@ -68,7 +68,7 @@ public class ClassUtilException extends NestedException
      */
     public ClassUtilException (Throwable exception)
     {
-	super (exception);
+        super (exception);
     }
 
     /**
@@ -90,7 +90,7 @@ public class ClassUtilException extends NestedException
      */
     public ClassUtilException (String message, Throwable exception)
     {
-	super (message, exception);
+        super (message, exception);
     }
 
     /**

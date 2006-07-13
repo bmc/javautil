@@ -50,5 +50,6 @@ final class Package
 
     private Package()
     {
+        // Can't be built
     }
 }

@@ -41,7 +41,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -465,6 +464,7 @@ public class Configuration
 
         Line()
         {
+            // Nothing to do
         }
 
         void newLine()
@@ -495,28 +495,29 @@ public class Configuration
         /**
          * Current section. Only set during parsing.
          */
-        private Section currentSection = null;
+        Section currentSection = null;
 
         /**
          * Current variable name being processed. Used during the variable
          * substitution parsing phase.
          */
-        private Variable currentVariable = null;
+        Variable currentVariable = null;
 
         /**
          * Current include file nesting level. Used as a fail-safe during
          * parsing.
          */
-        private int includeFileNestingLevel = 0;
+        int includeFileNestingLevel = 0;
 
         /**
          * Table of files/URLs currently open. Used during include
          * processing.
          */
-        private Set<String> openURLs = new HashSet<String>();
+        Set<String> openURLs = new HashSet<String>();
 
         ParseContext()
         {
+            // Nothing to do
         }
     }
 
@@ -560,12 +561,12 @@ public class Configuration
     /**
      * Section ID values.
      */
-    private int nextSectionID = 1;
+    private int nextSectionIDValue = 1;
 
     /**
      * For logging
      */
-    private static Logger log = new Logger (Configuration.class);
+    private static final Logger log = new Logger (Configuration.class);
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -579,6 +580,7 @@ public class Configuration
      */
     public Configuration()
     {
+        // Nothing to do
     }
 
     /**
@@ -589,12 +591,14 @@ public class Configuration
      *
      * @throws IOException             can't open or read file
      * @throws ConfigurationException  error in configuration data
+     *
+     * @deprecated as of 2.3 (unsafe); use {@link #load(File)} instead
      */
     public Configuration (File f)
         throws IOException,
                ConfigurationException
     {
-        load (f);
+        load (f);                                                   // NOPMD
     }
 
     /**
@@ -607,14 +611,14 @@ public class Configuration
      * @throws IOException             can't open or read file
      * @throws ConfigurationException  error in configuration data
      *
-     * @deprecated as of version 2.3 (unsafe)
+     * @deprecated as of version 2.3 (unsafe); use {@link #load(File)} instead
      */
     public Configuration (String path)
         throws FileNotFoundException,
                IOException,
                ConfigurationException
     {
-        load (path);
+        load (path);                                                   // NOPMD
     }
 
     /**
@@ -626,13 +630,13 @@ public class Configuration
      * @throws IOException             can't open or read URL
      * @throws ConfigurationException  error in configuration data
      *
-     * @deprecated as of version 2.3 (unsafe)
+     * @deprecated as of version 2.3 (unsafe); use {@link #load(File)} instead
      */
     public Configuration (URL url)
         throws IOException,
                ConfigurationException
     {
-        load (url);
+        load (url);                                                   // NOPMD
     }
 
     /**
@@ -644,13 +648,13 @@ public class Configuration
      * @throws IOException             can't read from <tt>InputStream</tt>
      * @throws ConfigurationException  error in configuration data
      *
-     * @deprecated as of version 2.3 (unsafe)
+     * @deprecated as of version 2.3 (unsafe); use {@link #load(File)} instead
      */
     public Configuration (InputStream iStream)
         throws IOException,
                ConfigurationException
     {
-        load (iStream);
+        load (iStream);                                                   // NOPMD
     }
 
     /*----------------------------------------------------------------------*\
@@ -994,15 +998,19 @@ public class Configuration
         throws NoSuchSectionException,
                ConfigurationException
     {
+        int result = defaultValue;
+
         try
         {
-            return getRequiredIntegerValue (sectionName, variableName);
+            result = getRequiredIntegerValue(sectionName, variableName);
         }
 
         catch (NoSuchVariableException ex)
         {
-            return defaultValue;
+            // Use default
         }
+
+        return result;
     }
 
     /**
@@ -1076,16 +1084,19 @@ public class Configuration
                ConfigurationException
     {
         assert (defaultValue >= 0);
+        int result = defaultValue;
 
         try
         {
-            return getRequiredCardinalValue (sectionName, variableName);
+            result = getRequiredCardinalValue(sectionName, variableName);
         }
 
         catch (NoSuchVariableException ex)
         {
-            return defaultValue;
+            // Accept default
         }
+
+        return result;
     }
 
     /**
@@ -1149,15 +1160,19 @@ public class Configuration
         throws NoSuchSectionException,
                ConfigurationException
     {
+        double result = defaultValue;
+
         try
         {
-            return getRequiredDoubleValue (sectionName, variableName);
+            result = getRequiredDoubleValue(sectionName, variableName);
         }
 
         catch (NoSuchVariableException ex)
         {
-            return defaultValue;
+            // Accept default
         }
+
+        return result;
     }
 
     /**
@@ -1228,7 +1243,7 @@ public class Configuration
         {
             String s = getConfigurationValue (sectionName, variableName);
 
-            if (s.trim().length() == 0)
+            if (TextUtil.stringIsEmpty (s))
                 result = defaultValue;
             else
                 result = TextUtil.booleanFromString (s);
@@ -1295,7 +1310,7 @@ public class Configuration
         try
         {
             result = getConfigurationValue (sectionName, variableName);
-            if (result.trim().length() == 0)
+            if (TextUtil.stringIsEmpty (result))
                 result = defaultValue;
         }
 
@@ -2189,8 +2204,6 @@ public class Configuration
             {
                 // First line. Determine what it is.
 
-                char firstChar;
-
                 if (s.length() == 0)
                     line.type = LineType.BLANK;
 
@@ -2420,6 +2433,6 @@ public class Configuration
      */
     private synchronized int nextSectionID()
     {
-        return ++nextSectionID;
+        return ++nextSectionIDValue;
     }
 }
