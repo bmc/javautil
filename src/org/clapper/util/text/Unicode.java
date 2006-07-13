@@ -189,5 +189,6 @@ public final class Unicode
 
     private Unicode()
     {
+        // Cannot be instantiated
     }
 }
