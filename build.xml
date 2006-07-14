@@ -60,17 +60,17 @@
   <property name="javadocs.api.dir" value="${javadocs.dir}/api"/>
   <property name="javac.debug" value="true"/>
   <property name="javac.listfiles" value="no"/>
-  <property name="javac_lint_unchecked_opt" value="-Xlint:unchecked"/>
-  <property name="javac_lint_deprecation_opt" value="-Xlint:deprecation"/>
+  <property name="javac.lint.unchecked.opt" value="-Xlint:unchecked"/>
+  <property name="javac.lint.deprecation.opt" value="-Xlint:deprecation"/>
   <property name="build.info.file"
             value="${compiled.classes.dir}/org/clapper/util/misc/BuildInfoBundle.properties"/>
-  <property name="code_jar_name" value="ocutil"/>
-  <property name="code_jar_file" value="${code_jar_name}.jar"/>
-  <property name="code_jar_path" value="${build.dir}/lib/${code_jar_file}"/>
-  <property name="docs_top_dir" value="${top.dir}/docs"/>
-  <property name="docs_api_dir" value="${docs_top_dir}/api"/>
-  <property name="zip_dir_prefix" value="util/"/>
-  <property name="release_dir" value="${build.dir}/release"/>
+  <property name="code.jar.name" value="ocutil"/>
+  <property name="code.jar.file" value="${code.jar.name}.jar"/>
+  <property name="code.jar.path" value="${build.dir}/lib/${code.jar.file}"/>
+  <property name="docs.top.dir" value="${top.dir}/docs"/>
+  <property name="docs.api.dir" value="${docs.top.dir}/api"/>
+  <property name="zip.dir.prefix" value="util/"/>
+  <property name="release.dir" value="${build.dir}/release"/>
   <property file="build.properties"/>
   <!--
   ***************************************************************************
@@ -152,9 +152,11 @@
       <compilerarg compiler="jikes" value="+Pmodifier-order"/>
       <compilerarg compiler="jikes" value="+Pserial"/>
 
-      <compilerarg compiler="javac1.5" value="${javac_lint_unchecked_opt}"/>
+      <compilerarg compiler="modern" value="${javac.lint.unchecked.opt}"/>
+      <compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
+      <compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
       <!--
-      <compilerarg compiler="javac1.5" value="${javac_lint_deprecation_opt}"/>
+      <compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
       -->
 
       <classpath refid="project.class.path"/>
@@ -213,9 +215,10 @@
       <compilerarg compiler="jikes" value="+Pmodifier-order"/>
       <compilerarg compiler="jikes" value="+Pserial"/>
 
-      <compilerarg compiler="javac1.5" value="${javac_lint_unchecked_opt}"/>
+      <compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
+      <compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
       <!--
-      <compilerarg compiler="javac1.5" value="${javac_lint_deprecation_opt}"/>
+      <compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
       -->
 
       <classpath refid="project.class.path"/>
@@ -262,9 +265,10 @@
       <compilerarg compiler="jikes" value="+Pmodifier-order"/>
       <compilerarg compiler="jikes" value="+Pserial"/>
 
-      <compilerarg compiler="javac1.5" value="${javac_lint_unchecked_opt}"/>
+      <compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
+      <compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
       <!--
-      <compilerarg compiler="javac1.5" value="${javac_lint_deprecation_opt}"/>
+      <compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
       -->
 
       <classpath refid="project.class.path"/>
@@ -322,9 +326,10 @@
       <compilerarg compiler="jikes" value="+Pmodifier-order"/>
       <compilerarg compiler="jikes" value="+Pserial"/>
 
-      <compilerarg compiler="javac1.5" value="${javac_lint_unchecked_opt}"/>
+      <compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
+      <compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
       <!--
-      <compilerarg compiler="javac1.5" value="${javac_lint_deprecation_opt}"/>
+      <compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
       -->
 
       <classpath refid="project.class.path"/>
@@ -350,9 +355,10 @@
       <compilerarg compiler="jikes" value="+Pmodifier-order"/>
       <compilerarg compiler="jikes" value="+Pserial"/>
 
-      <compilerarg compiler="javac1.5" value="${javac_lint_unchecked_opt}"/>
+      <compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
+      <compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
       <!--
-      <compilerarg compiler="javac1.5" value="${javac_lint_deprecation_opt}"/>
+      <compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
       -->
 
       <classpath refid="project.class.path"/>
@@ -405,8 +411,8 @@
     <property name="versioned_src_zipfile"
               value="src-${api.version}.zip"/>
 
-    <property name="versioned_code_jar_file"
-              value="${code_jar_name}-${api.version}.jar"/>
+    <property name="versioned_code.jar.file"
+              value="${code.jar.name}-${api.version}.jar"/>
 
     <property name="versioned_docs_zipfile"
               value="docs-${api.version}.zip"/>
@@ -418,32 +424,32 @@
   <target name="code.jar" depends="all"
           description="Generate the distribution">
     <mkdir dir="${build.dir}/lib"/>
-    <jar jarfile="${code_jar_path}" basedir="${compiled.classes.dir}"/>
+    <jar jarfile="${code.jar.path}" basedir="${compiled.classes.dir}"/>
   </target>
   <target name="build" depends="code.jar"/>
 
   <target name="-doczip" depends="doc"
           description="Builds the javadocs zip file">
-    <mkdir dir="${release_dir}"/>
-    <zip destfile="${release_dir}/${versioned_docs_zipfile}">
-      <zipfileset dir="${docs_top_dir}"
-                  prefix="${zip_dir_prefix}"/>
+    <mkdir dir="${release.dir}"/>
+    <zip destfile="${release.dir}/${versioned_docs_zipfile}">
+      <zipfileset dir="${docs.top.dir}"
+                  prefix="${zip.dir.prefix}"/>
     </zip>
-    <zip destfile="${release_dir}/${versioned_javadocs_zipfile}">
+    <zip destfile="${release.dir}/${versioned_javadocs_zipfile}">
       <zipfileset dir="${javadocs.dir}"
-                  prefix="${zip_dir_prefix}"/>
+                  prefix="${zip.dir.prefix}"/>
     </zip>
   </target>
 
   <target name="-srczip" depends=""
           description="Generate the source zip">
-    <mkdir dir="${release_dir}"/>
-    <zip destfile="${release_dir}/${versioned_src_zipfile}">
+    <mkdir dir="${release.dir}"/>
+    <zip destfile="${release.dir}/${versioned_src_zipfile}">
       <!--
           WARNING: This file set is essentially duplicated in the installer's
           config file, below. There's no way around that, unfortunately.
       -->
-      <zipfileset dir="." prefix="${zip_dir_prefix}" casesensitive="yes">
+      <zipfileset dir="." prefix="${zip.dir.prefix}" casesensitive="yes">
         <exclude name="${build.dir}/**"/>
         <exclude name="${compiled.classes.dir}"/>
         <exclude name="**/CVS"/>
@@ -459,8 +465,8 @@
   <target name="release"
           depends="build,-set.version.properties,-srczip,-doczip"
           description="Generate the distribution and source jars">
-    <copy file="${code_jar_path}"
-          tofile="${release_dir}/${versioned_code_jar_file}"/>
+    <copy file="${code.jar.path}"
+          tofile="${release.dir}/${versioned_code.jar.file}"/>
   </target>
 
   <!--
@@ -497,7 +503,7 @@
         <filter token="OCUTIL_VERSION" value="${api.version}"/>
         <filter token="INSTALL_TMP" value="${install.tmp}"/>
         <filter token="SRC_INSTALL" value="${src.install}"/>
-        <filter token="RELEASE_DIR" value="${release_dir}"/>
+        <filter token="RELEASE.DIR" value="${release.dir}"/>
         <filter token="THIRD_PARTY_JAR_DIR" value="${env.wwwtest}"/>
         <filter token="TOP_DIR" value="${top.dir}"/>
         <filter token="SRC_TOP" value="${src.top}"/>
@@ -507,9 +513,9 @@
         <filter token="BUILD_DIR_RELATIVE" value="${build.dir.relative}"/>
         <filter token="DOCS_DIR" value="${docs.dir}"/>
         <filter token="JAVADOCS_DIR" value="${javadocs.dir}"/>
-        <filter token="JAVADOCS_API_DIR" value="${javadocs.api.dir}"/>
-        <filter token="VERSIONED_CODE_JAR_FILE"
-                value="${versioned_code_jar_file}"/>
+        <filter token="JAVADOCS.API.DIR" value="${javadocs.api.dir}"/>
+        <filter token="VERSIONED_CODE.JAR.FILE"
+                value="${versioned_code.jar.file}"/>
       </filterset>
     </copy>
  </target>
@@ -520,7 +526,7 @@
     <!-- Build the installer -->
 
     <izpack input="${install.tmp}/install.xml"
-            output="${release_dir}/install-ocutil-${api.version}.jar"
+            output="${release.dir}/install-ocutil-${api.version}.jar"
             installerType="standard"
             basedir="."
             izPackDir="${izpack.home}">
