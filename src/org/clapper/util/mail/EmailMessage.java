@@ -234,11 +234,6 @@ public class EmailMessage implements Serializable
         new SimpleDateFormat ("yyyyMMddHHmmss");
 
     /**
-     * Default text file extension
-     */
-    private static final String DEFAULT_TEXT_FILE_EXTENSION = ".txt";
-
-    /**
      * Default text MIME type
      */
     private static final String DEFAULT_TEXT_MIME_TYPE = "text/plain";
@@ -302,7 +297,7 @@ public class EmailMessage implements Serializable
     /**
      * For log messages
      */
-    private static Logger log = new Logger (EmailMessage.class);
+    private static final Logger log = new Logger (EmailMessage.class);
 
     /*----------------------------------------------------------------------*\
                                Constructors
@@ -322,7 +317,10 @@ public class EmailMessage implements Serializable
 
     /**
      * Constructs a new <tt>EmailMessage</tt> object, with the specified
-     * sender address.
+     * sender address. Note: This method does <i>not</i> call
+     * {@link #setSender}, because {@link #setSender} might be overridden
+     * by a subclass. (Calling an overridable method from a constructor is
+     * dangerous.)
      *
      * @param sender   The email address of the sender. If this parameter is
      *                 <tt>null</tt>, the sender's address is built
@@ -332,14 +330,13 @@ public class EmailMessage implements Serializable
      *
      * @throws EmailException  improperly formed email address
      *
-     * @see #setSender(String)
      * @see EmailTransport#send(EmailMessage)
      */
     public EmailMessage (String sender)
         throws EmailException
     {
         this();
-        setSender (sender);
+        this.sender = new EmailAddress (sender);
     }
 
     /*----------------------------------------------------------------------*\
@@ -350,8 +347,10 @@ public class EmailMessage implements Serializable
      * Destructor.
      */
     protected void finalize()
+        throws Throwable
     {
         clear();
+        super.finalize();
     }
 
     /*----------------------------------------------------------------------*\
@@ -957,7 +956,7 @@ public class EmailMessage implements Serializable
     {
         return multipartSubtype;
     }
-     
+
     /**
      * Get the text portion of the message.
      *
@@ -1536,9 +1535,9 @@ public class EmailMessage implements Serializable
             if (! mainType.equals ("text"))
             {
                 throw new EmailException ("Bad MIME type (\"" +
-					  mimeType +
-					  "\") for text " +
-					  "part of email message");
+                                          mimeType +
+                                          "\") for text " +
+                                          "part of email message");
             }
 
             this.textPart = bodyPart;
@@ -1608,25 +1607,25 @@ public class EmailMessage implements Serializable
     {
         MimeBodyPart attachment = (MimeBodyPart) attachments.get (index);
 
-	try
-	{
-	    return attachment.getInputStream();
-	}
-
-	catch (IOException ex)
-	{
-	    throw new EmailException ("Cannot get attachment #" +
-				      String.valueOf (index) +
-				      " from message",
-				      ex);
+        try
+        {
+            return attachment.getInputStream();
         }
 
-	catch (MessagingException ex)
-	{
-	    throw new EmailException ("Cannot get attachment #" +
-				      String.valueOf (index) +
-				      " from message",
-				      ex);
+        catch (IOException ex)
+        {
+            throw new EmailException ("Cannot get attachment #" +
+                                      String.valueOf (index) +
+                                      " from message",
+                                      ex);
+        }
+
+        catch (MessagingException ex)
+        {
+            throw new EmailException ("Cannot get attachment #" +
+                                      String.valueOf (index) +
+                                      " from message",
+                                      ex);
         }
     }
 
@@ -1667,11 +1666,11 @@ public class EmailMessage implements Serializable
         }
 
         catch (MessagingException ex)
-	{
-	    throw new EmailException ("Cannot get attachment #" +
-				      String.valueOf (index) +
-				      " from message",
-				      ex);
+        {
+            throw new EmailException ("Cannot get attachment #" +
+                                      String.valueOf (index) +
+                                      " from message",
+                                      ex);
         }
     }
 
@@ -2551,22 +2550,6 @@ public class EmailMessage implements Serializable
      * Make a MIME body part from a File object. The MIME type is taken
      * from the file's extension.
      *
-     * @param file   The <tt>File</tt> object from which to get the text
-     *
-     * @throws EmailException      file doesn't exist
-     * @throws MessagingException  Java Mail API error
-     */
-    private MimeBodyPart makeBodyPart (File file)
-        throws MessagingException,
-               EmailException
-    {
-        return makeBodyPart (file, file.getName(), null);
-    }
-
-    /**
-     * Make a MIME body part from a File object. The MIME type is taken
-     * from the file's extension.
-     *
      * @param file      The <tt>File</tt> object from which to get the text
      * @param fileName  The file name to use with the attachment, or null to
      *                  use the file's name
@@ -2601,7 +2584,7 @@ public class EmailMessage implements Serializable
                 if (s == null)
                     s = MIMETypeUtil.MIMETypeForFile (file);
 
-                return s;
+                return s; // NOPMD (PMD can't grok internal classes)
             }
 
             public String getContentType (String path)
@@ -2611,7 +2594,7 @@ public class EmailMessage implements Serializable
                 if (s == null)
                     s = MIMETypeUtil.MIMETypeForFileName (path);
 
-                return s;
+                return s;  // NOPMD (PMD can't grok internal classes)
             }
         }
 
@@ -2630,7 +2613,7 @@ public class EmailMessage implements Serializable
         // Only add the file name if we're not composing a
         // multipart/alternative message.
 
-        if (multipartSubtype != MULTIPART_ALTERNATIVE)
+        if (! multipartSubtype.equals (MULTIPART_ALTERNATIVE))
         {
             if (fileName == null)
                 fileName = file.getName();
@@ -2794,7 +2777,7 @@ public class EmailMessage implements Serializable
 
     /**
      * Make a text body part from an array of <tt>String</tt>
-     * objects, each of which is assumed to represent a single line. 
+     * objects, each of which is assumed to represent a single line.
      *
      * @param text     The strings to use as the text of the message.
      * @param fileName The file name to use, if applicable
@@ -2826,41 +2809,6 @@ public class EmailMessage implements Serializable
             pw.println (text[i]);
 
         return makeTextBodyPart (w.toString(), fileName, mimeType);
-    }
-
-    /**
-     * Make a text body part from an <tt>Iterator</tt> of <tt>String</tt>
-     * objects, each of which is assumed to represent a single line. The
-     * corresponding MIME type is assumed to be "text/plain".
-     *
-     * @param iterator The <tt>Iterator</tt> that will return the
-     *                 <tt>String</tt> objects that represent the text lines
-     * @param fileName The file name to use, if applicable
-     *
-     * @return the MimeBodyPart for the text
-     *
-     * @throws MessagingException Java Mail API error
-     *
-     * @see makeTextBodyPart(String)
-     * @see makeTextBodyPart(String,String)
-     * @see makeTextBodyPart(String[],String)
-     * @see makeBodyPart(InputStream,String)
-     * @see makeTextBodyPart(Iterator,String)
-     * @see makeTextBodyPart(File)
-     */
-    private MimeBodyPart makeTextBodyPart (Iterator iterator, String fileName)
-        throws MessagingException
-    {
-        // Quick and dirty approach
-
-        StringWriter  w  = new StringWriter();
-        PrintWriter   pw = new PrintWriter (w);
-
-        while (iterator.hasNext())
-            pw.println ((String) iterator.next());
-
-        return makeTextBodyPart (w.toString(), fileName,
-                                 DEFAULT_TEXT_MIME_TYPE);
     }
 
     /**
