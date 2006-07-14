@@ -1,18 +1,18 @@
-The clapper.org Java Utility Library is copyright Â© 2004-2006 Brian M.
+The clapper.org Java Utility Library is copyright © 2004-2006 Brian M.
 Clapper. All rights reserved. See the LICENSE file in the top-level directory
 for licensing information.
 
 This library uses the ASM Bytecode Manipulation Library
-(http://asm.objectweb.org/), which is copyright Â© 2000-2005 INRIA, France
+(http://asm.objectweb.org/), which is copyright © 2000-2005 INRIA, France
 Telecome. All rights reserved.
 
 This library uses the Java Mail API and the Java Beans Activation
-Framework, which are copyright Â© Sun Microsystems, Inc.
+Framework, which are copyright © Sun Microsystems, Inc.
 
 This library uses the the Jakarta Commons Logging API
-(http://jakarta.apache.org/commons/logging/), which is copyright Â© The
+(http://jakarta.apache.org/commons/logging/), which is copyright © The
 Apache Software Foundation.
 
 This library uses APIs from the Ant development and build tool
-(http://ant.apache.org/), which is copyright Â© The Apache Software
+(http://ant.apache.org/), which is copyright © The Apache Software
 Foundation.
