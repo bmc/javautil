@@ -81,6 +81,7 @@ public class MultiIterator<T> implements Iterator<T>, Iterable<T>
      */
     public MultiIterator()
     {
+        // Nothing to do
     }
 
     /**
@@ -95,7 +96,7 @@ public class MultiIterator<T> implements Iterator<T>, Iterable<T>
     public MultiIterator (Collection<T> array[])
     {
         for (int i = 0; i < array.length; i++)
-            addCollection (array[i]);
+            aggregation.add (array[i].iterator());
     }
 
     /**
@@ -112,7 +113,7 @@ public class MultiIterator<T> implements Iterator<T>, Iterable<T>
         for (Iterator<Collection<T>> iterator = coll.iterator();
              iterator.hasNext(); )
         {
-            addCollection (iterator.next());
+            aggregation.add (iterator.next().iterator());
         }
     }
 

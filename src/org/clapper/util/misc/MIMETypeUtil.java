@@ -134,7 +134,7 @@ public class MIMETypeUtil
     /**
      * For issuing log messages
      */
-    private static Logger log = new Logger (MIMETypeUtil.class);
+    private static final Logger log = new Logger (MIMETypeUtil.class);
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -142,6 +142,7 @@ public class MIMETypeUtil
 
     private MIMETypeUtil()
     {
+        // Can't be instantiated
     }
 
     /*----------------------------------------------------------------------*\
@@ -183,7 +184,7 @@ public class MIMETypeUtil
      * @see #MIMETypeForFileName(String)
      * @see #MIMETypeForFileName(String,String)
      */
-    public static String MIMETypeForFileExtension (String extension)
+    public static String MIMETypeForFileExtension (String extension)  // NOPMD
     {
         return MIMETypeForFileExtension (extension, DEFAULT_MIME_TYPE);
     }
@@ -204,7 +205,7 @@ public class MIMETypeUtil
      * @see #MIMETypeForFileName(String)
      * @see #MIMETypeForFileName(String,String)
      */
-    public static String MIMETypeForFileExtension (String extension,
+    public static String MIMETypeForFileExtension (String extension,   // NOPMD
                                                    String defaultMIMEType)
     {
         return MIMETypeForFileName ("test." + extension, defaultMIMEType);
@@ -226,7 +227,7 @@ public class MIMETypeUtil
      * @see #MIMETypeForFileExtension(String,String)
      * @see #DEFAULT_MIME_TYPE
      */
-    public static String MIMETypeForFile (File file)
+    public static String MIMETypeForFile (File file)                   // NOPMD
     {
         return MIMETypeForFileName (file.getName(), DEFAULT_MIME_TYPE);
     }
@@ -250,7 +251,8 @@ public class MIMETypeUtil
      * @see #MIMETypeForFileExtension(String,String)
      * @see #DEFAULT_MIME_TYPE
      */
-    public static String MIMETypeForFile (File file, String defaultMIMEType)
+    public static String MIMETypeForFile (File   file,                // NOPMD
+                                          String defaultMIMEType)
     {
         return MIMETypeForFileName (file.getName(), defaultMIMEType);
     }
@@ -269,7 +271,7 @@ public class MIMETypeUtil
      * @see #MIMETypeForFileName(String,String)
      * @see #DEFAULT_MIME_TYPE
      */
-    public static String MIMETypeForFileName (String fileName)
+    public static String MIMETypeForFileName (String fileName)         // NOPMD
     {
         return MIMETypeForFileName (fileName, DEFAULT_MIME_TYPE);
     }
@@ -293,7 +295,7 @@ public class MIMETypeUtil
      * @see #MIMETypeForFileExtension(String,String)
      * @see #DEFAULT_MIME_TYPE
      */
-    public static String MIMETypeForFileName (String fileName,
+    public static String MIMETypeForFileName (String fileName,         // NOPMD
                                               String defaultMIMEType)
     {
         String mimeType = null;
@@ -371,30 +373,31 @@ public class MIMETypeUtil
                                                StringBuffer mimeType,
                                                Map<String, String> parameters)
     {
-        if ((mimeType == null) && (parameters == null))
-            return;
+        // ContentType header is required, and either the MIME type or the
+        // parameters (or both) must be set. Otherwise, we do nothing.
 
-        if ((contentTypeHeader == null) ||
-            (contentTypeHeader.trim().length() == 0))
-            return;
-
-        if (mimeType == null)
-            mimeType = new StringBuffer();
-
-        if (parameters == null)
-            parameters = new HashMap<String, String>();
-
-        String[] tokens = TextUtil.split (contentTypeHeader, " ;");
-        mimeType.setLength (0);
-        mimeType.append (tokens[0]);
-
-        parameters.clear();
-        for (int i = 1; i < tokens.length; i++)
+        if ( ((mimeType != null) || (parameters != null))
+                                 &&
+             (! TextUtil.stringIsEmpty (contentTypeHeader)) )
         {
-            String[] nv = TextUtil.split (tokens[i], "=");
+            if (mimeType == null)
+                mimeType = new StringBuffer();
 
-            parameters.put (nv[0], (nv.length == 1) ? "" : nv[1]);
-        } 
+            if (parameters == null)
+                parameters = new HashMap<String, String>();
+
+            String[] tokens = TextUtil.split(contentTypeHeader, " ;");
+            mimeType.setLength(0);
+            mimeType.append(tokens[0]);
+
+            parameters.clear();
+            for (int i = 1; i < tokens.length; i++)
+            {
+                String[] nv = TextUtil.split(tokens[i], "=");
+
+                parameters.put(nv[0], (nv.length == 1) ? "" : nv[1]);
+            }
+        }
     }
 
     /*----------------------------------------------------------------------*\
@@ -426,7 +429,6 @@ public class MIMETypeUtil
         // Now, check every directory in the classpath.
 
         String   pathSep = System.getProperty ("path.separator");
-        String   classPath = System.getProperty ("java.classpath");
         String[] pathComponents = TextUtil.split (pathSep);
         int      i;
 

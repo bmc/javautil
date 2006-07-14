@@ -271,7 +271,7 @@ import java.util.TreeSet;
  *
  * @author Copyright &copy; 2004-2006 Brian M. Clapper
  */
-public final class FileHashMap<K,V> extends AbstractMap<K,V>
+public class FileHashMap<K,V> extends AbstractMap<K,V>
 {
     /*----------------------------------------------------------------------*\
                              Public Constants
@@ -682,7 +682,7 @@ public final class FileHashMap<K,V> extends AbstractMap<K,V>
 
         public int size()
         {
-            return indexMap.size();
+            return currentSize();
         }
 
         private void seekTo (long pos)
@@ -954,7 +954,7 @@ public final class FileHashMap<K,V> extends AbstractMap<K,V>
 
         public int size()
         {
-            return FileHashMap.this.indexMap.size();
+            return FileHashMap.this.currentSize();
         }
 
         private synchronized void loadKeyArray()
@@ -1659,7 +1659,7 @@ public final class FileHashMap<K,V> extends AbstractMap<K,V>
     public int size()
     {
         checkValidity();
-        return indexMap.size();
+        return currentSize();
     }
 
     /**
@@ -1719,6 +1719,17 @@ public final class FileHashMap<K,V> extends AbstractMap<K,V>
     }
 
     /**
+     * Determine the size of this map. Basically, this method just consolidates
+     * the size-determination logic in one place.
+     *
+     * @return the size
+     */
+    private int currentSize()
+    {
+        return indexMap.size();
+    }
+    
+    /**
      * Locate gaps in the file by traversing the index. Initializes or
      * reinitializes the fileGaps instance variable.
      */
@@ -1731,7 +1742,7 @@ public final class FileHashMap<K,V> extends AbstractMap<K,V>
         else
             fileGaps.clear();
 
-        if (this.size() > 0)
+        if (currentSize() > 0)
         {
             List<FileHashMapEntry<K>>     entries  = getSortedEntries();
             FileHashMapEntry<K>           previous = null;
@@ -1947,7 +1958,7 @@ public final class FileHashMap<K,V> extends AbstractMap<K,V>
         {
             List<FileHashMapEntry<K>> entries = getSortedEntries();
 
-            log.debug ("Just saved index. Total entries=" + indexMap.size());
+            log.debug ("Just saved index. Total entries=" + currentSize());
             log.debug ("Index values follow.");
             for (FileHashMapEntry<K> entry : entries)
             {

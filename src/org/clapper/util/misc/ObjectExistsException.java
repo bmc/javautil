@@ -55,7 +55,7 @@ public class ObjectExistsException extends NestedException
      */
     public ObjectExistsException()
     {
-	super();
+        super();
     }
 
     /**
@@ -66,7 +66,7 @@ public class ObjectExistsException extends NestedException
      */
     public ObjectExistsException (Throwable exception)
     {
-	super (exception);
+        super (exception);
     }
 
     /**
@@ -88,7 +88,7 @@ public class ObjectExistsException extends NestedException
      */
     public ObjectExistsException (String message, Throwable exception)
     {
-	super (message, exception);
+        super (message, exception);
     }
 
     /**

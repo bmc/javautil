@@ -45,7 +45,7 @@ import java.io.Serializable;
  * {@link org.clapper.util.text.VariableSubstituter} class.)
  *
  * @see java.util.Properties
- * 
+ *
  * @version <tt>$Revision$</tt>
  *
  * @author Copyright &copy; 2004-2006 Brian M. Clapper
@@ -107,24 +107,24 @@ public class PropertiesMap
      */
     private class EntrySet extends AbstractSet<Map.Entry<String, String>>
     {
-        private Set<PropertiesMapEntry> entrySet;
+        private Set<PropertiesMapEntry> entrySetResult;
 
         EntrySet()
         {
-            entrySet = new HashSet<PropertiesMapEntry>();
+            entrySetResult = new HashSet<PropertiesMapEntry>();
 
             // Load the entry set.
 
             KeySet keySet = new KeySet();
             for (Iterator<String> it = keySet.iterator(); it.hasNext(); )
-                entrySet.add (new PropertiesMapEntry (it.next()));
+                entrySetResult.add (new PropertiesMapEntry (it.next()));
         }
 
         public Iterator<Map.Entry<String, String>> iterator()
         {
             return new Iterator<Map.Entry<String, String>>()
             {
-                Iterator<PropertiesMapEntry> it = entrySet.iterator();
+                Iterator<PropertiesMapEntry> it = entrySetResult.iterator();
 
                 public Map.Entry<String, String> next()
                 {
@@ -180,6 +180,11 @@ public class PropertiesMap
      */
     private class KeySet extends AbstractSet<String>
     {
+        private KeySet()
+        {
+            // Nothing to do
+        }
+
         public Iterator<String> iterator()
         {
             return new KeySetIterator();
@@ -247,7 +252,7 @@ public class PropertiesMap
                              Private Variables
     \*----------------------------------------------------------------------*/
 
-    private EntrySet entrySet = null;
+    private EntrySet entrySetResult = null;
     private Properties properties = null;
 
     /*----------------------------------------------------------------------*\
@@ -267,7 +272,7 @@ public class PropertiesMap
     /*----------------------------------------------------------------------*\
                               Public Methods
     \*----------------------------------------------------------------------*/
-     
+
     /**
      * Remove all mappings from this map.
      */
@@ -323,13 +328,13 @@ public class PropertiesMap
     {
         synchronized (this)
         {
-            if (entrySet == null)
-                entrySet = new EntrySet();
+            if (entrySetResult == null)
+                entrySetResult = new EntrySet();
         }
 
-        return entrySet;
+        return entrySetResult;
     }
-     
+
     /**
      * Retrieve an object from the map. Retrieving an object from an
      * LRU map "refreshes" the object so that it is among the most recently
@@ -386,7 +391,7 @@ public class PropertiesMap
     public String put (String key, String value)
     {
         String previous = (String) properties.setProperty (key, value);
-        entrySet = null;
+        entrySetResult = null;
         return previous;
     }
 

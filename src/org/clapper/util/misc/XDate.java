@@ -145,7 +145,6 @@ public class XDate extends Date
      */
     public String formatInTimeZone (String dateFormat, TimeZone tz)
     {
-        TimeZone tzUTC = TimeZone.getTimeZone ("UTC");
         Date tzDate = convertToTimeZone (tz);
         DateFormat fmt = new SimpleDateFormat (dateFormat);
         fmt.setTimeZone (tz);

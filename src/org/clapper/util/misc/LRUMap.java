@@ -78,7 +78,7 @@ import java.io.Serializable;
  *
  * @author Copyright &copy; 2004-2006 Brian M. Clapper
  */
-public final class LRUMap<K,V>
+public class LRUMap<K,V>
     extends AbstractMap<K,V>
     implements Cloneable, Serializable
 {
@@ -566,7 +566,7 @@ public final class LRUMap<K,V>
     public LRUMap (LRUMap<? extends K, ? extends V> map)
     {
         this (map.initialCapacity, map.loadFactor, map.maxCapacity);
-        putAll (map);
+        doPutAll (map);
     }
 
     /*----------------------------------------------------------------------*\
@@ -795,40 +795,7 @@ public final class LRUMap<K,V>
      */
     public V put (K key, V value)
     {
-        // If the total number of entries is at capacity, then we need to
-        // remove one of them to make room. The linked list is a priority
-        // queue, of sorts, with least recently used items at the end. So
-        // remove the tail entries.
-
-        V                   oldValue = null;
-        LRULinkedListEntry  entry    = (LRULinkedListEntry) hash.get (key);
-
-        if (entry == null)
-        {
-            // Must add a new one. Clear out the cruft. Reuse the last
-            // cleared entry, though, rather than allocate a new object.
-
-            entry = clearTo (this.maxCapacity - 1);
-            if (entry == null)
-                entry = new LRULinkedListEntry (key, value);
-            else
-                entry.setKeyValue (key, value);
-
-            lruQueue.addToHead (entry);
-            hash.put (key, entry);
-        }
-
-        else
-        {
-            // We're replacing the value with a new one. Move the entry to
-            // the head of the list.
-
-            oldValue = entry.value;
-            entry.value = value;
-            lruQueue.moveToHead (entry);
-        }
-
-        return oldValue;
+        return doPut (key, value);
     }
 
     /**
@@ -839,14 +806,7 @@ public final class LRUMap<K,V>
      */
     public void putAll (Map<? extends K, ? extends V> map)
     {
-        for (Iterator<? extends K> it = map.keySet().iterator();
-             it.hasNext(); )
-        {
-            K key = it.next();
-            V value = map.get (key);
-
-            this.put (key, value);
-        }
+        doPutAll(map);
     }
 
     /**
@@ -1001,5 +961,61 @@ public final class LRUMap<K,V>
                 l.objectRemoved (new ObjectRemovalEvent (entry));
             }
         }
+    }
+
+    /**
+     * Actual implementation of putAll(). Extracted to a private method
+     * so it can be called from the constructor.
+     *
+     * @param map  the map from which to extract values
+     */
+    private void doPutAll(final Map<? extends K, ? extends V> map)
+    {
+        for (Iterator<? extends K> it = map.keySet().iterator();
+             it.hasNext(); )
+        {
+            K key = it.next();
+            V value = map.get (key);
+
+            doPut (key, value);
+        }
+    }
+
+    private V doPut(final K key, final V value)
+    {
+        // If the total number of entries is at capacity, then we need to
+        // remove one of them to make room. The linked list is a priority
+        // queue, of sorts, with least recently used items at the end. So
+        // remove the tail entries.
+
+        V                   oldValue = null;
+        LRULinkedListEntry  entry    = (LRULinkedListEntry) hash.get (key);
+
+        if (entry == null)
+        {
+            // Must add a new one. Clear out the cruft. Reuse the last
+            // cleared entry, though, rather than allocate a new object.
+
+            entry = clearTo (this.maxCapacity - 1);
+            if (entry == null)
+                entry = new LRULinkedListEntry (key, value);
+            else
+                entry.setKeyValue (key, value);
+
+            lruQueue.addToHead (entry);
+            hash.put (key, entry);
+        }
+
+        else
+        {
+            // We're replacing the value with a new one. Move the entry to
+            // the head of the list.
+
+            oldValue = entry.value;
+            entry.value = value;
+            lruQueue.moveToHead (entry);
+        }
+
+        return oldValue;
     }
 }

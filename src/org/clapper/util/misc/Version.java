@@ -26,8 +26,6 @@
 
 package org.clapper.util.misc;
 
-import java.lang.System;
-
 /**
  * <p>Contains the software version for the <i>org.clapper.util</i>
  * library. Also contains a main program which, invoked, displays the name

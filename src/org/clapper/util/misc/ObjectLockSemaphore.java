@@ -63,7 +63,7 @@ import java.util.Date;
  *         sem.acquire();                // bufferPool is still locked
  *         result = (MyBuffer) bufferPool.removeElementAt (0);
  *     }
- * 
+ *
  *     return result;
  * }
  *
@@ -134,7 +134,7 @@ import java.util.Date;
  *     {
  *         result = (MyBuffer) bufferPool.removeElementAt (0);
  *     }
- * 
+ *
  *     return result;
  * }
  *
@@ -289,7 +289,7 @@ public class ObjectLockSemaphore implements Semaphore
      */
     public synchronized void release()
         throws SemaphoreException
-    {    
+    {
         count++;
         notifyAll();
     }
@@ -301,13 +301,13 @@ public class ObjectLockSemaphore implements Semaphore
      */
     public String toString()
     {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 
         buf.append ("Semaphore[");
         buf.append (Integer.toHexString (hashCode()));
         buf.append (", value=");
         buf.append (String.valueOf (count));
-        buf.append ("]");
+        buf.append (']');
 
         return buf.toString();
     }
@@ -338,7 +338,7 @@ public class ObjectLockSemaphore implements Semaphore
             }
         }
     }
-    
+
     /**
      * Wait for the semaphore to become available, or until the specified
      * timeout expires. The timeout must be positive. This method must

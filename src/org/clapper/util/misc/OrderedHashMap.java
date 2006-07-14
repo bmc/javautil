@@ -175,7 +175,7 @@ public class OrderedHashMap<K,V>
      *
      * @return a shallow copy of this map
      */
-    public Object clone()
+    public Object clone()                                            // NOPMD
     {
         return new OrderedHashMap<K,V> (this);
     }
