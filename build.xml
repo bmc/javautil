@@ -50,6 +50,8 @@
        for details.
   -->
   <property name="javac.src.dir" location="${src.top}"/>
+  <property name="javac.source" value="1.5"/>
+  <property name="javac.target" value="1.5"/>
   <property name="build.dir.relative" value="build"/>
   <property name="build.dir"  location="${build.dir.relative}"/>
   <property name="compiled.classes.dir" location="${build.dir}/classes"/>
@@ -58,7 +60,6 @@
   <property name="javadocs.api.dir" value="${javadocs.dir}/api"/>
   <property name="javac.debug" value="true"/>
   <property name="javac.listfiles" value="no"/>
-  <property name="javac.source" value="1.5"/>
   <property name="javac_lint_unchecked_opt" value="-Xlint:unchecked"/>
   <property name="javac_lint_deprecation_opt" value="-Xlint:deprecation"/>
   <property name="build.info.file"
@@ -139,6 +140,7 @@
     <echo>third.party.jar.dir=${third.party.jar.dir}</echo>
     <javac srcdir="${javac.src.dir}"
            source="${javac.source}"
+           target="${javac.target}"
            debug="${javac.debug}"
            listfiles="${javac.listfiles}"
            deprecation="yes"
@@ -199,9 +201,11 @@
     <echo level="verbose">Found Java Mail API. Compiling mail classes.</echo>
     <javac srcdir="${javac.src.dir}"
            source="${javac.source}"
+           target="${javac.target}"
            debug="${javac.debug}"
            listfiles="${javac.listfiles}"
            deprecation="yes"
+           target="1.5"
            destdir="${compiled.classes.dir}">
 
       <compilerarg compiler="jikes" value="+Peffective-java"/>
@@ -247,6 +251,7 @@
     <echo level="verbose">Found ASM API. Compiling classutil classes.</echo>
     <javac srcdir="${javac.src.dir}"
            source="${javac.source}"
+           target="${javac.target}"
            debug="${javac.debug}"
            listfiles="${javac.listfiles}"
            deprecation="yes"
@@ -306,6 +311,7 @@
     <!-- Create the distribution directory -->
     <javac srcdir="${javac.src.dir}"
            source="${javac.source}"
+           target="${javac.target}"
            debug="${javac.debug}"
            listfiles="${javac.listfiles}"
            deprecation="yes"
@@ -334,6 +340,7 @@
     <!-- Create the distribution directory -->
     <javac srcdir="${javac.src.dir}"
            source="${javac.source}"
+           target="${javac.target}"
            debug="${javac.debug}"
            listfiles="${javac.listfiles}"
            destdir="${compiled.classes.dir}">
