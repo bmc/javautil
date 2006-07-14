@@ -21,7 +21,7 @@
   </locale>
 
   <resources>
-    <res id="LicencePanel.licence" src="@INSTALL_TMP@/LICENSE"/>
+    <res id="HTMLLicencePanel.licence" src="@TOP_DIR@/LICENSE.html"/>
     <res id="Installer.image" src="@SRC_INSTALL@/clapper-logo.png"/>
     <res id="ProcessPanel.Spec.xml" src="@SRC_INSTALL@/cleanup.xml"/>
     <!--

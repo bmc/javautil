@@ -6,6 +6,9 @@ $Id$
 
 Version 2.3 (...)
 
+- The graphical installer now renders the license in a more readable,
+  proportional font.
+
 - "Configuration" class (in org.clapper.util.config) constructors that
   actually parse the configuration have been deprecated. They are unsafe,
   since they invoke methods that could be overridden by a subclass (and

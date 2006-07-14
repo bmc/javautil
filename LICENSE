@@ -19,13 +19,13 @@ modification, are permitted provided that the following conditions are met:
     Alternately, this acknowlegement may appear in the software itself, if and
     wherever such third-party acknowlegements normally appear.
 
-3.  Neither the names "clapper.org", "clapper.org Utility Library", nor any
-    of the names of the project contributors may be used to endorse or
+3.  Neither the names "clapper.org", "clapper.org Java Utility Library", nor 
+    any of the names of the project contributors may be used to endorse or
     promote products derived from this software without prior written
     permission. For written permission, please contact bmc@clapper.org.
 
 4.  Products derived from this software may not be called "clapper.org
-    Utility Library", nor nor may "clapper.org" appear in their names
+    Java Utility Library", nor may "clapper.org" appear in their names
     without prior written permission of Brian M.a Clapper.
 
 THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,

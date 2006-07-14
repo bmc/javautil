@@ -503,7 +503,7 @@
         <filter token="OCUTIL_VERSION" value="${api.version}"/>
         <filter token="INSTALL_TMP" value="${install.tmp}"/>
         <filter token="SRC_INSTALL" value="${src.install}"/>
-        <filter token="RELEASE.DIR" value="${release.dir}"/>
+        <filter token="RELEASE_DIR" value="${release.dir}"/>
         <filter token="THIRD_PARTY_JAR_DIR" value="${env.wwwtest}"/>
         <filter token="TOP_DIR" value="${top.dir}"/>
         <filter token="SRC_TOP" value="${src.top}"/>
@@ -513,8 +513,8 @@
         <filter token="BUILD_DIR_RELATIVE" value="${build.dir.relative}"/>
         <filter token="DOCS_DIR" value="${docs.dir}"/>
         <filter token="JAVADOCS_DIR" value="${javadocs.dir}"/>
-        <filter token="JAVADOCS.API.DIR" value="${javadocs.api.dir}"/>
-        <filter token="VERSIONED_CODE.JAR.FILE"
+        <filter token="JAVADOCS_API_DIR" value="${javadocs.api.dir}"/>
+        <filter token="VERSIONED_CODE_JAR_FILE"
                 value="${versioned_code.jar.file}"/>
       </filterset>
     </copy>
