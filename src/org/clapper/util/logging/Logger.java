@@ -30,8 +30,6 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.Collection;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.logging.Level;
 
 /**
  * <p><tt>Logger</tt> wraps the

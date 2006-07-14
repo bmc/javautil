@@ -46,6 +46,7 @@ public final class BundleUtil
 
     private BundleUtil()
     {
+        // Can't be instantiated
     }
 
     /*----------------------------------------------------------------------*\
@@ -60,7 +61,7 @@ public final class BundleUtil
      *
      * @return the value for the key, or the default value
      */
-    public static final String getString (String bundleName, String key)
+    public static String getString (String bundleName, String key)
     {
         return getMessage (bundleName, null, key, (String) null);
     }
@@ -74,9 +75,9 @@ public final class BundleUtil
      *
      * @return the value for the key, or the default value
      */
-    public static final String getString (String bundleName,
-                                          String key,
-                                          String defaultMsg)
+    public static String getString (String bundleName,
+                                    String key,
+                                    String defaultMsg)
     {
         return getMessage (bundleName, null, key, defaultMsg);
     }
@@ -91,10 +92,10 @@ public final class BundleUtil
      *
      * @return the message, or the default
      */
-    public static final String getMessage (String bundleName,
-                                           Locale locale,
-                                           String key,
-                                           String defaultMsg)
+    public static String getMessage (String bundleName,
+                                     Locale locale,
+                                     String key,
+                                     String defaultMsg)
     {
         return getMessage (bundleName, locale, key, defaultMsg, null);
     }
@@ -108,9 +109,9 @@ public final class BundleUtil
      *
      * @return the message, or the default
      */
-    public static final String getMessage (String   bundleName,
-                                           String   key,
-                                           Object[] params)
+    public static String getMessage (String   bundleName,
+                                     String   key,
+                                     Object[] params)
     {
         return getMessage (bundleName, Locale.getDefault(), key, params);
     }
@@ -126,11 +127,11 @@ public final class BundleUtil
      *
      * @return the message, or the default
      */
-    public static final String getMessage (String   bundleName,
-                                           Locale   locale,
-                                           String   key,
-                                           String   defaultMsg,
-                                           Object[] params)
+    public static String getMessage (String   bundleName,
+                                     Locale   locale,
+                                     String   key,
+                                     String   defaultMsg,
+                                     Object[] params)
     {
         ResourceBundle bundle;
         String         result = null;
@@ -172,10 +173,10 @@ public final class BundleUtil
      *
      * @return the message, or the default
      */
-    public static final String getMessage (String   bundleName,
-                                           Locale   locale,
-                                           String   key,
-                                           Object[] params)
+    public static String getMessage (String   bundleName,
+                                     Locale   locale,
+                                     String   key,
+                                     Object[] params)
     {
         ResourceBundle bundle;
         String         result = null;

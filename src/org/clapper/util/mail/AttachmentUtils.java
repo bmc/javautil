@@ -61,6 +61,7 @@ class AttachmentUtils
 
     private AttachmentUtils()
     {
+        // Can't be instantiated.
     }
 
     /*----------------------------------------------------------------------*\

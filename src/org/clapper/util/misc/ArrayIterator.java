@@ -56,7 +56,7 @@ public class ArrayIterator<T> implements Iterator<T>
     /**
      * The next array index.
      */
-    private int next = 0;
+    private int nextIndex = 0;
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -84,7 +84,7 @@ public class ArrayIterator<T> implements Iterator<T>
     public ArrayIterator (T array[], int index)
     {
         this.array = array;
-        this.next  = index;
+        this.nextIndex  = index;
     }
 
     /*----------------------------------------------------------------------*\
@@ -99,7 +99,7 @@ public class ArrayIterator<T> implements Iterator<T>
      */
     public int getNextIndex()
     {
-        return next;
+        return nextIndex;
     }
 
     /**
@@ -114,7 +114,7 @@ public class ArrayIterator<T> implements Iterator<T>
      */
     public boolean hasNext()
     {
-        return (array != null) && (next < array.length);
+        return (array != null) && (nextIndex < array.length);
     }
 
     /**
@@ -134,17 +134,12 @@ public class ArrayIterator<T> implements Iterator<T>
 
         try
         {
-            result = array[next++];
+            result = array[nextIndex++];
         }
 
         catch (ArrayIndexOutOfBoundsException ex)
         {
-            throw new NoSuchElementException();
-        }
-
-        catch (NullPointerException ex)
-        {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException(); // NOPMD
         }
 
         return result;
@@ -168,19 +163,13 @@ public class ArrayIterator<T> implements Iterator<T>
 
         try
         {
-            result = array[--next];
+            result = array[--nextIndex];
         }
 
         catch (ArrayIndexOutOfBoundsException ex)
         {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException();  // NOPMD
         }
-
-        catch (NullPointerException ex)
-        {
-            throw new NoSuchElementException();
-        }
-
 
         return result;
     }
