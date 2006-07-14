@@ -52,8 +52,6 @@ import java.io.StringReader;
 import java.io.PushbackReader;
 import java.io.IOException;
 
-import org.clapper.util.text.TextUtil;
-
 /**
  * Abstract base class for <tt>XStringBuffer</tt> and <tt>XStringBuilder</tt>.
  * This class exists to share common functionality, pushing appropriate details
@@ -94,6 +92,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      */
     XStringBufBase()
     {
+        // Nothing to do
     }
 
     /*----------------------------------------------------------------------*\

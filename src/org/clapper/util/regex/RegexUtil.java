@@ -46,7 +46,6 @@
 
 package org.clapper.util.regex;
 
-import org.clapper.util.logging.Logger;
 import org.clapper.util.misc.LRUMap;
 import org.clapper.util.text.TextUtil;
 
@@ -146,11 +145,6 @@ public class RegexUtil
     private LRUMap<Substitution, Pattern> compiledRegexps =
         new LRUMap<Substitution, Pattern> (100);
 
-    /**
-     * For logging.
-     */
-    private static Logger log = new Logger (RegexUtil.class);
-
     /*----------------------------------------------------------------------*\
                                Constructors
     \*----------------------------------------------------------------------*/
@@ -161,6 +155,7 @@ public class RegexUtil
      */
     public RegexUtil()
     {
+        // Nothing to do
     }
 
     /*----------------------------------------------------------------------*\
@@ -310,7 +305,6 @@ public class RegexUtil
         String regex = fields[1];
         String replacement = fields[2];
         Substitution sub = new Substitution (regex);
-        boolean replaceAll = false;
 
         if (fields.length == 4)
             getSubstitutionFlags (substitutionCommand, fields[3], sub);

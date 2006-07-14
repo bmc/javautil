@@ -92,6 +92,7 @@ public final class HTMLUtil
 
     private HTMLUtil()
     {
+        // Can't be instantiated
     }
 
     /*----------------------------------------------------------------------*\

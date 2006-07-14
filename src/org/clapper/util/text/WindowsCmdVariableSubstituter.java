@@ -94,10 +94,6 @@ public class WindowsCmdVariableSubstituter
     implements VariableSubstituter, VariableNameChecker
 {
     /*----------------------------------------------------------------------*\
-                             Private Variables
-    \*----------------------------------------------------------------------*/
-
-    /*----------------------------------------------------------------------*\
                                 Constructor
     \*----------------------------------------------------------------------*/
 
@@ -106,6 +102,7 @@ public class WindowsCmdVariableSubstituter
      */
     public WindowsCmdVariableSubstituter()
     {
+        // Nothing to do
     }
 
     /*----------------------------------------------------------------------*\
@@ -185,15 +182,68 @@ public class WindowsCmdVariableSubstituter
      * @see #substitute(String,VariableDereferencer,Object)
      * @see VariableDereferencer#getVariableValue(String,Object)
      */
-    public String substitute (String               s,
-                              VariableDereferencer deref,
-                              VariableNameChecker  nameChecker,
-                              Object               context)
+    public String substitute (      String               s,
+                              final VariableDereferencer deref,
+                              final VariableNameChecker  nameChecker,
+                              final Object               context)
         throws VariableSubstitutionException
     {
-        if (s == null)
-            return null;
-        
+        if (s != null)
+            s = doSubstitution(s, context, nameChecker, deref);
+
+        return s;
+    }
+
+
+    /**
+     * Determine whether a character is a legal variable identifier character.
+     *
+     * @param c  The character
+     *
+     * @return <tt>true</tt> if the character is legal, <tt>false</tt>
+     *         otherwise.
+     */
+    public boolean legalVariableCharacter (char c)
+    {
+        // Must be a letter, digit or underscore.
+
+        return (Character.isLetterOrDigit (c) || (c == '_') || (c == '.'));
+    }
+
+    /*----------------------------------------------------------------------*\
+                             Private Variables
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * Worker routine called by substitute() to perform the actual
+     * substitution on a non-null string.
+     *
+     * @param s            the string containing possible variable references
+     * @param deref        the <tt>VariableDereferencer</tt> object
+     *                     to use to resolve the variables' values.
+     * @param nameChecker  the <tt>VariableNameChecker</tt> object to be
+     *                     used to check for legal variable name characters,
+     *                     or null
+     * @param context      an optional context object, passed through
+     *                     unmodified to the <tt>deref</tt> object's
+     *                     {@link VariableDereferencer#getVariableValue}
+     *                     method. This object can be anything at all (and,
+     *                     in fact, may be null if you don't care.) It's
+     *                     primarily useful for passing context information
+     *                     from the caller to the
+     *                     <tt>VariableDereferencer</tt>.
+     *
+     * @return The (possibly) expanded string.
+     *
+     * @throws VariableSubstitutionException  substitution error
+     */
+    private String doSubstitution (final String s,
+                                   final Object context,
+                                         VariableNameChecker nameChecker,
+                                   final VariableDereferencer deref)
+        throws VariableSubstitutionException
+    {
+
         StringBuffer  result      = new StringBuffer();
         int           len         = s.length();
         char          prev        = '\0';
@@ -276,24 +326,10 @@ public class WindowsCmdVariableSubstituter
             // Transfer the characters buffered in 'var' into the result,
             // without modification.
 
-            result.append ('%' + var.toString());
+            result.append ('%');
+            result.append (var.toString());
         }
 
         return result.toString();
-    }
-
-    /**
-     * Determine whether a character is a legal variable identifier character.
-     *
-     * @param c  The character
-     *
-     * @return <tt>true</tt> if the character is legal, <tt>false</tt>
-     *         otherwise.
-     */
-    public boolean legalVariableCharacter (char c)
-    {
-        // Must be a letter, digit or underscore.
-
-        return (Character.isLetterOrDigit (c) || (c == '_') || (c == '.'));
     }
 }

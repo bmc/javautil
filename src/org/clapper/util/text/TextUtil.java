@@ -70,6 +70,7 @@ public final class TextUtil
 
     private TextUtil()
     {
+        // Can't be instantiated
     }
 
     /*----------------------------------------------------------------------*\

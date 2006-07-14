@@ -46,14 +46,6 @@
 
 package org.clapper.util.text;
 
-import java.util.Collection;
-
-import java.io.StringReader;
-import java.io.PushbackReader;
-import java.io.IOException;
-
-import org.clapper.util.text.TextUtil;
-
 /**
  * An <tt>XStringBuffer</tt> objects wraps a standard Java
  * <tt>StringBuffer</tt> object, providing a superset of

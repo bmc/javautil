@@ -129,6 +129,7 @@ public class UnixShellVariableSubstituter
      */
     public UnixShellVariableSubstituter()
     {
+        // Nothing to do
     }
 
     /*----------------------------------------------------------------------*\

@@ -85,8 +85,6 @@ public class TestRegexUtil
             {
                 if (lastLine != null)
                     nextLine = r.readLine();
-
-                return lastLine;
             }
 
             catch (IOException ex)
@@ -118,7 +116,7 @@ public class TestRegexUtil
         catch (CommandLineException ex)
         {
             System.err.println (ex.getMessage());
-            ex.printStackTrace();
+            ex.printStackTrace();                                    // NOPMD
             System.exit (1);
         }
 

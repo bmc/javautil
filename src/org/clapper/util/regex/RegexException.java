@@ -77,7 +77,7 @@ public class RegexException extends NestedException
      */
     public RegexException()
     {
-	super();
+        super();
     }
 
     /**
@@ -88,7 +88,7 @@ public class RegexException extends NestedException
      */
     public RegexException (Throwable exception)
     {
-	super (exception);
+        super (exception);
     }
 
     /**
@@ -110,7 +110,7 @@ public class RegexException extends NestedException
      */
     public RegexException (String message, Throwable exception)
     {
-	super (message, exception);
+        super (message, exception);
     }
 
     /**

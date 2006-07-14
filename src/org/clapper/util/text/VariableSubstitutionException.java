@@ -81,7 +81,7 @@ public class VariableSubstitutionException extends NestedException
      */
     public VariableSubstitutionException()
     {
-	super();
+        super();
     }
 
     /**
@@ -92,7 +92,7 @@ public class VariableSubstitutionException extends NestedException
      */
     public VariableSubstitutionException (Throwable exception)
     {
-	super (exception);
+        super (exception);
     }
 
     /**
@@ -114,7 +114,7 @@ public class VariableSubstitutionException extends NestedException
      */
     public VariableSubstitutionException (String message, Throwable exception)
     {
-	super (message, exception);
+        super (message, exception);
     }
 
     /**
