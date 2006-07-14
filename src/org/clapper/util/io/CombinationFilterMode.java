@@ -35,8 +35,6 @@ package org.clapper.util.io;
  *
  * @version <tt>$Revision$</tt>
  *
- * @deprecated Use AndFileFilter, OrFileFilter, etc.
- *
  * @author Copyright &copy; 2004-2006 Brian M. Clapper
  */
 public enum CombinationFilterMode
