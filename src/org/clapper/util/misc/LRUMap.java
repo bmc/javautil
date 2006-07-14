@@ -68,17 +68,17 @@ import java.io.Serializable;
  *
  * <p>There are other, similar implementations. For instance, see the
  * {@link <a href="http://jakarta.apache.org/commons/collections/apidocs/org/apache/commons/collections/LRUMap.html">LRUMap</a>}
- * class in the 
+ * class in the
  * {@link <a href="http://jakarta.apache.org/commons/collections/">Apache Jakarta Commons Collection</a>}
  * API. (This leads to the obvious question: Why write another one? The primary
  * answer is that I did not want to add another third-party library dependency.
  * Plus, I wanted to experiment with this algorithm.)</p>
- * 
+ *
  * @version <tt>$Revision$</tt>
  *
  * @author Copyright &copy; 2004-2006 Brian M. Clapper
  */
-public class LRUMap<K,V>
+public final class LRUMap<K,V>
     extends AbstractMap<K,V>
     implements Cloneable, Serializable
 {
@@ -107,6 +107,11 @@ public class LRUMap<K,V>
      */
     private class EntrySet extends AbstractSet<Map.Entry<K,V>>
     {
+        private EntrySet()
+        {
+            // Nothing to do
+        }
+
         public Iterator<Map.Entry<K,V>> iterator()
         {
             return new Iterator<Map.Entry<K,V>>()
@@ -196,6 +201,11 @@ public class LRUMap<K,V>
      */
     private class KeySet extends AbstractSet<K>
     {
+        private KeySet()
+        {
+            // Nothing to do
+        }
+
         public Iterator<K> iterator()
         {
             return new KeySetIterator();
@@ -256,7 +266,7 @@ public class LRUMap<K,V>
      * Entry in the internal linked list (queue) of LRU entries. Implements
      * Map.Entry for convenience.
      */
-    private class LRULinkedListEntry implements Map.Entry<K,V>
+    private final class LRULinkedListEntry implements Map.Entry<K,V>
     {
         LRULinkedListEntry  previous = null;
         LRULinkedListEntry  next     = null;
@@ -313,13 +323,16 @@ public class LRUMap<K,V>
         LRULinkedListEntry  tail = null;
         int                 size = 0;
 
-        LRULinkedList()
+        private LRULinkedList()
         {
+            // Nothing to do
         }
 
         protected void finalize()
+            throws Throwable
         {
             clear();
+            super.finalize();
         }
 
         void addToTail (LRULinkedListEntry entry)
@@ -372,10 +385,10 @@ public class LRUMap<K,V>
             if (entry.previous != null)
                 entry.previous.next = entry.next;
 
-            if (entry == head)
+            if (entry == head)           // NOPMD (legal reference comparison)
                 head = entry.next;
 
-            if (entry == tail)
+            if (entry == tail)           // NOPMD (legal reference comparison)
                 tail = entry.previous;
 
             entry.next = null;
@@ -393,7 +406,7 @@ public class LRUMap<K,V>
                 remove (result);
 
             return result;
-                
+
         }
 
         void moveToHead (LRULinkedListEntry entry)
@@ -504,7 +517,7 @@ public class LRUMap<K,V>
      */
     public LRUMap (int maxCapacity)
     {
-	this (DEFAULT_INITIAL_CAPACITY, DEFAULT_LOAD_FACTOR, maxCapacity);
+        this (DEFAULT_INITIAL_CAPACITY, DEFAULT_LOAD_FACTOR, maxCapacity);
     }
 
     /**
@@ -517,7 +530,7 @@ public class LRUMap<K,V>
      */
     public LRUMap (int initialCapacity, int maxCapacity)
     {
-	this (initialCapacity, DEFAULT_LOAD_FACTOR, maxCapacity);
+        this (initialCapacity, DEFAULT_LOAD_FACTOR, maxCapacity);
     }
 
     /**
@@ -607,15 +620,15 @@ public class LRUMap<K,V>
     {
         boolean removed = false;
 
-        if (removalListeners != null)
+        if ((removalListeners != null) &&
+            (removalListeners.remove(listener) != null))
         {
-            if (removalListeners.remove (listener) != null)
-                removed = true;
+            removed = true;
         }
 
         return removed;
     }
-     
+
     /**
      * Remove all mappings from this map.
      */
@@ -670,7 +683,7 @@ public class LRUMap<K,V>
     {
         return new EntrySet();
     }
-     
+
     /**
      * Retrieve an object from the map. Retrieving an object from an
      * LRU map "refreshes" the object so that it is among the most recently
@@ -904,8 +917,11 @@ public class LRUMap<K,V>
      * are not cloned.
      *
      * @return a shallow copy of this map
+     *
+     * @throws CloneNotSupportedException not cloneable
      */
     protected Object clone()
+        throws CloneNotSupportedException
     {
         return new LRUMap<K,V> (this);
     }
