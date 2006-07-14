@@ -4,7 +4,7 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
-Version 2.3 (...)
+Version 2.2.1 (...)
 
 - The graphical installer now renders the license in a more readable,
   proportional font.
