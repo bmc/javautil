@@ -79,7 +79,7 @@ public class OrderedHashMap<K,V>
      */
     public OrderedHashMap()
     {
-	super();
+        super();
     }
 
     /**
@@ -90,7 +90,7 @@ public class OrderedHashMap<K,V>
      */
     public OrderedHashMap (int initialCapacity)
     {
-	super (initialCapacity);
+        super (initialCapacity);
     }
 
     /**
@@ -119,7 +119,7 @@ public class OrderedHashMap<K,V>
      */
     public OrderedHashMap (Map<? extends K, ? extends V> map)
     {
-	super (map);
+        super (map);
         keysInOrder.addAll (map.keySet());
     }
 
