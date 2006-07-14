@@ -34,7 +34,7 @@ package org.clapper.util.io;
  * @see JustifyTextWriter
  * @see org.clapper.util.text.TextUtil#rightJustifyString(String,int)
  * @see org.clapper.util.text.TextUtil#leftJustifyString(String,int)
- * @see Torg.clapper.util.text.extUtil#centerString(String,int)
+ * @see org.clapper.util.text.TextUtil#centerString(String,int)
  *
  * @version $Revision$
  *
