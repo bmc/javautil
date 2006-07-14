@@ -205,7 +205,6 @@
            debug="${javac.debug}"
            listfiles="${javac.listfiles}"
            deprecation="yes"
-           target="1.5"
            destdir="${compiled.classes.dir}">
 
       <compilerarg compiler="jikes" value="+Peffective-java"/>
