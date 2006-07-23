@@ -54,6 +54,7 @@ import java.util.Map;
 import java.util.Set;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * <p>An <tt>LRUMap</tt> implements a <tt>Map</tt> of a fixed maximum size
@@ -269,6 +270,93 @@ public class LRUMap<K,V>
             LRULinkedListEntry result = current;
             current = current.next;
             return result.key;
+        }
+
+        public boolean hasNext()
+        {
+            return (current != null);
+        }
+
+        public void remove()
+        {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+   /**
+     * Shallow set that implements a set of values backed by the map.
+     */
+    private class ValueSet extends AbstractSet<V>
+    {
+        private ValueSet()
+        {
+            // Nothing to do
+        }
+
+        public void clear()
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        public boolean contains (Object o)
+        {
+            return LRUMap.this.containsValue(o);
+        }
+
+        public boolean containsAll (Collection c)
+        {
+            boolean contains = true;
+
+            for (Object o : c)
+            {
+                if (! contains(o))
+                {
+                    contains = false;
+                    break;
+                }
+            }
+
+            return contains;
+        }
+
+        public boolean isEmpty()
+        {
+            return LRUMap.this.isEmpty();
+        }
+
+        public Iterator<V> iterator()
+        {
+            return new ValueSetIterator();
+        }
+
+        public boolean remove (Object o)
+        {
+            throw new UnsupportedOperationException();
+        }
+
+        public int size()
+        {
+            return LRUMap.this.size();
+        }
+    }
+
+    /**
+     * Iterator returned by ValueSet.iterator()
+     */
+    private class ValueSetIterator implements Iterator<V>
+    {
+        private LRULinkedListEntry current;
+
+        ValueSetIterator()
+        {
+            current = lruQueue.head;
+        }
+
+        public V next()
+        {
+            LRULinkedListEntry result = current;
+            current = current.next;
+            return result.value;
         }
 
         public boolean hasNext()
@@ -568,6 +656,9 @@ public class LRUMap<K,V>
         assert (loadFactor > 0.0);
         assert (initialCapacity > 0);
 
+        if (initialCapacity > maxCapacity)
+            initialCapacity = maxCapacity;
+
         this.maxCapacity     = maxCapacity;
         this.loadFactor      = loadFactor;
         this.initialCapacity = initialCapacity;
@@ -683,7 +774,17 @@ public class LRUMap<K,V>
      */
     public boolean containsValue (Object value)
     {
-        return hash.containsValue (value);
+        boolean contains = false;
+        for (LRULinkedListEntry entry : hash.values())
+        {
+            if (entry.getValue().equals(value))
+            {
+                contains = true;
+                break;
+            }
+        }
+
+        return contains;
     }
 
     /**
@@ -886,6 +987,32 @@ public class LRUMap<K,V>
     public int size()
     {
         return lruQueue.size;
+    }
+
+    /**
+     * <p>Returns a collection view of the values contained in this map. The
+     * returned collection is a "thin" view of the values contained in
+     * this map. The collection contains proxies for the actual disk-resident
+     * values; the values themselves are not loaded until a
+     * <tt>Collection</tt> method such as <tt>contains()</tt> is called.</p>
+     *
+     * <p>The collection is backed by the map, so changes to the map are
+     * reflected in the set. If the map is modified while an iteration over
+     * the set is in progress, the results of the iteration are undefined.</p>
+     * The set does not support any of the <tt>add()</tt> methods.</p>
+     *
+     * <p><b>Warning:</b>: The <tt>toArray()</tt> methods can be dangerous,
+     * since they will attempt to load every value from the data file into
+     * an in-memory array.</p>
+     *
+     * @return a collection view of the values contained in this map.
+     *
+     * @see #keySet
+     * @see #values
+     */
+    public Collection<V> values()
+    {
+       return new ValueSet();
     }
 
     /*----------------------------------------------------------------------*\
