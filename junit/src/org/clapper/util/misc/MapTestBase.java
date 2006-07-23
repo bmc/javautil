@@ -53,103 +53,83 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Base class for map testers.
  *
  */
-public class FileHashMapTest extends MapTestBase
+public abstract class MapTestBase extends TestCase
 {
-    public FileHashMapTest(String testName)
+    /*----------------------------------------------------------------------*\
+                                Constructor
+    \*----------------------------------------------------------------------*/
+
+    protected MapTestBase(String testName)
     {
         super(testName);
     }
 
-    protected void setUp() throws Exception
-    {
-    }
-
-    protected void tearDown() throws Exception
-    {
-    }
+    /*----------------------------------------------------------------------*\
+                               Public Methods
+    \*----------------------------------------------------------------------*/
 
     /**
-     * Test of clear method, of class org.clapper.util.misc.FileHashMap.
+     * Test of clear method, of class org.clapper.util.misc.MapTestBase.
      *
      * @throws IOException error initializing map
      */
     public void testClear()
         throws IOException
     {
-        FileHashMap<String,String> map = new FileHashMap<String,String>();
+        Map<String,String> map = newMap();
         map.put("a", "foo");
         assertEquals ("Hash table size mismatch", 1, map.size());
 
         map.clear();
         assertEquals ("Hash table size mismatch", 0, map.size());
-
-        map.close();
    }
 
     /**
-     * Test of close method, of class org.clapper.util.misc.FileHashMap.
-     *
-     * @throws IOException error initializing map
-     */
-    public void testClose()
-        throws IOException
-    {
-        FileHashMap<String,String> map = new FileHashMap<String,String>();
-        map.close();
-        assertFalse (map.isValid());
-
-        map.close();
-   }
-
-    /**
-     * Test of containsKey method, of class org.clapper.util.misc.FileHashMap.
+     * Test of containsKey method, of class org.clapper.util.misc.MapTestBase.
      *
      * @throws IOException error initializing map
      */
     public void testContainsKey()
         throws IOException
     {
-        FileHashMap<String,String> map = new FileHashMap<String,String>();
+        Map<String,String> map = newMap();
         map.put("a", "a value");
         map.put("b", "b value");
 
         assertTrue(map.containsKey("a"));
         assertTrue(map.containsKey("b"));
         assertFalse(map.containsKey("c"));
-
-        map.close();
    }
 
     /**
-     * Test of containsValue method, of class org.clapper.util.misc.FileHashMap.
+     * Test of containsValue method, of class org.clapper.util.misc.MapTestBase.
      *
      * @throws IOException error initializing map
      */
     public void testContainsValue()
         throws IOException
     {
-        FileHashMap<String,String> map = new FileHashMap<String,String>();
+        Map<String,String> map = newMap();
         map.put("a", "a value");
         map.put("b", "b value");
 
-        assertTrue(map.containsValue("a value"));
-        assertTrue(map.containsValue("b value"));
-        assertFalse(map.containsValue("c value"));
-
-        map.close();
+        assertTrue("Missing expected value", map.containsValue("a value"));
+        assertTrue("Missing expected value", map.containsValue("b value"));
+        assertFalse("Unexpected value", map.containsValue("c value"));
     }
 
     /**
-     * Test of entrySet method, of class org.clapper.util.misc.FileHashMap.
+     * Test of entrySet method, of class org.clapper.util.misc.MapTestBase.
       *
      * @throws IOException error initializing map
     */
     public void testEntrySet()
          throws IOException
    {
-        FileHashMap<String,String> map = new FileHashMap<String,String>();
+        Map<String,String> map = newMap();
         map.put("a", "a value");
         map.put("b", "b value");
 
@@ -165,19 +145,18 @@ public class FileHashMapTest extends MapTestBase
                        map.containsKey(entry.getKey()));
         }
 
-        map.close();
     }
 
     /**
-     * Test of equals method, of class org.clapper.util.misc.FileHashMap.
+     * Test of equals method, of class org.clapper.util.misc.MapTestBase.
      *
      * @throws IOException error initializing map
      */
     public void testEquals()
         throws IOException
     {
-        FileHashMap<String,String> map = new FileHashMap<String,String>();
-        FileHashMap<String,String> map2 = new FileHashMap<String,String>();
+        Map<String,String> map = newMap();
+        Map<String,String> map2 = newMap();
         assertTrue ("Two empty maps not equal", map.equals (map2));
 
         map.put("a", "a value");
@@ -187,38 +166,34 @@ public class FileHashMapTest extends MapTestBase
 
         map2.put("b", "b value");
         assertFalse("Maps with different values are equal", map.equals(map2));
-
-        map.close();
     }
 
     /**
-     * Test of get method, of class org.clapper.util.misc.FileHashMap.
+     * Test of get method, of class org.clapper.util.misc.MapTestBase.
      *
      * @throws IOException error initializing map
      */
     public void testGet()
         throws IOException
     {
-        FileHashMap<String,String> map = new FileHashMap<String,String>();
+        Map<String,String> map = newMap();
         map.put("a", "a value");
 
         assertNotNull("Attempt to retrieve known value returns null",
                       map.get("a"));
         assertNull("Attempt to retrieve nonexistent value returns non-null",
                    map.get("foo"));
-
-        map.close();
     }
 
     /**
-     * Test of keySet method, of class org.clapper.util.misc.FileHashMap.
+     * Test of keySet method, of class org.clapper.util.misc.MapTestBase.
      *
      * @throws IOException error initializing map
      */
     public void testKeySet()
         throws IOException
     {
-        FileHashMap<String,String> map = new FileHashMap<String,String>();
+        Map<String,String> map = newMap();
         map.put("a", "a value");
         map.put("b", "b value");
 
@@ -226,19 +201,17 @@ public class FileHashMapTest extends MapTestBase
         assertTrue(keySet.contains("a"));
         assertTrue(keySet.contains("b"));
         assertFalse(keySet.contains("c"));
-
-        map.close();
     }
 
     /**
-     * Test of put method, of class org.clapper.util.misc.FileHashMap.
+     * Test of put method, of class org.clapper.util.misc.MapTestBase.
      *
      * @throws IOException error initializing map
      */
     public void testPut()
         throws IOException
     {
-        FileHashMap<String,String> map = new FileHashMap<String,String>();
+        Map<String,String> map = newMap();
 
         map.put("a", "a value");
         assertTrue("Map doesn't contain value just put there",
@@ -247,19 +220,17 @@ public class FileHashMapTest extends MapTestBase
         map.put("b", "b value");
         assertTrue("Map doesn't contain value just put there",
                    map.containsKey("b"));
-
-        map.close();
     }
 
     /**
-     * Test of remove method, of class org.clapper.util.misc.FileHashMap.
+     * Test of remove method, of class org.clapper.util.misc.MapTestBase.
      *
      * @throws IOException error initializing map
      */
     public void testRemove()
         throws IOException
     {
-        FileHashMap<String,String> map = new FileHashMap<String,String>();
+        Map<String,String> map = newMap();
         map.put("a", "a value");
         map.put("b", "b value");
 
@@ -270,14 +241,14 @@ public class FileHashMapTest extends MapTestBase
     }
 
   /**
-     * Test of size method, of class org.clapper.util.misc.FileHashMap.
+     * Test of size method, of class org.clapper.util.misc.MapTestBase.
      *
      * @throws IOException error initializing map
      */
     public void testSize()
         throws IOException
     {
-        FileHashMap<String,String> map = new FileHashMap<String,String>();
+        Map<String,String> map = newMap();
         map.put("a", "a value");
         assertEquals("Size not valid", 1, map.size());
 
@@ -286,19 +257,17 @@ public class FileHashMapTest extends MapTestBase
 
         map.remove("b");
         assertEquals("Size not valid", 1, map.size());
-
-        map.close();
     }
 
     /**
-     * Test of values method, of class org.clapper.util.misc.FileHashMap.
+     * Test of values method, of class org.clapper.util.misc.MapTestBase.
      *
      * @throws IOException error initializing map
      */
     public void testValues()
         throws IOException
     {
-        FileHashMap<String,String> map = new FileHashMap<String,String>();
+        Map<String,String> map = newMap();
         map.put("a", "a value");
         map.put("b", "b value");
 
@@ -307,28 +276,18 @@ public class FileHashMapTest extends MapTestBase
                    values.contains("a value"));
         assertTrue("Returned values set does not contain value",
                    values.contains("b value"));
-
-        map.close();
+        for (String key : map.keySet())
+        {
+            String value = map.get(key);
+            assertTrue("Value set is missing value \"" + value + "\" " +
+                       "for key \"" + key + "\"",
+                       values.contains(value));
+        }
     }
 
     /*----------------------------------------------------------------------*\
                              Protected Methods
     \*----------------------------------------------------------------------*/
 
-    protected Map<String,String> newMap()
-    {
-        Map<String,String> result = null;
-
-        try
-        {
-            result = new FileHashMap<String,String>();
-        }
-
-        catch (IOException ex)
-        {
-            fail("IOException on FileHashMap creation");
-        }
-
-        return result;
-    }
+    protected abstract Map<String,String> newMap();
 }
