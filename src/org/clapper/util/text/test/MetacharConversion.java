@@ -52,10 +52,11 @@ public class MetacharConversion
      */
     private MetacharConversion()
     {
+        // Nothing to do
     }
 
     /*----------------------------------------------------------------------*\
-			       Main Program
+                               Main Program
     \*----------------------------------------------------------------------*/
 
     /**
@@ -65,7 +66,7 @@ public class MetacharConversion
      */
     public static void main (String args[])
     {
-	if (args.length < 1)
+        if (args.length < 1)
             usage();
 
         try

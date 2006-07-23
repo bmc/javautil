@@ -46,7 +46,7 @@
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<project name="util" default="all" basedir=".">
+<project name="util" default="build" basedir=".">
   <description>
     Build file for "util" Java classes
   </description>
@@ -72,9 +72,14 @@
   <property name="javac.src.dir" location="${src.top}"/>
   <property name="javac.source" value="1.5"/>
   <property name="javac.target" value="1.5"/>
+  <property name="test.src.dir" location="junit/src"/>
   <property name="build.dir.relative" value="build"/>
   <property name="build.dir"  location="${build.dir.relative}"/>
   <property name="compiled.classes.dir" location="${build.dir}/classes"/>
+  <property name="compiled.test.classes.dir"
+            location="${build.dir}/classes_junit"/>
+  <property name="test.run.dir" location="${build.dir}/junit_run"/>
+  <property name="test.output.dir" location="${build.dir}/junit_output"/>
   <property name="docs.dir" value="${top.dir}/docs"/>
   <property name="javadocs.dir" value="${build.dir}/javadocs"/>
   <property name="javadocs.api.dir" value="${javadocs.dir}/api"/>
@@ -115,6 +120,12 @@
     <pathelement location="${ant.home}/lib/ant.jar"/>
   </path>
   
+  <path id="test.class.path">
+    <path refid="project.class.path"/>
+    <pathelement location="${compiled.test.classes.dir}"/>
+    <pathelement location="${third.party.jar.dir}/junit.jar"/>
+  </path>
+
   <path id="installer.class.path">
     <path refid="project.class.path"/>
     <pathelement location="${third.party.jar.dir}/izpack-compiler.jar"/>
@@ -143,7 +154,9 @@
   ***************************************************************************
   -->
 
-  <target name="all" depends="init,lib,bundles,-build.info,testers"/>
+  <target name="build" depends="code.jar"/>
+  <target name="compile" depends="init,lib,bundles,-build.info,testers"/>
+  <target name="compile-all" depends="compile,test-compile"/>
 
   <target name="bundles">
     <copy todir="${compiled.classes.dir}">
@@ -391,6 +404,48 @@
 
   <!--
   ***************************************************************************
+                               JUnit targets
+  ***************************************************************************
+  -->
+
+  <target name="test-compile">
+    <mkdir dir="${compiled.test.classes.dir}"/>
+    <javac srcdir="${test.src.dir}"
+           source="${javac.source}"
+           target="${javac.target}"
+           debug="${javac.debug}"
+           listfiles="${javac.listfiles}"
+           deprecation="yes"
+           destdir="${compiled.test.classes.dir}">
+      <classpath refid="test.class.path"/>
+      <include name="**/*.java"/>
+    </javac>
+  </target>
+    
+  <target name="test" depends="test-compile">
+    <mkdir dir="${test.run.dir}"/>
+    <mkdir dir="${test.output.dir}"/>
+    <junit haltonfailure="true"
+           haltonerror="true"
+           printsummary="on"
+           dir="${test.run.dir}"
+           tempdir="${test.run.dir}"
+           forkmode="once">
+      <assertions>
+        <enable/>
+      </assertions>
+      <batchtest fork="yes" todir="${test.output.dir}">
+        <fileset dir="${test.src.dir}">
+          <include name="${pkg.path}/**/*.java"/>
+        </fileset>
+      </batchtest>
+      <formatter type="plain" usefile="false"/>
+      <classpath refid="test.class.path"/>
+    </junit>
+  </target>
+
+  <!--
+  ***************************************************************************
                               Javadoc targets
   ***************************************************************************
   -->
@@ -441,12 +496,11 @@
               value="javadocs-${api.version}.zip"/>
   </target>
 
-  <target name="code.jar" depends="all"
+  <target name="code.jar" depends="compile"
           description="Generate the distribution">
     <mkdir dir="${build.dir}/lib"/>
     <jar jarfile="${code.jar.path}" basedir="${compiled.classes.dir}"/>
   </target>
-  <target name="build" depends="code.jar"/>
 
   <target name="-doczip" depends="doc"
           description="Builds the javadocs zip file">
@@ -483,7 +537,7 @@
   </target>
 
   <target name="release"
-          depends="build,-set.version.properties,-srczip,-doczip"
+          depends="build,test,-set.version.properties,-srczip,-doczip"
           description="Generate the distribution and source jars">
     <copy file="${code.jar.path}"
           tofile="${release.dir}/${versioned_code.jar.file}"/>

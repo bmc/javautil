@@ -821,6 +821,21 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
             };
         }
 
+        public boolean equals(Object obj)
+        {
+            boolean eq = (this == obj);
+
+            if (! eq)
+                eq = super.equals(obj);
+
+            return eq;
+        }
+
+        public int hashCode()                                // NOPMD
+        {
+            return super.hashCode();
+        }
+
         public boolean remove (FileHashMapEntry<K> o)
         {
             throw new UnsupportedOperationException();
@@ -1503,6 +1518,18 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
     }
 
     /**
+     * Determine whether the <tt>FileHashMap</tt> is valid or not. Once
+     * a <tt>FileHashMap</tt> has been closed, it is invalid and can no
+     * longer be used.
+     *
+     * @return <tt>true</tt> if this object is valid, <tt>false</tt> if not
+     */
+    public boolean isValid()
+    {
+        return valid;
+    }
+
+    /**
      * <p>Returns a <tt>Set</tt> containing all the keys in this map. Since
      * the keys are cached in memory, this method is relatively efficient.
      * The keys are returned in an order that optimizes sequential access
@@ -1748,7 +1775,7 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
     {
         return indexMap.size();
     }
-    
+
     /**
      * Locate gaps in the file by traversing the index. Initializes or
      * reinitializes the fileGaps instance variable.

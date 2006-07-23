@@ -51,10 +51,11 @@ public class ConvertHTMLCharEntities
      */
     private ConvertHTMLCharEntities()
     {
+        // Nothing to do
     }
 
     /*----------------------------------------------------------------------*\
-			       Main Program
+                               Main Program
     \*----------------------------------------------------------------------*/
 
     /**
