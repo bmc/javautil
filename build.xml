@@ -123,6 +123,7 @@
   <path id="test.class.path">
     <path refid="project.class.path"/>
     <pathelement location="${compiled.test.classes.dir}"/>
+    <pathelement location="${compiled.classes.dir}"/>
     <pathelement location="${third.party.jar.dir}/junit.jar"/>
   </path>
 
@@ -417,6 +418,17 @@
            listfiles="${javac.listfiles}"
            deprecation="yes"
            destdir="${compiled.test.classes.dir}">
+      <compilerarg compiler="jikes" value="+Peffective-java"/>
+      <compilerarg compiler="jikes" value="+Punused-type-imports"/>
+      <compilerarg compiler="jikes" value="+Punused-package-imports"/>
+      <compilerarg compiler="jikes" value="+Pmodifier-order"/>
+      <compilerarg compiler="jikes" value="+Pserial"/>
+
+      <compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
+      <compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
+      <!--
+      <compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
+      -->
       <classpath refid="test.class.path"/>
       <include name="**/*.java"/>
     </javac>
@@ -427,7 +439,7 @@
     <mkdir dir="${test.output.dir}"/>
     <junit haltonfailure="true"
            haltonerror="true"
-           printsummary="on"
+           printsummary="off"
            dir="${test.run.dir}"
            tempdir="${test.run.dir}"
            forkmode="once">
@@ -436,7 +448,7 @@
       </assertions>
       <batchtest fork="yes" todir="${test.output.dir}">
         <fileset dir="${test.src.dir}">
-          <include name="${pkg.path}/**/*.java"/>
+          <include name="${pkg.path}/**/*Test.java"/>
         </fileset>
       </batchtest>
       <formatter type="plain" usefile="false"/>
@@ -496,7 +508,7 @@
               value="javadocs-${api.version}.zip"/>
   </target>
 
-  <target name="code.jar" depends="compile"
+  <target name="code.jar" depends="compile-all"
           description="Generate the distribution">
     <mkdir dir="${build.dir}/lib"/>
     <jar jarfile="${code.jar.path}" basedir="${compiled.classes.dir}"/>
