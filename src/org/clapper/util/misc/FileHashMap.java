@@ -1293,6 +1293,31 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
     }
 
     /*----------------------------------------------------------------------*\
+                              Finalizer
+    \*----------------------------------------------------------------------*/
+
+    /**
+     * Finalizer
+     *
+     * @throws throwable on error
+     */
+    protected void finalize()
+        throws Throwable
+    {
+        try
+        {
+            close();
+        }
+
+        catch (IOException ex)
+        {
+            log.error("Error during finalize", ex);
+        }
+
+        super.finalize();
+    }
+
+    /*----------------------------------------------------------------------*\
                               Public Methods
     \*----------------------------------------------------------------------*/
 
