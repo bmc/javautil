@@ -11,6 +11,12 @@ Version 2.2.1 (...)
 
 - Propagated modified license (from 2.2) into source files.
 
+- Added JUnit infrastructure and various JUnit tests to build.
+
+- In org.clapper.util.misc.LRUMap, the containsValue() method was broken;
+  a new JUnit tester found the bug. Also implemented a proper values() method
+  for LRUMap.
+
 - "Configuration" class (in org.clapper.util.config) constructors that
   actually parse the configuration have been deprecated. They are unsafe,
   since they invoke methods that could be overridden by a subclass (and
