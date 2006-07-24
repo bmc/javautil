@@ -68,6 +68,8 @@ import java.io.Serializable;
  *
  * @author Copyright &copy; 2004-2006 Brian M. Clapper
  *
+ * @deprecated Please use java.util.LinkedHashMap, instead
+ *
  * @see #keysInInsertionOrder
  * @see #getKeysInInsertionOrder
  */
