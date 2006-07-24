@@ -189,9 +189,10 @@ public class LRUMapTest extends MapTestBase
      */
     public void testSetMaximumCapacity()
     {
-        LRUMap<String,Integer> map = new LRUMap<String,Integer>(10);
-        for (int i = 0; i < map.getMaximumCapacity() + 5; i++)
-            map.put(String.valueOf(i), i);
+        LRUMap<Integer,String> map = makeAndFillIntegerKeyedMap(10);
+        // Add some more.
+        for (int i = 0; i < 5; i++)
+            map.put(i, String.valueOf(i));
         map.setMaximumCapacity(5);
         assertEquals("Explicitly lowered maximum capacity incorrect", 5,
                      map.getMaximumCapacity());
@@ -202,8 +203,36 @@ public class LRUMapTest extends MapTestBase
     /**
      * Test of clone method, of class org.clapper.util.misc.LRUMap.
      */
-    public void testClone() throws Exception
+    public void testClone()
+        throws CloneNotSupportedException
     {
+        LRUMap<Integer,String> map = makeAndFillIntegerKeyedMap(10);
+        LRUMap<String,Integer> map2 = (LRUMap<String,Integer>) map.clone();
+        assertEquals("Clone map not equal to original", map, map2);
+    }
+
+    /**
+     * Test the LRU behavior.
+     */
+    public void testLRUBehavior()
+    {
+        LRUMap<Integer,String> map = makeAndFillIntegerKeyedMap(10);
+
+        // First one thrown out should be 0, if we add a new one
+        assertTrue("Map doesn't contain key 0", map.containsKey(0));
+        map.put(100, "100");
+        assertFalse("Map still contains key 0", map.containsKey(0));
+
+        // Next one thrown out would be 1, except that we're going to
+        // access it, which makes it "new" again, so 2 should be tossed out
+        // instead.
+        map.get(1);
+        assertTrue("Map doesn't contain key 1", map.containsKey(1));
+        map.put(101, "101");
+        map.get(1);
+        assertTrue("Map doesn't contain freshened key 1", map.containsKey(1));
+        assertFalse("Map still contains key 2", map.containsKey(2));
+        
     }
 
     /*----------------------------------------------------------------------*\
@@ -214,5 +243,18 @@ public class LRUMapTest extends MapTestBase
     {
         return new LRUMap<String,String>(100);
     }
+
+    /*----------------------------------------------------------------------*\
+                              Private Methods
+    \*----------------------------------------------------------------------*/
+
+    private LRUMap<Integer,String> makeAndFillIntegerKeyedMap(int capacity)
+    {
+        LRUMap<Integer,String> map = new LRUMap<Integer,String>(capacity);
+        for (int i = 0; i < capacity; i++)
+            map.put(i, String.valueOf(i));
+        return map;
+    }
 }
+
 
