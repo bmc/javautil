@@ -434,7 +434,8 @@
     </javac>
   </target>
     
-  <target name="test" depends="test-compile">
+  <target name="test" depends="test-compile"
+          description="Run all JUnit tests">
     <mkdir dir="${test.run.dir}"/>
     <mkdir dir="${test.output.dir}"/>
     <junit haltonfailure="true"
@@ -451,7 +452,32 @@
           <include name="${pkg.path}/**/*Test.java"/>
         </fileset>
       </batchtest>
-      <formatter type="plain" usefile="false"/>
+      <formatter classname="org.clapper.util.ant.JUnitSummaryFormatter"
+                 usefile="false"/>
+      <formatter type="plain"/>
+      <classpath refid="test.class.path"/>
+    </junit>
+  </target>
+
+  <target name="test.single" depends="test-compile"
+          description="Run the JUnit test for a single class">
+    <mkdir dir="${test.run.dir}"/>
+    <mkdir dir="${test.output.dir}"/>
+    <junit haltonfailure="true"
+           haltonerror="true"
+           printsummary="off"
+           showoutput="false"
+           dir="${test.run.dir}"
+           tempdir="${test.run.dir}"
+           forkmode="once">
+      <assertions>
+        <enable/>
+      </assertions>
+      <test name="${test.class}"/>
+      <formatter classname="org.clapper.util.ant.JUnitSummaryFormatter"
+                 usefile="false"
+                 extension=".txt"/>
+-->
       <classpath refid="test.class.path"/>
     </junit>
   </target>
