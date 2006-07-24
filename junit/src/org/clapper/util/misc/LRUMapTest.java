@@ -47,12 +47,23 @@
 package org.clapper.util.misc;
 
 import java.util.Map;
+import org.clapper.util.logging.Logger;
 
 /**
  *
  */
 public class LRUMapTest extends MapTestBase
 {
+    /*----------------------------------------------------------------------*\
+                            Private Instance Data
+    \*----------------------------------------------------------------------*/
+
+    private static final Logger log = new Logger(LRUMapTest.class);
+
+    /*----------------------------------------------------------------------*\
+                               Inner Classes
+    \*----------------------------------------------------------------------*/
+
     class TestListener implements ObjectRemovalListener
     {
         private String lookForKey;
@@ -69,8 +80,8 @@ public class LRUMapTest extends MapTestBase
         {
             Map.Entry<String,String> removed =
                 (Map.Entry<String,String>) event.getSource();
-            System.out.println("ObjectRemovalListener called for " +
-                               removed.getKey() + "=" + removed.getValue());
+            log.debug("ObjectRemovalListener called for " +
+                      removed.getKey() + "=" + removed.getValue());
             assertEquals("Removed item has wrong key",
                          lookForKey, removed.getKey());
             assertEquals("Removed item has wrong value",
@@ -84,18 +95,18 @@ public class LRUMapTest extends MapTestBase
         }
     }
 
+    /*----------------------------------------------------------------------*\
+                                Constructor
+    \*----------------------------------------------------------------------*/
+
     public LRUMapTest(String testName)
     {
         super(testName);
     }
 
-    protected void setUp() throws Exception
-    {
-    }
-
-    protected void tearDown() throws Exception
-    {
-    }
+    /*----------------------------------------------------------------------*\
+                               Public Methods
+    \*----------------------------------------------------------------------*/
 
     /**
      * Test of addRemovalListener method, of class org.clapper.util.misc.LRUMap.
@@ -133,6 +144,14 @@ public class LRUMapTest extends MapTestBase
      */
     public void testGetInitialCapacity()
     {
+        LRUMap<String,String> map = new LRUMap<String,String>(1, 10);
+        assertEquals("Explicit initial capacity problem",
+                     1,
+                     map.getInitialCapacity());
+        map = new LRUMap<String,String>(100);
+        assertEquals("Default initial capacity problem",
+                     LRUMap.DEFAULT_INITIAL_CAPACITY,
+                     map.getInitialCapacity());
     }
 
     /**
@@ -140,6 +159,14 @@ public class LRUMapTest extends MapTestBase
      */
     public void testGetLoadFactor()
     {
+        LRUMap<String,String> map = new LRUMap<String,String>(1, 10);
+        assertEquals("Default load factor problem",
+                     LRUMap.DEFAULT_LOAD_FACTOR,
+                     map.getLoadFactor());
+        map = new LRUMap<String,String>(1, 0.90f, 10);
+        assertEquals("Explicit load factor problem",
+                     0.90f,
+                     map.getLoadFactor());
     }
 
     /**
@@ -147,54 +174,20 @@ public class LRUMapTest extends MapTestBase
      */
     public void testGetMaximumCapacity()
     {
-    }
-
-    /**
-     * Test of isEmpty method, of class org.clapper.util.misc.LRUMap.
-     */
-    public void testIsEmpty()
-    {
-    }
-
-    /**
-     * Test of keySet method, of class org.clapper.util.misc.LRUMap.
-     */
-    public void testKeySet()
-    {
-    }
-
-    /**
-     * Test of put method, of class org.clapper.util.misc.LRUMap.
-     */
-    public void testPut()
-    {
-    }
-
-    /**
-     * Test of putAll method, of class org.clapper.util.misc.LRUMap.
-     */
-    public void testPutAll()
-    {
-    }
-
-    /**
-     * Test of remove method, of class org.clapper.util.misc.LRUMap.
-     */
-    public void testRemove()
-    {
+        LRUMap<String,String> map = new LRUMap<String,String>(1, 10);
+        assertEquals("Maximum capacity problem",
+                     10,
+                     map.getMaximumCapacity());
+        map = new LRUMap<String,String>(10);
+        assertEquals("Maximum capacity problem",
+                     10,
+                     map.getMaximumCapacity());
     }
 
     /**
      * Test of setMaximumCapacity method, of class org.clapper.util.misc.LRUMap.
      */
     public void testSetMaximumCapacity()
-    {
-    }
-
-    /**
-     * Test of size method, of class org.clapper.util.misc.LRUMap.
-     */
-    public void testSize()
     {
     }
 

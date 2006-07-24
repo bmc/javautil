@@ -46,9 +46,9 @@
 
 package org.clapper.util.misc;
 
-import java.io.IOException;
 import junit.framework.*;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -72,12 +72,9 @@ public abstract class MapTestBase extends TestCase
     \*----------------------------------------------------------------------*/
 
     /**
-     * Test of clear method, of class org.clapper.util.misc.MapTestBase.
-     *
-     * @throws IOException error initializing map
+     * Test of clear method.
      */
     public void testClear()
-        throws IOException
     {
         Map<String,String> map = newMap();
         map.put("a", "foo");
@@ -88,12 +85,9 @@ public abstract class MapTestBase extends TestCase
    }
 
     /**
-     * Test of containsKey method, of class org.clapper.util.misc.MapTestBase.
-     *
-     * @throws IOException error initializing map
+     * Test of containsKey method.
      */
     public void testContainsKey()
-        throws IOException
     {
         Map<String,String> map = newMap();
         map.put("a", "a value");
@@ -105,12 +99,9 @@ public abstract class MapTestBase extends TestCase
    }
 
     /**
-     * Test of containsValue method, of class org.clapper.util.misc.MapTestBase.
-     *
-     * @throws IOException error initializing map
+     * Test of containsValue method.
      */
     public void testContainsValue()
-        throws IOException
     {
         Map<String,String> map = newMap();
         map.put("a", "a value");
@@ -122,12 +113,9 @@ public abstract class MapTestBase extends TestCase
     }
 
     /**
-     * Test of entrySet method, of class org.clapper.util.misc.MapTestBase.
-      *
-     * @throws IOException error initializing map
-    */
+     * Test of entrySet method.
+     */
     public void testEntrySet()
-         throws IOException
    {
         Map<String,String> map = newMap();
         map.put("a", "a value");
@@ -148,12 +136,9 @@ public abstract class MapTestBase extends TestCase
     }
 
     /**
-     * Test of equals method, of class org.clapper.util.misc.MapTestBase.
-     *
-     * @throws IOException error initializing map
+     * Test of equals method.
      */
     public void testEquals()
-        throws IOException
     {
         Map<String,String> map = newMap();
         Map<String,String> map2 = newMap();
@@ -169,12 +154,9 @@ public abstract class MapTestBase extends TestCase
     }
 
     /**
-     * Test of get method, of class org.clapper.util.misc.MapTestBase.
-     *
-     * @throws IOException error initializing map
+     * Test of get method.
      */
     public void testGet()
-        throws IOException
     {
         Map<String,String> map = newMap();
         map.put("a", "a value");
@@ -186,12 +168,9 @@ public abstract class MapTestBase extends TestCase
     }
 
     /**
-     * Test of keySet method, of class org.clapper.util.misc.MapTestBase.
-     *
-     * @throws IOException error initializing map
+     * Test of keySet method.
      */
     public void testKeySet()
-        throws IOException
     {
         Map<String,String> map = newMap();
         map.put("a", "a value");
@@ -204,12 +183,9 @@ public abstract class MapTestBase extends TestCase
     }
 
     /**
-     * Test of put method, of class org.clapper.util.misc.MapTestBase.
-     *
-     * @throws IOException error initializing map
+     * Test of put method.
      */
     public void testPut()
-        throws IOException
     {
         Map<String,String> map = newMap();
 
@@ -223,12 +199,25 @@ public abstract class MapTestBase extends TestCase
     }
 
     /**
-     * Test of remove method, of class org.clapper.util.misc.MapTestBase.
-     *
-     * @throws IOException error initializing map
+     * Test of putAll() method
+     */
+    public void putAll()
+    {
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("a", "a value");
+        map.put("b", "b value");
+        map.put("c", "c value");
+
+        Map<String,String> map2 = newMap();
+        map2.putAll(map);
+
+        assertEquals("After putAll(), maps aren't equal", map, map2);
+    }
+
+    /**
+     * Test of remove method.
      */
     public void testRemove()
-        throws IOException
     {
         Map<String,String> map = newMap();
         map.put("a", "a value");
@@ -240,13 +229,10 @@ public abstract class MapTestBase extends TestCase
         assertNull("Map still contains removed value", map.get("a"));
     }
 
-  /**
-     * Test of size method, of class org.clapper.util.misc.MapTestBase.
-     *
-     * @throws IOException error initializing map
+    /**
+     * Test of size method.
      */
     public void testSize()
-        throws IOException
     {
         Map<String,String> map = newMap();
         map.put("a", "a value");
@@ -260,12 +246,9 @@ public abstract class MapTestBase extends TestCase
     }
 
     /**
-     * Test of values method, of class org.clapper.util.misc.MapTestBase.
-     *
-     * @throws IOException error initializing map
+     * Test of values method.
      */
     public void testValues()
-        throws IOException
     {
         Map<String,String> map = newMap();
         map.put("a", "a value");
@@ -283,6 +266,17 @@ public abstract class MapTestBase extends TestCase
                        "for key \"" + key + "\"",
                        values.contains(value));
         }
+    }
+
+    /**
+     * Test of isEmpty method, of class org.clapper.util.misc.LRUMap.
+     */
+    public void testIsEmpty()
+    {
+        Map<String,String> map = newMap();
+        assertTrue("isEmpty() returns false on empty map", map.isEmpty());
+        map.put("a", "a value");
+        assertFalse("isEmpty() returns true on non-empty map", map.isEmpty());
     }
 
     /*----------------------------------------------------------------------*\
