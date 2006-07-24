@@ -189,6 +189,14 @@ public class LRUMapTest extends MapTestBase
      */
     public void testSetMaximumCapacity()
     {
+        LRUMap<String,Integer> map = new LRUMap<String,Integer>(10);
+        for (int i = 0; i < map.getMaximumCapacity() + 5; i++)
+            map.put(String.valueOf(i), i);
+        map.setMaximumCapacity(5);
+        assertEquals("Explicitly lowered maximum capacity incorrect", 5,
+                     map.getMaximumCapacity());
+        assertEquals("Size should be same as max capacity, but isn't",
+                     map.getMaximumCapacity(), map.size());
     }
 
     /**
