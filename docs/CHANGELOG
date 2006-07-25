@@ -4,7 +4,7 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
-Version 2.2.1 (...)
+Version 2.3 (...)
 
 - The graphical installer now renders the license in a more readable,
   proportional font.
@@ -13,9 +13,13 @@ Version 2.2.1 (...)
 
 - Added JUnit infrastructure and various JUnit tests to build.
 
-- In org.clapper.util.misc.LRUMap, the containsValue() method was broken;
-  a new JUnit tester found the bug. Also implemented a proper values() method
+- In org.clapper.util.misc.LRUMap, the containsValue() method was broken; a
+  new JUnit test found the bug. Also implemented a proper values() method
   for LRUMap.
+
+- In org.clapper.util.misc.MultiIterator, the remove() method was broken;
+  it would throw an IllegalStateException when removing the last item in a
+  contained iterator. A new JUnit test found the bug.
 
 - "Configuration" class (in org.clapper.util.config) constructors that
   actually parse the configuration have been deprecated. They are unsafe,
