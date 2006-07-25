@@ -260,7 +260,6 @@ public class MultiIterator<T> implements Iterator<T>, Iterable<T>
      */
     public void remove()
     {
-        checkIterator();
         if (it != null)
             it.remove();
     }
