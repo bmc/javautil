@@ -91,6 +91,16 @@ public final class Version
     }
 
     /**
+     * Get the copyright.
+     *
+     * @return the copyright string
+     */
+    public static String getCopyright()
+    {
+        return BundleUtil.getString (Package.BUNDLE_NAME, "api.copyright", "?");
+    }
+
+    /**
      * Display the build information
      *
      * @param args  command-line parameters (ignored)
@@ -99,20 +109,21 @@ public final class Version
     {
         BuildInfo buildInfo = new BuildInfo (BUILD_INFO_BUNDLE_NAME);
 
-        System.out.println ("org.clapper.util library, version " +
-                            getVersion());
-        System.out.println ();
-        System.out.println ("Build:          " + buildInfo.getBuildID());
-        System.out.println ("Build date:     " + buildInfo.getBuildDate());
-        System.out.println ("Built by:       " + buildInfo.getBuildUserID());
-        System.out.println ("Built on:       " +
-                            buildInfo.getBuildOperatingSystem());
-        System.out.println ("Build Java VM:  " +
-                            buildInfo.getBuildJavaVM());
-        System.out.println ("Build compiler: " +
-                            buildInfo.getBuildJavaCompiler());
-        System.out.println ("Ant version:    " +
-                            buildInfo.getBuildAntVersion());
+        System.out.println("org.clapper.util library, version " +
+                           getVersion());
+        System.out.println(getCopyright());
+        System.out.println();
+        System.out.println("Build:          " + buildInfo.getBuildID());
+        System.out.println("Build date:     " + buildInfo.getBuildDate());
+        System.out.println("Built by:       " + buildInfo.getBuildUserID());
+        System.out.println("Built on:       " +
+                           buildInfo.getBuildOperatingSystem());
+        System.out.println("Build Java VM:  " +
+                           buildInfo.getBuildJavaVM());
+        System.out.println("Build compiler: " +
+                           buildInfo.getBuildJavaCompiler());
+        System.out.println("Ant version:    " +
+                           buildInfo.getBuildAntVersion());
         System.exit (0);
     }
 }
