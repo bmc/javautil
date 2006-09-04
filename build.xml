@@ -118,6 +118,8 @@
     <pathelement location="${third.party.jar.dir}/asm-util-2.2.3.jar"/>
     <pathelement location="${third.party.jar.dir}/commons-logging.jar"/>
     <pathelement location="${ant.home}/lib/ant.jar"/>
+    <pathelement location="${ant.home}/lib/ant-junit.jar"/>
+    <pathelement location="${third.party.jar.dir}/junit.jar"/>
   </path>
   
   <path id="test.class.path">
@@ -434,7 +436,7 @@
     </javac>
   </target>
     
-  <target name="test" depends="test-compile"
+  <target name="test" depends="compile,test-compile"
           description="Run all JUnit tests">
     <mkdir dir="${test.run.dir}"/>
     <mkdir dir="${test.output.dir}"/>
@@ -562,11 +564,11 @@
           config file, below. There's no way around that, unfortunately.
       -->
       <zipfileset dir="." prefix="${zip.dir.prefix}" casesensitive="yes">
-        <exclude name="${build.dir}/**"/>
+        <exclude name="${build.dir}"/>
         <exclude name="${compiled.classes.dir}"/>
         <exclude name="**/CVS"/>
-        <include name="**/*.java"/>
         <include name="**/package.html"/>
+        <include name="**/*.java"/>
         <include name="overview.html"/>
         <include name="**/*.xml"/>
         <include name="**/*.properties"/>
