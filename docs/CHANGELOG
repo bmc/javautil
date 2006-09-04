@@ -41,6 +41,15 @@ Version 2.3 (...)
   (useful) constructors for those classes potentially calling methods that
   could be overridden.
 
+- The org.clapper.util.config.Configuration class didn't properly handle
+  variable references to the "system", "program" and "env" pseudo-sections 
+  when an include file was being processed.
+
+- The org.clapper.util.misc.FileHashMap class was using an exclusive file
+  lock to prevent concurrent modification, but this strategy turns out to
+  cause more problems than it solves (owing to the way Java file locking is
+  implemented); it has been removed.
+
 - Miscellaneous code cleanup based on output from PMD (pmd.sourceforge.net).
 
 
