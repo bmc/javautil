@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * <p>An <tt>OrderedHashMap</tt> is a <tt>java.util.HashMap</tt> with one
@@ -174,7 +175,10 @@ public class OrderedHashMap<K,V>
      */
     public int getKeysInInsertionOrder (List<? super K> list)
     {
-        list.addAll (keysInOrder);
+        // Casting to Collection removes a stupid JDK 1.6-beta compiler
+        // complaint.
+
+        ((Collection<? super K>) list).addAll (keysInOrder);
 
         return keysInOrder.size();
     }
