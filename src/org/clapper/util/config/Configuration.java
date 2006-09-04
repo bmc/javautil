@@ -456,6 +456,10 @@ public class Configuration
     private static final String SYSTEM_SECTION_NAME        = "system";
     private static final String PROGRAM_SECTION_NAME       = "program";
     private static final String ENV_SECTION_NAME           = "env";
+    private static final int    SYSTEM_SECTION_ID          = 0;
+    private static final int    PROGRAM_SECTION_ID         = 1;
+    private static final int    ENV_SECTION_ID             = 2;
+    private static final int    FIRST_CONFIG_SECTION_ID    = 3;
 
     /*----------------------------------------------------------------------*\
                                   Classes
@@ -581,7 +585,7 @@ public class Configuration
     /**
      * Section ID values.
      */
-    private int nextSectionIDValue = 1;
+    private int nextSectionIDValue = FIRST_CONFIG_SECTION_ID;
 
     /**
      * For logging
@@ -1499,7 +1503,7 @@ public class Configuration
                ConfigurationException
     {
         clear();
-        URL url = file.toURL();
+        URL url = file.toURI().toURL();
         parse (new FileInputStream (file), url);
         this.configURL = url;
     }
@@ -1520,7 +1524,7 @@ public class Configuration
                ConfigurationException
     {
         clear();
-        URL url = new File (path).toURL();
+        URL url = new File (path).toURI().toURL();
         parse (new FileInputStream (path), url);
         this.configURL = url;
     }
@@ -1735,10 +1739,10 @@ public class Configuration
         // substitute from them. (i.e., They must have the lowest IDs.)
 
         programSection = new ProgramSection (PROGRAM_SECTION_NAME,
-                                             nextSectionID());
+                                             PROGRAM_SECTION_ID);
         systemSection  = new SystemSection (SYSTEM_SECTION_NAME,
-                                            nextSectionID());
-        envSection  = new EnvSection (ENV_SECTION_NAME, nextSectionID());
+                                            SYSTEM_SECTION_ID);
+        envSection  = new EnvSection (ENV_SECTION_NAME, ENV_SECTION_ID);
 
         if (parseContext.openURLs.contains (sURL))
         {
@@ -2130,7 +2134,7 @@ public class Configuration
 
                 if (url == null)
                 {
-                    loadInclude (new File (includeTarget).toURL(),
+                    loadInclude (new File (includeTarget).toURI().toURL(),
                                  parseContext);
                 }
 
