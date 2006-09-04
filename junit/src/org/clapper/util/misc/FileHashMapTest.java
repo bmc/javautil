@@ -48,6 +48,7 @@ package org.clapper.util.misc;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ConcurrentModificationException;
 import java.util.Map;
 
 /**
@@ -98,11 +99,7 @@ public class FileHashMapTest extends MapTestBase
                ClassNotFoundException,
                VersionMismatchException
     {
-        StringBuilder filePrefixBuf = new StringBuilder();
-        filePrefixBuf.append (System.getProperty("java.io.tmpdir"));
-        filePrefixBuf.append(System.getProperty("file.separator"));
-        filePrefixBuf.append("FileHashMapTest");
-        String filePrefix = filePrefixBuf.toString();
+        String filePrefix = getFilePrefix();
         try
         {
             FileHashMap<String,Integer> map =
@@ -120,7 +117,7 @@ public class FileHashMapTest extends MapTestBase
             FileHashMap<String,Integer> map2 =
                 new FileHashMap<String,Integer>(filePrefix, 0);
 
-            assertEquals("Reloaded map has wrong size", 
+            assertEquals("Reloaded map has wrong size",
                          map.size(), map2.size());
             for (String key : map.keySet())
             {
@@ -138,6 +135,58 @@ public class FileHashMapTest extends MapTestBase
         {
             new File(filePrefix).delete();
         }
+    }
+
+    /**
+     * Test concurrent modification.
+     * @throws IOException              error creating/writing/reading map
+     * @throws ObjectExistsException    unexpected
+     * @throws ClassNotFoundException   can't deserialized object
+     * @throws VersionMismatchException bad or unsupported version stamp
+     *                                  in <tt>FileHashMap</tt> index file
+     */
+    public void testConcurrentModification()
+        throws IOException,
+               ObjectExistsException,
+               ClassNotFoundException,
+               VersionMismatchException
+     {
+/*
+ DOESN'T WORK YET.
+ 
+        String filePrefix = getFilePrefix();
+        FileHashMap<String,Integer> map1 =
+            new FileHashMap<String,Integer>(filePrefix, 0);
+        FileHashMap<String,Integer> map2 =
+            new FileHashMap<String,Integer>(filePrefix, 0);
+
+        map1.put("a", 1);
+        map2.put("b", 2);
+        try
+        {
+            // Sleep a bit, to account for lack of granularity of
+            // last modified setting
+
+            try
+            {
+                Thread.sleep(2000);
+            }
+
+            catch (InterruptedException ex)
+            {
+                fail("Unexpected InterruptedException");
+            }
+
+            map1.put("c", 3);
+            fail("Expected ConcurrentModificationException to be thrown");
+        }
+
+        catch (ConcurrentModificationException ex)
+        {
+            System.out.println("Caught expected exception");
+            ex.printStackTrace(System.out);
+        }
+ */
     }
 
     /*----------------------------------------------------------------------*\
@@ -159,5 +208,18 @@ public class FileHashMapTest extends MapTestBase
         }
 
         return result;
+    }
+
+    /*----------------------------------------------------------------------*\
+                               Private Methods
+    \*----------------------------------------------------------------------*/
+
+    private String getFilePrefix()
+    {
+        StringBuilder filePrefixBuf = new StringBuilder();
+        filePrefixBuf.append (System.getProperty("java.io.tmpdir"));
+        filePrefixBuf.append(System.getProperty("file.separator"));
+        filePrefixBuf.append("FileHashMapTest");
+        return filePrefixBuf.toString();
     }
 }

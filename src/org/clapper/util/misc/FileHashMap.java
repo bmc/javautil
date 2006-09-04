@@ -61,8 +61,6 @@ import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.io.Serializable;
 
-import java.nio.channels.FileLock;
-
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
@@ -70,6 +68,7 @@ import java.util.Comparator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -274,15 +273,15 @@ import java.util.TreeSet;
  *       a 32-bit integer. This restriction is unlikely to cause anyone
  *       problems, and it keeps the keyspace down.
  *   <li>To prevent multiple Java VMs from updating the file containing the
- *       serialized values, this class asserts an exclusive lock on the file
- *       for the entire time the file is open. It's currently not possible to
- *       permit multiple VMs to use the same <tt>FileHashMap</tt>, because this
- *       class has no way to coordinate the in-memory index across VMs. (I
- *       could use the underlying <tt>java.nio.channels.FileChannel</tt>
- *       object to map the index file into memory. However, according to
- *       the JDK documentation, "Whether changes made to the content or
- *       size of the underlying file, by this program or another, are
- *       propagated to the [mapped memory] buffer is unspecified. The rate
+ *       serialized values, this class detect throws an exception if it
+ *       detects an attempted concurrent modification of a map. (Locking
+ *       the map, then synchronizing the in-memory indexes across multiple
+ *       updaters, is non-trivial. The most obvious method that leaps to
+ *       mind, mapping the underlying <tt>java.nio.channels.FileChannel</tt>
+ *       object to map the index file into memory, isn't guaranteed to work.
+ *       Cccording to the JDK documentation, "Whether changes made to the
+ *       content or size of the underlying file, by this program or another,
+ *       are propagated to the [mapped memory] buffer is unspecified. The rate
  *       at which changes to the buffer are propagated to the file is
  *       unspecified.")
  * </ul>
@@ -379,45 +378,23 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
      */
     private static class ValuesFile
     {
-        RandomAccessFile file;
-        FileLock         lock;
+        private RandomAccessFile file;
+        private long lastModified = 0;
+        private File path;
 
         ValuesFile (File f)
             throws IOException
         {
-            file = new RandomAccessFile (f, "rw");
+            this.file = new RandomAccessFile (f, "rw");
+            this.path = f;
+            updateLastModified();
+        }
 
-            // Assert a file-wide lock, to prevent anyone else from
-            // modifying the file at the same time.
-
-            try
-            {
-                log.debug ("Asserting lock on file \"" + f.getPath() + "\"");
-                lock = file.getChannel().tryLock();
-                if (lock == null)
-                    throw new IOException ("File already locked.");
-            }
-
-            catch (IOException ex)
-            {
-                try
-                {
-                    file.close();
-                }
-
-                catch (IOException ex2)
-                {
-                    log.error ("Can't close \"" + f.getPath() + "\"", ex2);
-                }
-
-                file = null;
-                IOException ex3 = new IOException ("Unable to assert file " +
-                                                   "lock on file \"" +
-                                                   f.getPath() +
-                                                   "\"");
-                ex3.initCause (ex);
-                throw ex3; // NOPMD (wrongly beefs about loss of stack trace)
-            }
+        RandomAccessFile getFile()
+            throws ConcurrentModificationException
+        {
+            checkLastModified();
+            return file;
         }
 
         void close()
@@ -425,6 +402,31 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
         {
             // Lock is implicitly released on close.
             file.close();
+        }
+
+        void updateLastModified()
+        {
+            // WARNING: Doesn't actually appear to work.
+
+            long newLastModified = System.currentTimeMillis();
+            if (path.setLastModified(newLastModified))
+                log.error("File.setLastModified() failed on " + path);
+
+            lastModified = path.lastModified();
+        }
+
+        void checkLastModified()
+            throws ConcurrentModificationException
+        {
+            long realLastModified = path.lastModified();
+            if (realLastModified != lastModified)
+            {
+                throw new ConcurrentModificationException
+                    ("This object last modified FileHashMap file \"" +
+                     path.getPath() + "\" on " + new Date(lastModified) +
+                     ". Some other process modified the file on " +
+                     new Date(realLastModified));
+            }
         }
     }
 
@@ -709,7 +711,7 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
         {
             try
             {
-                valuesDB.file.seek (pos);
+                valuesDB.getFile().seek (pos);
             }
 
             catch (IOException ex)
@@ -1335,7 +1337,8 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
         {
             // Implement the clear operation by truncating the data file.
 
-            valuesDB.file.getChannel().truncate (0);
+            valuesDB.getFile().getChannel().truncate (0);
+            valuesDB.updateLastModified();
             modified = true;
         }
 
@@ -1654,7 +1657,7 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
     /**
      * <p>Removes the mapping for this key from this map, if present.
      * <b>Note:</b> The space occupied by the serialized value in the
-     * data file is <i>not</i> coalesced or otherwise reclaimed.</p>
+     * data file is <i>not</i> coalesced at this point.</p>
      *
      * @param key key whose mapping is to be removed from the map.
      *
@@ -1959,8 +1962,9 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
 
         synchronized (this)
         {
-            this.valuesDB.file.seek (entry.getFilePosition());
-            if ( (sizeRead = this.valuesDB.file.read (byteBuf)) != size )
+            RandomAccessFile valuesFile = valuesDB.getFile();
+            valuesFile.seek (entry.getFilePosition());
+            if ( (sizeRead = valuesFile.read (byteBuf)) != size )
             {
                 throw new IOException ("Expected to read " +
                                        size +
@@ -2081,14 +2085,16 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
         if ((flags & RECLAIM_FILE_GAPS) != 0)
             filePos = findBestFitGap (size);
 
+        RandomAccessFile valuesFile = this.valuesDB.getFile();
         if (filePos == -1)
-            filePos = this.valuesDB.file.length();
+            filePos = valuesFile.length();
 
-        this.valuesDB.file.seek (filePos);
+        valuesFile.seek (filePos);
 
         // Write the bytes of the serialized object.
 
-        this.valuesDB.file.write (byteStream.toByteArray());
+        valuesFile.write (byteStream.toByteArray());
+        valuesDB.updateLastModified();
 
         // Return the entry.
 
