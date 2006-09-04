@@ -14,7 +14,7 @@
 
   2.  The end-user documentation included with the redistribution, if any,
       must include the following acknowlegement:
-
+d
         "This product includes software developed by Brian M. Clapper
         (bmc@clapper.org, http://www.clapper.org/bmc/). That software is
         copyright (c) 2004-2006 Brian M. Clapper."
