@@ -176,9 +176,21 @@ public class OrderedHashMap<K,V>
     public int getKeysInInsertionOrder (List<? super K> list)
     {
         // Casting to Collection removes a stupid JDK 1.6-beta compiler
-        // complaint.
+        // complaint. Doing this:
+        //
+        // list.addAll(keysInOrder)
+        //
+        // results in this compiler error:
+        //
+        // reference to addAll is ambiguous, both method 
+        // addAll(java.util.Collection<? extends E>) in 
+        // java.util.Collection<capture#142 of ? super K> and method 
+        // addAll(java.util.Collection<? extends E>) in 
+        // java.util.List<capture#142 of ? super K> match
+        //
+        // This problem is new with 1.6. Casting solves the problem.
 
-        ((Collection<? super K>) list).addAll (keysInOrder);
+        ((Collection<? super K>) list).addAll(keysInOrder);
 
         return keysInOrder.size();
     }
