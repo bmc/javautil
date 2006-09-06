@@ -114,9 +114,9 @@ public class NestedException extends Exception
      *
      * @param exception  the exception to contain
      */
-    public NestedException (Throwable exception)
+    public NestedException(Throwable exception)
     {
-        super (exception);
+        this(exception.getMessage(), exception);
     }
 
     /**
@@ -125,9 +125,9 @@ public class NestedException extends Exception
      *
      * @param message  the message to associate with this exception
      */
-    public NestedException (String message)
+    public NestedException(String message)
     {
-        super (message);
+        super(message);
     }
 
     /**
@@ -136,9 +136,9 @@ public class NestedException extends Exception
      * @param message    the message to associate with this exception
      * @param exception  the exception to contain
      */
-    public NestedException (String message, Throwable exception)
+    public NestedException(String message, Throwable exception)
     {
-        super (message, exception);
+        super(message, exception);
     }
 
     /**
@@ -163,11 +163,11 @@ public class NestedException extends Exception
      * @see #NestedException(String,String,String,Object[])
      * @see #getMessage(Locale)
      */
-    public NestedException (String bundleName,
-                            String messageKey,
-                            String defaultMsg)
+    public NestedException(String bundleName,
+                           String messageKey,
+                           String defaultMsg)
     {
-        this (bundleName, messageKey, defaultMsg, null, null);
+        this(bundleName, messageKey, defaultMsg, null, null);
     }
 
     /**
@@ -195,12 +195,12 @@ public class NestedException extends Exception
      * @see #NestedException(String,String,String,Object[])
      * @see #getMessage(Locale)
      */
-    public NestedException (String   bundleName,
-                            String   messageKey,
-                            String   defaultMsg,
-                            Object[] msgParams)
+    public NestedException(String   bundleName,
+                           String   messageKey,
+                           String   defaultMsg,
+                           Object[] msgParams)
     {
-        this (bundleName, messageKey, defaultMsg, msgParams, null);
+        this(bundleName, messageKey, defaultMsg, msgParams, null);
     }
 
     /**
@@ -227,12 +227,12 @@ public class NestedException extends Exception
      * @see #NestedException(String,String,String,Object[])
      * @see #getMessage(Locale)
      */
-    public NestedException (String    bundleName,
-                            String    messageKey,
-                            String    defaultMsg,
-                            Throwable exception)
+    public NestedException(String    bundleName,
+                           String    messageKey,
+                           String    defaultMsg,
+                           Throwable exception)
     {
-        this (bundleName, messageKey, defaultMsg, null, exception);
+        this(bundleName, messageKey, defaultMsg, null, exception);
     }
 
     /**
@@ -258,14 +258,14 @@ public class NestedException extends Exception
      * @see #NestedException(String,String,String,Object[])
      * @see #getMessage(Locale)
      */
-    public NestedException (String    bundleName,
-                            String    messageKey,
-                            String    defaultMsg,
-                            Object[]  msgParams,
-                            Throwable exception)
+    public NestedException(String    bundleName,
+                           String    messageKey,
+                           String    defaultMsg,
+                           Object[]  msgParams,
+                           Throwable exception)
     {
         super();
-        initCause (exception);
+        initCause(exception);
         this.resourceBundleName = bundleName;
         this.bundleMessageKey   = messageKey;
         this.defaultMessage     = defaultMsg;
@@ -288,7 +288,7 @@ public class NestedException extends Exception
      */
     public String getMessage()
     {
-        return getMessage (Locale.getDefault());
+        return getMessage(Locale.getDefault());
     }
 
     /**
@@ -304,18 +304,18 @@ public class NestedException extends Exception
      *
      * @return  the error message string for this exception
      */
-    public String getMessage (Locale locale)
+    public String getMessage(Locale locale)
     {
-        StringBuffer buf = new StringBuffer();
-        String       msg = null;
+        StringBuilder buf = new StringBuilder();
+        String        msg = null;
 
         if ((resourceBundleName != null) && (bundleMessageKey != null))
         {
-            msg = BundleUtil.getMessage (resourceBundleName,
-                                         locale,
-                                         bundleMessageKey,
-                                         defaultMessage,
-                                         messageParams);
+            msg = BundleUtil.getMessage(resourceBundleName,
+                                        locale,
+                                        bundleMessageKey,
+                                        defaultMessage,
+                                        messageParams);
         }
 
         if (msg == null)
@@ -330,13 +330,38 @@ public class NestedException extends Exception
 
         else
         {
-            buf.append (this.getClass().getName());
             Throwable containedException = getCause();
-            if (containedException != null)
+            while ((containedException != null) && (msg == null))
             {
-                buf.append (" (contains ");
-                buf.append (containedException.getClass().getName());
-                buf.append (")");
+                if (containedException instanceof NestedException)
+                {
+                    // It'll drill in itself.
+
+                    msg = ((NestedException) containedException)
+                              .getMessage(locale);
+                    break;
+                }
+
+                else
+                {
+                    msg = containedException.getMessage();
+                }
+
+                containedException = containedException.getCause();
+            }
+
+            if (msg != null)
+                buf.append (msg);
+
+            else
+            {
+                buf.append(this.getClass().getName());
+                if (containedException != null)
+                {
+                    buf.append(" (contains ");
+                    buf.append(containedException.getClass().getName());
+                    buf.append(")");
+                }
             }
         }
 
@@ -355,7 +380,7 @@ public class NestedException extends Exception
      */
     public String getMessages()
     {
-        return getMessages (false);
+        return getMessages(false);
     }
 
     /**
@@ -369,9 +394,9 @@ public class NestedException extends Exception
      *
      * @return the aggregated messages
      */
-    public String getMessages (boolean elideNewlines)
+    public String getMessages(boolean elideNewlines)
     {
-        return getMessages (elideNewlines, null);
+        return getMessages(elideNewlines, null);
     }
 
     /**
@@ -386,10 +411,10 @@ public class NestedException extends Exception
      *
      * @return the aggregated messages
      */
-    public String getMessages (boolean elideNewlines, Locale locale)
+    public String getMessages(boolean elideNewlines, Locale locale)
     {
         StringWriter  sw = new StringWriter();
-        PrintWriter   pw = new PrintWriter (sw);
+        PrintWriter   pw = new PrintWriter(sw);
         Throwable     ex = this;
         StringBuffer  buf = null;
 
@@ -406,7 +431,7 @@ public class NestedException extends Exception
             String s;
 
             if (ex instanceof NestedException)
-                s = ((NestedException) ex).getMessage (locale);
+                s = ((NestedException) ex).getMessage(locale);
             else
                 s = ex.getMessage();
 
@@ -419,16 +444,16 @@ public class NestedException extends Exception
 
                 try
                 {
-                    LineNumberReader r = new LineNumberReader
-                                           (new StringReader (s));
+                    LineNumberReader r =
+                        new LineNumberReader(new StringReader(s));
                     String line;
                     String sep = "";
 
                     buf.setLength (0);
                     while ((line = r.readLine()) != null)
                     {
-                        buf.append (sep);
-                        buf.append (line);
+                        buf.append(sep);
+                        buf.append(line);
                         sep = " ";
                     }
 
@@ -450,7 +475,7 @@ public class NestedException extends Exception
             if (ex != null)
             {
                 if (elideNewlines)
-                    pw.print (": ");
+                    pw.print(": ");
                 else
                     pw.println();
             }
@@ -478,9 +503,9 @@ public class NestedException extends Exception
      * concatenation of three strings:
      *
      * <ul>
-     *   <li> The name of the actual class of this object 
-     *   <li> ": " (a colon and a space) 
-     *   <li> The result of the {@link #getMessage} method for this object 
+     *   <li> The name of the actual class of this object
+     *   <li> ": " (a colon and a space)
+     *   <li> The result of the {@link #getMessage} method for this object
      * </ul>
      *
      * If this object was created with no error message string, then the
@@ -504,7 +529,7 @@ public class NestedException extends Exception
      */
     public void printStackTrace()
     {
-        this.printStackTrace (System.err);
+        this.printStackTrace(System.err);
     }
 
     /**
@@ -518,7 +543,7 @@ public class NestedException extends Exception
      */
     public void printStackTrace (Locale locale)
     {
-        this.printStackTrace (System.err, locale);
+        this.printStackTrace(System.err, locale);
     }
 
     /**
@@ -530,9 +555,9 @@ public class NestedException extends Exception
      * @see #printStackTrace(PrintWriter,Locale)
      * @see #printStackTrace(PrintStream)
      */
-    public void printStackTrace (PrintWriter out)
+    public void printStackTrace(PrintWriter out)
     {
-        super.printStackTrace (out);
+        super.printStackTrace(out);
     }
 
     /**
@@ -545,20 +570,20 @@ public class NestedException extends Exception
      * @see #printStackTrace(PrintWriter)
      * @see #printStackTrace(PrintStream,Locale)
      */
-    public void printStackTrace (PrintWriter out, Locale locale)
+    public void printStackTrace(PrintWriter out, Locale locale)
     {
         if (locale == null)
-            super.printStackTrace (out);
+            super.printStackTrace(out);
 
         else
         {
             Locale oldLocale = Locale.getDefault();
-            Locale.setDefault (locale);
+            Locale.setDefault(locale);
 
-            super.printStackTrace (out);
+            super.printStackTrace(out);
             out.flush();
 
-            Locale.setDefault (oldLocale);
+            Locale.setDefault(oldLocale);
         }
     }
 
@@ -571,9 +596,9 @@ public class NestedException extends Exception
      * @see #printStackTrace(PrintStream,Locale)
      * @see #printStackTrace(PrintWriter)
      */
-    public void printStackTrace (PrintStream out)
+    public void printStackTrace(PrintStream out)
     {
-        super.printStackTrace (out);
+        super.printStackTrace(out);
     }
 
     /**
@@ -586,8 +611,8 @@ public class NestedException extends Exception
      * @see #printStackTrace(PrintStream)
      * @see #printStackTrace(PrintWriter,Locale)
      */
-    public void printStackTrace (PrintStream out, Locale locale)
+    public void printStackTrace(PrintStream out, Locale locale)
     {
-        this.printStackTrace (new PrintWriter (out), locale);
+        this.printStackTrace(new PrintWriter(out), locale);
     }
 }
