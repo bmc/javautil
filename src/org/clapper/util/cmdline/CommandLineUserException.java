@@ -1,80 +1,47 @@
 /*---------------------------------------------------------------------------*\
-  $Id$
-  ---------------------------------------------------------------------------
-  This software is released under a BSD-style license:
-
-  Copyright (c) 2004-2006 Brian M. Clapper. All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are
-  met:
-
-  1.  Redistributions of source code must retain the above copyright notice,
-      this list of conditions and the following disclaimer.
-
-  2.  The end-user documentation included with the redistribution, if any,
-      must include the following acknowlegement:
-
-        "This product includes software developed by Brian M. Clapper
-        (bmc@clapper.org, http://www.clapper.org/bmc/). That software is
-        copyright (c) 2004-2006 Brian M. Clapper."
-
-      Alternately, this acknowlegement may appear in the software itself,
-      if wherever such third-party acknowlegements normally appear.
-
-  3.  Neither the names "clapper.org", "clapper.org Java Utility Library",
-      nor any of the names of the project contributors may be used to
-      endorse or promote products derived from this software without prior
-      written permission. For written permission, please contact
-      bmc@clapper.org.
-
-  4.  Products derived from this software may not be called "clapper.org
-      Java Utility Library", nor may "clapper.org" appear in their names
-      without prior written permission of Brian M.a Clapper.
-
-  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
-  NO EVENT SHALL BRIAN M. CLAPPER BE LIABLE FOR ANY DIRECT, INDIRECT,
-  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ $Id$
 \*---------------------------------------------------------------------------*/
 
 package org.clapper.util.cmdline;
 
 /**
- * Thrown by a command-line utility to indicate an error on the command line.
- * The {@link CommandLineUtility} class intercepts this exception and displays
- * the command's usage summary.
+ * <p>Thrown to indicate a user error <i>other than</i> a usage exception.
+ * A {@link CommandLineUsageException}, if thrown, will cause the
+ * {@link CommandLineUtility} class to print the command line usage summary.
+ * Sometimes, you want to handle other user errors slightly differently.
+ * For example, it's fairly common for a {@link CommandLineUtility} subclass's
+ * <tt>main()</tt> method to handle exceptions like this:</p>
+ *
+ * <ul>
+ *  <li>Don't print anything for a {@link CommandLineUsageException}, since
+ *      the superclass handles that. Don't print a stack trace, either; a
+ *      stack trace doesn't go well with a usage summary.
+ *  <li>Don't print a stack trace for a <tt>CommandLineUserException</tt>;
+ *      stack traces are for programmers, and this is some kind of user 
+ *      error other than a command-line error.
+ *  <li>For other errors, print (or log) a stack trace.
+ * </ul>
  *
  * @version <tt>$Revision$</tt>
- *
- * @author Copyright &copy; 2004-2006 Brian M. Clapper
  */
-public class CommandLineUsageException extends CommandLineException
+public class CommandLineUserException extends CommandLineException
 {
     /*----------------------------------------------------------------------*\
-                         Private Static Variables
+                               Private Constants
     \*----------------------------------------------------------------------*/
-
-    /**
-     * See JDK 1.5 version of java.io.Serializable
-     */
-    private static final long serialVersionUID = 1L;
 
     /*----------------------------------------------------------------------*\
-                               Constructors
+                             Private Instance Data
     \*----------------------------------------------------------------------*/
 
+    /*----------------------------------------------------------------------*\
+                                   Constructor
+    \*----------------------------------------------------------------------*/
     /**
      * Default constructor, for an exception with no nested exception and
      * no message.
      */
-    public CommandLineUsageException()
+    public CommandLineUserException()
     {
         super();
     }
@@ -85,7 +52,7 @@ public class CommandLineUsageException extends CommandLineException
      *
      * @param exception  the exception to contain
      */
-    public CommandLineUsageException (Throwable exception)
+    public CommandLineUserException(Throwable exception)
     {
         super (exception);
     }
@@ -96,7 +63,7 @@ public class CommandLineUsageException extends CommandLineException
      *
      * @param message  the message to associate with this exception
      */
-    public CommandLineUsageException (String message)
+    public CommandLineUserException(String message)
     {
         super (message);
     }
@@ -107,7 +74,7 @@ public class CommandLineUsageException extends CommandLineException
      * @param message    the message to associate with this exception
      * @param exception  the exception to contain
      */
-    public CommandLineUsageException (String message, Throwable exception)
+    public CommandLineUserException(String message, Throwable exception)
     {
         super (message, exception);
     }
@@ -116,7 +83,7 @@ public class CommandLineUsageException extends CommandLineException
      * Constructs an exception containing a resource bundle name, a message
      * key, and a default message (in case the resource bundle can't be
      * found). Using this constructor is equivalent to calling the
-     * {@link #CommandLineUsageException(String,String,String,Object[])}
+     * {@link #CommandLineUserException(String,String,String,Object[])}
      * constructor, with a null pointer for the <tt>Object[]</tt> parameter.
      * Calls to
      * {@link org.clapper.util.misc.NestedException#getMessage(java.util.Locale)}
@@ -133,21 +100,21 @@ public class CommandLineUsageException extends CommandLineException
      * @param messageKey  the key to the message to find in the bundle
      * @param defaultMsg  the default message
      *
-     * @see #CommandLineUsageException(String,String,String,Object[])
+     * @see #CommandLineUserException(String,String,String,Object[])
      * @see org.clapper.util.misc.NestedException#getMessage(java.util.Locale)
      */
-    public CommandLineUsageException (String bundleName,
-                                      String messageKey,
-                                      String defaultMsg)
+    public CommandLineUserException (String bundleName,
+                                     String messageKey,
+                                     String defaultMsg)
     {
-        super (bundleName, messageKey, defaultMsg);
+        super(bundleName, messageKey, defaultMsg);
     }
 
     /**
      * Constructs an exception containing a resource bundle name, a message
      * key, and a default message (in case the resource bundle can't be
      * found). Using this constructor is equivalent to calling the
-     * {@link #CommandLineUsageException(String,String,String,Object[],Throwable)}
+     * {@link #CommandLineUserException(String,String,String,Object[],Throwable)}
      * constructor, with a null pointer for the <tt>Throwable</tt> parameter.
      * Calls to
      * {@link org.clapper.util.misc.NestedException#getMessage(java.util.Locale)}
@@ -165,22 +132,22 @@ public class CommandLineUsageException extends CommandLineException
      * @param defaultMsg  the default message
      * @param msgParams   parameters to the message, if any, or null
      *
-     * @see #CommandLineUsageException(String,String,String,Object[])
+     * @see #CommandLineUserException(String,String,String,Object[])
      * @see org.clapper.util.misc.NestedException#getMessage(java.util.Locale)
      */
-    public CommandLineUsageException (String   bundleName,
-                                      String   messageKey,
-                                      String   defaultMsg,
-                                      Object[] msgParams)
+    public CommandLineUserException (String   bundleName,
+                                     String   messageKey,
+                                     String   defaultMsg,
+                                     Object[] msgParams)
     {
-        super (bundleName, messageKey, defaultMsg, msgParams);
+        super(bundleName, messageKey, defaultMsg, msgParams);
     }
 
     /**
      * Constructs an exception containing a resource bundle name, a message
      * key, a default message (in case the resource bundle can't be found), and
      * another exception. Using this constructor is equivalent to calling the
-     * {@link #CommandLineUsageException(String,String,String,Object[],Throwable)}
+     * {@link #CommandLineUserException(String,String,String,Object[],Throwable)}
      * constructor, with a null pointer for the <tt>Object[]</tt>
      * parameter. Calls to {@link #getMessage(java.util.Locale)} will attempt
      * to retrieve the top-most message (i.e., the message from this
@@ -197,15 +164,15 @@ public class CommandLineUsageException extends CommandLineException
      * @param defaultMsg  the default message
      * @param exception   the exception to nest
      *
-     * @see #CommandLineUsageException(String,String,String,Object[])
+     * @see #CommandLineUserException(String,String,String,Object[])
      * @see org.clapper.util.misc.NestedException#getMessage(java.util.Locale)
      */
-    public CommandLineUsageException (String    bundleName,
-                                      String    messageKey,
-                                      String    defaultMsg,
-                                      Throwable exception)
+    public CommandLineUserException(String    bundleName,
+                                    String    messageKey,
+                                    String    defaultMsg,
+                                    Throwable exception)
     {
-        this (bundleName, messageKey, defaultMsg, null, exception);
+        this(bundleName, messageKey, defaultMsg, null, exception);
     }
 
     /**
@@ -230,15 +197,15 @@ public class CommandLineUsageException extends CommandLineException
      * @param msgParams   parameters to the message, if any, or null
      * @param exception   exception to be nested
      *
-     * @see #CommandLineUsageException(String,String,String,Object[])
+     * @see #CommandLineUserException(String,String,String,Object[])
      * @see org.clapper.util.misc.NestedException#getMessage(java.util.Locale)
      */
-    public CommandLineUsageException (String    bundleName,
-                                      String    messageKey,
-                                      String    defaultMsg,
-                                      Object[]  msgParams,
-                                      Throwable exception)
+    public CommandLineUserException(String    bundleName,
+                                    String    messageKey,
+                                    String    defaultMsg,
+                                    Object[]  msgParams,
+                                    Throwable exception)
     {
-        super (bundleName, messageKey, defaultMsg, msgParams, exception);
+        super(bundleName, messageKey, defaultMsg, msgParams, exception);
     }
 }
