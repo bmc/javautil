@@ -154,6 +154,9 @@ public class ArrayIterator<T> implements Iterator<T>
 
         try
         {
+            if (array == null)
+                throw new NoSuchElementException(); // NOPMD
+
             result = array[nextIndex++];
         }
 
