@@ -592,6 +592,11 @@ public class Configuration
      */
     private static final Logger log = new Logger (Configuration.class);
 
+    /**
+     * Whether or not to abort if a variable is undefined
+     */
+    private boolean abortOnUndefinedVariable = true;
+
     /*----------------------------------------------------------------------*\
                                 Constructor
     \*----------------------------------------------------------------------*/
@@ -1406,6 +1411,7 @@ public class Configuration
             // context.
 
             section = variableParentSection;
+            sectionName = section.getName();
         }
 
         else
@@ -1426,7 +1432,20 @@ public class Configuration
                 section = sectionsByName.get (sectionName);
         }
 
-        if (section != null)
+        if (section == null)
+        {
+            if (abortOnUndefinedVariable)
+            {
+                throw new VariableSubstitutionException
+                    (Package.BUNDLE_NAME,
+                     "Configuration.nonExistentSection",
+                     "Reference to variable \"{0}\" in nonexistent section " +
+                     "\"{1}\".",
+                     new Object[] {varName, sectionName});
+            }
+        }
+
+        else
         {
             if (variableParentSection.getID() < section.getID())
             {
@@ -1463,8 +1482,23 @@ public class Configuration
                 throw new VariableSubstitutionException (ex.getMessage());
             }
 
-            if (varToSubst != null)
+            if (varToSubst == null)
+            {
+                if (abortOnUndefinedVariable)
+                {
+                    throw new VariableSubstitutionException
+                        (Package.BUNDLE_NAME,
+                         "Configuration.nonExistentVariable",
+                         "Variable \"{0}\" does not exist in section \"" +
+                         "{1}\"",
+                         new Object[] {varName, section.getName()});
+                }
+            }
+
+            else
+            {
                 value = varToSubst.getCookedValue();
+            }
         }
 
         substContext.totalSubstitutions++;
@@ -1623,6 +1657,40 @@ public class Configuration
                 throw new VariableSubstitutionException (ex.getMessage());
             }
         }
+    }
+
+    /**
+     * Get the value of the flag that controls whether the
+     * <tt>Configuration</tt> object will abort when it encounters an
+     * undefined variable. If this flag is clear, then an undefined variable
+     * is expanded to an empty string. If this flag is set, then an undefined
+     * value results in a {@link ConfigurationException}.
+     *
+     * @return <tt>true</tt> if the "abort on undefined variable" capability
+     *         is enabled, <tt>false</tt> if it is disabled.
+     *
+     * @see #setAbortOnUndefinedVariable
+     */
+    public boolean getAbortOnUndefinedVariable()
+    {
+        return abortOnUndefinedVariable;
+    }
+
+    /**
+     * Set or clear the flag that controls whether the <tt>Configuration</tt>
+     * object will abort when it encounters an undefined variable. If this
+     * flag is clear, then an undefined variable is expanded to an empty
+     * string. If this flag is set, then an undefined value results in a
+     * {@link ConfigurationException}. The flag defaults to <tt>true</tt>.
+     *
+     * @param enable  <tt>true</tt> to enable the "abort on undefined variable"
+     *                flag, <tt>false</tt> to disable it.
+     *
+     * @see #getAbortOnUndefinedVariable
+     */
+    public void setAbortOnUndefinedVariable(boolean enable)
+    {
+        abortOnUndefinedVariable = enable;
     }
 
     /**
@@ -1977,7 +2045,7 @@ public class Configuration
                                    String.valueOf (line.number),
                                    currentSection.getName(),
                                    varName,
-                                   String.valueOf (existing.lineWhereDefined())
+                                   String.valueOf (existing.getLineWhereDefined())
                                });
         }
 

@@ -50,7 +50,6 @@ import org.clapper.util.text.XStringBufBase;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Contents of a variable. Mostly exists to make replacing a variable
@@ -76,13 +75,6 @@ class Variable
     private int            lineWhereDefined = 0; // 0 means unknown
     private ValueSegment[] valueSegments    = null;
     private Section        parentSection;
-
-    /**
-     * Total number of variable substitutions performed on the
-     * variable's value during one substitution round. Used during the
-     * variable substitution parsing phase.
-     */
-    private int totalSubstitutions = 0;
 
     /*----------------------------------------------------------------------*\
                                Constructors
@@ -208,7 +200,7 @@ class Variable
      */
     void setCookedValue (String value)
     {
-        this.cookedValue = value;            
+        this.cookedValue = value;
     }
 
     /**
@@ -421,7 +413,7 @@ class Variable
     void setValue (String value)
     {
         this.rawValue = value;
-        this.cookedValue = value;            
+        this.cookedValue = value;
     }
 
     /**
@@ -431,7 +423,7 @@ class Variable
      *
      * @see #setLineWhereDefined
      */
-    int lineWhereDefined()
+    int getLineWhereDefined()
     {
         return this.lineWhereDefined;
     }
