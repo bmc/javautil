@@ -45,6 +45,13 @@ Version 2.3 (...)
   variable references to the "system", "program" and "env" pseudo-sections 
   when an include file was being processed.
 
+- The org.clapper.util.config.Configuration class will now abort, by
+  default, if it encounters a reference to a non-existent section or
+  variable in a ${...} variable substitution. Prior to this change, it
+  would simply substitute an empty string; substituting an empty string can
+  lead to runtime errors that are difficult to diagnose. The old behavior
+  can be restored by calling Configuration.setAbortOnUndefinedVariable(true).
+
 - The org.clapper.util.misc.FileHashMap class was using an exclusive file
   lock to prevent concurrent modification, but this strategy turns out to
   cause more problems than it solves (owing to the way Java file locking is
@@ -52,6 +59,9 @@ Version 2.3 (...)
 
 - Miscellaneous code cleanup based on output from PMD (pmd.sourceforge.net).
 
+- The org.clapper.util.misc.ArrayIterator class's next() method would
+  throw a NullPointerException if the wrapped array was null. It now
+  throws a NoSuchElementException.
 
 ---------------------------------------------------------------------------
 Version 2.2 (4 July, 2006)
