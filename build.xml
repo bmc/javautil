@@ -46,7 +46,7 @@
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<project name="util" default="build" basedir=".">
+<project name="util" default="jar" basedir=".">
   <description>
     Build file for "util" Java classes
   </description>
@@ -436,6 +436,8 @@
     </javac>
   </target>
     
+  <target name="junit" depends="test" description="Synonym for 'test'"/>
+
   <target name="test" depends="compile,test-compile"
           description="Run all JUnit tests">
     <mkdir dir="${test.run.dir}"/>
@@ -454,6 +456,12 @@
           <include name="${pkg.path}/**/*Test.java"/>
         </fileset>
       </batchtest>
+<!--
+<jvmarg value="-Xdebug"/>
+<jvmarg value="-Xnoagent"/>
+<jvmarg value="-Djava.compiler=none"/>
+<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9001"/>
+-->
       <formatter classname="org.clapper.util.ant.JUnitSummaryFormatter"
                  usefile="false"/>
       <formatter type="plain"/>
@@ -535,6 +543,8 @@
     <property name="versioned_javadocs_zipfile"
               value="javadocs-${api.version}.zip"/>
   </target>
+
+  <target name="jar" depends="code.jar" description="Synonym for 'code.jar'"/>
 
   <target name="code.jar" depends="compile-all"
           description="Generate the distribution">
