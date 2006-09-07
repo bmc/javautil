@@ -5,6 +5,9 @@
 package org.clapper.util.text;
 
 /**
+ * Abstract base class for {@link VariableSubstituter} classes, containing
+ * various useful utility methods.
+ *
  * @version <tt>$Revision$</tt>
  */
 public abstract class AbstractVariableSubstituter
@@ -40,17 +43,25 @@ public abstract class AbstractVariableSubstituter
     }
 
     /*----------------------------------------------------------------------*\
-                                Public Methods
-    \*----------------------------------------------------------------------*/
-
-    /*----------------------------------------------------------------------*\
-                               Protected Methods
-    \*----------------------------------------------------------------------*/
-
-    /*----------------------------------------------------------------------*\
                               Public Methods
     \*----------------------------------------------------------------------*/
 
+    /**
+     * Determine whether a character is a legal variable identifier character.
+     * This default implementation permits alphanumerics, underscores and
+     * periods ("."). Subclasses can override this method.
+     *
+     * @param c  The character
+     *
+     * @return <tt>true</tt> if the character is legal, <tt>false</tt>
+     *         otherwise.
+     */
+    public boolean legalVariableCharacter (char c)
+    {
+        // Must be a letter, digit or underscore.
+
+        return (Character.isLetterOrDigit (c) || (c == '_') || (c == '.'));
+    }
     /**
      * <p>Substitute all variable references in the supplied string, using
      * a Unix Bourne Shell-style variable syntax. This method uses a
@@ -262,16 +273,4 @@ public abstract class AbstractVariableSubstituter
     {
         abortOnUndefinedVariable = enable;
     }
-
-    /**
-     * <p>Determine whether a character may legally be used in a variable
-     * name or not.</p>
-     *
-     * @param c   The character to test
-     *
-     * @return <tt>true</tt> if the character may be part of a variable name,
-     *         <tt>false</tt> otherwise
-     *
-     * @see VariableSubstituter#substitute
-     */
-    public abstract boolean legalVariableCharacter (char c);}
+}

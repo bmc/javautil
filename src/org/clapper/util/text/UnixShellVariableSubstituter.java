@@ -504,21 +504,6 @@ public class UnixShellVariableSubstituter
         return isMeta;
     }
 
-    /**
-     * Determine whether a character is a legal variable identifier character.
-     *
-     * @param c  The character
-     *
-     * @return <tt>true</tt> if the character is legal, <tt>false</tt>
-     *         otherwise.
-     */
-    public boolean legalVariableCharacter (char c)
-    {
-        // Must be a letter, digit or underscore.
-
-        return (Character.isLetterOrDigit (c) || (c == '_') || (c == '.'));
-    }
-
     /*----------------------------------------------------------------------*\
                              Private Methods
     \*----------------------------------------------------------------------*/

@@ -175,25 +175,6 @@ public class WindowsCmdVariableSubstituter
         return s;
     }
 
-
-    /**
-     * <p>Determine whether a character may legally be used in a variable
-     * name or not.</p>
-     *
-     * @param c   The character to test
-     *
-     * @return <tt>true</tt> if the character may be part of a variable name,
-     *         <tt>false</tt> otherwise
-     *
-     * @see VariableSubstituter#substitute
-     */
-    public boolean legalVariableCharacter (char c)
-    {
-        // Must be a letter, digit or underscore
-
-        return Character.isLetterOrDigit(c) || (c == '_') || (c == '.');
-    }
-
     /*----------------------------------------------------------------------*\
                              Private Methods
     \*----------------------------------------------------------------------*/
