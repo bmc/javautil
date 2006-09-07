@@ -188,15 +188,24 @@ import org.clapper.util.io.FileUtil;
  *
  * <p>A variable value can interpolate the values of other variables, using
  * a variable substitution syntax. The general form of a variable reference
- * is <tt>${sectionName:varName}</tt>. <tt>sectionName</tt> is the name of
- * the section containing the variable to substitute; if omitted, it
- * defaults to the current section. <tt>varName</tt> is the name of the
- * variable to substitute. If the variable has an empty value, an empty
- * string is substituted. If the variable (or the referenced section) does
- * not exist, the configuration parser throws an exception. If a variable
- * reference specifies a section name, the referenced section must precede
- * the current section. It is not possible to substitute the value of a
- * variable in a section that occurs later in the file.</p>
+ * is <tt>${sectionName:varName?default}</tt>.</p>
+ *
+ * <ul>
+ *   <li><tt>sectionName</tt> is the name of the section containing the
+ *       variable to substitute; if omitted, it defaults to the current
+ *       section.
+ *   <li><tt>varName</tt> is the name of the variable to substitute.
+ *   <li><tt>default</tt> is the default value for the variable, if the
+ *       variable is undefined. If omitted, a reference to an undefined
+ *       variable (or undefined section) will either result in an exception
+ *       or will be replaced with  an empty string, depending on the setting
+ *       of the "abort on undefined value" flag. See
+ *       {@link #setAbortOnUndefinedVariable}.
+ * </ul>
+ *
+ * <p>If a variable reference specifies a section name, the referenced section 
+ * must precede the current section. It is not possible to substitute the value 
+ * of a variable in a section that occurs later in the file.</p>
  *
  * <p>The section names "system", "env", and "program" are reserved for
  * special "pseudosections."</p>
@@ -212,7 +221,7 @@ import org.clapper.util.io.FileUtil;
  *
  * <blockquote><pre>
  * [main]
- * installation.directory=${system:user.home}/this_package
+ * installation.directory=${system:user.home?/tmp}/this_package
  * program.directory: ${installation.directory}/foo/programs
  *
  * [search]
@@ -596,7 +605,7 @@ public class Configuration
      * Whether or not to abort if a variable is undefined
      */
     private boolean abortOnUndefinedVariable = true;
-    
+
     /**
      * The substituter
      */
