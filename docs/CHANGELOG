@@ -41,16 +41,21 @@ Version 2.3 (...)
   (useful) constructors for those classes potentially calling methods that
   could be overridden.
 
-- The org.clapper.util.config.Configuration class didn't properly handle
-  variable references to the "system", "program" and "env" pseudo-sections 
-  when an include file was being processed.
+- Changes and fixes to the org.clapper.util.config.Configuration class:
 
-- The org.clapper.util.config.Configuration class will now abort, by
-  default, if it encounters a reference to a non-existent section or
-  variable in a ${...} variable substitution. Prior to this change, it
-  would simply substitute an empty string; substituting an empty string can
-  lead to runtime errors that are difficult to diagnose. The old behavior
-  can be restored by calling Configuration.setAbortOnUndefinedVariable(true).
+  a) It how properly handles variable references to the "system", "program"
+     and "env" pseudo-sections when an include file was being processed.
+
+  b) It will now abort, by default, if it encounters a reference to a
+     non-existent section or variable in a ${...} variable substitution.
+     Prior to this change, it would simply substitute an empty string;
+     substituting an empty string can lead to runtime errors that are
+     difficult to diagnose. The old behavior can be restored by calling
+     Configuration.setAbortOnUndefinedVariable(true).
+
+  c) It now supports "${var?default value}" syntax. In that example, if
+     "${var}" does not have a value, or has an empty value, the string
+     "default value" will be substituted.
 
 - The org.clapper.util.misc.FileHashMap class was using an exclusive file
   lock to prevent concurrent modification, but this strategy turns out to
@@ -62,6 +67,30 @@ Version 2.3 (...)
 - The org.clapper.util.misc.ArrayIterator class's next() method would
   throw a NullPointerException if the wrapped array was null. It now
   throws a NoSuchElementException.
+
+- The org.clapper.util.text.UnixShellVariableSubstituter class has been
+  extended:
+
+  a) It now supports a "${var?default value}" syntax. In that example,
+     if "${var}" does not have a value, or has an empty value, the string
+     "default value" will be substituted.
+  b) It can be configured to abort when a variable is undefined, rather
+     than substituting an empty string.
+  c) It can be configured to abort on syntax error (e.g., an unclosed
+     "}"), rather than simply passing the bad variable reference through.
+  d) The version of substitute() that takes an "allowEscapes" parameter
+     has been deprecated. The same capability is now available by setting
+     the "honor escapes" flag via the new setHonorEscapes() method.
+
+- The org.clapper.util.text.WindowsShellVariableSubstituter class has been
+  extended:
+
+  a) It can be configured to abort when a variable is undefined, rather
+     than substituting an empty string.
+  b) It can be configured to abort on syntax error (e.g., an unclosed
+     "}"), rather than simply passing the bad variable reference through.
+
+- The p
 
 ---------------------------------------------------------------------------
 Version 2.2 (4 July, 2006)
