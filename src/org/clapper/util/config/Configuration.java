@@ -596,6 +596,12 @@ public class Configuration
      * Whether or not to abort if a variable is undefined
      */
     private boolean abortOnUndefinedVariable = true;
+    
+    /**
+     * The substituter
+     */
+    private UnixShellVariableSubstituter varSubstituter =
+        new UnixShellVariableSubstituter();
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -1366,8 +1372,7 @@ public class Configuration
      *                 SubstitutionContext variable.
      *
      * @return The variable's value. If the variable has no value, this
-     *         method must return the empty string (""). It is important
-     *         <b>not</b> to return null.
+     *         method must return null.
      *
      * @throws VariableSubstitutionException  variable references itself
      */
@@ -1482,28 +1487,15 @@ public class Configuration
                 throw new VariableSubstitutionException (ex.getMessage());
             }
 
-            if (varToSubst == null)
-            {
-                if (abortOnUndefinedVariable)
-                {
-                    throw new VariableSubstitutionException
-                        (Package.BUNDLE_NAME,
-                         "Configuration.nonExistentVariable",
-                         "Variable \"{0}\" does not exist in section \"" +
-                         "{1}\"",
-                         new Object[] {varName, section.getName()});
-                }
-            }
-
-            else
-            {
+            if (varToSubst != null)
+             {
                 value = varToSubst.getCookedValue();
             }
         }
 
         substContext.totalSubstitutions++;
 
-        return (value == null) ? "" : value;
+        return value;
     }
 
     /**
@@ -1647,9 +1639,7 @@ public class Configuration
         {
             try
             {
-                substituteVariables (variable,
-                                     new UnixShellVariableSubstituter(),
-                                     true);
+                substituteVariables(variable, varSubstituter, true);
             }
 
             catch (ConfigurationException ex)
@@ -1691,6 +1681,7 @@ public class Configuration
     public void setAbortOnUndefinedVariable(boolean enable)
     {
         abortOnUndefinedVariable = enable;
+        varSubstituter.setAbortOnUndefinedVariable(enable);
     }
 
     /**
@@ -2058,9 +2049,8 @@ public class Configuration
         try
         {
             newVar.segmentValue();
-            VariableSubstituter sub = new UnixShellVariableSubstituter();
             decodeMetacharacters (newVar);
-            substituteVariables (newVar, sub, false);
+            substituteVariables (newVar, varSubstituter, false);
             newVar.reassembleCookedValueFromSegments();
         }
 
