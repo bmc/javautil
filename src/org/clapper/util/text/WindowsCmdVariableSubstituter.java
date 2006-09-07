@@ -52,17 +52,28 @@ package org.clapper.util.text;
  * variable substitution capability using a syntax that's reminiscent of
  * the Microsoft Windows <tt>cmd.exe</tt> command interpreter.
  * This syntax assumes that variable references are surrounded by "%"
- * characters. For example, given the string</p>
+ * characters. For example, given the string (variables in
+ * <b>bold</b>):</p>
  *
  * <blockquote>
  * <pre>
- * file:///%user.home%/profiles/%PLATFORM%/config.txt
+ * file:<b>%user.home%</b>/profiles/<b>%PLATFORM%</b>/config.txt
  * </pre>
  * </blockquote>
+*
+ * <p>and the variable values:</p>
  *
- * <p>a <tt>WindowsStyleVarSubstituter</tt> will attempt to produce a
- * result string by substituting values for the <tt>user.home</tt> and
- * <tt>PLATFORM</tt> variables.</p>
+ * <blockquote><pre>
+ * user.home=/home/bmc
+ * PLATFORM=freebsd
+ * </pre></blockquote>
+ * *
+ * <p>a <tt>WindowsCmdVariableSubstituter</tt> will produce the result
+ * string (substitutions noted in <b>bold</b>):
+ *
+ * <blockquote><pre>
+ * file:<b>/home/bmc</b>/profiles/<b>freebsd</b>/config.txt
+ * </pre></blockquote>
  *
  * <b><u>Notes and Caveats</u></b>
  *
@@ -81,6 +92,11 @@ package org.clapper.util.text;
  *        <tt>VariableDereferencer</tt> object interprets variable names.
  * </ol>
  *
+ * <p>It's also possible to configure a <tt>WindowsCmdVariableSubstituter</tt>
+ * to throw a {@link UndefinedVariableException}, rather than substituting
+ * a blank, if a variable is undefined and a default value is not specified.
+ * See the {@link #setAbortOnUndefinedVariable} method.</p>
+ *
  * @see UnixShellVariableSubstituter
  * @see VariableDereferencer
  * @see VariableSubstituter
@@ -91,7 +107,7 @@ package org.clapper.util.text;
  * @author Copyright &copy; 2004-2006 Brian M. Clapper
  */
 public class WindowsCmdVariableSubstituter
-    implements VariableSubstituter, VariableNameChecker
+    extends AbstractVariableSubstituter
 {
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -102,49 +118,12 @@ public class WindowsCmdVariableSubstituter
      */
     public WindowsCmdVariableSubstituter()
     {
-        // Nothing to do
+        super();
     }
 
     /*----------------------------------------------------------------------*\
                               Public Methods
     \*----------------------------------------------------------------------*/
-
-    /**
-     * <p>Substitute all variable references in the supplied string, using
-     * a Unix Bourne Shell-style variable syntax. This method uses a
-     * supplied <tt>VariableDereferencer</tt> object to resolve variable
-     * values. Note that this method throws no exceptions. Syntax errors in
-     * the variable references are silently ignored. Variables that have no
-     * value are substituted as the empty string. This method assumes that
-     * variable names may consist solely of alphanumeric characters and
-     * underscores. If you want more control over the legal characters, use
-     * the second <tt>substitute</tt> method.</p>
-     *
-     * @param s       the string containing possible variable references
-     * @param deref   the <tt>VariableDereferencer</tt> object
-     *                to use to resolve the variables' values.
-     * @param context an optional context object, passed through unmodified
-     *                to the <tt>deref</tt> object's
-     *                {@link VariableDereferencer#getVariableValue} method.
-     *                This object can be anything at all (and, in fact, may
-     *                be null if you don't care.) It's primarily useful
-     *                for passing context information from the caller to
-     *                the (custom) <tt>VariableDereferencer</tt>.
-     *
-     * @return The (possibly) expanded string.
-     *
-     * @throws VariableSubstitutionException  substitution error
-     *
-     * @see #substitute(String,VariableDereferencer,VariableNameChecker,Object)
-     * @see VariableDereferencer#getVariableValue(String,Object)
-     */
-    public String substitute (String               s,
-                              VariableDereferencer deref,
-                              Object               context)
-        throws VariableSubstitutionException
-    {
-        return substitute (s, deref, null);
-    }
 
     /**
      * <p>Substitute all variable references in the supplied string, using
@@ -182,11 +161,13 @@ public class WindowsCmdVariableSubstituter
      * @see #substitute(String,VariableDereferencer,Object)
      * @see VariableDereferencer#getVariableValue(String,Object)
      */
-    public String substitute (      String               s,
-                              final VariableDereferencer deref,
-                              final VariableNameChecker  nameChecker,
-                              final Object               context)
-        throws VariableSubstitutionException
+    public String substitute(      String               s,
+                             final VariableDereferencer deref,
+                             final VariableNameChecker  nameChecker,
+                             final Object               context)
+        throws VariableSyntaxException,
+               UndefinedVariableException,
+               VariableSubstitutionException
     {
         if (s != null)
             s = doSubstitution(s, context, nameChecker, deref);
@@ -196,22 +177,25 @@ public class WindowsCmdVariableSubstituter
 
 
     /**
-     * Determine whether a character is a legal variable identifier character.
+     * <p>Determine whether a character may legally be used in a variable
+     * name or not.</p>
      *
-     * @param c  The character
+     * @param c   The character to test
      *
-     * @return <tt>true</tt> if the character is legal, <tt>false</tt>
-     *         otherwise.
+     * @return <tt>true</tt> if the character may be part of a variable name,
+     *         <tt>false</tt> otherwise
+     *
+     * @see VariableSubstituter#substitute
      */
     public boolean legalVariableCharacter (char c)
     {
-        // Must be a letter, digit or underscore.
+        // Must be a letter, digit or underscore
 
-        return (Character.isLetterOrDigit (c) || (c == '_') || (c == '.'));
+        return Character.isLetterOrDigit(c) || (c == '_') || (c == '.');
     }
 
     /*----------------------------------------------------------------------*\
-                             Private Variables
+                             Private Methods
     \*----------------------------------------------------------------------*/
 
     /**
@@ -237,10 +221,10 @@ public class WindowsCmdVariableSubstituter
      *
      * @throws VariableSubstitutionException  substitution error
      */
-    private String doSubstitution (final String s,
-                                   final Object context,
-                                         VariableNameChecker nameChecker,
-                                   final VariableDereferencer deref)
+    private String doSubstitution(final String s,
+                                  final Object context,
+                                        VariableNameChecker nameChecker,
+                                  final VariableDereferencer deref)
         throws VariableSubstitutionException
     {
 
@@ -269,7 +253,7 @@ public class WindowsCmdVariableSubstituter
                         // Doubled "%". Insert one literal "%".
 
                         inVar = false;
-                        result.append ('%');
+                        result.append('%');
                     }
 
                     else
@@ -280,12 +264,27 @@ public class WindowsCmdVariableSubstituter
 
                         String varName = var.toString();
                         if (syntaxError)
-                            result.append ('%' + varName + '%');
-                        else
-                            result.append (deref.getVariableValue (varName,
-                                                                   context));
+                        {
+                            result.append('%' + varName + '%');
+                        }
 
-                        var.setLength (0);
+                        else
+                        {
+                            String value = deref.getVariableValue(varName,
+                                                                  context);
+                            if (((value == null) || (value.length() == 0))
+                                                 &&
+                                (getAbortOnUndefinedVariable() == true))
+                            {
+                                throw new UndefinedVariableException
+                                    ("Variable \"" + varName +
+                                     "\" is not defined.");
+                            }
+
+                            result.append(value == null ? "" : value);
+                        }
+
+                        var.setLength(0);
                         inVar       = false;
                         syntaxError = false;
                         prev        = '\0';  // prevent match on trailing "%"
@@ -307,14 +306,14 @@ public class WindowsCmdVariableSubstituter
 
                 if (inVar)
                 {
-                    var.append (c);
-                    if (! nameChecker.legalVariableCharacter (c))
+                    var.append(c);
+                    if (! nameChecker.legalVariableCharacter(c))
                         syntaxError = true;
                 }
 
                 else
                 {
-                    result.append (c);
+                    result.append(c);
                 }
                 prev = c;
             }
@@ -326,8 +325,16 @@ public class WindowsCmdVariableSubstituter
             // Transfer the characters buffered in 'var' into the result,
             // without modification.
 
-            result.append ('%');
-            result.append (var.toString());
+            result.append('%');
+            result.append(var.toString());
+            syntaxError = true;
+        }
+
+        if (syntaxError && (getAbortOnSyntaxError() == true))
+        {
+            throw new VariableSyntaxException
+                ("Syntactically incorrect reference to variable \"" +
+                 var.toString() + "\"");
         }
 
         return result.toString();

@@ -168,13 +168,10 @@ public class MapVariableDereferencer implements VariableDereferencer
      *                 Ignored here.
      *
      * @return The variable's value. If the variable has no value, this
-     *         method must return the empty string (""). It is important
-     *         <b>not</b> to return null.
+     *         method must return null.
      */
     public String getVariableValue (String varName, Object context)
     {
-        String result = map.get (varName);
-
-        return (result == null) ? "" : result;
+        return map.get(varName);
     }
 }

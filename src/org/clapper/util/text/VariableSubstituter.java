@@ -131,6 +131,12 @@ public interface VariableSubstituter
      *
      * @return The (possibly) expanded string.
      *
+     * @throws UndefinedVariableException     undefined variable, and
+     *                                        {@link #getAbortOnUndefinedVariable}
+     *                                        returns true
+     * @throws VariableSyntaxException        syntax error, and
+     *                                        {@link #getAbortOnSyntaxError}
+     *                                        returns true
      * @throws VariableSubstitutionException  substitution error
      *
      * @see #substitute(String,VariableDereferencer,VariableNameChecker,Object)
@@ -173,6 +179,12 @@ public interface VariableSubstituter
      * @return The (possibly) expanded string.
      *
      * @throws VariableSubstitutionException  substitution error
+     * @throws UndefinedVariableException     undefined variable, and
+     *                                        {@link #getAbortOnUndefinedVariable}
+     *                                        returns true
+     * @throws VariableSyntaxException        syntax error, and
+     *                                        {@link #getAbortOnSyntaxError}
+     *                                        returns true
      *
      * @see #substitute(String,VariableDereferencer,Object)
      * @see VariableDereferencer#getVariableValue(String,Object)
@@ -182,4 +194,62 @@ public interface VariableSubstituter
                               VariableNameChecker  nameChecker,
                               Object               context)
         throws VariableSubstitutionException;
+
+    /**
+     * Get the value of the flag that controls whether the
+     * <tt>substitute()</tt> methods will abort when they encounter an
+     * undefined variable. If this flag is clear, then an undefined variable
+     * is expanded to an empty string. If this flag is set, then an undefined
+     * value results in an {@link UndefinedVariableException}.
+     *
+     * @return <tt>true</tt> if the "abort on undefined variable" capability
+     *         is enabled, <tt>false</tt> if it is disabled.
+     * @see #setAbortOnUndefinedVariable
+     */
+    public boolean getAbortOnUndefinedVariable();
+
+    /**
+     * Set or clear the flag that controls whether the <tt>substitute()</tt>
+     * methods will abort when they encounter an undefined variable. If this
+     * flag is clear, then an undefined variable is expanded to an empty
+     * string. If this flag is set, then an undefined value results in an
+     * {@link UndefinedVariableException}. The flag defaults to <tt>false</tt>.
+     *
+     * @param enable  <tt>true</tt> to enable the "abort on undefined variable"
+     *                flag, <tt>false</tt> to disable it.
+     * @see #getAbortOnUndefinedVariable
+     */
+    public void setAbortOnUndefinedVariable(boolean enable);
+
+    /**
+     * Get the value of the flag that controls whether the
+     * <tt>substitute()</tt> methods will abort when they encounter a
+     * syntax error. If this flag is clear, then this object will recover
+     * from a syntax error (usually by leaving the syntactically bad
+     * variable reference untouched in the resulting string). If this flag
+     * is set, then a syntax error results in a
+     * {@link VariableSyntaxException}.
+     *
+     * @return <tt>true</tt> if the "abort on syntax error" capability
+     *         is enabled, <tt>false</tt> if it is disabled.
+     *
+     * @see #setAbortOnUndefinedVariable
+     */
+    public boolean getAbortOnSyntaxError();
+
+    /**
+     * Set or clear the flag that controls whether the
+     * <tt>substitute()</tt> methods will abort when they encounter a
+     * syntax error. If this flag is clear, then this object will recover
+     * from a syntax error (usually by leaving the syntactically bad
+     * variable reference untouched in the resulting string). If this flag
+     * is set, then a syntax error results in a
+     * {@link VariableSyntaxException}. The flag defaults to <tt>false</tt>.
+     *
+     * @param enable  <tt>true</tt> to enable the "abort on syntax error"
+     *                flag, <tt>false</tt> to disable it.
+     *
+     * @see #getAbortOnUndefinedVariable
+     */
+    public void setAbortOnSyntaxError(boolean enable);
 }

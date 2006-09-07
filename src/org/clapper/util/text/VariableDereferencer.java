@@ -80,8 +80,7 @@ public interface VariableDereferencer
      *                 to the dereferencer, or null if there isn't one.
      *
      * @return The variable's value. If the variable has no value, this
-     *         method must return the empty string (""). It is important
-     *         <b>not</b> to return null.
+     *         method must return null.
      *
      * @throws VariableSubstitutionException  substitution error
      */
