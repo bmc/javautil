@@ -67,7 +67,7 @@ package org.clapper.util.text;
  * user.home=/home/bmc
  * PLATFORM=freebsd
  * </pre></blockquote>
- * *
+ *
  * <p>a <tt>WindowsCmdVariableSubstituter</tt> will produce the result
  * string (substitutions noted in <b>bold</b>):
  *
