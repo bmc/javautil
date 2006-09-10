@@ -20,12 +20,6 @@ public abstract class ScriptExecutor
                                Private Constants
     \*----------------------------------------------------------------------*/
 
-    public enum Type
-    {
-        JSR_223,
-        BSF
-    };
-
     /*----------------------------------------------------------------------*\
                              Private Instance Data
     \*----------------------------------------------------------------------*/
@@ -58,29 +52,33 @@ public abstract class ScriptExecutor
      *
      * @throws ScriptExecutorException on error
      */
-    public static ScriptExecutor getScriptExecutor(Type type)
+    public static ScriptExecutor getScriptExecutor(ScriptFrameworkType type)
         throws ScriptExecutorException
     {
         ScriptExecutor result = null;
         String className = null;
+        String packageName = ScriptExecutor.class.getPackage().getName();
 
         switch (type)
         {
             case JSR_223:
-                className = "JSR223ScriptExecutor";
+                className = TextUtil.join (".",
+                                           packageName,
+                                           "jsr223",
+                                           "JSR223ScriptExecutor");
                 break;
 
             case BSF:
-                className = "BSFScriptExecutor";
+                className = TextUtil.join (".",
+                                           packageName,
+                                           "bsf",
+                                           "BSFScriptExecutor");
                 break;
 
             default:
                 assert(false);
         }
 
-        className = TextUtil.join(".",
-                                  ScriptExecutor.class.getPackage().getName(),
-                                  className);
         try
         {
             Class<?> cls = Class.forName(className);
@@ -118,10 +116,6 @@ public abstract class ScriptExecutor
         return result;
     }
 
-    protected Object clone() throws CloneNotSupportedException
-    {
-    }
-
     /**
      * Put an object into the script environment. If the scripting
      * infrastructure supports different scopes (e.g., JSR 223), then
@@ -151,7 +145,4 @@ public abstract class ScriptExecutor
                                 Private Methods
     \*----------------------------------------------------------------------*/
 
-    protected void finalize() throws Throwable
-    {
-    }
 }
