@@ -106,11 +106,11 @@ public abstract class ScriptExecutor
 
         switch (type)
         {
-            case JSR_223:
+            case JAVAX_SCRIPT:
                 className = TextUtil.join (".",
                                            packageName,
-                                           "jsr223",
-                                           "JSR223ScriptExecutor");
+                                           "javax_script",
+                                           "JavaxScriptExecutor");
                 break;
 
             case BSF:
@@ -203,7 +203,8 @@ public abstract class ScriptExecutor
      * @throws IOException             error reading script
      * @throws ScriptExecutorException compilation error
      *
-     * @see #compileScript(String)
+     * @see #compileScript(String,String)
+     * @see #compileScript(File)
      */
     public abstract ScriptExecutorCompiledScript
     compileScript(Reader scriptReader, String language)
@@ -227,7 +228,8 @@ public abstract class ScriptExecutor
      * @throws IOException             error reading script
      * @throws ScriptExecutorException compilation error
      *
-     * @see #compileScript(String)
+     * @see #compileScript(File)
+     * @see #compileScript(Reader,String)
      */
     public ScriptExecutorCompiledScript compileScript(String scriptString,
                                                       String language)
@@ -254,7 +256,8 @@ public abstract class ScriptExecutor
      * @throws IOException             error reading script
      * @throws ScriptExecutorException compilation error
      *
-     * @see #compileScript(String)
+     * @see #compileScript(String,String)
+     * @see #compileScript(Reader,String)
      */
     public abstract ScriptExecutorCompiledScript compileScript(File scriptFile)
         throws IOException,
@@ -269,7 +272,8 @@ public abstract class ScriptExecutor
      * @throws IOException             error reading script
      * @throws ScriptExecutorException compilation error
      *
-     * @see #execScript(String)
+     * @see #execScript(String,String)
+     * @see #execScript(File)
      */
     public abstract void execScript(Reader scriptReader, String language)
         throws IOException,
@@ -284,7 +288,8 @@ public abstract class ScriptExecutor
      * @throws IOException             error reading script
      * @throws ScriptExecutorException compilation error
      *
-     * @see #execScript(String)
+     * @see #execScript(String,String)
+     * @see #execScript(Reader,String)
      */
     public abstract void execScript(File scriptFile)
         throws IOException,
@@ -299,7 +304,8 @@ public abstract class ScriptExecutor
      * @throws IOException             error reading script
      * @throws ScriptExecutorException compilation error
      *
-     * @see #execScript(String)
+     * @see #execScript(File)
+     * @see #execScript(Reader,String)
      */
     public void execScript(String scriptString, String language)
         throws IOException,
@@ -316,8 +322,8 @@ public abstract class ScriptExecutor
      * @throws IOException             error reading script
      * @throws ScriptExecutorException compilation error
      *
-     * @see #compileScript(File)
-     * @see #compileScript(Reader)
+     * @see #execScript(File)
+     * @see #execScript(Reader,String)
      */
     public abstract void execScript(ScriptExecutorCompiledScript compiledScript)
         throws IOException,
