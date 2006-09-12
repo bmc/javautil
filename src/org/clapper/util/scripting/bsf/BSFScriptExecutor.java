@@ -121,7 +121,8 @@ public class BSFScriptExecutor extends ScriptExecutor
      * @throws IOException             error reading script
      * @throws ScriptExecutorException compilation error
      *
-     * @see #compileScript(String)
+     * @see #compileScript(File)
+     * @see #compileScript(String,String)
      */
     public ScriptExecutorCompiledScript
     compileScript(Reader scriptReader, String language)
@@ -150,7 +151,8 @@ public class BSFScriptExecutor extends ScriptExecutor
      * @throws IOException             error reading script
      * @throws ScriptExecutorException compilation error
      *
-     * @see #compileScript(String)
+     * @see #compileScript(String,String)
+     * @see #compileScript(Reader,String)
      */
     public ScriptExecutorCompiledScript compileScript(File scriptFile)
         throws IOException,
@@ -170,7 +172,8 @@ public class BSFScriptExecutor extends ScriptExecutor
      * @throws IOException             error reading script
      * @throws ScriptExecutorException compilation error
      *
-     * @see #execScript(String)
+     * @see #execScript(String,String)
+     * @see #execScript(Reader,String)
      */
     public void execScript(File scriptFile)
         throws IOException,
@@ -204,7 +207,7 @@ public class BSFScriptExecutor extends ScriptExecutor
      * @throws ScriptExecutorException compilation error
      *
      * @see #compileScript(File)
-     * @see #compileScript(Reader)
+     * @see #compileScript(Reader,String)
      */
     public void execScript(ScriptExecutorCompiledScript compiledScript)
         throws IOException,
@@ -223,7 +226,8 @@ public class BSFScriptExecutor extends ScriptExecutor
      * @throws IOException             error reading script
      * @throws ScriptExecutorException compilation error
      *
-     * @see #execScript(String)
+     * @see #execScript(File)
+     * @see #execScript(String,String)
      */
     public void execScript(Reader scriptReader, String language)
         throws IOException,
