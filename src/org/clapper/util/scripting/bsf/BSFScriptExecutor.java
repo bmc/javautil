@@ -276,9 +276,9 @@ public class BSFScriptExecutor extends ScriptExecutor
 
         catch (BSFException ex)
         {
-            throw new ScriptException("Can't declare BSF bean \"" + name +
-                                      "\"",
-                                      ex);
+            throw new ScriptExecutorException("Can't declare BSF bean \"" + 
+                                              name + "\"",
+                                              ex);
         }
     }
 
