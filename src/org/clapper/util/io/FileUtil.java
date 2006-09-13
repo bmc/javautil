@@ -80,7 +80,7 @@ public class FileUtil
      *
      * @throws IOException  on error
      */
-    public static boolean isAbsolutePath (String path)
+    public static boolean isAbsolutePath(String path)
         throws IOException
     {
         // It's important not to use  java.util.File.listRoots(), for two
@@ -95,29 +95,29 @@ public class FileUtil
         // So, this version analyzes the pathname textually.
 
         boolean  isAbsolute = false;
-        String   fileSep = System.getProperty ("file.separator");
+        String   fileSep = System.getProperty("file.separator");
 
-        if (fileSep.equals ("/"))
+        if (fileSep.equals("/"))
         {
             // Unix.
 
-            isAbsolute = path.startsWith ("/");
+            isAbsolute = path.startsWith("/");
         }
 
-        else if (fileSep.equals ("\\"))
+        else if (fileSep.equals("\\"))
         {
             // Windows. Must start with something that looks like a drive
             // letter.
 
-            isAbsolute = (Character.isLetter (path.charAt (0))) &&
+            isAbsolute = (Character.isLetter(path.charAt(0))) &&
                          (path.charAt(1) == ':') &&
                          (path.charAt(2) == '\\');
         }
 
         else
         {
-            throw new IOException ("Can't determine operating system from " +
-                                   "file separator \"" + fileSep + "\"");
+            throw new IOException("Can't determine operating system from " +
+                                  "file separator \"" + fileSep + "\"");
         }
 
         return isAbsolute;
@@ -143,10 +143,10 @@ public class FileUtil
      * @see #copyReader(Reader,Writer)
      * @see #copyFile(File,File)
      */
-    public static int copyStream (InputStream is, OutputStream os)
+    public static int copyStream(InputStream is, OutputStream os)
         throws IOException
     {
-        return copyStream (is, os, -1);
+        return copyStream(is, os, -1);
     }
 
     /**
@@ -167,9 +167,9 @@ public class FileUtil
      * @see #copyStream(InputStream,OutputStream)
      * @see #copyFile(File,File)
      */
-    public static int copyStream (InputStream  src,
-                                  OutputStream dst,
-                                  int          bufferSize)
+    public static int copyStream(InputStream  src,
+                                 OutputStream dst,
+                                 int          bufferSize)
         throws IOException
     {
         int totalCopied = 0;
@@ -177,24 +177,24 @@ public class FileUtil
         if (! (src instanceof BufferedInputStream))
         {
             if (bufferSize > 0)
-                src = new BufferedInputStream (src, bufferSize);
+                src = new BufferedInputStream(src, bufferSize);
             else
-                src = new BufferedInputStream (src);
+                src = new BufferedInputStream(src);
         }
 
         if (! (dst instanceof BufferedOutputStream))
         {
             if (bufferSize > 0)
-                dst = new BufferedOutputStream (dst, bufferSize);
+                dst = new BufferedOutputStream(dst, bufferSize);
             else
-                dst = new BufferedOutputStream (dst);
+                dst = new BufferedOutputStream(dst);
         }
-        
+
         int b;
 
         while ((b = src.read()) != -1)
         {
-            dst.write (b);
+            dst.write(b);
             totalCopied++;
         }
 
@@ -225,23 +225,23 @@ public class FileUtil
      * @see #copyStream(InputStream,OutputStream)
      * @see #copyFile(File,File)
      */
-    public static int copyReader (Reader reader, Writer writer, int bufferSize)
+    public static int copyReader(Reader reader, Writer writer, int bufferSize)
         throws IOException
     {
         if (! (reader instanceof BufferedReader))
         {
             if (bufferSize > 0)
-                reader = new BufferedReader (reader, bufferSize);
+                reader = new BufferedReader(reader, bufferSize);
             else
-                reader = new BufferedReader (reader);
+                reader = new BufferedReader(reader);
         }
 
         if (! (writer instanceof BufferedWriter))
         {
             if (bufferSize > 0)
-                writer = new BufferedWriter (writer, bufferSize);
+                writer = new BufferedWriter(writer, bufferSize);
             else
-                writer = new BufferedWriter (writer);
+                writer = new BufferedWriter(writer);
         }
 
         int ch;
@@ -249,7 +249,7 @@ public class FileUtil
 
         while ((ch = reader.read()) != -1)
         {
-            writer.write (ch);
+            writer.write(ch);
             total++;
         }
 
@@ -273,10 +273,10 @@ public class FileUtil
      * @see #copyStream(InputStream,OutputStream)
      * @see #copyFile(File,File)
      */
-    public static int copyReader (Reader reader, Writer writer)
+    public static int copyReader(Reader reader, Writer writer)
         throws IOException
     {
-        return copyReader (reader, writer, -1);
+        return copyReader(reader, writer, -1);
     }
 
     /**
@@ -297,22 +297,22 @@ public class FileUtil
      * @see #copyStream(InputStream,OutputStream,int)
      * @see #copyStream(InputStream,OutputStream)
      */
-    public static int copyFile (File src, File dst) throws IOException
+    public static int copyFile(File src, File dst) throws IOException
     {
         int totalCopied = 0;
 
         if (dst.isDirectory())
-            dst = new File (dst, src.getName());
-        
+            dst = new File(dst, src.getName());
+
         InputStream   from = null;
         OutputStream  to   = null;
 
         try
         {
-            from = new FileInputStream (src);
-            to   = new FileOutputStream (dst);
+            from = new FileInputStream(src);
+            to   = new FileOutputStream(dst);
 
-            totalCopied = copyStream (from, to);
+            totalCopied = copyStream(from, to);
         }
 
         finally
@@ -348,43 +348,41 @@ public class FileUtil
      * @see #copyStream(InputStream,OutputStream,int)
      * @see #copyStream(InputStream,OutputStream)
      */
-    public static int copyTextFile (File   src,
-                                    String srcEncoding,
-                                    File   dst,
-                                    String dstEncoding)
+    public static int copyTextFile(File   src,
+                                   String srcEncoding,
+                                   File   dst,
+                                   String dstEncoding)
         throws IOException
     {
-        int totalCopied = 0;
-
         if (dst.isDirectory())
-            dst = new File (dst, src.getName());
+            dst = new File(dst, src.getName());
 
         Reader reader;
         Writer writer;
 
         if (srcEncoding != null)
         {
-            reader = new InputStreamReader (new FileInputStream (src),
-                                            srcEncoding);
+            reader = new InputStreamReader(new FileInputStream(src),
+                srcEncoding);
         }
 
         else
         {
-            reader = new FileReader (src);
+            reader = new FileReader(src);
         }
 
         if (dstEncoding != null)
         {
-            writer = new OutputStreamWriter (new FileOutputStream (dst),
-                                             dstEncoding);
+            writer = new OutputStreamWriter(new FileOutputStream(dst),
+                dstEncoding);
         }
 
         else
         {
-            writer = new FileWriter (dst);
+            writer = new FileWriter(dst);
         }
 
-        int total = copyReader (reader, writer);
+        int total = copyReader(reader, writer);
 
         reader.close();
         writer.close();
@@ -405,19 +403,45 @@ public class FileUtil
     /**
      * Get the extension for a path or file name. Does not include the ".".
      *
+     * @param file the file
+     *
+     * @return the extension, or null if there isn't one
+     */
+    public static String getFileNameExtension(File file)
+    {
+        return getFileNameExtension(file.getName());
+    }
+
+    /**
+     * Get the extension for a path or file name. Does not include the ".".
+     *
      * @param path  the file or path name
      *
      * @return the extension, or null if there isn't one
      */
-    public static String getFileNameExtension (String path)
+    public static String getFileNameExtension(String path)
     {
         String ext = null;
-        int    i   = path.lastIndexOf ('.');
+        int    i   = path.lastIndexOf('.');
 
         if ((i != -1) && (i != (path.length() - 1)))
-            ext = path.substring (i + 1);
+            ext = path.substring(i + 1);
 
         return ext;
+    }
+
+    /**
+     * Get the name of a file without its extension. Does not remove
+     * any parent directory components. Uses <tt>File.getAbsolutePath()</tt>,
+     * not <tt>File.getCanonicalPath()</tt> to get the path.
+     *
+     * @param file  the file
+     *
+     * @return the path without the extension
+     */
+    public static String getFileNameNoExtension(File file)
+    {
+        return getFileNameNoExtension(file.getAbsolutePath());
     }
 
     /**
@@ -428,12 +452,12 @@ public class FileUtil
      *
      * @return the path without the extension
      */
-    public static String getFileNameNoExtension (String path)
+    public static String getFileNameNoExtension(String path)
     {
-        int i = path.lastIndexOf ('.');
+        int i = path.lastIndexOf('.');
 
         if (i != -1)
-            path = path.substring (0, i);
+            path = path.substring(0, i);
 
         return path;
     }
@@ -450,9 +474,9 @@ public class FileUtil
      * @see #dirname(File)
      * @see #basename(String)
      */
-    public static String dirname (String fileName)
+    public static String dirname(String fileName)
     {
-        return dirname (new File (fileName));
+        return dirname(new File(fileName));
     }
 
     /**
@@ -467,13 +491,13 @@ public class FileUtil
      * @see #dirname(String)
      * @see #basename(File)
      */
-    public static String dirname (File file)
+    public static String dirname(File file)
     {
         String  absName = file.getAbsolutePath();
-        String  fileSep = System.getProperty ("file.separator");
-        int     lastSep = absName.lastIndexOf (fileSep);
+        String  fileSep = System.getProperty("file.separator");
+        int     lastSep = absName.lastIndexOf(fileSep);
 
-        return absName.substring (0, lastSep);
+        return absName.substring(0, lastSep);
     }
 
     /**
@@ -487,15 +511,13 @@ public class FileUtil
      *
      * @see #dirname(String)
      */
-    public static String basename (String fileName)
+    public static String basename(String fileName)
     {
-        String  fileSep = System.getProperty ("file.separator");
-        int     lastSep = fileName.lastIndexOf (fileSep);
+        String  fileSep = System.getProperty("file.separator");
+        int     lastSep = fileName.lastIndexOf(fileSep);
 
-        if (lastSep == -1)
-            return fileName;
-        else
-            return fileName.substring (lastSep + 1);
+        return (lastSep == -1) ? fileName
+                               : fileName.substring(lastSep + 1);
     }
 
     /**
@@ -512,6 +534,6 @@ public class FileUtil
      */
     public static String basename (File file)
     {
-        return basename (file.getName());
+        return basename(file.getName());
     }
 }
