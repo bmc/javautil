@@ -47,8 +47,8 @@
 package org.clapper.util.misc;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ConcurrentModificationException;
 import java.util.Map;
 
 /**
@@ -56,6 +56,12 @@ import java.util.Map;
  */
 public class FileHashMapTest extends MapTestBase
 {
+    /*----------------------------------------------------------------------*\
+                                 Constants
+    \*----------------------------------------------------------------------*/
+
+    private static final String FILE_PREFIX = "junit_fhm";
+
     /*----------------------------------------------------------------------*\
                                 Constructor
     \*----------------------------------------------------------------------*/
@@ -77,11 +83,13 @@ public class FileHashMapTest extends MapTestBase
     public void testClose()
         throws IOException
     {
-        FileHashMap<String,String> map = new FileHashMap<String,String>();
+        FileHashMap<String,String> map =
+            new FileHashMap<String,String>(FILE_PREFIX);
         map.close();
         assertFalse (map.isValid());
 
         map.close();
+        map.delete();
    }
 
     /**
@@ -99,12 +107,12 @@ public class FileHashMapTest extends MapTestBase
                ClassNotFoundException,
                VersionMismatchException
     {
-        String filePrefix = getFilePrefix();
+        FileHashMap<String,Integer> map =
+            new FileHashMap<String,Integer>
+                (FILE_PREFIX,
+                 FileHashMap.FORCE_OVERWRITE);
         try
         {
-            FileHashMap<String,Integer> map =
-                new FileHashMap<String,Integer>(filePrefix,
-                                                FileHashMap.FORCE_OVERWRITE);
 
             map.put("a", 1);
             map.put("b", 2);
@@ -115,7 +123,7 @@ public class FileHashMapTest extends MapTestBase
 
             System.out.println("Rereading map.");
             FileHashMap<String,Integer> map2 =
-                new FileHashMap<String,Integer>(filePrefix, 0);
+                new FileHashMap<String,Integer>(FILE_PREFIX, 0);
 
             assertEquals("Reloaded map has wrong size",
                          map.size(), map2.size());
@@ -133,7 +141,8 @@ public class FileHashMapTest extends MapTestBase
 
         finally
         {
-            new File(filePrefix).delete();
+            if (map != null)
+                map.delete();
         }
     }
 
@@ -153,7 +162,7 @@ public class FileHashMapTest extends MapTestBase
      {
 /*
  DOESN'T WORK YET.
- 
+
         String filePrefix = getFilePrefix();
         FileHashMap<String,Integer> map1 =
             new FileHashMap<String,Integer>(filePrefix, 0);
