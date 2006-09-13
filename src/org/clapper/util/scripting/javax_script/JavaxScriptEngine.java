@@ -101,10 +101,12 @@ public class JavaxScriptEngine extends UnifiedScriptEngine
      * Execute a previously compiled script.
      *
      * @param compiledScript  the compiled script
-     * @see #compileScript(File)
-     * @see #compileScript(Reader,String)
-     * @throws IOException             error reading script
+     *
+     * @throws IOException            error reading script
      * @throws UnifiedScriptException compilation error
+     *
+     * @see #compile(File)
+     * @see #compile(Reader)
      */
     public void exec(UnifiedCompiledScript compiledScript)
         throws IOException,

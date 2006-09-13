@@ -52,13 +52,14 @@ import java.util.Map;
 import org.apache.bsf.BSFException;
 import org.apache.bsf.BSFManager;
 import org.clapper.util.logging.Logger;
+import org.clapper.util.scripting.ScriptFrameworkType;
 import org.clapper.util.scripting.UnifiedScriptEngine;
 import org.clapper.util.scripting.UnifiedScriptEngineManager;
 import org.clapper.util.scripting.UnifiedScriptException;
 
 /**
- * {@link ScriptExecutor} that uses the Apache Jakarta Bean Scripting
- * Framework.
+ * {@link UnifiedScriptEngineManager} that uses the Apache Jakarta Bean 
+ * Scripting Framework (BSF).
  *
  * @version <tt>$Revision$</tt>
  */
@@ -118,6 +119,17 @@ public class BSFScriptEngineManager extends UnifiedScriptEngineManager
     /*----------------------------------------------------------------------*\
                                 Public Methods
     \*----------------------------------------------------------------------*/
+
+    /**
+     * Get the framework type ({@link ScriptFrameworkType} associated with
+     * the <tt>UnifiedScriptEngineManager</tt> object.
+     *
+     * @return the framework type
+     */
+    public ScriptFrameworkType getType()
+    {
+        return ScriptFrameworkType.BSF;
+    }
 
      /**
      * Get the global object bindings. Unlike JSR 223, this interface only

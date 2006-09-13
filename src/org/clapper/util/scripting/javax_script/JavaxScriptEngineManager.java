@@ -46,19 +46,17 @@
 
 package org.clapper.util.scripting.javax_script;
 
-import java.io.File;
 import java.util.Map;
 import javax.script.Bindings;
-import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import org.clapper.util.io.FileUtil;
+import org.clapper.util.scripting.ScriptFrameworkType;
 import org.clapper.util.scripting.UnifiedScriptEngine;
 import org.clapper.util.scripting.UnifiedScriptEngineManager;
 import org.clapper.util.scripting.UnifiedScriptException;
 
 /**
- * {@link ScriptExecutor} that uses the Apache Jakarta Bean Scripting
- * Framework.
+ * {@link UnifiedScriptEngineManager} that uses the Java 6
+ * <tt>javax.script</tt> (a.k.a., JSR 223) scripting framework.
  *
  * @version <tt>$Revision$</tt>
  */
@@ -86,6 +84,17 @@ public class JavaxScriptEngineManager extends UnifiedScriptEngineManager
     /*----------------------------------------------------------------------*\
                                 Public Methods
     \*----------------------------------------------------------------------*/
+
+    /**
+     * Get the framework type ({@link ScriptFrameworkType} associated with
+     * the <tt>UnifiedScriptEngineManager</tt> object.
+     *
+     * @return the framework type
+     */
+    public ScriptFrameworkType getType()
+    {
+        return ScriptFrameworkType.JAVAX_SCRIPT;
+    }
 
     /**
      * Get the global object bindings. Unlike JSR 223, this interface only

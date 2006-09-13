@@ -37,7 +37,7 @@ public abstract class UnifiedScriptEngine
      * @throws IOException             error reading script
      * @throws UnifiedScriptException compilation error
      *
-     * @see #compile(String,String)
+     * @see #compile(String)
      * @see #compile(File)
      */
     public abstract UnifiedCompiledScript compile(Reader scriptReader)
@@ -61,7 +61,7 @@ public abstract class UnifiedScriptEngine
      * @throws UnifiedScriptException compilation error
      *
      * @see #compile(File)
-     * @see #compile(Reader,String)
+     * @see #compile(Reader)
      */
     public final UnifiedCompiledScript compile(String scriptString)
         throws IOException,
@@ -87,8 +87,8 @@ public abstract class UnifiedScriptEngine
      * @throws IOException            error reading script
      * @throws UnifiedScriptException compilation error
      *
-     * @see #compile(String,String)
-     * @see #compile(Reader,String)
+     * @see #compile(String)
+     * @see #compile(Reader)
      */
     public final UnifiedCompiledScript compile(File scriptFile)
         throws IOException,
@@ -105,7 +105,7 @@ public abstract class UnifiedScriptEngine
      * @throws IOException            error reading script
      * @throws UnifiedScriptException compilation error
      *
-     * @see #exec(String,String)
+     * @see #exec(String)
      * @see #exec(File)
      */
     public abstract void exec(Reader scriptReader)
@@ -121,8 +121,8 @@ public abstract class UnifiedScriptEngine
      * @throws IOException            error reading script
      * @throws UnifiedScriptException compilation error
      *
-     * @see #exec(String,String)
-     * @see #exec(Reader,String)
+     * @see #exec(String)
+     * @see #exec(Reader)
      */
     public final void exec(File scriptFile)
         throws IOException,
@@ -135,13 +135,12 @@ public abstract class UnifiedScriptEngine
      * Execute a script.
      *
      * @param scriptString string containing the script
-     * @param language     the scripting language
      *
-     * @throws IOException             error reading script
+     * @throws IOException            error reading script
      * @throws UnifiedScriptException compilation error
      *
      * @see #exec(File)
-     * @see #exec(Reader,String)
+     * @see #exec(Reader)
      */
     public final void exec(String scriptString)
         throws IOException,
@@ -159,7 +158,7 @@ public abstract class UnifiedScriptEngine
      * @throws UnifiedScriptException compilation error
      *
      * @see #exec(File)
-     * @see #exec(Reader,String)
+     * @see #exec(Reader)
      */
     public abstract void exec(UnifiedCompiledScript compiledScript)
         throws IOException,

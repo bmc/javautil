@@ -49,6 +49,7 @@ package org.clapper.util.scripting;
 import java.io.File;
 import java.util.Map;
 import org.clapper.util.io.FileUtil;
+import org.clapper.util.logging.Logger;
 import org.clapper.util.text.TextUtil;
 
 /**
@@ -64,12 +65,11 @@ import org.clapper.util.text.TextUtil;
 public abstract class UnifiedScriptEngineManager
 {
     /*----------------------------------------------------------------------*\
-                               Private Constants
+                                  Private Data
     \*----------------------------------------------------------------------*/
 
-    /*----------------------------------------------------------------------*\
-                             Private Instance Data
-    \*----------------------------------------------------------------------*/
+    private static final Logger log =
+        new Logger(UnifiedScriptEngineManager.class);
 
     /*----------------------------------------------------------------------*\
                                    Constructor
@@ -93,6 +93,8 @@ public abstract class UnifiedScriptEngineManager
      * @param type  which underlying scripting framework to use
      *
      * @throws UnifiedScriptException on error
+     *
+     * @see #getManager(ScriptFrameworkType[])
      */
     public static final UnifiedScriptEngineManager
     getManager(ScriptFrameworkType type)
@@ -158,6 +160,50 @@ public abstract class UnifiedScriptEngineManager
 
         return result;
     }
+
+    /**
+     * Get the <tt>UnifiedScriptEngineManager</tt> for the first available
+     * underlying scripting framework. The order the frameworks are checked
+     * is the order they appear in the passed-in array.
+     *
+     * @param types the framework types to check, in order.
+     *
+     * @return the first framework found, or null if none found.
+     *
+     * @see #getType
+     * @see #getManager(ScriptFrameworkType)
+     */
+    public static final UnifiedScriptEngineManager
+    getManager(ScriptFrameworkType[] types)
+    {
+        UnifiedScriptEngineManager manager = null;
+
+        for (ScriptFrameworkType type : types)
+        {
+            try
+            {
+                manager = getManager(type);
+                break;
+            }
+
+            catch (Exception ex)
+            {
+                log.error("Can't get script framework of type \"" +
+                          type.toString() + "\"",
+                          ex);
+            }
+        }
+
+        return manager;
+    }
+
+    /**
+     * Get the framework type ({@link ScriptFrameworkType} associated with
+     * the <tt>UnifiedScriptEngineManager</tt> object.
+     *
+     * @return the framework type
+     */
+    public abstract ScriptFrameworkType getType();
 
      /**
      * Get the global object bindings. Unlike JSR 223, this interface only
