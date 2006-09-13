@@ -68,7 +68,6 @@ import java.util.Comparator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -379,21 +378,16 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
     private static class ValuesFile
     {
         private RandomAccessFile file;
-        private long lastModified = 0;
-        private File path;
 
         ValuesFile (File f)
             throws IOException
         {
             this.file = new RandomAccessFile (f, "rw");
-            this.path = f;
-            updateLastModified();
         }
 
         RandomAccessFile getFile()
             throws ConcurrentModificationException
         {
-            checkLastModified();
             return file;
         }
 
@@ -402,31 +396,6 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
         {
             // Lock is implicitly released on close.
             file.close();
-        }
-
-        void updateLastModified()
-        {
-            // WARNING: Doesn't actually appear to work.
-
-            long newLastModified = System.currentTimeMillis();
-            if (path.setLastModified(newLastModified))
-                log.error("File.setLastModified() failed on " + path);
-
-            lastModified = path.lastModified();
-        }
-
-        void checkLastModified()
-            throws ConcurrentModificationException
-        {
-            long realLastModified = path.lastModified();
-            if (realLastModified != lastModified)
-            {
-                throw new ConcurrentModificationException
-                    ("This object last modified FileHashMap file \"" +
-                     path.getPath() + "\" on " + new Date(lastModified) +
-                     ". Some other process modified the file on " +
-                     new Date(realLastModified));
-            }
         }
     }
 
@@ -1338,7 +1307,6 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
             // Implement the clear operation by truncating the data file.
 
             valuesDB.getFile().getChannel().truncate (0);
-            valuesDB.updateLastModified();
             modified = true;
         }
 
@@ -1352,7 +1320,7 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
     }
 
     /**
-     * <p>Close this map. If the map is not marked as temporary, this method
+     * <p>Close this map. If the map is not marked as transient, this method
      * saves the index to disk. Otherwise, it removes both the index file
      * and data file.</p>
      *
@@ -1377,17 +1345,7 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
                     valuesDB = null;
                 }
 
-                if (valuesDBPath != null)
-                {
-                    valuesDBPath.delete();
-                    valuesDBPath = null;
-                }
-
-                if (indexFilePath != null)
-                {
-                    indexFilePath.delete();
-                    indexFilePath = null;
-                }
+                deleteMapFiles();
             }
 
             else
@@ -1431,6 +1389,29 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
         checkValidity();
         return new ValueSet().contains (value);
     }
+
+    /**
+     * Deletes the files backing this <tt>FileHashMap</tt>. This method
+     * implicitly calls {@link #close}.
+     */
+    public void delete()
+    {
+        try
+        {
+            close();
+        }
+
+        catch (NotSerializableException ex)
+        {
+        }
+
+        catch (IOException ex)
+        {
+        }
+
+        deleteMapFiles();
+    }
+
     /**
      * <p>Returns a "thin" set view of the mappings contained in this map.
      * Each element in the returned set is a <tt>Map.Entry</tt>; each
@@ -2094,7 +2075,6 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
         // Write the bytes of the serialized object.
 
         valuesFile.write (byteStream.toByteArray());
-        valuesDB.updateLastModified();
 
         // Return the entry.
 
@@ -2156,5 +2136,21 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
 
         log.debug ("findBestFitGap: returning " + result);
         return result;
+    }
+
+    private void deleteMapFiles()
+    {
+
+        if (valuesDBPath != null)
+        {
+            valuesDBPath.delete();
+            valuesDBPath = null;
+        }
+
+        if (indexFilePath != null)
+        {
+            indexFilePath.delete();
+            indexFilePath = null;
+        }
     }
 }
