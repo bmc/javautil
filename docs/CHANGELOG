@@ -57,10 +57,14 @@ Version 2.3 (...)
      "${var}" does not have a value, or has an empty value, the string
      "default value" will be substituted.
 
-- The org.clapper.util.misc.FileHashMap class was using an exclusive file
-  lock to prevent concurrent modification, but this strategy turns out to
-  cause more problems than it solves (owing to the way Java file locking is
-  implemented); it has been removed.
+- In org.clapper.util.misc.FileHashMap:
+
+  a) Class was using an exclusive file lock to prevent concurrent
+     modification, but this strategy turns out to cause more problems than
+     it solves (owing to the way Java file locking is implemented); it has
+     been removed.
+
+  b) Added delete() method, to force deletion of files.
 
 - Miscellaneous code cleanup based on output from PMD (pmd.sourceforge.net).
 
@@ -90,7 +94,10 @@ Version 2.3 (...)
   b) It can be configured to abort on syntax error (e.g., an unclosed
      "}"), rather than simply passing the bad variable reference through.
 
-- The p
+- Add a new org.clapper.util.scripting package, containing a simplified
+  front-end to both the Apache Jakarta Bean Scripting Framework and the
+  Java 6 javax.script (a.k.a., JSR 223) scripting framework. This package
+  allows code to use one API to interact with either (or both) framework.
 
 ---------------------------------------------------------------------------
 Version 2.2 (4 July, 2006)
