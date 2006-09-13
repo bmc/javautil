@@ -50,7 +50,6 @@ import org.clapper.util.logging.Logger;
 
 import org.clapper.util.text.UnixShellVariableSubstituter;
 import org.clapper.util.text.VariableDereferencer;
-import org.clapper.util.text.VariableSubstituter;
 import org.clapper.util.text.VariableSubstitutionException;
 
 import java.io.File;
@@ -67,7 +66,6 @@ import java.io.Writer;
 import java.util.zip.GZIPOutputStream;
 
 import java.text.DecimalFormat;
-import java.text.MessageFormat;
 
 /**
  * <p>A <tt>RollingFileWriter</tt> is similar to the JDK-supplied
@@ -115,7 +113,7 @@ import java.text.MessageFormat;
  * this file is called the <i>primary</i> file. Backup files are ordered by
  * reverse timestamp. The newest backup file has the lowest-numbered index,
  * and the oldest backup file has the highest-numbered index.</p>
- * 
+ *
  * Examples of valid file name patterns follow:</p>
  *
  * <table>
@@ -288,10 +286,10 @@ public class RollingFileWriter extends PrintWriter
             // 1, and figure out how many digits that number has. A few
             // examples will illustrate that this works:
             //
-            // maxRolledOverFiles  maxRolledOverFiles  # of 
+            // maxRolledOverFiles  maxRolledOverFiles  # of
             //     value            value minus 1  digits    extensions
             // ---------------------------------------------------------------
-            //        2                  1           1       0, 1           
+            //        2                  1           1       0, 1
             //        9                  8           1       0, 1, 2, ..., 7
             //       10                  9           1       0, 1, 2, ..., 9
             //       25                 24           2       00, 01, ..., 24
@@ -327,7 +325,7 @@ public class RollingFileWriter extends PrintWriter
                 buf.append (".");
                 buf.append (indexFormat.format (index));
             }
-                
+
             return buf.toString();
         }
 
@@ -696,7 +694,7 @@ public class RollingFileWriter extends PrintWriter
      */
     public synchronized void println (float f)
     {
-        print (f); 
+        print (f);
         println();
     }
 
@@ -707,7 +705,7 @@ public class RollingFileWriter extends PrintWriter
      */
     public synchronized void println (int i)
     {
-        print (i); 
+        print (i);
         println();
     }
 
@@ -983,18 +981,18 @@ public class RollingFileWriter extends PrintWriter
             UnixShellVariableSubstituter sub =
                 new UnixShellVariableSubstituter();
 
-            String fileName = sub.substitute (fileNamePattern,
-                                              deref,
-                                              null,
-                                              fileNamePattern,
-                                              false);
+            sub.setHonorEscapes(false);
+            String fileName = sub.substitute(fileNamePattern,
+                                             deref,
+                                             null,
+                                             fileNamePattern);
             if (! deref.patternIsLegal())
             {
-                throw new IOExceptionExt (Package.BUNDLE_NAME,
-                                          "RollingFileWriter.badPattern",
-                                          "File pattern \"{0}\" is missing " +
-                                          "the \"$\\{n\\}\" marker.",
-                                          new Object[] {fileNamePattern});
+                throw new IOExceptionExt(Package.BUNDLE_NAME,
+                                         "RollingFileWriter.badPattern",
+                                         "File pattern \"{0}\" is missing " +
+                                         "the \"$\\{n\\}\" marker.",
+                                         new Object[] {fileNamePattern});
             }
 
             if (compressionType == Compression.COMPRESS_BACKUPS)
@@ -1098,7 +1096,7 @@ public class RollingFileWriter extends PrintWriter
             if (targetFile.exists())
             {
                 log.debug ("Removing file \"" + targetFile.getPath() + "\"");
-                    
+
                 try
                 {
                     targetFile.delete();
@@ -1202,7 +1200,7 @@ public class RollingFileWriter extends PrintWriter
         try
         {
             InputStream is = new FileInputStream (file);
-            OutputStream os = new GZIPOutputStream 
+            OutputStream os = new GZIPOutputStream
                                    (new FileOutputStream (file.getPath() +
                                                           GZIP_EXTENSION));
             FileUtil.copyStream (is, os);
