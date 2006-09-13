@@ -72,6 +72,7 @@
   <property name="javac.src.dir" location="${src.top}"/>
   <property name="javac.source" value="1.5"/>
   <property name="javac.target" value="1.5"/>
+  <property name="test.top.dir" location="junit"/>
   <property name="test.src.dir" location="junit/src"/>
   <property name="build.dir.relative" value="build"/>
   <property name="build.dir"  location="${build.dir.relative}"/>
@@ -117,6 +118,7 @@
     <pathelement location="${third.party.jar.dir}/asm-commons-2.2.3.jar"/>
     <pathelement location="${third.party.jar.dir}/asm-util-2.2.3.jar"/>
     <pathelement location="${third.party.jar.dir}/commons-logging.jar"/>
+    <pathelement location="${third.party.jar.dir}/bsf.jar"/>
     <pathelement location="${ant.home}/lib/ant.jar"/>
     <pathelement location="${ant.home}/lib/ant-junit.jar"/>
     <pathelement location="${third.party.jar.dir}/junit.jar"/>
@@ -456,12 +458,15 @@
           <include name="${pkg.path}/**/*Test.java"/>
         </fileset>
       </batchtest>
+      <jvmarg value="-Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Log4JLogger"/>
+      <jvmarg value="-Dlog4j.configuration=file:${test.top.dir}/log4j.properties"/>
 <!--
 <jvmarg value="-Xdebug"/>
 <jvmarg value="-Xnoagent"/>
 <jvmarg value="-Djava.compiler=none"/>
 <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9001"/>
 -->
+
       <formatter classname="org.clapper.util.ant.JUnitSummaryFormatter"
                  usefile="false"/>
       <formatter type="plain"/>
