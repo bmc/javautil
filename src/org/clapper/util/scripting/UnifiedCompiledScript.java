@@ -11,6 +11,6 @@ package org.clapper.util.scripting;
  *
  * @version <tt>$Revision$</tt>
  */
-public interface ScriptExecutorCompiledScript
+public interface UnifiedCompiledScript
 {
 }

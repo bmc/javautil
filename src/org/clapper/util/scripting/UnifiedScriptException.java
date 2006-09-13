@@ -51,14 +51,14 @@ import org.clapper.util.misc.NestedException;
  *
  * @version <tt>$Revision$</tt>
  */
-public class ScriptExecutorException extends NestedException
+public class UnifiedScriptException extends NestedException
 {
 
     /**
      * Default constructor, for an exception with no nested exception and
      * no message.
      */
-    public ScriptExecutorException()
+    public UnifiedScriptException()
     {
         super();
     }
@@ -69,7 +69,7 @@ public class ScriptExecutorException extends NestedException
      *
      * @param exception  the exception to contain
      */
-    public ScriptExecutorException(Throwable exception)
+    public UnifiedScriptException(Throwable exception)
     {
         super(exception);
     }
@@ -80,7 +80,7 @@ public class ScriptExecutorException extends NestedException
      *
      * @param message  the message to associate with this exception
      */
-    public ScriptExecutorException(String message)
+    public UnifiedScriptException(String message)
     {
         super(message);
     }
@@ -91,7 +91,7 @@ public class ScriptExecutorException extends NestedException
      * @param message    the message to associate with this exception
      * @param exception  the exception to contain
      */
-    public ScriptExecutorException(String message, Throwable exception)
+    public UnifiedScriptException(String message, Throwable exception)
     {
         super(message, exception);
     }
@@ -100,7 +100,7 @@ public class ScriptExecutorException extends NestedException
      * Constructs an exception containing a resource bundle name, a message
      * key, and a default message(in case the resource bundle can't be
      * found). Using this constructor is equivalent to calling the
-     * {@link #ScriptExecutorException(String,String,String,Object[])} constructor,
+     * {@link #UnifiedScriptException(String,String,String,Object[])} constructor,
      * with a null pointer for the <tt>Object[]</tt> parameter.
      * Calls to {@link NestedException#getMessage(Locale)} will attempt to
      * retrieve the top-most message(i.e., the message from this exception,
@@ -110,15 +110,14 @@ public class ScriptExecutorException extends NestedException
      * until one of those methods is called, because the desired locale is
      * passed into <tt>getMessage()</tt> and <tt>printStackTrace()</tt>,
      * not this constructor.
-     *
+     * 
      * @param bundleName  resource bundle name
      * @param messageKey  the key to the message to find in the bundle
      * @param defaultMsg  the default message
-     *
-     * @see #ScriptExecutorException(String,String,String,Object[])
+     * @see #UnifiedScriptException(String,String,String,Object[])
      * @see NestedException#getLocalizedMessage
      */
-    public ScriptExecutorException(String bundleName,
+    public UnifiedScriptException(String bundleName,
                                    String messageKey,
                                    String defaultMsg)
     {
@@ -129,7 +128,7 @@ public class ScriptExecutorException extends NestedException
      * Constructs an exception containing a resource bundle name, a message
      * key, and a default message(in case the resource bundle can't be
      * found). Using this constructor is equivalent to calling the
-     * {@link #ScriptExecutorException(String,String,String,Object[])} constructor,
+     * {@link #UnifiedScriptException(String,String,String,Object[])} constructor,
      * with a null pointer for the <tt>Object[]</tt> parameter.
      * Calls to {@link NestedException#getMessage(Locale)} will attempt to
      * retrieve the top-most message(i.e., the message from this exception,
@@ -139,16 +138,15 @@ public class ScriptExecutorException extends NestedException
      * until one of those methods is called, because the desired locale is
      * passed into <tt>getMessage()</tt> and <tt>printStackTrace()</tt>,
      * not this constructor.
-     *
+     * 
      * @param bundleName  resource bundle name
      * @param messageKey  the key to the message to find in the bundle
      * @param defaultMsg  the default message
      * @param msgParams   parameters to the message, if any, or null
-     *
-     * @see #ScriptExecutorException(String,String,String,Object[])
+     * @see #UnifiedScriptException(String,String,String,Object[])
      * @see NestedException#getLocalizedMessage
      */
-    public ScriptExecutorException(String   bundleName,
+    public UnifiedScriptException(String   bundleName,
                                    String   messageKey,
                                    String   defaultMsg,
                                    Object[] msgParams)
@@ -160,7 +158,7 @@ public class ScriptExecutorException extends NestedException
      * Constructs an exception containing a resource bundle name, a message
      * key, a default message(in case the resource bundle can't be found),
      * and another exception. Using this constructor is equivalent to
-     * calling the {@link #ScriptExecutorException(String,String,String,Object[])}
+     * calling the {@link #UnifiedScriptException(String,String,String,Object[])}
      * constructor, with a null pointer for the <tt>Object[]</tt>
      * parameter. Calls to {@link #getMessage(Locale)} will attempt to
      * retrieve the top-most message(i.e., the message from this
@@ -171,16 +169,15 @@ public class ScriptExecutorException extends NestedException
      * is called, because the desired locale is passed into
      * <tt>getMessage()</tt> and <tt>printStackTrace()</tt>, not this
      * constructor.
-     *
+     * 
      * @param bundleName  resource bundle name
      * @param messageKey  the key to the message to find in the bundle
      * @param defaultMsg  the default message
      * @param exception   the exception to nest
-     *
-     * @see #ScriptExecutorException(String,String,String,Object[])
+     * @see #UnifiedScriptException(String,String,String,Object[])
      * @see NestedException#getMessage(Locale)
      */
-    public ScriptExecutorException(String    bundleName,
+    public UnifiedScriptException(String    bundleName,
                                    String    messageKey,
                                    String    defaultMsg,
                                    Throwable exception)
@@ -201,17 +198,16 @@ public class ScriptExecutorException extends NestedException
      * is called, because the desired locale is passed into
      * <tt>getMessage()</tt> and <tt>printStackTrace()</tt>, not this
      * constructor.
-     *
+     * 
      * @param bundleName  resource bundle name
      * @param messageKey  the key to the message to find in the bundle
      * @param defaultMsg  the default message
      * @param msgParams   parameters to the message, if any, or null
      * @param exception   exception to be nested
-     *
-     * @see #ScriptExecutorException(String,String,String,Object[])
+     * @see #UnifiedScriptException(String,String,String,Object[])
      * @see NestedException#getMessage(Locale)
      */
-    public ScriptExecutorException(String    bundleName,
+    public UnifiedScriptException(String    bundleName,
                                    String    messageKey,
                                    String    defaultMsg,
                                    Object[]  msgParams,
