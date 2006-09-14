@@ -22,5 +22,37 @@ package org.clapper.util.scripting;
 public enum ScriptFrameworkType
 {
     JAVAX_SCRIPT,
-    BSF
+    BSF;
+
+    /**
+     * Converts a string to a <tt>ScriptFrameworkType</tt> value, with the
+     * following features:
+     *
+     * <ul>
+     *  <li> Comparison is case-blind.
+     *  <li> Treats "." as "_" for the purposes of comparison. (That is,
+     *       "javax.script" and "javax_script" both match the value
+     *       {@link #JAVAX_SCRIPT}.)
+     * </ul>
+     *
+     * @param s  the string to convert
+     *
+     * @return the corresponding value, or null if no match
+     */
+    public static final ScriptFrameworkType getTypeFromString(String s)
+    {
+        ScriptFrameworkType result = null;
+
+        s = s.replaceAll("\\.", "_");
+        for (ScriptFrameworkType type : ScriptFrameworkType.values())
+        {
+            if (s.equalsIgnoreCase(type.toString()))
+            {
+                result = type;
+                break;
+            }
+        }
+
+        return result;
+    }
 }
