@@ -168,13 +168,16 @@ public abstract class UnifiedScriptEngineManager
      *
      * @param types the framework types to check, in order.
      *
-     * @return the first framework found, or null if none found.
+     * @return the first framework found
+     *
+     * @throws UnifiedScriptException if no script managers could be found
      *
      * @see #getType
      * @see #getManager(ScriptFrameworkType)
      */
     public static final UnifiedScriptEngineManager
     getManager(ScriptFrameworkType[] types)
+        throws UnifiedScriptException
     {
         UnifiedScriptEngineManager manager = null;
 
@@ -193,6 +196,22 @@ public abstract class UnifiedScriptEngineManager
                           type.toString() + "\"",
                           ex);
             }
+        }
+
+        if (manager == null)
+        {
+            String sep = "";
+            StringBuilder buf = new StringBuilder(32);
+            for (ScriptFrameworkType type : ScriptFrameworkType.values())
+            {
+                buf.append(sep);
+                buf.append(type.toString());
+                sep = ", ";
+            }
+
+            throw new UnifiedScriptException
+                ("Unable to find any of the following script APIs: " +
+                 buf.toString());
         }
 
         return manager;
