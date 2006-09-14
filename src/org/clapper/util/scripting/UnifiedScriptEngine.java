@@ -12,7 +12,7 @@ import java.io.StringReader;
 
 /**
  * A script engine interface that provides a common set of methods that can
- * map both the Apache Jakarta Bean Scripting Framework (BSF) and the Java 6 
+ * map both the Apache Jakarta Bean Scripting Framework (BSF) and the Java 6
  * JSR 223 (<tt>javax.script</tt>) framework, allowing callers to use either
  * underlying framework without changing code. This class is modeled
  * on the JSR 223 interface, though it is much simple
@@ -34,15 +34,13 @@ public abstract class UnifiedScriptEngine
      * @return a representation of the compiled script, or null if the
      *         underlying scripting engine does not support compilation
      *
-     * @throws IOException             error reading script
      * @throws UnifiedScriptException compilation error
      *
      * @see #compile(String)
      * @see #compile(File)
      */
     public abstract UnifiedCompiledScript compile(Reader scriptReader)
-        throws IOException,
-               UnifiedScriptException;
+        throws UnifiedScriptException;
 
     /**
      * Compile a script, if possible, returning an object that implements
@@ -57,15 +55,13 @@ public abstract class UnifiedScriptEngine
      * @return a representation of the compiled script, or null if the
      *         underlying scripting engine does not support compilation
      *
-     * @throws IOException             error reading script
      * @throws UnifiedScriptException compilation error
      *
      * @see #compile(File)
      * @see #compile(Reader)
      */
     public final UnifiedCompiledScript compile(String scriptString)
-        throws IOException,
-               UnifiedScriptException
+        throws UnifiedScriptException
     {
         return compile(new StringReader(scriptString));
     }
@@ -91,10 +87,20 @@ public abstract class UnifiedScriptEngine
      * @see #compile(Reader)
      */
     public final UnifiedCompiledScript compile(File scriptFile)
-        throws IOException,
-               UnifiedScriptException
+        throws UnifiedScriptException
     {
-        return compile(new FileReader(scriptFile));
+        try
+        {
+            return compile(new FileReader(scriptFile));
+        }
+
+        catch (IOException ex)
+        {
+            throw new UnifiedScriptException
+                ("I/O error while compiling script in file \"" +
+                 scriptFile + "\"",
+                 ex);
+        }
     }
 
     /**
@@ -102,15 +108,13 @@ public abstract class UnifiedScriptEngine
      *
      * @param scriptReader  a <tt>Reader</tt> that will produce the script
      *
-     * @throws IOException            error reading script
      * @throws UnifiedScriptException compilation error
      *
      * @see #exec(String)
      * @see #exec(File)
      */
     public abstract void exec(Reader scriptReader)
-        throws IOException,
-               UnifiedScriptException;
+        throws UnifiedScriptException;
 
     /**
      * Execute a script.
@@ -118,17 +122,25 @@ public abstract class UnifiedScriptEngine
      * @param scriptFile  file containing the script; the file's extension
      *                    is used to determine the language
      *
-     * @throws IOException            error reading script
      * @throws UnifiedScriptException compilation error
      *
      * @see #exec(String)
      * @see #exec(Reader)
      */
     public final void exec(File scriptFile)
-        throws IOException,
-               UnifiedScriptException
+        throws UnifiedScriptException
     {
-        exec(new FileReader(scriptFile));
+        try
+        {
+            exec(new FileReader(scriptFile));
+        }
+
+        catch (IOException ex)
+        {
+            throw new UnifiedScriptException
+                ("I/O error reading script file \"" + scriptFile + "\"",
+                 ex);
+        }
     }
 
     /**
@@ -136,15 +148,13 @@ public abstract class UnifiedScriptEngine
      *
      * @param scriptString string containing the script
      *
-     * @throws IOException            error reading script
      * @throws UnifiedScriptException compilation error
      *
      * @see #exec(File)
      * @see #exec(Reader)
      */
     public final void exec(String scriptString)
-        throws IOException,
-               UnifiedScriptException
+        throws UnifiedScriptException
     {
         exec(new StringReader(scriptString));
     }
@@ -154,15 +164,13 @@ public abstract class UnifiedScriptEngine
      *
      * @param compiledScript  the compiled script
      *
-     * @throws IOException            error reading script
      * @throws UnifiedScriptException compilation error
      *
      * @see #exec(File)
      * @see #exec(Reader)
      */
     public abstract void exec(UnifiedCompiledScript compiledScript)
-        throws IOException,
-               UnifiedScriptException;
+        throws UnifiedScriptException;
 
     /**
      * Evaluate a script or a script snippet and return the value of the

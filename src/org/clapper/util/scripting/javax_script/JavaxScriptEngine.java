@@ -69,12 +69,10 @@ public class JavaxScriptEngine extends UnifiedScriptEngine
      * @return a representation of the compiled script, or null if the
      *         underlying scripting engine does not support compilation
      *
-     * @throws IOException             error reading script
      * @throws UnifiedScriptException compilation error
      */
     public UnifiedCompiledScript compile(Reader scriptReader)
-        throws IOException,
-               UnifiedScriptException
+        throws UnifiedScriptException
     {
         JavaxCompiledScript result = null;
 
@@ -102,15 +100,13 @@ public class JavaxScriptEngine extends UnifiedScriptEngine
      *
      * @param compiledScript  the compiled script
      *
-     * @throws IOException            error reading script
      * @throws UnifiedScriptException compilation error
      *
      * @see #compile(File)
      * @see #compile(Reader)
      */
     public void exec(UnifiedCompiledScript compiledScript)
-        throws IOException,
-               UnifiedScriptException
+        throws UnifiedScriptException
     {
         assert(compiledScript instanceof JavaxCompiledScript);
 
@@ -134,12 +130,10 @@ public class JavaxScriptEngine extends UnifiedScriptEngine
      *
      * @param scriptReader  a <tt>Reader</tt> that will produce the script
      *
-     * @throws IOException             error reading script
      * @throws UnifiedScriptException compilation error
      */
     public void exec(Reader scriptReader)
-        throws IOException,
-               UnifiedScriptException
+        throws UnifiedScriptException
     {
         try
         {

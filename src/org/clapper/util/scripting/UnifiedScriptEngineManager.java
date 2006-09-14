@@ -182,6 +182,7 @@ public abstract class UnifiedScriptEngineManager
         {
             try
             {
+                log.info("Trying to find " + type + " scripting API");
                 manager = getManager(type);
                 break;
             }

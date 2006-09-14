@@ -59,12 +59,10 @@ public class BSFScriptEngine extends UnifiedScriptEngine
      * @return a representation of the compiled script, or null if the
      *         underlying scripting engine does not support compilation
      *
-     * @throws IOException            error reading script
      * @throws UnifiedScriptException compilation error
      */
     public UnifiedCompiledScript compile(Reader scriptReader)
-        throws IOException,
-               UnifiedScriptException
+        throws UnifiedScriptException
     {
         // Compilation is too funky with BSF.
 
@@ -76,12 +74,10 @@ public class BSFScriptEngine extends UnifiedScriptEngine
      *
      * @param compiledScript  the compiled script
      *
-     * @throws IOException             error reading script
      * @throws UnifiedScriptException compilation error
      */
     public void exec(UnifiedCompiledScript compiledScript)
-        throws IOException,
-               UnifiedScriptException
+        throws UnifiedScriptException
     {
         throw new UnifiedScriptException("Compilation not supported with " +
                                           "BSF scripting engine.");
@@ -92,12 +88,10 @@ public class BSFScriptEngine extends UnifiedScriptEngine
      *
      * @param scriptReader  a <tt>Reader</tt> that will produce the script
      *
-     * @throws IOException            error reading script
      * @throws UnifiedScriptException compilation error
      */
     public void exec(Reader scriptReader)
-        throws IOException,
-               UnifiedScriptException
+        throws UnifiedScriptException
     {
         try
         {
@@ -107,7 +101,12 @@ public class BSFScriptEngine extends UnifiedScriptEngine
 
         catch (BSFException ex)
         {
-            throw new UnifiedScriptException ("Error running script", ex);
+            throw new UnifiedScriptException("Error running script", ex);
+        }
+
+        catch (IOException ex)
+        {
+            throw new UnifiedScriptException("I/O error reading script", ex);
         }
     }
 
