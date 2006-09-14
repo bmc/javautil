@@ -52,7 +52,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 
 /**
- *
+ * Tester for script frameworks.
  */
 public class AbstractUnifiedScriptEngineTestBase extends TestCase
 {
