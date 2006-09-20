@@ -248,74 +248,71 @@ public class RegexUtil
      *
      * @throws RegexException bad expression, bad regular expression, etc.
      */
-    public String substitute (String substitutionCommand, String s)
+    public String substitute(String substitutionCommand, String s)
         throws RegexException
     {
-        // Minimum size: 6 (s/a/b/)
+        // Minimum size: 5 (s/a//)
 
-        if (substitutionCommand.length() < 6)
+        if (substitutionCommand.length() < 5)
         {
-            throw new RegexException (Package.BUNDLE_NAME,
-                                      "RegexUtil.substitutionCommandTooShort",
-                                      "Substitution command \"{0}\" is too " +
-                                      "short.",
+            throw new RegexException(Package.BUNDLE_NAME,
+                                     "RegexUtil.substitutionCommandTooShort",
+                                     "Substitution command \"{0}\" is too " +
+                                     "short.",
+                                     new Object[] {substitutionCommand});
+        }
+
+        if (substitutionCommand.charAt(0) != 's')
+        {
+            throw new RegexException(Package.BUNDLE_NAME,
+                                     "RegexUtil.badSubstitutionSyntax",
+                                     "\"{0}\" is a syntactically incorrect " +
+                                     "substitution command.",
+                                     new Object[] {substitutionCommand});
+        }
+
+        char delim = substitutionCommand.charAt(1);
+
+        if (Character.isWhitespace(delim) || (Character.isLetter(delim)))
+        {
+            throw new RegexException(Package.BUNDLE_NAME,
+                                     "RegexUtil.badSubstitutionDelim",
+                                     "Substitution command \"{0}\" uses " +
+                                     "alphabetic or white-space delimiter " +
+                                     "\"{1}\".",
                                       new Object[]
-                                          {
-                                              substitutionCommand
-                                          });
+                                      {
+                                          substitutionCommand,
+                                          String.valueOf (delim)
+                                      });
         }
 
-        if (substitutionCommand.charAt (0) != 's')
-        {
-            throw new RegexException (Package.BUNDLE_NAME,
-                                      "RegexUtil.badSubstitutionSyntax",
-                                      "\"{0}\" is a syntactically incorrect " +
-                                      "substitution command.",
-                                      new Object[] {substitutionCommand});
-        }
-
-        char delim = substitutionCommand.charAt (1);
-
-        if (Character.isWhitespace (delim) || (Character.isLetter (delim)))
-        {
-            throw new RegexException (Package.BUNDLE_NAME,
-                                      "RegexUtil.badSubstitutionDelim",
-                                      "Substitution command \"{0}\" uses " +
-                                      "alphabetic or white-space delimiter " +
-                                      "\"{1}\".",
-                                      new Object[]
-                                          {
-                                              substitutionCommand,
-                                              String.valueOf (delim)
-                                          });
-        }
-
-        String[] fields = TextUtil.split (substitutionCommand, delim, true);
+        String[] fields = TextUtil.split(substitutionCommand, delim, true);
         if ((fields.length != 3) && (fields.length != 4))
         {
-            throw new RegexException (Package.BUNDLE_NAME,
-                                      "RegexUtil.badSubstitutionSyntax",
-                                      "\"{0}\" is a syntactically incorrect " +
-                                      "substitution command.",
-                                      new Object[] {substitutionCommand});
+            throw new RegexException(Package.BUNDLE_NAME,
+                                     "RegexUtil.badSubstitutionSyntax",
+                                     "\"{0}\" is a syntactically incorrect " +
+                                     "substitution command.",
+                                     new Object[] {substitutionCommand});
         }
 
         assert ((fields[0].length() == 1) && (fields[0].charAt(0) == 's'));
 
         String regex = fields[1];
         String replacement = fields[2];
-        Substitution sub = new Substitution (regex);
+        Substitution sub = new Substitution(regex);
 
         if (fields.length == 4)
-            getSubstitutionFlags (substitutionCommand, fields[3], sub);
+            getSubstitutionFlags(substitutionCommand, fields[3], sub);
 
-        Pattern pattern = (Pattern) compiledRegexps.get (sub);
+        Pattern pattern = (Pattern) compiledRegexps.get(sub);
         if (pattern == null)
         {
             try
             {
-                pattern = Pattern.compile (regex, sub.flags);
-                compiledRegexps.put (sub, pattern);
+                pattern = Pattern.compile(regex, sub.flags);
+                compiledRegexps.put(sub, pattern);
             }
 
             catch (PatternSyntaxException ex)
@@ -325,15 +322,15 @@ public class RegexUtil
         }
 
         String result = s;
-        Matcher matcher = pattern.matcher (s);
+        Matcher matcher = pattern.matcher(s);
 
         // Note that Matcher.replaceFirst() and Matcher.replaceAll() handle
         // group replacement tokens $1, $2, etc.
 
         if (sub.replaceAll)
-            result = matcher.replaceAll (replacement);
+            result = matcher.replaceAll(replacement);
         else
-            result = matcher.replaceFirst (replacement);
+            result = matcher.replaceFirst(replacement);
 
         return result;
     }
