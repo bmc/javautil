@@ -158,6 +158,12 @@ public abstract class UnifiedScriptEngineManager
                  ex);
         }
 
+        catch (Throwable ex)
+        {
+            throw new UnifiedScriptException
+                ("Unable to instantiate \"" + className + "\"", ex);
+        }
+
         return result;
     }
 
