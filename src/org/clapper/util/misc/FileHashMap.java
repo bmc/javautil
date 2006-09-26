@@ -766,7 +766,7 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
 
         public boolean contains (Map.Entry<K,V> o)
         {
-            return FileHashMap.this.containsValue (o.getValue());
+            return FileHashMap.this.containsValue(o.getValue());
         }
 
         public Iterator<Map.Entry<K,V>> iterator()
