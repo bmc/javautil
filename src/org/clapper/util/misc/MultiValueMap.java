@@ -29,7 +29,6 @@ import java.util.Set;
  */
 public class MultiValueMap<K extends Comparable,V extends Comparable>
     extends AbstractMap<K,V>
-    implements Cloneable
 {
     /*----------------------------------------------------------------------*\
                            Public Inner Classes
@@ -292,8 +291,7 @@ public class MultiValueMap<K extends Comparable,V extends Comparable>
 
     /**
      * Construct a new map from the contents of an existing map. The new
-     * map is a shallow copy of the existing map. (See the {@link clone}
-     * method.
+     * map is a shallow copy of the existing map.
      *
      * @param otherMap  the map to clone
      */
@@ -462,8 +460,8 @@ public class MultiValueMap<K extends Comparable,V extends Comparable>
      * @throws NullPointerException if the key is <tt>null</tt> and this map
      *                              does not not permit <tt>null</tt> keys.
      *
-     * @see #containsKey(Object)
-     * @see #getFirstValueForKey(Object)
+     * @see #containsKey
+     * @see #getFirstValueForKey
      */
     public Collection<V> getCollection(K key)
     {
@@ -503,10 +501,9 @@ public class MultiValueMap<K extends Comparable,V extends Comparable>
      * @throws NullPointerException if the key is <tt>null</tt> and this map
      *                              does not not permit <tt>null</tt> keys.
      *
-     * @see #containsKey(Object)
-     * @see #get(Object)
-     * @see #totalValuesForKey(Object)
-     * @see #valuesForKey(Object)
+     * @see #containsKey
+     * @see #get
+     * @see #totalValuesForKey
      */
     public V getFirstValueForKey(K key)
     {
@@ -535,9 +532,6 @@ public class MultiValueMap<K extends Comparable,V extends Comparable>
      *
      * @return the hash code value for this map.
      *
-     * @see Map.Entry#hashCode()
-     * @see Object#hashCode()
-     * @see Object#equals(Object)
      * @see #equals(Object)
      */
     public int hashCode()
@@ -574,7 +568,7 @@ public class MultiValueMap<K extends Comparable,V extends Comparable>
      *
      * @return a set view of the keys contained in this map.
      *
-     * @see #valuesForKey(Object)
+     * @see #getValuesForKey
      * @see #values()
      */
     public Set<K> keySet()
@@ -765,7 +759,7 @@ public class MultiValueMap<K extends Comparable,V extends Comparable>
      * @throws NullPointerException if the key is <tt>null</tt> and this map
      *                              does not not permit <tt>null</tt> keys.
      *
-     * @see #valuesForKey(Object)
+     * @see #getValuesForKey
      */
     public int totalValuesForKey(K key)
     {
@@ -796,7 +790,7 @@ public class MultiValueMap<K extends Comparable,V extends Comparable>
      * @return a collection view of the values contained in this map.
      *
      * @see #keySet
-     * @see #valuesForKey(Object)
+     * @see #getValuesForKey
      */
     public Collection<V> values()
     {
@@ -822,7 +816,7 @@ public class MultiValueMap<K extends Comparable,V extends Comparable>
      *                              does not not permit <tt>null</tt> keys.
      *
      * @see #keySet()
-     * @see #totalValuesForKey(Object)
+     * @see #totalValuesForKey
      * @see #values()
      */
     public Collection<V> getValuesForKey (K key)
@@ -848,9 +842,8 @@ public class MultiValueMap<K extends Comparable,V extends Comparable>
      *                              does not not permit <tt>null</tt> keys.
      *
      * @see #keySet()
-     * @see #totalValuesForKey(Object)
+     * @see #totalValuesForKey
      * @see #values()
-     * @see #valuesForKey(Object)
      */
     public int getValuesForKey(K key, Collection<V> values)
     {
