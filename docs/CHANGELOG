@@ -94,10 +94,14 @@ Version 2.3 (...)
   b) It can be configured to abort on syntax error (e.g., an unclosed
      "}"), rather than simply passing the bad variable reference through.
 
-- Add a new org.clapper.util.scripting package, containing a simplified
+- Added a new org.clapper.util.scripting package, containing a simplified
   front-end to both the Apache Jakarta Bean Scripting Framework and the
   Java 6 javax.script (a.k.a., JSR 223) scripting framework. This package
   allows code to use one API to interact with either (or both) framework.
+
+- Added a new generics-aware org.clapper.util.misc.MultiValueMap class.
+  This class is very similar to the MultiValueMap in the Jakarta Commons
+  Collections API, except that it uses Java generics.
 
 ---------------------------------------------------------------------------
 Version 2.2 (4 July, 2006)
