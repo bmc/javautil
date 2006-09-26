@@ -27,8 +27,7 @@ import java.util.Set;
  *
  * @version <tt>$Revision$</tt>
  */
-public class MultiValueMap<K extends Comparable,V extends Comparable>
-    extends AbstractMap<K,V>
+public class MultiValueMap<K,V> extends AbstractMap<K,V> implements Cloneable
 {
     /*----------------------------------------------------------------------*\
                            Public Inner Classes
@@ -68,10 +67,17 @@ public class MultiValueMap<K extends Comparable,V extends Comparable>
 
         public boolean equals(Object o)
         {
-            Map.Entry<K,V> other = (Map.Entry<K,V>) o;
+            boolean eq = false;
 
-            return other.getKey().equals(key) &&
-                   other.getValue().equals(value);
+            if (o instanceof Map.Entry)
+            {
+                Map.Entry other = (Map.Entry) o;
+
+                eq = other.getKey().equals(key) &&
+                     other.getValue().equals(value);
+            }
+
+            return eq;
         }
 
         public K getKey()
@@ -342,7 +348,7 @@ public class MultiValueMap<K extends Comparable,V extends Comparable>
      *
      * @see #totalValuesForKey
      */
-    public boolean containsKey (K key)
+    public boolean containsKey (Object key)
     {
         return map.containsKey(key);
     }
@@ -358,7 +364,7 @@ public class MultiValueMap<K extends Comparable,V extends Comparable>
      * @return <tt>true</tt> if this map maps one or more keys to the
      *         specified value, <tt>false</tt> otherwise.
      */
-    public boolean containsValue(V value)
+    public boolean containsValue(Object value)
     {
         boolean found = false;
         Iterator<Collection<V>> it = map.values().iterator();
@@ -441,7 +447,12 @@ public class MultiValueMap<K extends Comparable,V extends Comparable>
      */
     public boolean equals (Object o)
     {
-        return this.entrySet().equals(((MultiValueMap<K,V>) o).entrySet());
+        boolean eq = false;
+
+        if (o instanceof MultiValueMap)
+            eq = ((MultiValueMap) o).entrySet().equals(this.entrySet());
+
+        return eq;
     }
 
     /**
@@ -481,9 +492,15 @@ public class MultiValueMap<K extends Comparable,V extends Comparable>
      *
      * @return the first value for the key, or null if not found
      */
-    public V get(K key)
+    public V get(Object key)
     {
-        return getFirstValueForKey(key);
+        V result = null;
+        Collection<V> values = map.get(key);
+
+        if (values != null)
+            result = values.iterator().next();
+
+        return result;
     }
 
     /**
@@ -847,7 +864,7 @@ public class MultiValueMap<K extends Comparable,V extends Comparable>
      */
     public int getValuesForKey(K key, Collection<V> values)
     {
-        Collection<V> valuesForKey = (Collection) map.get (key);
+        Collection<V> valuesForKey = map.get (key);
         int           total        = 0;
 
         if (valuesForKey != null)
