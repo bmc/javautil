@@ -103,6 +103,9 @@ Version 2.3 (...)
   This class is very similar to the MultiValueMap in the Jakarta Commons
   Collections API, except that it uses Java generics.
 
+- org.clapper.util.classutil.ClassUtil now has an instantiateClass()
+  convenience method.
+
 ---------------------------------------------------------------------------
 Version 2.2 (4 July, 2006)
 
