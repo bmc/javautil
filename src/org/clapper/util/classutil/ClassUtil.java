@@ -64,6 +64,10 @@ public class ClassUtil
     static final String BUNDLE_NAME = "org.clapper.util.classutil.Bundle";
 
     /*----------------------------------------------------------------------*\
+                                Static Data
+    \*----------------------------------------------------------------------*/
+
+    /*----------------------------------------------------------------------*\
                                Constructor
     \*----------------------------------------------------------------------*/
 
@@ -135,4 +139,53 @@ public class ClassUtil
         return getShortClassName (cls.getName());
     }
 
+    /**
+     * Convenience method that loads a class and attempts to instantiate it
+     * via its default constructor. This method catches all the explicit,
+     * checked exceptions that can occur and wraps them in a
+     * {@link ClassUtilException}, reducing the number of lines of code
+     * necessary to instantiate a class given its name. Note that this method
+     * <i>only</i> catches and wraps checked exceptions. Unchecked exceptions,
+     * such as <tt>ExceptionInInitializerError</tt>, are propagated directly
+     * to the caller.
+     *
+     * @param className the fully-qualified class name
+     *
+     * @return the instantiated object
+     *
+     * @throws ClassUtilException on error
+     */
+    public static Object instantiateClass(String className)
+        throws ClassUtilException
+    {
+        try
+        {
+            Class cls = Class.forName(className);
+            return cls.newInstance();
+        }
+
+        catch (ClassNotFoundException ex)
+        {
+            throw new ClassUtilException("Can't load class " + className,
+                                         ex);
+        }
+
+        catch (ClassCastException ex)
+        {
+            throw new ClassUtilException("Can't load class " + className,
+                                         ex);
+        }
+
+        catch (IllegalAccessException ex)
+        {
+            throw new ClassUtilException("Can't load class " + className,
+                                         ex);
+        }
+
+        catch (InstantiationException ex)
+        {
+            throw new ClassUtilException("Can't load class " + className,
+                                         ex);
+        }
+    }
 }
