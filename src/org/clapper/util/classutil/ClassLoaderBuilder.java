@@ -124,7 +124,7 @@ public class ClassLoaderBuilder
                     file = new File(fileName);
                 }
 
-                urlList.add (file.toURL());
+                urlList.add(file.toURI().toURL());
                 added = true;
             }
         }
