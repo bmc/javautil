@@ -24,7 +24,7 @@
   a pointer to or a copy of the original.
 \*---------------------------------------------------------------------------*/
 
-package org.clapper.util.text.test;
+package org.clapper.util.html.test;
 
 import org.clapper.util.text.*;
 import java.io.*;

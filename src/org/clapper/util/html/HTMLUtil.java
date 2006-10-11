@@ -44,7 +44,7 @@
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \*---------------------------------------------------------------------------*/
 
-package org.clapper.util.text;
+package org.clapper.util.html;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -55,6 +55,9 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.clapper.util.text.Unicode;
+import org.clapper.util.text.XStringBuffer;
+import org.clapper.util.text.XStringBuilder;
 
 /**
  * Static class containing miscellaneous HTML-related utility methods.
@@ -98,7 +101,7 @@ public final class HTMLUtil
     /*----------------------------------------------------------------------*\
                               Public Methods
     \*----------------------------------------------------------------------*/
-    
+
     /**
      * Removes all HTML element tags from a string, leaving just the character
      * data. This method does <b>not</b> touch any inline HTML character
@@ -221,7 +224,7 @@ public final class HTMLUtil
                         int cc = Integer.parseInt (match.substring (1));
 
                         // It parsed. Is it a valid Unicode character?
-                            
+
                         if (Character.isDefined ((char) cc))
                             buf.append ((char) cc);
                         else
