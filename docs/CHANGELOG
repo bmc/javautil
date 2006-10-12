@@ -106,6 +106,16 @@ Version 2.3 (...)
 - org.clapper.util.classutil.ClassUtil now has an instantiateClass()
   convenience method.
 
+- The HTMLUtil class has been moved from the org.clapper.util.text package
+  to new org.clapper.util.html package. A deprecated version of HTMLUtil
+  remains in the org.clapper.util.text package (for now), but its methods
+  merely invoke the corresponding methods in org.clapper.util.html.HTMLUtil.
+
+- In org.clapper.util.text.TextUtil:
+
+  a) Added various hexadecimal conversion routines.
+  b) Added romanNumeralsForNumber() method.
+
 ---------------------------------------------------------------------------
 Version 2.2 (4 July, 2006)
 
