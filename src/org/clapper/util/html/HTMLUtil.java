@@ -75,7 +75,7 @@ public final class HTMLUtil
     /**
      * Resource bundle containing the character entity code mappings.
      */
-    private static final String BUNDLE_NAME = "org.clapper.util.text.HTMLUtil";
+    private static final String BUNDLE_NAME = "org.clapper.util.html.HTMLUtil";
 
     /*----------------------------------------------------------------------*\
                             Private Data Items
