@@ -104,7 +104,7 @@
   ***************************************************************************
   -->
 
-  <condition property="third.party.jar.dir" value="/usr/local/java/classes">
+  <condition property="third.party.jar.dir" value="${env.HOME}/java/classes">
     <not>
       <isset property="third.party.jar.dir"/>
     </not>
@@ -129,6 +129,7 @@
     <pathelement location="${compiled.test.classes.dir}"/>
     <pathelement location="${compiled.classes.dir}"/>
     <pathelement location="${third.party.jar.dir}/junit.jar"/>
+    <pathelement location="${third.party.jar.dir}/js.jar"/>
   </path>
 
   <path id="installer.class.path">
@@ -492,7 +493,6 @@
       <formatter classname="org.clapper.util.ant.JUnitSummaryFormatter"
                  usefile="false"
                  extension=".txt"/>
--->
       <classpath refid="test.class.path"/>
     </junit>
   </target>
