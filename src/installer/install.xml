@@ -66,6 +66,9 @@
 
   <resources>
     <res id="HTMLLicencePanel.licence" src="@TOP_DIR@/LICENSE.html"/>
+    <!--
+    <res id="LicencePanel.licence" src="@TOP_DIR@/LICENSE"/>
+    -->
     <res id="Installer.image" src="@SRC_INSTALL@/clapper-logo.png"/>
     <res id="ProcessPanel.Spec.xml" src="@SRC_INSTALL@/cleanup.xml"/>
     <!--
@@ -74,6 +77,7 @@
     -->
     <res id="TargetPanel.dir.windows" src="@SRC_INSTALL@/path_windows.txt"/>
     <res id="TargetPanel.dir.unix" src="@SRC_INSTALL@/path_unix.txt"/>
+    <res id="TargetPanel.dir.macosx" src="@SRC_INSTALL@/path_darwin.txt"/>
 
     <!--
         Points to a (deliberately) empty text file. Specifies that native
@@ -87,7 +91,10 @@
     <!--
     <panel classname="InfoPanel"/>
     -->
+    <!--
     <panel classname="LicencePanel"/>
+    -->
+    <panel classname="HTMLLicencePanel"/>
     <panel classname="TargetPanel"/>
     <panel classname="PacksPanel"/>
     <panel classname="InstallPanel"/>
@@ -109,11 +116,11 @@
             targetdir="$INSTALL_PATH/lib"/>
       <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/mail.jar"
             targetdir="$INSTALL_PATH/lib"/>
-      <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/asm-2.2.1.jar"
+      <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/asm-2.2.3.jar"
             targetdir="$INSTALL_PATH/lib"/>
-      <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/asm-commons-2.2.1.jar"
+      <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/asm-commons-2.2.3.jar"
             targetdir="$INSTALL_PATH/lib"/>
-      <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/asm-util-2.2.1.jar"
+      <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/asm-util-2.2.3.jar"
             targetdir="$INSTALL_PATH/lib"/>
 
       <!-- for cleaning up -->
@@ -163,6 +170,7 @@
       <fileset dir="@TOP_DIR@" targetdir="$INSTALL_PATH/sources">
         <exclude name="**/.svn"/>
         <exclude name="@BUILD_DIR_RELATIVE@/**"/>
+        <exclude name="nbproject/**"/>
 
         <include name="**/*.java"/>
         <include name="**/package.html"/>

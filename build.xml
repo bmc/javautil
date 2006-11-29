@@ -609,7 +609,7 @@
       utility (http://www.izforge.com/izpack/), and you'll have to set
       this value to the location of the IzPack installation.
   -->
-  <property name="izpack.home" value="/usr/local/java/IzPack"/>
+  <property name="izpack.home" value="${env.HOME}/java/IzPack"/>
   <property name="src.install" value="${src.top}/installer"/>
 
   <target name="-installer.prep">
