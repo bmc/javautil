@@ -94,6 +94,7 @@ public class AbstractUnifiedScriptEngineTestBase extends TestCase
 
             manager.put("foo", "10");
             UnifiedScriptEngine engine = manager.getEngineByName(EVAL_LANG);
+            assertNotNull(engine);
             Object result = engine.eval("foo");
             assertEquals("put or eval failed", result.toString(), "10");
         }
@@ -167,12 +168,12 @@ public class AbstractUnifiedScriptEngineTestBase extends TestCase
 
                 so.close();
 
-                manager.put("foo", new Integer(1));
-                manager.put("bar", new Integer(100));
+                manager.put("foo", Integer.valueOf(1));
+                manager.put("bar", Integer.valueOf(100));
                 manager.put("out", System.out);
                 UnifiedScriptEngine engine = manager.getEngineByName(EVAL_LANG);
                 engine.exec(scriptFile);
-                manager.put("bar", new Integer(1));
+                manager.put("bar", Integer.valueOf(1));
                 engine.exec(scriptFile);
             }
 
