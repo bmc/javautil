@@ -117,7 +117,7 @@
     <pathelement location="${third.party.jar.dir}/asm-2.2.3.jar"/>
     <pathelement location="${third.party.jar.dir}/asm-commons-2.2.3.jar"/>
     <pathelement location="${third.party.jar.dir}/asm-util-2.2.3.jar"/>
-    <pathelement location="${third.party.jar.dir}/commons-logging.jar"/>
+    <pathelement location="${third.party.jar.dir}/commons-logging-1.1.jar"/>
     <pathelement location="${third.party.jar.dir}/bsf.jar"/>
     <pathelement location="${ant.home}/lib/ant.jar"/>
     <pathelement location="${ant.home}/lib/ant-junit.jar"/>
@@ -570,6 +570,7 @@
     </zip>
   </target>
 
+  <target name="srczip" depends="-srczip"/>
   <target name="-srczip" depends=""
           description="Generate the source zip">
     <mkdir dir="${release.dir}"/>
@@ -579,14 +580,15 @@
           config file, below. There's no way around that, unfortunately.
       -->
       <zipfileset dir="." prefix="${zip.dir.prefix}" casesensitive="yes">
-        <exclude name="${build.dir}"/>
+        <include name="LICENSE"/>
+        <include name="*.html"/>
+        <include name="build.xml"/>
+        <include name="docs/**"/>
+        <include name="junit/**"/>
+        <include name="src/**"/>
         <exclude name="${compiled.classes.dir}"/>
-        <exclude name="**/CVS"/>
-        <include name="**/package.html"/>
-        <include name="**/*.java"/>
-        <include name="overview.html"/>
-        <include name="**/*.xml"/>
-        <include name="**/*.properties"/>
+        <exclude name="nbproject"/>
+        <exclude name="${build.dir}/**"/>
       </zipfileset>
     </zip>
   </target>
