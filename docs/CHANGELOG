@@ -4,6 +4,55 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
+Version 2.4 (...)
+
+- Added two new methods to org.clapper.util.text.TextUtil:
+
+  a) isPrintable() determines whether a character is printable. Its
+     definition of printable is fairly simple, but serviceable:
+
+         A character is assumed to be printable if (a) it's in the Basic
+         Latin, Latin 1 Supplement, or Extended Latin A Unicode block, and
+         (b) its type, as returned by
+         <tt>java.lang.Character.getType()</tt> is one of:
+
+         - Character.OTHER_PUNCTUATION
+         - Character.START_PUNCTUATION
+         - Character.END_PUNCTUATION
+         - Character.CONNECTOR_PUNCTUATION
+         - Character.CURRENCY_SYMBOL
+         - Character.MATH_SYMBOL
+         - Character.MODIFIER_SYMBOL
+         - Character.UPPERCASE_LETTER
+         - Character.LOWERCASE_LETTER
+         - Character.DECIMAL_DIGIT_NUMBER
+         - Character.SPACE_SEPARATOR
+         - Character.DASH_PUNCTUATION
+
+         This definition of "printable" that doesn't take into account
+         specific locales.
+
+  b) charToUnicodeEscape() converts a character to a string representing
+     its Java unicode escape sequence.
+
+- Converted org.clapper.util.text.XStringBufBase (the base class for
+  XStringBuffer and XStringBuilder) to use TextUtil.isPrintable() and
+  TextUtil.charToUnicodeEscape(), instead of doing those things inline.
+
+- Added more JUnit tests for org.clapper.util.html.HTMLUtil and
+  org.clapper.util.text.TextUtil.
+
+- The convertCharacterEntities() method in org.clapper.util.html.HTMLUtil
+  handled decimal character entities (e.g., "&#8482;") but not hexadecimal
+  ones (e.g., "&#x2122;"). It does now. Thanks to Arjumand Bonhomme (jumand
+  <at> gmail <dot> com) for finding the problem and suggesting a fix. (I've
+  adapted his patch.)
+
+- The makeCharacterEntities() method in org.clapper.util.html.HTMLUtil
+  didn't properly handle some symbolic entities, owing to some mistakes
+  in the properties file it uses for conversion. That's been fixed.
+
+
 Version 2.3 (29 November, 2006)
 
 - The graphical installer now renders the license in a more readable,
