@@ -168,7 +168,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      */
     protected abstract void deleteCharacters (int start, int end)
         throws IndexOutOfBoundsException;
- 
+
     /**
      * Insert a single character into the buffer at a specified position.
      * Note that an insertion operation may push characters off the end of
@@ -279,8 +279,6 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      */
     public XStringBufBase append (char chars[])
     {
-        Appendable buf = getBufferAsAppendable();
-
         for (int i = 0; i < chars.length; i++)
             append (chars[i]);
 
@@ -622,30 +620,8 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *         <tt>&#92;u</tt><i>xxxx</i> sequence.
      * </ul>
      *
-     * <p>This method uses a simple definition of "non-printable" that
-     * doesn't take into account specific locales. A character is assumed
-     * to be printable if (a) it's in the Basic Latin, Latin 1 Supplement,
-     * or Extended Latin A Unicode block, and (b) its type, as returned by
-     * <tt>java.lang.Character.getType()</tt> is one of:</p>
-     *
-     * <ul>
-     *    <li><tt>Character.OTHER_PUNCTUATION</tt>
-     *    <li><tt>Character.START_PUNCTUATION</tt>
-     *    <li><tt>Character.END_PUNCTUATION</tt>
-     *    <li><tt>Character.CONNECTOR_PUNCTUATION</tt>
-     *    <li><tt>Character.CURRENCY_SYMBOL</tt>
-     *    <li><tt>Character.MATH_SYMBOL</tt>
-     *    <li><tt>Character.MODIFIER_SYMBOL</tt>
-     *    <li><tt>Character.UPPERCASE_LETTER</tt>
-     *    <li><tt>Character.LOWERCASE_LETTER</tt>
-     *    <li><tt>Character.DECIMAL_DIGIT_NUMBER</tt>
-     *    <li><tt>Character.SPACE_SEPARATOR</tt>
-     *    <li><tt>Character.DASH_PUNCTUATION</tt>
-     * </ul>
-     *
-     * <p>All other characters are assumed to be non-printable, even if
-     * they could actually be printed in the current locale or on some
-     * printer.</p>
+     * <p>This method uses the same definition of "non-printable" as
+     * {@link TextUtil#isPrintable}.</p>
      *
      * @param start  The beginning index, inclusive
      * @param end    The ending index, exclusive
@@ -700,7 +676,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      * @see #encodeMetacharacters(int, int)
      * @see #decodeMetacharacters()
      */
-    public void encodeMetacharacters() 
+    public void encodeMetacharacters()
     {
         try
         {
@@ -751,7 +727,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
             // Process the region. First, allocate a PushbackReader than
             // can handle up to 5 characters (4 characters for a Unicode
             // code, plus the preceding "u").
-            
+
             String         region = new String (chars, i, end - i);
             StringReader   sr     = new StringReader (region);
             PushbackReader pb     = new PushbackReader (sr, 5);
@@ -1215,7 +1191,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
     }
 
     /**
-     * Removes all existing characters from the buffer and loads the 
+     * Removes all existing characters from the buffer and loads the
      * string into the buffer.
      *
      *  @param str <tt>String</tt> object to be loaded into the cleared buffer.
@@ -1232,7 +1208,6 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      * {@link TextUtil#split(String)}.
      *
      * @return an array of <tt>String</tt> objects
-     *
      * @see #split(String)
      * @see TextUtil#split(String,char)
      */
@@ -1247,9 +1222,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      * {@link TextUtil#split(String,char)}.
      *
      * @param delim the delimiter
-     *
      * @return an array of <tt>String</tt> objects
-     *
      * @see #split(String)
      * @see TextUtil#split(String,char)
      */
@@ -1264,9 +1237,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      * {@link TextUtil#split(String,String)}
      *
      * @param delimSet the delimiter set
-     *
      * @return an array of <tt>String</tt> objects
-     *
      * @see #split(char)
      * @see TextUtil#split(String,String)
      */
@@ -1283,9 +1254,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *
      * @param delim      the delimiter
      * @param collection where to store the resulting strings
-     *
      * @return the number of strings added to the collection
-     *
      * @see #split(String,Collection)
      * @see #split(char)
      * @see TextUtil#split(String,char)
@@ -1304,9 +1273,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *
      * @param delimSet   the set of delimiters
      * @param collection where to store the resulting strings
-     *
      * @return the number of strings added to the collection
-     *
      * @see #split(char,Collection)
      * @see #split(String)
      * @see TextUtil#split(String,String)
@@ -1407,67 +1374,48 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      */
     private static String encodeOneMetacharacter (char c, StringBuilder buf)
     {
-        Character.UnicodeBlock  ublock;
-        StringBuilder           result = new StringBuilder();
+        StringBuilder result = new StringBuilder();
 
-        ublock = Character.UnicodeBlock.of (c);
-        if ((ublock == Character.UnicodeBlock.BASIC_LATIN) ||
-            (ublock == Character.UnicodeBlock.LATIN_1_SUPPLEMENT) ||
-            (ublock == Character.UnicodeBlock.LATIN_EXTENDED_A))
+        if (TextUtil.isPrintable(c))
         {
-            int type = Character.getType (c);
-
-            switch (type)
+            if (c == METACHAR_SEQUENCE_START)
             {
-                case Character.OTHER_PUNCTUATION:
-                case Character.START_PUNCTUATION:
-                case Character.END_PUNCTUATION:
-                    if (c == METACHAR_SEQUENCE_START)
-                    {
-                        result.append (METACHAR_SEQUENCE_START);
-                        result.append (METACHAR_SEQUENCE_START);
-                    }
+                // Have to escape the escape character.
 
-                    else
-                    {
-                        result.append (c);
-                    }
+                result.append(METACHAR_SEQUENCE_START);
+                result.append(METACHAR_SEQUENCE_START);
+            }
+
+            else
+            {
+                result.append(c);
+            }
+        }
+
+        else
+        {
+            // Assume it's non-printable and translate it.
+
+            switch (c)
+            {
+                case '\r':
+                    result.append("\\r");
                     break;
 
-                case Character.CONNECTOR_PUNCTUATION:
-                case Character.CURRENCY_SYMBOL:
-                case Character.MATH_SYMBOL:
-                case Character.MODIFIER_SYMBOL:
-                case Character.UPPERCASE_LETTER:
-                case Character.LOWERCASE_LETTER:
-                case Character.DECIMAL_DIGIT_NUMBER:
-                case Character.DASH_PUNCTUATION:
-                case Character.SPACE_SEPARATOR:
-                    result.append (c);
+                case '\n':
+                    result.append("\\n");
+                    break;
+
+                case '\t':
+                    result.append("\\t");
+                    break;
+
+                case '\f':
+                    result.append("\\f");
                     break;
 
                 default:
-                    switch (c)
-                    {
-                        case '\r':
-                            result.append ("\\r");
-                            break;
-
-                        case '\n':
-                            result.append ("\\n");
-                            break;
-
-                        case '\t':
-                            result.append ("\\t");
-                            break;
-
-                        case '\f':
-                            result.append ("\\f");
-                            break;
-
-                        default:
-                            result.append (toUnicodeEscape (c, buf));
-                    }
+                    result.append(toUnicodeEscape(c, buf));
             }
         }
 
@@ -1485,14 +1433,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
     private static String toUnicodeEscape (char c, StringBuilder buf)
     {
         buf.setLength (0);
-
-        buf.append (Integer.toHexString ((int) c));
-
-        while (buf.length() < 4)
-            buf.insert (0, "0");
-
-        buf.insert (0, "\\u");
-        return buf.toString();
+        return TextUtil.charToUnicodeEscape(c, buf);
     }
 
     /**
