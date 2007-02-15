@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-  $Id$
+  $Id: TextUtilRomanNumberTest.java 6511 2006-10-12 00:43:47Z bmc $
   ---------------------------------------------------------------------------
   This software is released under a BSD-style license:
 
@@ -51,31 +51,17 @@ import junit.framework.*;
 /**
  *
  */
-public class TextUtilRomanNumberTest extends TestCase
+public class TextUtilTest extends TestCase
 {
-    public TextUtilRomanNumberTest(String testName)
+    public TextUtilTest(String testName)
     {
         super(testName);
     }
 
-    public void testRomanNumerals()
+    public void testToUnicodeEscape()
     {
-        assertEquals("Failed", "I", TextUtil.romanNumeralsForNumber(1));
-        assertEquals("Failed", "IV", TextUtil.romanNumeralsForNumber(4));
-        assertEquals("Failed", "V", TextUtil.romanNumeralsForNumber(5));
-        assertEquals("Failed", "IX", TextUtil.romanNumeralsForNumber(9));
-        assertEquals("Failed", "X", TextUtil.romanNumeralsForNumber(10));
-        assertEquals("Failed", "XV", TextUtil.romanNumeralsForNumber(15));
-        assertEquals("Failed", "XVIII", TextUtil.romanNumeralsForNumber(18));
-        assertEquals("Failed", "XIX", TextUtil.romanNumeralsForNumber(19));
-        assertEquals("Failed", "XX", TextUtil.romanNumeralsForNumber(20));
-        assertEquals("Failed", "XL", TextUtil.romanNumeralsForNumber(40));
-        assertEquals("Failed", "L", TextUtil.romanNumeralsForNumber(50));
-        assertEquals("Failed", "LXXI", TextUtil.romanNumeralsForNumber(71));
-        assertEquals("Failed", "CD", TextUtil.romanNumeralsForNumber(400));
-        assertEquals("Failed", "D", TextUtil.romanNumeralsForNumber(500));
-        assertEquals("Failed", "CM", TextUtil.romanNumeralsForNumber(900));
-        assertEquals("Failed", "M", TextUtil.romanNumeralsForNumber(1000));
-        assertEquals("Failed", "MCMLXI", TextUtil.romanNumeralsForNumber(1961));
+        assertEquals(TextUtil.charToUnicodeEscape('\u001a'), "\u001a");
+        assertEquals(TextUtil.charToUnicodeEscape('3'), "\u0033");
+        assertEquals(TextUtil.charToUnicodeEscape('{'), "\u007b");
     }
 }
