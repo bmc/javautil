@@ -1757,4 +1757,108 @@ public final class TextUtil
 
         return buf.toString();
     }
+
+    /**
+     * Convert a character to its corresponding Unicode escape sequence.
+     *
+     * @param c   the character
+     * @param buf where to store the result
+     *
+     * @return the contents of <tt>buf</tt>, as a string
+     *
+     * @see #charToUnicodeEscape(char)
+     */
+    public static String charToUnicodeEscape(char c, StringBuilder buf)
+    {
+        String hex = Integer.toHexString((int) c);
+
+        buf.append("\\u");
+        for (int i = hex.length(); i < 4; i++)
+            buf.append('0');
+        buf.append(hex);
+
+        return buf.toString();
+    }
+
+    /**
+     * Convert a character to its corresponding Unicode escape sequence.
+     *
+     * @param c   the character
+     * @param buf where to store the result
+     *
+     * @see #charToUnicodeEscape(char)
+     */
+    public static String charToUnicodeEscape(char c)
+    {
+        return charToUnicodeEscape(c, new StringBuilder());
+    }
+
+    /**
+     * Determine whether a character is printable. This method uses a simple
+     * definition of "printable" that doesn't take into account specific
+     * locales. A character is assumed to be printable if (a) it's in the Basic
+     * Latin, Latin 1 Supplement, or Extended Latin A Unicode block, and
+     * (b) its type, as returned by <tt>java.lang.Character.getType()</tt>
+     * is one of:</p>
+     *
+     * <ul>
+     *    <li><tt>Character.OTHER_PUNCTUATION</tt>
+     *    <li><tt>Character.START_PUNCTUATION</tt>
+     *    <li><tt>Character.END_PUNCTUATION</tt>
+     *    <li><tt>Character.CONNECTOR_PUNCTUATION</tt>
+     *    <li><tt>Character.CURRENCY_SYMBOL</tt>
+     *    <li><tt>Character.MATH_SYMBOL</tt>
+     *    <li><tt>Character.MODIFIER_SYMBOL</tt>
+     *    <li><tt>Character.UPPERCASE_LETTER</tt>
+     *    <li><tt>Character.LOWERCASE_LETTER</tt>
+     *    <li><tt>Character.DECIMAL_DIGIT_NUMBER</tt>
+     *    <li><tt>Character.SPACE_SEPARATOR</tt>
+     *    <li><tt>Character.DASH_PUNCTUATION</tt>
+     * </ul>
+     *
+     * <p>All other characters are assumed to be non-printable, even if
+     * they could actually be printed in the current locale or on some
+     * printer.
+     *
+     * @param c  the character to test
+     *
+     * @return whether or not it is non-
+     */
+    public static boolean isPrintable(char c)
+    {
+        boolean isPrintable = false;
+
+        Character.UnicodeBlock  ublock;
+        StringBuilder           result = new StringBuilder();
+
+        ublock = Character.UnicodeBlock.of (c);
+        if ((ublock == Character.UnicodeBlock.BASIC_LATIN) ||
+            (ublock == Character.UnicodeBlock.LATIN_1_SUPPLEMENT) ||
+            (ublock == Character.UnicodeBlock.LATIN_EXTENDED_A))
+        {
+            // Might be printable.
+
+            int type = Character.getType (c);
+
+            switch (type)
+            {
+                case Character.OTHER_PUNCTUATION:
+                case Character.START_PUNCTUATION:
+                case Character.END_PUNCTUATION:
+                case Character.CONNECTOR_PUNCTUATION:
+                case Character.CURRENCY_SYMBOL:
+                case Character.MATH_SYMBOL:
+                case Character.MODIFIER_SYMBOL:
+                case Character.UPPERCASE_LETTER:
+                case Character.LOWERCASE_LETTER:
+                case Character.DECIMAL_DIGIT_NUMBER:
+                case Character.DASH_PUNCTUATION:
+                case Character.SPACE_SEPARATOR:
+                    isPrintable = true;
+                    break;
+            }
+        }
+
+        return isPrintable;
+    }
 }
