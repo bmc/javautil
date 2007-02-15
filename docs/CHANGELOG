@@ -44,9 +44,9 @@ Version 2.4 (...)
 
 - The convertCharacterEntities() method in org.clapper.util.html.HTMLUtil
   handled decimal character entities (e.g., "&#8482;") but not hexadecimal
-  ones (e.g., "&#x2122;"). It does now. Thanks to Arjumand Bonhomme (jumand
-  <at> gmail <dot> com) for finding the problem and suggesting a fix. (I've
-  adapted his patch.)
+  ones (e.g., "&#x2122;"). It does now. Thanks to Arjumand Bonhomme 
+  (jumand <at> gmail <dot> com) for finding the problem and suggesting a
+  fix. (I've adapted his patch.)
 
 - The makeCharacterEntities() method in org.clapper.util.html.HTMLUtil
   didn't properly handle some symbolic entities, owing to some mistakes
