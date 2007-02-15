@@ -55,6 +55,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.clapper.util.text.TextUtil;
 import org.clapper.util.text.Unicode;
 import org.clapper.util.text.XStringBuffer;
 import org.clapper.util.text.XStringBuilder;
@@ -156,7 +157,6 @@ public final class HTMLUtil
      * @return the resulting, possibly modified, string
      *
      * @see #stripHTMLTags
-     *
      * @see #makeCharacterEntities
      */
     public static String convertCharacterEntities (String s)
@@ -217,23 +217,40 @@ public final class HTMLUtil
                 {
                     // It might be a numeric entity code. Try to parse it
                     // as a number. If the parse fails, just put the whole
-                    // string in the result, as is.
+                    // string in the result, as is. Be sure to handle both
+                    // the decimal form (e.g., &#8482;) and the hexadecimal
+                    // form (e.g., &#x2122;).
 
+                    int cc;
+                    boolean isHex = (match.length() > 2) &&
+                                    (match.charAt(1) == 'x');
+                    boolean isLegal = false;
                     try
                     {
-                        int cc = Integer.parseInt (match.substring (1));
+                        if (isHex)
+                            cc = Integer.parseInt(match.substring(2), 16);
+                        else
+                            cc = Integer.parseInt(match.substring(1));
 
                         // It parsed. Is it a valid Unicode character?
 
-                        if (Character.isDefined ((char) cc))
-                            buf.append ((char) cc);
-                        else
-                            buf.append ("&#" + match + ";");
+                        if (Character.isDefined((char) cc))
+                        {
+                            buf.append((char) cc);
+                            isLegal = true;
+                        }
                     }
 
                     catch (NumberFormatException ex)
                     {
-                        buf.append ("&#" + match + ";");
+                    }
+
+                    if (! isLegal)
+                    {
+                        buf.append("&#");
+                        if (isHex)
+                            buf.append('x');
+                        buf.append(match + ";");
                     }
                 }
             }
@@ -316,9 +333,25 @@ public final class HTMLUtil
 
             String entity = charToEntityName.get (c);
             if (entity == null)
-                buf.append (c);
+            {
+                if (! TextUtil.isPrintable(c))
+                {
+                    buf.append("&#");
+                    buf.append(Integer.valueOf(c));
+                    buf.append(';');
+                }
+                else
+                {
+                    buf.append(c);
+                }
+            }
+
             else
-                buf.append ("&" + entity + ";");
+            {
+                buf.append ('&');
+                buf.append(entity);
+                buf.append(';');
+            }
         }
 
         return buf.toString();
