@@ -46,7 +46,6 @@
 
 package org.clapper.util.text;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 /**
