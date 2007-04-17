@@ -1784,7 +1784,6 @@ public final class TextUtil
      * Convert a character to its corresponding Unicode escape sequence.
      *
      * @param c   the character
-     * @param buf where to store the result
      *
      * @see #charToUnicodeEscape(char)
      */

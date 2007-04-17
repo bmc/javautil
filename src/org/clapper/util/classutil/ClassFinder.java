@@ -128,11 +128,11 @@ import org.objectweb.asm.ClassReader;
  *                 // Must not be abstract
  *                 new NotClassFilter (new AbstractClassFilter()));
  *
- *         Collection<String> classNames = new ArrayList<String>();
- *         finder.findClasses (classNames, filter);
+ *         Collection&lt;ClassInfo&gt; foundClasses = new ArrayList&lt;ClassInfo&gt;();
+ *         finder.findClasses (foundClasses, filter);
  *
- *         for (String className : classNames)
- *             System.out.println ("Found " + className);
+ *         for (ClassInfo classInfo : foundClasses)
+ *             System.out.println ("Found " + classInfo.getClassName());
  *     }
  * }
  * </pre></blockquote>
