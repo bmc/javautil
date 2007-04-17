@@ -93,21 +93,21 @@ public class ClassInfo extends EmptyVisitor
      *
      * @throws ClassUtilException load error
      */
-    public ClassInfo (File classFile) throws ClassUtilException
+    public ClassInfo(File classFile) throws ClassUtilException
     {
         try
         {
-            ClassReader cr = new ClassReader (new FileInputStream (classFile));
-            cr.accept (this, true);
+            ClassReader cr = new ClassReader(new FileInputStream(classFile));
+            cr.accept(this, true);
         }
 
         catch (IOException ex)
         {
-            throw new ClassUtilException (ClassUtil.BUNDLE_NAME,
-                                          "ClassInfo.cantReadClassFile",
-                                          "Unable to load class file \"{0}\"",
-                                          new Object[] {classFile.getPath()},
-                                          ex);
+            throw new ClassUtilException(ClassUtil.BUNDLE_NAME,
+                                         "ClassInfo.cantReadClassFile",
+                                         "Unable to load class file \"{0}\"",
+                                         new Object[] {classFile.getPath()},
+                                         ex);
         }
     }
 
@@ -118,21 +118,21 @@ public class ClassInfo extends EmptyVisitor
      *
      * @throws ClassUtilException load error
      */
-    public ClassInfo (InputStream is) throws ClassUtilException
+    public ClassInfo(InputStream is) throws ClassUtilException
     {
         try
         {
-            ClassReader cr = new ClassReader (is);
-            cr.accept (this, true);
+            ClassReader cr = new ClassReader(is);
+            cr.accept(this, true);
         }
 
         catch (IOException ex)
         {
-            throw new ClassUtilException (ClassUtil.BUNDLE_NAME,
-                                          "ClassInfo.cantReadClassStream",
-                                          "Unable to load class from open " +
-                                          "input stream",
-                                          ex);
+            throw new ClassUtilException(ClassUtil.BUNDLE_NAME,
+                                         "ClassInfo.cantReadClassStream",
+                                         "Unable to load class from open " +
+                                         "input stream",
+                                         ex);
         }
     }
 
@@ -146,13 +146,13 @@ public class ClassInfo extends EmptyVisitor
      * @param asmAccessMask  ASM API's access mask for the class
      * @param location       File (jar, zip) or directory where class was found
      */
-    ClassInfo (String   name,
-               String   superClassName,
-               String[] interfaces,
-               int      asmAccessMask,
-               File     location)
+    ClassInfo(String   name,
+              String   superClassName,
+              String[] interfaces,
+              int      asmAccessMask,
+              File     location)
     {
-        setFields (name, superClassName, interfaces, asmAccessMask, location);
+        setClassFields(name, superClassName, interfaces, asmAccessMask, location);
     }
 
     /*----------------------------------------------------------------------*\
@@ -268,26 +268,26 @@ public class ClassInfo extends EmptyVisitor
                   Public Methods Required by ClassVisitor
     \*----------------------------------------------------------------------*/
 
-     /**
-      * "Visit" a class. Required by ASM <tt>ClassVisitor</tt> interface.
-      *
-      * @param version     class version
-      * @param access      class access modifiers, etc.
-      * @param name        internal class name
-      * @param signature   class signature (not used here)
-      * @param superName   internal super class name
-      * @param interfaces  internal names of all directly implemented
-      *                    interfaces
-      */
-     public void visit (int      version,
-                        int      access,
-                        String   name,
-                        String   signature,
-                        String   superName,
-                        String[] interfaces)
-     {
-         setFields (name, superName, interfaces, access, null);
-     }
+    /**
+     * "Visit" a class. Required by ASM <tt>ClassVisitor</tt> interface.
+     *
+     * @param version     class version
+     * @param access      class access modifiers, etc.
+     * @param name        internal class name
+     * @param signature   class signature (not used here)
+     * @param superName   internal super class name
+     * @param interfaces  internal names of all directly implemented
+     *                    interfaces
+     */
+    public void visit(int      version,
+                      int      access,
+                      String   name,
+                      String   signature,
+                      String   superName,
+                      String[] interfaces)
+    {
+        setClassFields(name, superName, interfaces, access, null);
+    }
 
     /*----------------------------------------------------------------------*\
                               Private Methods
@@ -300,9 +300,9 @@ public class ClassInfo extends EmptyVisitor
      *
      * @return the external name
      */
-    private String translateInternalClassName (String internalName)
+    private String translateInternalClassName(String internalName)
     {
-        return internalName.replaceAll ("/", ".");
+        return internalName.replaceAll("/", ".");
     }
 
     /**
@@ -315,19 +315,19 @@ public class ClassInfo extends EmptyVisitor
      * @param asmAccessMask  ASM API's access mask for the class
      * @param location       File (jar, zip) or directory where class was found
      */
-    private void setFields (String   name,
-                            String   superClassName,
-                            String[] interfaces,
-                            int      asmAccessMask,
-                            File     location)
+    private void setClassFields(String   name,
+                                String   superClassName,
+                                String[] interfaces,
+                                int      asmAccessMask,
+                                File     location)
     {
-        this.className = translateInternalClassName (name);
+        this.className = translateInternalClassName(name);
         this.locationFound = location;
 
-        if ((superClassName != null) && 
+        if ((superClassName != null) &&
              (! superClassName.equals ("java/lang/Object")))
         {
-            this.superClassName = translateInternalClassName (superClassName);
+            this.superClassName = translateInternalClassName(superClassName);
         }
 
         if (interfaces != null)
@@ -336,9 +336,23 @@ public class ClassInfo extends EmptyVisitor
             for (int i = 0; i < interfaces.length; i++)
             {
                 this.implementedInterfaces[i] =
-                    translateInternalClassName (interfaces[i]);
+                    translateInternalClassName(interfaces[i]);
             }
         }
+
+        modifier = convertAccessMaskToModifierMask(asmAccessMask);
+    }
+
+    /**
+     * Convert an ASM access mask to a reflection Modifier mask.
+     *
+     * @param asmAccessMask the ASM access mask
+     *
+     * @return the Modifier mask
+     */
+    private int convertAccessMaskToModifierMask(int asmAccessMask)
+    {
+        int modifier = 0;
 
         // Convert the ASM access info into Reflection API modifiers.
 
@@ -377,5 +391,7 @@ public class ClassInfo extends EmptyVisitor
 
         if ((asmAccessMask & Opcodes.ACC_VOLATILE) != 0)
             modifier |= Modifier.VOLATILE;
+
+        return modifier;
     }
 }
