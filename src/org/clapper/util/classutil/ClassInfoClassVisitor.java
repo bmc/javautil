@@ -85,7 +85,7 @@ class ClassInfoClassVisitor extends EmptyVisitor
      *                      indexed by class name.
      * @param location      file (jar, zip) or directory containing classes
      *                      being processed by this visitor
-     * 
+     *
      */
     ClassInfoClassVisitor (Map<String,ClassInfo> foundClasses, File location)
     {
