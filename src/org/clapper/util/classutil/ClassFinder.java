@@ -571,7 +571,6 @@ public class ClassFinder
         ClassVisitor classVisitor = new ClassInfoClassVisitor (foundClasses,
                                                                dir);
 
-        String dirPath = dir.getPath();
         for (File f : files)
         {
             String path = f.getPath();
@@ -664,13 +663,6 @@ public class ClassFinder
                                           "input stream",
                                           ex);
         }
-    }
-
-    private String getClassNameFrom (String entryName)
-    {
-        String s = new String (entryName).replace ('/', '.');
-        s = s.replace ('\\', '.');
-        return s.substring (0, s.lastIndexOf ( '.' ));
     }
 
     private boolean isJar (String fileName)
