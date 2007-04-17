@@ -46,7 +46,8 @@
 
 package org.clapper.util.text;
 
-import junit.framework.*;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  *
@@ -60,8 +61,8 @@ public class TextUtilTest extends TestCase
 
     public void testToUnicodeEscape()
     {
-        assertEquals(TextUtil.charToUnicodeEscape('\u001a'), "\u001a");
-        assertEquals(TextUtil.charToUnicodeEscape('3'), "\u0033");
-        assertEquals(TextUtil.charToUnicodeEscape('{'), "\u007b");
+        assertEquals(TextUtil.charToUnicodeEscape('\u001a'), "\\u001a");
+        assertEquals(TextUtil.charToUnicodeEscape('3'), "\\u0033");
+        assertEquals(TextUtil.charToUnicodeEscape('{'), "\\u007b");
     }
 }
