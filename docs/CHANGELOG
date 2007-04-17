@@ -4,7 +4,7 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
-Version 2.4 (...)
+Version 2.4 (17 April, 2007)
 
 - Added two new methods to org.clapper.util.text.TextUtil:
 
@@ -52,7 +52,7 @@ Version 2.4 (...)
   didn't properly handle some symbolic entities, owing to some mistakes
   in the properties file it uses for conversion. That's been fixed.
 
-
+---------------------------------------------------------------------------
 Version 2.3 (29 November, 2006)
 
 - The graphical installer now renders the license in a more readable,
