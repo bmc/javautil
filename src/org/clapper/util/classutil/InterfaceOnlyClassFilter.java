@@ -49,8 +49,8 @@ package org.clapper.util.classutil;
 import java.lang.reflect.Modifier;
 
 /**
- * <p><tt>AbstractClassFilter</tt> implements a {@link ClassFilter}
- * that matches class names that (a) can be loaded and (b) are abstract. It
+ * <p><tt>InterfaceOnlyClassFilter</tt> implements a {@link ClassFilter}
+ * that matches class names that (a) can be loaded and (b) are interfaces. It
  * relies on the pool of classes read by a {@link ClassFinder}; it's
  * not really useful by itself.</p>
  *
