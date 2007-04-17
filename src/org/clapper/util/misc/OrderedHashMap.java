@@ -3,7 +3,7 @@
   ---------------------------------------------------------------------------
   This software is released under a BSD-style license:
 
-  Copyright (c) 2004-2006 Brian M. Clapper. All rights reserved.
+  Copyright (c) 2004-2007 Brian M. Clapper. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are
@@ -17,7 +17,7 @@
 
         "This product includes software developed by Brian M. Clapper
         (bmc@clapper.org, http://www.clapper.org/bmc/). That software is
-        copyright (c) 2004-2006 Brian M. Clapper."
+        copyright (c) 2004-2007 Brian M. Clapper."
 
       Alternately, this acknowlegement may appear in the software itself,
       if wherever such third-party acknowlegements normally appear.
@@ -67,7 +67,7 @@ import java.util.Collection;
  *
  * @version <tt>$Revision$</tt>
  *
- * @author Copyright &copy; 2004-2006 Brian M. Clapper
+ * @author Copyright &copy; 2004-2007 Brian M. Clapper
  *
  * @deprecated Please use java.util.LinkedHashMap, instead
  *

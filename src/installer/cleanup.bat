@@ -2,7 +2,7 @@ rem $Id$
 rem ---------------------------------------------------------------------------
 rem This software is released under a BSD-style license:
 rem
-rem Copyright (c) 2004-2006 Brian M. Clapper. All rights reserved.
+rem Copyright (c) 2004-2007 Brian M. Clapper. All rights reserved.
 rem
 rem Redistribution and use in source and binary forms, with or without
 rem modification, are permitted provided that the following conditions are
@@ -16,7 +16,7 @@ rem     must include the following acknowlegement:
 rem
 rem       "This product includes software developed by Brian M. Clapper
 rem       (bmc@clapper.org, http://www.clapper.org/bmc/). That software is
-rem       copyright (c) 2004-2006 Brian M. Clapper."
+rem       copyright (c) 2004-2007 Brian M. Clapper."
 rem
 rem     Alternately, this acknowlegement may appear in the software itself,
 rem     if wherever such third-party acknowlegements normally appear.
