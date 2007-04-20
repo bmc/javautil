@@ -477,7 +477,7 @@ public class Configuration
     /**
      * Line types
      */
-    enum LineType
+    private static enum LineType
     {
         COMMENT,
         INCLUDE,
@@ -489,7 +489,7 @@ public class Configuration
     /**
      * Contains one logical input line.
      */
-    static class Line
+    private static class Line
     {
         int            number = 0;
         LineType       type   = LineType.COMMENT;
