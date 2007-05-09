@@ -148,6 +148,40 @@ public final class HTMLUtil
     }
 
     /**
+     * Escape characters that are special in HTML, so that the resulting
+     * string can be included in HTML (or XML). For instance, this method
+     * will convert an embedded "&amp;" to "&amp;amp;".
+     *
+     * @param s  the string to convert
+     *
+     * @return the converted string
+     */
+    public static String escapeHTML(String s)
+    {
+        StringBuilder buf = new StringBuilder();
+
+        for (char c : s.toCharArray())
+        {
+            switch (c)
+            {
+                case '&':
+                    buf.append("&amp;");
+                    break;
+                case '<':
+                    buf.append("&lt;");
+                    break;
+                case '>':
+                    buf.append("&gt;");
+                    break;
+                default:
+                    buf.append(c);
+            }
+        }
+
+        return buf.toString();
+    }
+
+    /**
      * Converts all inline HTML character entities (c.f.,
      * <a href="http://www.w3.org/TR/REC-html40/sgml/entities.html">http://www.w3.org/TR/REC-html40/sgml/entities.html</a>)
      * to their Unicode character counterparts, if possible.
