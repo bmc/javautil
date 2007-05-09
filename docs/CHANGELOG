@@ -4,6 +4,12 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
+Version 2.4.1 (...)
+
+- Added new HTMLUtil.escapeHTML() method.
+
+---------------------------------------------------------------------------
+
 Version 2.4 (17 April, 2007)
 
 - Added two new methods to org.clapper.util.text.TextUtil:
