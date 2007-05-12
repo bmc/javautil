@@ -29,7 +29,7 @@ rem     bmc@clapper.org.
 rem
 rem 4.  Products derived from this software may not be called "clapper.org
 rem     Java Utility Library", nor may "clapper.org" appear in their names
-rem     without prior written permission of Brian M.a Clapper.
+rem     without prior written permission of Brian M. Clapper.
 rem
 rem THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
 rem WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF

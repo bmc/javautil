@@ -31,7 +31,7 @@
 #
 # 4.  Products derived from this software may not be called "clapper.org
 #     Java Utility Library", nor may "clapper.org" appear in their names
-#     without prior written permission of Brian M.a Clapper.
+#     without prior written permission of Brian M. Clapper.
 #
 # THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
 # WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
