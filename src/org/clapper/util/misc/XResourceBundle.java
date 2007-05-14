@@ -99,9 +99,9 @@ public final class XResourceBundle extends ResourceBundle
      * @throws NullPointerException     if <tt>baseName</tt> is null
      * @throws MissingResourceException no bundle available
      */
-    public static XResourceBundle getXResourceBundle(String bundleName)
+    public static XResourceBundle getXResourceBundle(String baseName)
     {
-        ResourceBundle bundle = ResourceBundle.getBundle(bundleName);
+        ResourceBundle bundle = ResourceBundle.getBundle(baseName);
         return (bundle == null) ? null : new XResourceBundle(bundle);
     }
 
@@ -118,10 +118,10 @@ public final class XResourceBundle extends ResourceBundle
      * @throws NullPointerException     if <tt>baseName</tt> is null
      * @throws MissingResourceException no bundle available
      */
-    public static XResourceBundle getXResourceBundle(String bundleName,
+    public static XResourceBundle getXResourceBundle(String baseName,
                                                      Locale locale)
     {
-        ResourceBundle bundle = ResourceBundle.getBundle(bundleName, locale);
+        ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale);
         return (bundle == null) ? null : new XResourceBundle(bundle);
     }
 
@@ -139,11 +139,11 @@ public final class XResourceBundle extends ResourceBundle
      * @throws NullPointerException     if <tt>baseName</tt> is null
      * @throws MissingResourceException no bundle available
      */
-    public static XResourceBundle getXResourceBundle(String      bundleName,
+    public static XResourceBundle getXResourceBundle(String      baseName,
                                                      Locale      locale,
                                                      ClassLoader classLoader)
     {
-        ResourceBundle bundle = ResourceBundle.getBundle(bundleName,
+        ResourceBundle bundle = ResourceBundle.getBundle(baseName,
                                                          locale,
                                                          classLoader);
         return (bundle == null) ? null : new XResourceBundle(bundle);
