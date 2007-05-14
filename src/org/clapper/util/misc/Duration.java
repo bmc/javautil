@@ -413,11 +413,19 @@ public final class Duration
         }
     }
 
-    public long getDAY_MS()
+    /**
+     * Return a string representation of this duration. Note that this method
+     * is <i>not</i> the same as the {@link #format} method. <tt>format()</tt>
+     * produces a natural language phrase, whereas <tt>toString()</tt> just
+     * returns the equivalent of
+     * <tt>String.valueOf(Duration.getDuration())</tt>.
+     *
+     * @return the stringified duration value
+     */
+    public String toString()
     {
-        return DAY_MS;
+        return String.valueOf(getDuration());
     }
-
 
     /*----------------------------------------------------------------------*\
                               Private Methods
