@@ -15,7 +15,7 @@ import java.io.StringReader;
  * map both the Apache Jakarta Bean Scripting Framework (BSF) and the Java 6
  * JSR 223 (<tt>javax.script</tt>) framework, allowing callers to use either
  * underlying framework without changing code. This class is modeled
- * on the JSR 223 interface, though it is much simple
+ * on the JSR 223 interface, though it is much simpler.
  *
  * @version <tt>$Revision$</tt>
  */
