@@ -74,6 +74,7 @@ public class DurationTest extends TestCase
         parseOne("5 weeks, 30 hours, 30100 milliseconds", 3132030100L);
         parseOne("1001 hours, 1100 ms", 3603601100L);
         parseOne("1 day", 86400000L);
+        parseOne("1 Day", 86400000L);
     }
 
     /**

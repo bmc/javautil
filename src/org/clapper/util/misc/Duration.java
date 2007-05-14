@@ -373,7 +373,7 @@ public final class Duration
 
             // Next, the duration string.
 
-            DurationType t = tokenMap.get(tokens[i+1]);
+            DurationType t = tokenMap.get(tokens[i+1].toLowerCase());
             if (t == null)
             {
                 throw new ParseException("In \"" + s + "\", found unknown " +
@@ -524,13 +524,14 @@ public final class Duration
         if (mapByToken != null)
         {
             for (String token : tokens)
-                mapByToken.put(token, durationType);
+                mapByToken.put(token.toLowerCase(), durationType);
         }
 
         if (mapByType != null)
         {
             mapByType.put(durationType,
-                          new DurationForFormat(tokens[0], tokens[1]));
+                          new DurationForFormat(tokens[0].toLowerCase(),
+                                                tokens[1].toLowerCase()));
         }
     }
 }
