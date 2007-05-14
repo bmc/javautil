@@ -67,7 +67,7 @@ public class DurationTest extends TestCase
     }
 
     /**
-     * Test of parse method, of class org.clapper.util.misc.ArrayIterator.
+     * Test of parse() method
      */
     public void testParse() throws Exception // NOPMD
     {
@@ -76,10 +76,29 @@ public class DurationTest extends TestCase
         parseOne("1 day", 86400000L);
     }
 
+    /**
+     * Test format() method
+     */
+    public void testFormat() throws Exception // NOPMD
+    {
+        formatOne(1, "1 millisecond");
+        formatOne(1000, "1 second");
+        formatOne(1001, "1 second, 1 millisecond");
+        formatOne(86401001, "1 day, 1 second, 1 millisecond");
+        formatOne(864001001, "10 days, 1 second, 1 millisecond");
+    }
+
     private void parseOne(String s, long expected) throws Exception
     {
         Duration d = new Duration(s);
         assertEquals("Parse of \"" + s + "\" did not produce correct result",
                      expected, d.getDuration());
+    }
+
+    private void formatOne(long ms, String expected) throws Exception
+    {
+        Duration d = new Duration(ms);
+        assertEquals("Format of " + expected + " did not produce expected " +
+                     "result.", expected, d.format());
     }
 }
