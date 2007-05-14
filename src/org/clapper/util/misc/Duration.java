@@ -467,6 +467,11 @@ public final class Duration
         XResourceBundle bundle = XResourceBundle.getXResourceBundle(BUNDLE_NAME,
                                                                     locale);
         loadBundle(bundle, map, null);
+
+        // Also allow the default.
+
+        bundle = XResourceBundle.getXResourceBundle(BUNDLE_NAME);
+        loadBundle(bundle, map, null);
         return map;
     }
 
