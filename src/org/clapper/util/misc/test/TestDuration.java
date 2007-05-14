@@ -117,22 +117,35 @@ public class TestDuration
 
             for (String s : stringsToParse)
             {
-                System.out.println("\nParsing \"" + s + "\"");
+                Duration duration = null;
 
                 try
                 {
-                    Duration duration = new Duration(s, localeIn);
-                    System.out.println("Parses to " + duration.getDuration() +
-                                       " milliseconds.");
-                    System.out.println("Formats to \"" + 
-                                       duration.format(localeOut) + "\"");
+                    long l = Long.parseLong(s);
+                    duration = new Duration(l);
                 }
 
-                catch (ParseException ex)
+                catch (NumberFormatException ex)
                 {
-                    System.err.println("\"" + s + "\" is a bad duration " +
-                                       "string: " + ex.getMessage());
+                    System.out.println("\nParsing \"" + s + "\"");
+
+                    try
+                    {
+                        duration = new Duration(s, localeIn);
+                        System.out.println("Parses to " + duration.getDuration() +
+                                           " milliseconds.");
+                    }
+
+                    catch (ParseException ex2)
+                    {
+                        System.err.println("\"" + s + "\" is a bad duration " +
+                            "string: " + ex2.getMessage());
+                    }
                 }
+
+                System.out.println("Duration " + duration.toString() +
+                                   " formats to \"" +
+                                   duration.format(localeOut) + "\"");
             }
         }
 
