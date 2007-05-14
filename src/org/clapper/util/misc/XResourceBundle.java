@@ -150,12 +150,9 @@ public final class XResourceBundle extends ResourceBundle
     }
 
     /**
-     * Gets an object for the given key from this resource bundle. Returns null
-     * if this resource bundle doesn't contain an object for the given key.
+     * Returns an enumeration of the keys.
      *
-     * @param key the key for the desired object
-     *
-     * @return the object for the given key, or null
+     * @return the enumeration of the keys
      */
     public Enumeration<String> getKeys()
     {
