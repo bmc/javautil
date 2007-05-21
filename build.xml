@@ -506,8 +506,7 @@
   <target name="doc"
           description="Generate API Javadocs">
     <mkdir dir="${javadocs.api.dir}"/>
-    <javadoc
-             destdir="${javadocs.api.dir}"
+    <javadoc destdir="${javadocs.api.dir}"
              sourcepath="${src.top}"
              source="${javac.source}"
              author="true"
@@ -515,6 +514,7 @@
              breakiterator="true"
              splitindex="true"
              use="true"
+             stylesheetfile="${src.top}/javadoc/stylesheet.css"
              overview="overview.html"
              excludepackagenames="org.clapper.util.*.test"
              packagenames="org.clapper.util.*"
