@@ -11,6 +11,13 @@ Version 2.4.1 (...)
 - Added new org.clapper.util.misc.Duration class, which parses and formats
   strings like "1 day, 5 minutes" and "300 days, 23 hours, 59 minutes".
 
+- Factored parameter parsing out of the
+  org.clapper.util.cmdline.CommandLineUtility class and into a separate
+  org.clapper.util.cmdline.ParameterParser class, allowing it to be used in
+  other contexts (e.g., within a property value that happens to have a
+  command line option syntax).
+
+
 ---------------------------------------------------------------------------
 
 Version 2.4 (17 April, 2007)
