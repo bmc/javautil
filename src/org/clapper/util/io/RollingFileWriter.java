@@ -98,7 +98,7 @@ import java.text.DecimalFormat;
  * existing backups out of the way, by renaming them. The new name is based
  * on the primary name, with a version number (e.g., 0, 1, 2, etc.), or index,
  * inserted into it. The file pattern controls where the index is inserted
- * in the file names.</p>n
+ * in the file names.</p>
  *
  * <p>The filename or pathname passed to the constructor must be a pattern
  * that contains a special marker, the string "${n}", indicating where the
