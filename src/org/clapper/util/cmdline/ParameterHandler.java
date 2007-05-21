@@ -50,7 +50,12 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * 
+ * Thie interface defines the callback methods used by a
+ * {@link ParameterParser} object, when its 
+ * {@link ParameterParser#parse parse()} method is called.
+ *
+ * @see ParameterParser
+ * @see CommandLineUtility
  *
  * @author Copyright &copy; 2004-2007 Brian M. Clapper
  */
@@ -76,12 +81,14 @@ public interface ParameterHandler
      *
      * @throws CommandLineUsageException  on error
      * @throws NoSuchElementException     attempt to iterate past end of args;
-     *                                    {@link ArgumentParser#parse}
+     *                                    {@link ParameterParser#parse}
      *                                    automatically handles this exception,
      *                                    so it's safe for implementations of
      *                                    this method not to handle it
      */
-    public void parseOption(char shortOption, String longOption, Iterator it)
+    public void parseOption(char             shortOption,
+                            String           longOption, 
+                            Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException;
 
@@ -94,12 +101,12 @@ public interface ParameterHandler
      *
      * @throws CommandLineUsageException  on error
      * @throws NoSuchElementException     attempt to iterate past end of args;
-     *                                    {@link ArgumentParser#parse}
+     *                                    {@link ParameterParser#parse}
      *                                    automatically handles this exception,
      *                                    so it's safe for implementations of
      *                                    this method not to handle it
      */
-    public void parsePostOptionParameters(Iterator it)
+    public void parsePostOptionParameters(Iterator<String> it)
         throws CommandLineUsageException,
                NoSuchElementException;
 }

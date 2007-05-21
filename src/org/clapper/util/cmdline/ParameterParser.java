@@ -46,6 +46,7 @@
 
 package org.clapper.util.cmdline;
 
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Locale;
 import java.util.NoSuchElementException;
@@ -55,15 +56,170 @@ import org.clapper.util.misc.BundleUtil;
 import org.clapper.util.text.TextUtil;
 
 /**
- * An instance of this class is used to specify usage information for a
- * command-line utility. See
- * {@link CommandLineUtility#getCustomUsageInfo(UsageInfo)}
- * for more information how to use this class.
+ * <p>This class provides a command line parameter and option parser, suitable
+ * for use in command line utilities, as well as other contexts where a command
+ * line option-style syntax is desired. The {@link CommandLineUtility} class
+ * implicitly uses this class to parse its parameters, but there's no reason
+ * an application cannot use a <tt>ParameterParser</tt> object directly.</p>
+ *
+ * <p><tt>ParameterParser</tt> supports both short single-character options
+ * (e.g., <tt>-h</tt>) and GNU-style long options (e.g., <tt>--help</tt>).
+ * A single option can have both a short and a long variant. Similarly, it's
+ * possible to have <i>only</i> a short or a long variant for an option. In
+ * addition, this class will parse non-option parameters that follow any
+ * options.</p>
+ *
+ * <p>Note that this class does <b>not</b> parse options the way GNU
+ * <i>getopt()</i> (or even traditional <i>getopt()</i>) does. In particular,
+ * it does not permit combining multiple single-character options into one
+ * command-line parameter. The parsing logic may be extended to support that
+ * capability in the future; however, it doesn't do that yet.</p>
+ *
+ * <p>Using this class is straightforward:</p>
+ *
+ * <ul>
+ *   <li>Create a {@link UsageInfo} object that describes the options and
+ *       parameters. This object is also used when generating a usage summary
+ *       message. (See the {@link #getUsageMessage getUsageMessage()} method.)
+ *   <li>Create a class (often, a local or anonymous one will do) that implements
+ *       the {@link ParameterHandler} interface. An instance of this class will
+ *       be passed to the parser, to be invoked as the parser encounters options
+ *       and parameters.
+ *   <li>Instantiate a <tt>ParameterParser</tt> object and call its
+ *       {@link #parse parse()} method, passing it three arguments:
+ *       <ol>
+ *         <li>The array of parameters to be parsed. Options are assumed to
+ *             precede non-option parameters.
+ *         <li>The {@link UsageInfo} object that describes the expected
+ *             options and parameters.
+ *         <li>An instance of the class that implements the
+ *             {@link ParameterHandler} interface.
+ *       </ol>
+ * </ul>
+ *
+ * <p><b>Example:</b></p>
+ *
+ * <p>This example handles the following options and parameters, for a
+ * fictitious copy utility.</p>
+ *
+ * <table align="center" width="60%" class="embedded">
+ *   <tr valign="bottom">
+ *     <th>Option/Parameter</th>
+ *     <th>Meaning</th>
+ *   </tr>
+ *
+ *   <tr valign="top">
+ *     <td><tt>--help</tt> or <tt>-h</tt></td>
+ *     <td>Get detailed help</td>
+ *   </tr>
+ *
+ *   <tr valign="top">
+ *     <td><tt>--force</tt> or <tt>-f</tt></td>
+ *     <td>Perform the copy even if the destination file already exists.</td>
+ *   </tr>
+ *
+ *   <tr valign="top">
+ *     <td><tt>--time yyyymmddHHMMSS</tt> or<br><tt>-t yymmddHHMMSS</tt></td>
+ *     <td>After the copy, set the timestamp of the destination file to the
+ *         specified datetime.</td>
+ *   </tr>
+ *
+ *   <tr valign="top">
+ *     <td><tt>srcFile</tt></td>
+ *     <td>Path to file to be copied.</td>
+ *   </tr>
+ *
+ *   <tr valign="top">
+ *     <td><tt>destFile</tt></td>
+ *     <td>Path to destinationn file.</td>
+ *   </tr>
+ * </table>
+ *
+ * <p>Here's some sample code that will parse those options. In practice, of
+ * course, you'd usually use the {@link CommandLineUtility} infrastructure,
+ * which provides these capabilities and more; however, for the purposes of
+ * illustration, we'll stick to <tt>ParameterParser</tt> here. This example
+ * omits constructors, a <tt>main()</tt> method, and other methods necessary
+ * build a truly runnable utility.</p>
+ *
+ * <pre>
+ * public class ExampleParser implements ParameterHandler
+ * {
+ *     private Date timestamp= null;
+ *     private boolean forceCopy = false;
+ *     private boolean showHelpOnly = false;
+ *
+ *     public void parse(String[] args) throws CommandLineUtilityException
+ *     {
+ *         UsageInfo usageInfo = new UsageInfo();
+ *
+ *         usageInfo.addOption('h', "help", "Get detailed help");
+ *         usageInfo.addOption('f', "force",
+ *                             "Perform copy even if destination file exists.");
+ *         usageInfo.addOption('t', "time", "yymmddHHMMSS",
+ *                             "Set timestamp of destination file to specified " +
+ *                             "datetime");
+ *         usageInfo.addParameter("srcFile", "Path to file to be copied", true);
+ *         usageInfo.addParameter("destFile", "Path to destination file", true);
+ *
+ *         ParameterParser paramParser = new ParameterParser();
+ *         try
+ *         {
+ *             paramParser.parse(args, this);
+ *         }
+ *
+ *         catch (Exception ex)
+ *         {
+ *             System.err.println(paramParser.getUsageMessage(null, 80));
+ *         }
+ *     }
+ *
+ *     public void parseOption(char shortOption, String longOption, Iterator&lt;String&gt; it)
+ *         throws CommandLineUsageException,
+ *                NoSuchElementException
+ *     {
+ *         switch (shortOption)
+ *         {
+ *             case 'h':
+ *                 doHelp();
+ *                 this.showHelpOnly = true;
+ *                 break;
+ *
+ *             case 'f':
+ *                 forceCopy = true;
+ *                 break;
+ *
+ *             case 't':
+ *                 parseTimestamp(it.next());
+ *                 break;
+ *
+ *             default:
+ *                 if (longOption == null)
+ *                     throw new CommandLineUsageException("Unknown option: " +
+ *                                                         UsageInfo.SHORT_OPTION_PREFIX +
+ *                                                         shortOption);
+ *                 else
+ *                     throw new CommandLineUsageException("Unknown option: " +
+ *                                                         UsageInfo.LONG_OPTION_PREFIX +
+ *                                                         longOption);
+ *                 break;
+ *         }
+ *     }
+ *
+ *     public void parsePostOptionParameters(Iterator&lt;String&gt; it)
+ *         throws CommandLineUsageException,
+ *                NoSuchElementException
+ *     {
+ *         this.sourceFile = new File(it.next());
+ *         this.targetFile = new File(it.next());
+ *     }
+ * }
+ * </pre>
  *
  * @version <tt>$Revision: 6735 $</tt>
  *
+ * @see ParameterHandler
  * @see CommandLineUtility
- * @see CommandLineUtility#getCustomUsageInfo(UsageInfo)
  *
  * @author Copyright &copy; 2004-2007 Brian M. Clapper
  */
@@ -84,16 +240,22 @@ public final class ParameterParser
                            Private Data Elements
     \*----------------------------------------------------------------------*/
 
+    private UsageInfo usageInfo = null;
+
     /*----------------------------------------------------------------------*\
                                 Constructor
     \*----------------------------------------------------------------------*/
 
     /**
-     * Construct a new <tt>ParameterParser</tt>.
+     * Construct a new <tt>ParameterParser</tt> that parses a specific set
+     * of options.
+     *
+     * @param usageInfo  the {@link UsageInfo} object that describes the
+     *                   parameters to be parsed
      */
-    public ParameterParser()
+    public ParameterParser(UsageInfo usageInfo)
     {
-        // Nothing to do
+        this.usageInfo = usageInfo;
     }
 
     /*----------------------------------------------------------------------*\
@@ -106,14 +268,11 @@ public final class ParameterParser
      * object handles the encountered parameters.
      *
      * @param params       parameters to parse
-     * @param usageInfo    describes the arguments expected
      * @param paramHandler handles the arguments
      *
      * @throws CommandLineUsageException on error
      */
-    public void parse(String[]         params,
-                      UsageInfo        usageInfo,
-                      ParameterHandler paramHandler)
+    public void parse(String[] params, ParameterHandler paramHandler)
         throws CommandLineUsageException
     {
         ArrayIterator<String> it = new ArrayIterator<String>(params);
@@ -206,17 +365,27 @@ public final class ParameterParser
      * Generate a usage message.
      *
      * @param prefixMsg     prefix (e.g., error) message to use, or null
-     * @param usageInfo     the usage info
-     * @param maxLineLength maximum output line length
      *
      * @return the usage string, with embedded newlines
      */
-    public String getUsageMessage(String    prefixMsg,
-                                  UsageInfo usageInfo,
-                                  int       maxLineLength)
+    public String getUsageMessage(String prefixMsg)
+    {
+        return getUsageMessage(prefixMsg, 0);
+    }
+
+    /**
+     * Generate a usage message.
+     *
+     * @param prefixMsg     prefix (e.g., error) message to use, or null
+     * @param maxLineLength maximum output line length, or 0 to disable line
+     *                      wrapping
+     *
+     * @return the usage string, with embedded newlines
+     */
+    public String getUsageMessage(String prefixMsg, int maxLineLength)
     {
         StringWriter     buf = new StringWriter();
-        WordWrapWriter   out = new WordWrapWriter (buf, maxLineLength);
+        WordWrapWriter   out;
         String[]         strings;
         int              i;
         int              maxParamLength = 0;
@@ -226,6 +395,11 @@ public final class ParameterParser
         OptionInfo[]     options;
         OptionInfo       opt;
         Locale           locale = Locale.getDefault();
+
+        if (maxLineLength <= 0)
+            maxLineLength = Integer.MAX_VALUE;
+
+        out = new WordWrapWriter(buf, maxLineLength);
 
         if (prefixMsg != null)
         {

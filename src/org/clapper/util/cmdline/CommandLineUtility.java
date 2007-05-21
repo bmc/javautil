@@ -98,7 +98,7 @@ import java.util.NoSuchElementException;
  *     private int     count    = 1;
  *     private String  filename = null;
  *
- *     public static void main (String args[])
+ *     public static void main (String[] args)
  *     {
  *         try
  *         {
@@ -134,7 +134,7 @@ import java.util.NoSuchElementException;
  *
  *     protected void parseCustomOption (char shortOption,
  *                                       String longOption,
- *                                       Iterator<String> it)
+ *                                       Iterator&lt;String&gt; it)
  *         throws CommandLineUsageException,
  *                NoSuchElementException
  *     {
@@ -148,7 +148,7 @@ import java.util.NoSuchElementException;
  *             throw new CommandLineUsageException ("Unknown option: " + option);
  *     }
  *
- *     protected void processPostOptionCommandLine (Iterator<String> it)
+ *     protected void processPostOptionCommandLine (Iterator&lt;String&gt; it)
  *         throws CommandLineUsageException,
  *                NoSuchElementException
  *     {
@@ -165,6 +165,8 @@ import java.util.NoSuchElementException;
  * </pre>
  * </blockquote>
  *
+ * @see ParameterParser
+ *
  * @version <tt>$Revision$</tt>
  *
  * @author Copyright &copy; 2004-2007 Brian M. Clapper
@@ -179,8 +181,7 @@ public abstract class CommandLineUtility
                            Private Data Elements
     \*----------------------------------------------------------------------*/
 
-    private UsageInfo       usageInfo   = null;
-    private ParameterParser paramParser = new ParameterParser();
+    private ParameterParser paramParser = null;
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -217,7 +218,7 @@ public abstract class CommandLineUtility
     {
         try
         {
-            usageInfo = getUsageInfo();
+            paramParser = new ParameterParser(getUsageInfo());
             parseParams (args);
             runCommand();
         }
@@ -971,9 +972,9 @@ public abstract class CommandLineUtility
     {
         ParameterHandler handler = new ParameterHandler()
         {
-            public void parseOption(char     shortOption,
-                                    String   longOption,
-                                    Iterator it)
+            public void parseOption(char             shortOption,
+                                    String           longOption,
+                                    Iterator<String> it)
                 throws CommandLineUsageException,
                        NoSuchElementException
             {
@@ -989,7 +990,7 @@ public abstract class CommandLineUtility
                 }
             }
 
-            public void parsePostOptionParameters(Iterator it)
+            public void parsePostOptionParameters(Iterator<String> it)
                 throws CommandLineUsageException,
                        NoSuchElementException
             {
@@ -997,7 +998,7 @@ public abstract class CommandLineUtility
             }
         };
 
-        paramParser.parse(args, usageInfo, handler);
+        paramParser.parse(args, handler);
     }
 
     /**
@@ -1008,7 +1009,7 @@ public abstract class CommandLineUtility
      */
     private void usage (String prefixMsg)
     {
-        System.err.println(paramParser.getUsageMessage(prefixMsg, usageInfo, 78));
+        System.err.println(paramParser.getUsageMessage(prefixMsg, 78));
     }
 
     private UsageInfo getUsageInfo()
