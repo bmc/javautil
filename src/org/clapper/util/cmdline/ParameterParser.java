@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-  $Id: UsageInfo.java 6735 2007-05-12 11:30:05Z bmc $
+  $Id$
   ---------------------------------------------------------------------------
   This software is released under a BSD-style license:
 
@@ -216,7 +216,7 @@ import org.clapper.util.text.TextUtil;
  * }
  * </pre>
  *
- * @version <tt>$Revision: 6735 $</tt>
+ * @version <tt>$Revision$</tt>
  *
  * @see ParameterHandler
  * @see CommandLineUtility
