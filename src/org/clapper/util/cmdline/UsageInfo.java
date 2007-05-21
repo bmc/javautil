@@ -169,7 +169,7 @@ public final class UsageInfo
      *                     in the usage message). This is useful, for instance,
      *                     when you've deprecated an option but are retaining
      *                     it for backward compatibility.
-     */ 
+     */
     public void addOption (char   shortOption,
                            String longOption,
                            String explanation)
@@ -206,7 +206,7 @@ public final class UsageInfo
      *                     in the usage message). This is useful, for instance,
      *                     when you've deprecated an option but are retaining
      *                     it for backward compatibility.
-     */ 
+     */
     public void addOption (char   shortOption,
                            String longOption,
                            String argToken,
@@ -255,7 +255,7 @@ public final class UsageInfo
      *                     lines as necessary.
      * @param required     <tt>true</tt> if the parameter is required,
      *                     <tt>false</tt> if the parameter is optional
-     */ 
+     */
     public void addParameter (String  param,
                               String  explanation,
                               boolean required)
