@@ -46,12 +46,9 @@
 
 package org.clapper.util.cmdline;
 
-import org.clapper.util.io.WordWrapWriter;
 
 import org.clapper.util.logging.Logger;
-import org.clapper.util.misc.ArrayIterator;
 import org.clapper.util.misc.BundleUtil;
-import org.clapper.util.text.TextUtil;
 
 import java.util.Iterator;
 import java.util.Locale;
@@ -108,20 +105,20 @@ import java.util.NoSuchElementException;
  *             Foo foo = new Foo();
  *             foo.execute (args);
  *         }
- * 
+ *
  *         catch (CommandLineUsageException ex)
  *         {
  *             // Already reported
- * 
+ *
  *             System.exit (1);
  *         }
- * 
+ *
  *         catch (CommandLineException ex)
  *         {
  *             System.err.println (ex.getMessage());
  *             System.exit (1);
  *         }
- * 
+ *
  *         System.exit (0);
  *     }
  *
@@ -178,18 +175,12 @@ public abstract class CommandLineUtility
                              Private Constants
     \*----------------------------------------------------------------------*/
 
-    /**
-     * Maximum length of option string (see usage()) that can be concatenated
-     * with first line of option's explanation. Strings longer than this are
-     * printed on a line by themselves.
-     */
-    private static final int MAX_OPTION_STRING_LENGTH = 35;
-
     /*----------------------------------------------------------------------*\
                            Private Data Elements
     \*----------------------------------------------------------------------*/
 
-    private UsageInfo usageInfo = null;
+    private UsageInfo       usageInfo   = null;
+    private ParameterParser paramParser = new ParameterParser();
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -270,7 +261,7 @@ public abstract class CommandLineUtility
      *
      * @throws CommandLineUsageException  on error
      * @throws NoSuchElementException     overran the iterator (i.e., missing
-     *                                    parameter) 
+     *                                    parameter)
      */
     protected void parseCustomOption (char             shortOption,
                                       String           longOption,
@@ -978,99 +969,35 @@ public abstract class CommandLineUtility
     private void parseParams (String args[])
         throws CommandLineUsageException
     {
-        ArrayIterator<String> it = new ArrayIterator<String> (args);
-
-        try
+        ParameterHandler handler = new ParameterHandler()
         {
-            while (it.hasNext())
+            public void parseOption(char     shortOption,
+                                    String   longOption,
+                                    Iterator it)
+                throws CommandLineUsageException,
+                       NoSuchElementException
             {
-                String arg = it.next();
-
-                if (! (arg.charAt (0) == UsageInfo.SHORT_OPTION_PREFIX) )
-                {
-                    // Move iterator back, since we've already advanced
-                    // past the last option and retrieved the first
-                    // non-option.
-
-                    it.previous();
-                    break;
-                }
-
-                // First, verify that the option is legal.
-
-                OptionInfo optionInfo = null;
-
-                if (arg.length() == 2)
-                    optionInfo = usageInfo.getOptionInfo (arg.charAt (1));
-                else
-                {
-                    if (! arg.startsWith (UsageInfo.LONG_OPTION_PREFIX))
-                    {
-                        throw new CommandLineUsageException
-                            (Package.BUNDLE_NAME,
-                             "CommandLineUtility.badLongOption",
-                             "Option \"{0}\" is not a single-character " +
-                             "short option, but it does not start with " +
-                             "\"{1}\", as long options must.",
-                             new Object[] {arg, UsageInfo.LONG_OPTION_PREFIX});
-                    }
-
-                    optionInfo = usageInfo.getOptionInfo (arg.substring (2));
-                }
-
-                if (optionInfo == null)
-                {
-                    throw new CommandLineUsageException
-                            (Package.BUNDLE_NAME,
-                             "CommandLineUtility.unknownOption",
-                             "Unknown option: \"{0}\"",
-                             new Object[] {arg});
-                }
-
-                // Okay, now handle our options.
-
-                if ((optionInfo.longOption != null) &&
-                    (optionInfo.longOption.equals ("logging")))
+                if ((longOption != null) &&
+                    (longOption.equals ("logging")))
                 {
                     Logger.enableLogging();
                 }
 
                 else
                 {
-                    parseCustomOption (optionInfo.shortOption,
-                                       optionInfo.longOption,
-                                       it);
+                    parseCustomOption (shortOption, longOption, it);
                 }
             }
 
-            processPostOptionCommandLine (it);
-
-            // Should be no parameters left now.
-
-            if (it.hasNext())
+            public void parsePostOptionParameters(Iterator it)
+                throws CommandLineUsageException,
+                       NoSuchElementException
             {
-                throw new CommandLineUsageException
-                             (Package.BUNDLE_NAME,
-                              "CommandLineUtility.tooManyParams",
-                              "Too many parameters.");
+                processPostOptionCommandLine(it);
             }
-        }
+        };
 
-        catch (NoSuchElementException ex)
-        {
-            throw new CommandLineUsageException
-                             (Package.BUNDLE_NAME,
-                              "CommandLineUtility.missingParams",
-                              "Missing command line parameter(s).");
-        }
-
-        catch (ArrayIndexOutOfBoundsException ex)
-        {
-            throw new CommandLineUsageException
-                             (Package.BUNDLE_NAME,
-                              "CommandLineUtility.missingParams",
-                              "Missing command line parameter(s).");
-        }
+        paramParser.parse(args, usageInfo, handler);
     }
 
     /**
@@ -1081,221 +1008,7 @@ public abstract class CommandLineUtility
      */
     private void usage (String prefixMsg)
     {
-        WordWrapWriter   out = new WordWrapWriter (System.err, 78);
-        String[]         strings;
-        int              i;
-        int              maxParamLength = 0;
-        int              maxOptionLength = 0;
-        String           s;
-        StringBuffer     usageLine = new StringBuffer();
-        OptionInfo[]     options;
-        OptionInfo       opt;
-        Locale           locale = Locale.getDefault();
-
-        if (prefixMsg != null)
-        {
-            out.println();
-            out.println (prefixMsg);
-            out.println();
-        }
-
-        // Now, print the summary line.
-
-        String commandName = usageInfo.getCommandName();
-        if (commandName != null)
-        {
-            usageLine.append (commandName);
-        }
-        else
-        {
-            usageLine.append ("java ");
-            usageLine.append (getClass().getName());
-        }
-
-        usageLine.append (' ');
-        usageLine.append (BundleUtil.getMessage (Package.BUNDLE_NAME,
-                                                 locale,
-                                                 "CommandLineUtility.options1",
-                                                 "[options]"));
-        usageLine.append (' ');
-
-        // Add the parameter placeholders. We'll also calculate the maximum
-        // parameter name length in this loop, to save an iteration later.
-
-        strings = usageInfo.getParameterNames();
-        if (strings.length > 0)
-        {
-            for (i = 0; i < strings.length; i++)
-            {
-                usageLine.append (' ');
-
-                boolean optional = true;
-                if (usageInfo.parameterIsRequired (strings[i]))
-                    optional = false;
-
-                if (optional)
-                    usageLine.append ('[');
-                usageLine.append (strings[i]);
-                if (optional)
-                    usageLine.append (']');
-                maxParamLength = Math.max (maxParamLength,
-                                           strings[i].length() + 1);
-            }
-        }
-
-        if ( (s = usageInfo.getUsagePrologue()) != null)
-            out.println (s);
-
-        s = BundleUtil.getMessage (Package.BUNDLE_NAME,
-                                   locale,
-                                   "CommandLineUtility.usage",
-                                   "Usage:");
-        out.setPrefix (s + " ");
-        out.println (usageLine.toString());
-        out.setPrefix (null);
-        out.println ();
-
-        // Find the largest option name.
-
-        out.println (BundleUtil.getMessage (Package.BUNDLE_NAME,
-                                            locale,
-                                            "CommandLineUtility.options2",
-                                            "OPTIONS:"));
-        out.println ();
-
-        maxOptionLength = 2;
-        options = usageInfo.getOptions();
-        for (i = 0; i < options.length; i++)
-        {
-            opt = options[i];
-
-            // An option with a null explanation is hidden.
-
-            if (opt.explanation == null)
-                continue;
-
-            if (opt.longOption != null)
-            {
-                // Allow room for short option, long option and argument,
-                // if any.
-                //
-                // -x, --long-x <arg>
-
-                int    len = 0;
-                String sep = "";
-                if (opt.shortOption != UsageInfo.NO_SHORT_OPTION)
-                {
-                    len = 2;    // -x
-                    sep = ", ";
-                }
-
-                if (opt.longOption != null)
-                {
-                    len += (sep.length()
-                         + UsageInfo.LONG_OPTION_PREFIX.length()
-                         + opt.longOption.length());
-                }
-
-                if (opt.argToken != null)
-                    len += (opt.argToken.length() + 1);
-
-                maxOptionLength = Math.max (maxOptionLength, len + 1);
-            }
-        }
-
-        if (maxOptionLength > MAX_OPTION_STRING_LENGTH)
-            maxOptionLength = MAX_OPTION_STRING_LENGTH;
-
-        // Now, print the options.
-
-        StringBuffer optString = new StringBuffer();
-        for (i = 0; i < options.length; i++)
-        {
-            opt = options[i];
-
-            // An option with a null explanation is hidden.
-
-            if (opt.explanation == null)
-                continue;
-
-            // If there's a short option, print it first. Then do the
-            // long one.
-
-            optString.setLength (0);
-            String sep = "";
-
-            if (opt.shortOption != UsageInfo.NO_SHORT_OPTION)
-            {
-                optString.append (UsageInfo.SHORT_OPTION_PREFIX);
-                optString.append (opt.shortOption);
-                sep = ", ";
-            }
-
-            if (opt.longOption != null)
-            {
-                optString.append (sep);
-                optString.append (UsageInfo.LONG_OPTION_PREFIX);
-                optString.append (opt.longOption);
-            }
-
-            if (opt.argToken != null)
-            {
-                optString.append (' ');
-                optString.append (opt.argToken);
-            }
-
-            s = optString.toString();    
-            if (s.length() > maxOptionLength)
-            {
-                out.println (s);
-                out.setPrefix (padString (" ", maxOptionLength));
-            }
-
-            else
-            {
-                out.setPrefix (padString (optString.toString(),
-                                          maxOptionLength));
-            }
-
-            out.println (opt.explanation);
-            out.setPrefix (null);
-        }
-
-        // Print the parameters. We already have size of the the largest
-        // parameter name.
-
-        strings = usageInfo.getParameterNames();
-        if (strings.length > 0)
-        {
-            out.println ();
-            out.println (BundleUtil.getMessage (Package.BUNDLE_NAME,
-                                                locale,
-                                                "CommandLineUtility.params",
-                                                "PARAMETERS:"));
-            out.println ();
-
-            // Now, print the parameters.
-
-            for (i = 0; i < strings.length; i++)
-            {
-                out.setPrefix (padString (strings[i], maxParamLength));
-                out.println (usageInfo.getParameterExplanation (strings[i]));
-                out.setPrefix (null);
-            }
-        }
-
-        if ( (s = usageInfo.getUsageTrailer()) != null)
-        {
-            out.println ();
-            out.println (s);
-        }
-
-        out.flush();
-    }
-
-    private String padString (String s, int toLength)
-    {
-        return TextUtil.leftJustifyString (s, toLength);
+        System.err.println(paramParser.getUsageMessage(prefixMsg, usageInfo, 78));
     }
 
     private UsageInfo getUsageInfo()

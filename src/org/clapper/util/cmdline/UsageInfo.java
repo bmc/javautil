@@ -109,9 +109,9 @@ public final class UsageInfo
     \*----------------------------------------------------------------------*/
 
     /**
-     * Default constructor; can only be invoked in this package.
+     * Create a new <tt>UsageInfo()</tt> object.
      */
-    UsageInfo()
+    public UsageInfo()
     {
         // Nothing to do
     }
