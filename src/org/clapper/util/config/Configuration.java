@@ -247,7 +247,7 @@ import org.clapper.util.io.FileUtil;
  * variables provided by the <tt>Configuration</tt> class. Those variables
  * are:</p>
  *
- * <table border="1" align="left" width="100%">
+ * <table border="1" align="left" width="100%" class="nested-table">
  *   <tr valign="top">
  *     <th align="left">Variable</th>
  *     <th align="left">Description</th>

@@ -102,7 +102,7 @@ import org.clapper.util.text.TextUtil;
  * <p>This example handles the following options and parameters, for a
  * fictitious copy utility.</p>
  *
- * <table align="center" width="60%" class="embedded">
+ * <table align="center" width="60%" class="nested-table">
  *   <tr valign="bottom">
  *     <th>Option/Parameter</th>
  *     <th>Meaning</th>

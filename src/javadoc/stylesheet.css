@@ -98,7 +98,7 @@ h1
     color:#000000;
 }
 
-table.embedded
+table.nested-table
 {
     margin-top: 1em;
     border-spacing: 2px;
@@ -108,11 +108,11 @@ table.embedded
     border-collapse: collapse;
 }
 
-table.embedded tr
+table.nested-table tr
 {
 }
 
-table.embedded tr td
+table.nested-table tr td
 {
     vertical-align: top;
     border-width: 1px;
@@ -121,7 +121,7 @@ table.embedded tr td
     padding: 5px;
 }
 
-table.embedded tr th
+table.nested-table tr th
 {
     vertical-align: bottom;
     border-width: 1px;
