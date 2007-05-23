@@ -52,8 +52,10 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.LinkedHashSet;
 
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * <p><tt>NestedException</tt> defines a special <tt>Exception</tt> class
@@ -424,7 +426,14 @@ public class NestedException extends Exception
         if (elideNewlines)
             buf = new StringBuffer();
 
-        // Note: Last exception message dumped should not have a newline.
+        // It's possible for some of the messages to be identical, especially
+        // when a nested exception doesn't have a message of its own.
+        // (Calling getMessage() in that case gets the message of the first
+        // nested exception that actually has a message.) To avoid
+        // repetition, weed out the ones that are dups. Use a LinkedHashSet
+        // to maintain order.
+
+        Set<String> messages = new LinkedHashSet<String>();
 
         while (ex != null)
         {
@@ -467,17 +476,28 @@ public class NestedException extends Exception
                 }
             }
 
-            // Add the message to the buffer
-
-            pw.print (s);
+            if (! messages.contains(s))
+                messages.add(s);
 
             ex = ex.getCause();
-            if (ex != null)
+        }
+
+        // Now, add the accumulated messages to the buffer.
+        // Note: Last exception message dumped should not have a newline.
+
+        String sep = "";
+        for (String message : messages)
+        {
+            if (elideNewlines)
             {
-                if (elideNewlines)
-                    pw.print(": ");
-                else
-                    pw.println();
+                pw.print(sep);
+                pw.print(message);
+                sep = ": ";
+            }
+
+            else
+            {
+                pw.println(message);
             }
         }
 
