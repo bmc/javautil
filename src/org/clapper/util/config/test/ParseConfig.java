@@ -59,7 +59,7 @@ public class ParseConfig
     }
 
     /*----------------------------------------------------------------------*\
-			       Main Program
+                               Main Program
     \*----------------------------------------------------------------------*/
 
     /**
@@ -69,10 +69,9 @@ public class ParseConfig
      */
     public static void main (String args[])
     {
-	if (args.length < 1)
+        if (args.length < 1)
             usage();
 
-        String file = args[0];
         Collection<String> vars = new ArrayList<String>();
         for (int i = 1; i < args.length; i++)
             vars.add (args[i]);
@@ -112,21 +111,21 @@ public class ParseConfig
     private void runTest (String thing, Collection vars)
         throws FileNotFoundException,
                IOException,
-	       ConfigurationException,
+               ConfigurationException,
                SectionExistsException,
                NoSuchElementException,
                VariableSubstitutionException
     {
-        Configuration config = null;
+        Configuration config = new Configuration();
 
-	try
+        try
         {
-            config = new Configuration (new URL (thing));
+            config.load(new URL(thing));
         }
 
         catch (MalformedURLException ex)
         {
-            config = new Configuration (new File (thing));
+            config.load(new File(thing));
         }
 
         for (Iterator it = vars.iterator(); it.hasNext(); )
@@ -179,8 +178,14 @@ public class ParseConfig
 
                 if (tokens != null)
                 {
+                    System.out.print("[");
+                    String sep = "";
                     for (int i = 0; i < tokens.length; i++)
-                        System.out.print ("<" + tokens[i] + ">");
+                    {
+                        System.out.print(sep + tokens[i]);
+                        sep = ",";
+                    }
+                    System.out.print("]");
                 }
 
                 System.out.println();
@@ -188,7 +193,7 @@ public class ParseConfig
         }
 
         System.out.println ();
-        System.out.println ("Configuration, cooked:");
+        System.out.println ("Configuration, recreated:");
         System.out.println ("---------------------------------------" +
                             "---------------------------------------");
         config.write (System.out);

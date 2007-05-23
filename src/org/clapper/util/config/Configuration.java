@@ -203,8 +203,8 @@ import org.clapper.util.io.FileUtil;
  *       {@link #setAbortOnUndefinedVariable}.
  * </ul>
  *
- * <p>If a variable reference specifies a section name, the referenced section 
- * must precede the current section. It is not possible to substitute the value 
+ * <p>If a variable reference specifies a section name, the referenced section
+ * must precede the current section. It is not possible to substitute the value
  * of a variable in a section that occurs later in the file.</p>
  *
  * <p>The section names "system", "env", and "program" are reserved for
@@ -953,11 +953,11 @@ public class Configuration
      * tell where quoted substrings appeared. For example, if the
      * configuration line looks like this:
      *
-     * <blockquote><pre>foo: abc "def ghi" jkl</pre></blockquote>
+     * <blockquote><pre>foo: abc "def ghi" jkl mno</pre></blockquote>
      *
      * {@link #getConfigurationValue} will return the string
      *
-     * <blockquote><pre>abc def ghi jkl</pre></blockquote>
+     * <blockquote><pre>abc def ghi jkl mno</pre></blockquote>
      *
      * whereas this method will return the following individual tokens:
      *
@@ -965,14 +965,11 @@ public class Configuration
      * abc
      * def ghi
      * jkl
+     * mno
      * </pre></blockquote>
      *
      * <p>Getting the tokens preserves the white space-escaping properties of
      * the double quotes.</p>
-     *
-     * <p>WARNING: The tokens are <b>not</b> broken on white space! Tokens
-     * are broken up based on quoted fields only. A value without any
-     * quoted strings is treated as a single token.</p>
      *
      * @param sectionName   the name of the section containing the variable
      * @param variableName  the variable name
@@ -982,6 +979,7 @@ public class Configuration
      *
      * @throws NoSuchSectionException  the named section does not exist
      * @throws NoSuchVariableException the section has no such variable
+     * @throws ConfigurationException  some other error
      *
      * @see #getConfigurationValue
      *
@@ -990,7 +988,8 @@ public class Configuration
     public String[] getConfigurationTokens (String sectionName,
                                             String variableName)
         throws NoSuchSectionException,
-               NoSuchVariableException
+               NoSuchVariableException,
+               ConfigurationException
     {
         Section section = (Section) sectionsByName.get (sectionName);
         if (section == null)
@@ -1016,7 +1015,59 @@ public class Configuration
         if (variable == null)
             throw new NoSuchVariableException (sectionName, variableName);
 
-        return variable.getCookedTokens();
+        // The "cooked" tokens are split into literal (i.e., quoted) and
+        // non-quoted pieces. This is almost never what a caller wants.
+        // Instead, the caller wants individual tokens, with quoted parts
+        // represented as a single token. For instance, given:
+        //
+        //      abc def ghi
+        //
+        // the caller wants:
+        //
+        //      abc
+        //      def
+        //      ghi
+        //
+        // Similarly, given:
+        //
+        //      abc "def ghi" jkl
+        //
+        // the caller wants:
+        //
+        //      abc
+        //      def ghi
+        //      jkl
+        //
+        // Fortunately, the parser keeps track of whether a segment was
+        // literal or not, so this is easy to manufacture.
+
+        ValueSegment[] cookedSegments = variable.getCookedSegments();
+        ArrayList<String> result = new ArrayList<String>();
+
+        if (cookedSegments != null)
+        {
+            for (ValueSegment segment : cookedSegments)
+            {
+                String cookedToken = segment.toString();
+                if (segment.isLiteral || segment.isWhiteSpaceEscaped)
+                {
+                    // Was quoted. Use it as is.
+
+                    result.add(cookedToken);
+                }
+
+                else
+                {
+                    // Break it into white space-delimited tokens.
+
+                    String[] tokens = TextUtil.split(cookedToken);
+                    for (String token : tokens)
+                        result.add(token);
+                }
+            }
+        }
+
+        return result.toArray(new String[result.size()]);
     }
 
     /**
@@ -1632,6 +1683,10 @@ public class Configuration
         try
         {
             variable = section.getVariable (variableName);
+            if (variable != null)
+                variable.setValue(value);
+            else
+                variable = section.addVariable(variableName, value);
         }
 
         catch (ConfigurationException ex)
@@ -1639,10 +1694,6 @@ public class Configuration
             throw new VariableSubstitutionException (ex.getMessage());
         }
 
-        if (variable != null)
-            variable.setValue (value);
-        else
-            variable = section.addVariable (variableName, value);
 
         if (expand)
         {
@@ -1697,9 +1748,8 @@ public class Configuration
      * Writes the configuration data to a <tt>PrintWriter</tt>. The sections
      * and variables within the sections are written in the order they were
      * originally read from the file. Non-printable characters (and a few
-     * others) are encoded into metacharacter sequences. Comments and
-     * variable references are not propagated, since they are not retained
-     * when the data is parsed.
+     * others) are encoded into metacharacter sequences. Comments are not
+     * propagated, since they are not retained when the data is parsed.
      *
      * @param out  where to write the configuration data
      *
@@ -1733,8 +1783,8 @@ public class Configuration
             {
                 Variable var = section.getVariable (varName);
                 value.setLength (0);
-                value.append (var.getCookedValue());
-                value.encodeMetacharacters();
+                value.append (var.getRawValue());
+                //value.encodeMetacharacters();
 
                 out.println (varName + ": " + value.toString());
             }
