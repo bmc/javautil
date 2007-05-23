@@ -72,4 +72,18 @@ class ValueSegment
     {
         return segmentBuf.length();
     }
+
+    public String toString()
+    {
+        return segmentBuf.toString();
+    }
+
+    public ValueSegment makeCopy()
+    {
+        ValueSegment copy        = new ValueSegment();
+        copy.segmentBuf          = new XStringBuilder(this.segmentBuf.toString());
+        copy.isLiteral           = this.isLiteral;
+        copy.isWhiteSpaceEscaped = this.isWhiteSpaceEscaped;
+        return copy;
+    }
 }
