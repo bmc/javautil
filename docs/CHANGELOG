@@ -23,6 +23,11 @@ Version 2.4.1 (...)
   quotes honored. (Previously, it only split the value into tokens based
   on quotes.)
 
+- In the org.clapper.util.misc.NestedException method (the base class for
+  all exceptions in the library), the getMessages() method is used to
+  get one consolidated string that concatenates the messages of all the
+  nested exceptions. It now suppresses any duplicate messages.
+
 
 ---------------------------------------------------------------------------
 
