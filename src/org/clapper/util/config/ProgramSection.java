@@ -140,7 +140,7 @@ class ProgramSection extends Section
             String value = dir.getCanonicalPath();
             addVariable (PROGRAM_CWD_VAR, value);
 
-            value = dir.getCanonicalFile().toURL().toString();
+            value = dir.getCanonicalFile().toURI().toURL().toString();
             if (value.charAt (value.length() - 1) == '/')
                 value = value.substring (0, value.length() - 1);
             addVariable (PROGRAM_CWD_URL_VAR, value);
