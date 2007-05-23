@@ -73,7 +73,8 @@ class Variable
     private String[]       cookedTokens = null;
     private String         rawValue;
     private int            lineWhereDefined = 0; // 0 means unknown
-    private ValueSegment[] valueSegments    = null;
+    private ValueSegment[] rawSegments    = null;
+    private ValueSegment[] cookedSegments = null;
     private Section        parentSection;
 
     /*----------------------------------------------------------------------*\
@@ -223,11 +224,34 @@ class Variable
         throws ConfigurationException
     {
         segmentValue();
-        return valueSegments;
+        return cookedSegments;
     }
 
     /**
-     * Segment the value into literal and non-literal pieces, storing the
+     * Get the raw value, broken into separate segments. The segments
+     * are stored internally. The cooked value is not updated until a call
+     * to {@link #reassembleCookedValueFromSegments}. Calling this method
+     * multiple times will not hamper efficiency. If the internal list of
+     * segments is null (as it will be after construction or after a call
+     * to <tt>reassembleCookedValueFromSegments()</tt>), then this method
+     * creates the segments; otherwise, it just returns the existing ones.
+     *
+     * @return the segments
+     *
+     * @throws ConfigurationException on parsing error
+     *
+     * @see #segmentValue
+     * @see #reassembleCookedValueFromSegments
+     */
+    ValueSegment[] getRawSegments()
+        throws ConfigurationException
+    {
+        segmentValue();
+        return rawSegments;
+    }
+
+    /**
+     * Segment the raw value into literal and non-literal pieces, storing the
      * resulting <tt>ValueSegment</tt> objects internally.
      *
      * @throws ConfigurationException on parsing error
@@ -238,17 +262,16 @@ class Variable
     void segmentValue()
         throws ConfigurationException
     {
-        if (valueSegments == null)
+        if (rawSegments == null)
         {
             Collection<ValueSegment> segments = new ArrayList<ValueSegment>();
             char                     ch;
             char                     last;
             char[]                   chars;
-            boolean                  literal;
             ValueSegment             currentSegment = new ValueSegment();
             int                      i;
 
-            chars = cookedValue.toCharArray();
+            chars = rawValue.toCharArray();
             last  = '\0';
             currentSegment.isLiteral = false;
             currentSegment.isWhiteSpaceEscaped = false;
@@ -256,7 +279,7 @@ class Variable
             for (i = 0; i < chars.length; i++)
             {
                 ch = chars[i];
-                switch (ch)
+                switch (ch) // NOPMD
                 {
                     case LITERAL_QUOTE:
                         if ((last == XStringBufBase.METACHAR_SEQUENCE_START) ||
@@ -362,10 +385,18 @@ class Variable
 
             if (segments.size() > 0)
             {
-                valueSegments = new ValueSegment [segments.size()];
+                // Initially, the raw and cooked segments are identical.
+                // The main parser will "cook" the cooked segments.
+
+                rawSegments = new ValueSegment[segments.size()];
+                cookedSegments = new ValueSegment[segments.size()];
                 i = 0;
                 for (ValueSegment vs : segments)
-                    valueSegments[i++] = vs;
+                {
+                    rawSegments[i] = vs;
+                    cookedSegments[i] = vs.makeCopy();
+                    i++;
+                }
             }
         }
     }
@@ -380,24 +411,22 @@ class Variable
      */
     void reassembleCookedValueFromSegments()
     {
-        if (valueSegments != null)
+        if (cookedSegments != null)
         {
             StringBuilder buf = new StringBuilder();
-            cookedTokens = new String[valueSegments.length];
+            cookedTokens = new String[cookedSegments.length];
 
-            for (int i = 0; i < valueSegments.length; i++)
+            int i = 0;
+            for (ValueSegment segment : cookedSegments)
             {
-                ValueSegment segment;
-
-                segment = valueSegments[i];
                 String s = segment.segmentBuf.toString();
                 buf.append (s);
-                cookedTokens[i] = s;
-                valueSegments[i] = null;
+                cookedTokens[i++] = s;
+//                valueSegments[i] = null;
             }
 
             cookedValue = buf.toString();
-            valueSegments = null;
+//            valueSegments = null;
         }
     }
 
@@ -410,7 +439,7 @@ class Variable
      * @see #getCookedValue
      * @see #setCookedValue
      */
-    void setValue (String value)
+    final void setValue (String value)
     {
         this.rawValue = value;
         this.cookedValue = value;
