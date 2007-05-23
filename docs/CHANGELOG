@@ -17,6 +17,12 @@ Version 2.4.1 (...)
   other contexts (e.g., within a property value that happens to have a
   command line option syntax).
 
+- In the org.clapper.util.config.Configuration class, the
+  getConfigurationTokens() method has been simplified and made more
+  intuitive. Now, it returns the value, split on white space, with
+  quotes honored. (Previously, it only split the value into tokens based
+  on quotes.)
+
 
 ---------------------------------------------------------------------------
 
