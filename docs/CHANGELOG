@@ -28,6 +28,10 @@ Version 2.4.1 (...)
   get one consolidated string that concatenates the messages of all the
   nested exceptions. It now suppresses any duplicate messages.
 
+- Added a new org.clapper.util.text.MultipleMapVariableDereferencer class,
+  to permit VariableSubstituter objects to use multiple maps to resolve
+  variable values.
+
 - org.clapper.util.misc.BuildInfo now contains some useful print methods.
 
 
