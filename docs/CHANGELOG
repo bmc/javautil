@@ -28,6 +28,8 @@ Version 2.4.1 (...)
   get one consolidated string that concatenates the messages of all the
   nested exceptions. It now suppresses any duplicate messages.
 
+- org.clapper.util.misc.BuildInfo now contains some useful print methods.
+
 
 ---------------------------------------------------------------------------
 

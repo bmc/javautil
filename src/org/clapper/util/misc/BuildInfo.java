@@ -52,8 +52,8 @@ import java.text.SimpleDateFormat;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import java.util.Date;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.util.Properties;
@@ -308,6 +308,35 @@ public class BuildInfo
         System.out.println ("Updating " + bundleFile);
         FileOutputStream  out  = new FileOutputStream (bundleFile);
         props.store (out, header);
+    }
+
+    /**
+     * Display build information to the specified <tt>PrintStream</tt>.
+     *
+     * @param out  where to write the build information
+     *
+     * @see #showBuildInfo(PrintWriter)
+     */
+    public void showBuildInfo(PrintStream out)
+    {
+        showBuildInfo(new PrintWriter(out));
+    }
+
+    /**
+     * Display build information to the specified <tt>PrintWriter</tt>.
+     *
+     * @param out  where to write the build information
+     *
+     * @see #showBuildInfo(PrintStream)
+     */
+    public void showBuildInfo(PrintWriter out)
+    {
+        out.println("Build date:     " + getBuildDate());
+        out.println("Built by:       " + getBuildUserID());
+        out.println("Built on:       " + getBuildOperatingSystem());
+        out.println("Build Java VM:  " + getBuildJavaVM());
+        out.println("Build compiler: " + getBuildJavaCompiler());
+        out.println("Ant version:    " + getBuildAntVersion());
     }
 
     /*----------------------------------------------------------------------*\
