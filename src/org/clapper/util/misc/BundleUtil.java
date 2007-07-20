@@ -162,19 +162,20 @@ public final class BundleUtil
         bundle = ResourceBundle.getBundle (bundleName, locale);
         if (bundle != null)
         {
+            String fmt = null;
             try
             {
-                String fmt = bundle.getString (key);
-                if (fmt == null)
-                    fmt = defaultMsg;
-
-                if (fmt != null)
-                    result = MessageFormat.format (fmt, params);
+                fmt = bundle.getString (key);
             }
-
             catch (MissingResourceException ex)
             {
             }
+
+            if (fmt == null)
+                fmt = defaultMsg;
+
+            if (fmt != null)
+                result = MessageFormat.format(fmt, params);
         }
 
         if (result == null)
