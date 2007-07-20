@@ -34,6 +34,8 @@ Version 2.4.1 (...)
 
 - org.clapper.util.misc.BuildInfo now contains some useful print methods.
 
+- Fixed a bundle string retrieval bug in org.clapper.util.misc.BundleUtil.
+
 
 ---------------------------------------------------------------------------
 
