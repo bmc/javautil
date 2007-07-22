@@ -6,6 +6,8 @@ $Id$
 
 Version 2.4.1 (...)
 
+- Added the org.clapper.util.misc.SparseArrayList class.
+
 - Added new HTMLUtil.escapeHTML() method.
 
 - Added new org.clapper.util.misc.Duration class, which parses and formats
