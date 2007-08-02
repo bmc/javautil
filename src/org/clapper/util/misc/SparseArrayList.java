@@ -54,8 +54,8 @@ import java.util.List;
  * <p><tt>SparseList</tt> implements a sparse array. This class is identical to
  * <tt>java.util.ArrayList</tt>, except that it permits assignment to array
  * indexes that are beyond the current length of the list, using the expected
- * {@link #set(int,Object} set()} or {@link #add(int,Object}) methods.
- * The list is extended and null-filled in that case.</p>
+ * <tt>set()</tt> and <tt>add()</tt> methods. The list is extended and 
+ * null-filled in that case.</p>
  *
  * <p><strong>Note that this implementation is not synchronized.</strong> If
  * multiple threads access an <tt>ArrayList</tt> instance concurrently, and at
