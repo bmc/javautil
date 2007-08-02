@@ -107,6 +107,18 @@ public abstract class VersionBase
     }
 
     /**
+     * Get the application name.
+     *
+     * @return the application name
+     */
+    public String getApplicationName()
+    {
+        return BundleUtil.getString(getVersionBundleName(),
+                                    getApplicationNameKey(),
+                                    "?");
+    }
+    
+    /**
      * Get the multiline version output. The returned string will have
      * embedded newlines, but no trailing newline.
      *
