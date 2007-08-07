@@ -44,8 +44,9 @@
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \*---------------------------------------------------------------------------*/
 
-package org.clapper.util.misc;
+package org.clapper.util.text;
 
+import org.clapper.util.text.Duration;
 import junit.framework.*;
 
 /**

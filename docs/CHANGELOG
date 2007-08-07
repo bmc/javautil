@@ -10,7 +10,7 @@ Version 2.4.1 (...)
 
 - Added new HTMLUtil.escapeHTML() method.
 
-- Added new org.clapper.util.misc.Duration class, which parses and formats
+- Added new org.clapper.util.text.Duration class, which parses and formats
   strings like "1 day, 5 minutes" and "300 days, 23 hours, 59 minutes".
 
 - Factored parameter parsing out of the

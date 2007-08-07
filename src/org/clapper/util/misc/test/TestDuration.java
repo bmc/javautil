@@ -15,7 +15,7 @@ import org.clapper.util.cmdline.UsageInfo;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.NoSuchElementException;
-import org.clapper.util.misc.Duration;
+import org.clapper.util.text.Duration;
 import org.clapper.util.text.TextUtil;
 
 /**

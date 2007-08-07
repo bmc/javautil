@@ -44,8 +44,9 @@
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \*---------------------------------------------------------------------------*/
 
-package org.clapper.util.misc;
+package org.clapper.util.text;
 
+import org.clapper.util.misc.*;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
@@ -83,6 +84,8 @@ import org.clapper.util.text.TextUtil;
  * different month lengths, respectively. Weeks are honored on input only.
  *
  * @version <tt>$Revision: 6687 $</tt>
+ *
+ * @since org.clapper.util version 2.4.1
  *
  * @author Copyright &copy; 2004-2007 Brian M. Clapper
  */
