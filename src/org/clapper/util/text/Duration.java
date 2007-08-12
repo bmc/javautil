@@ -52,7 +52,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import org.clapper.util.text.TextUtil;
 
 /**
  * This class contains methods to parse and format time durations. A time
@@ -134,7 +133,7 @@ public final class Duration
                              Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private static long duration_in_ms = 0L;
+    private long duration_in_ms = 0L;
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -425,6 +424,7 @@ public final class Duration
      *
      * @return the stringified duration value
      */
+    @Override
     public String toString()
     {
         return String.valueOf(getDuration());
