@@ -4,7 +4,7 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
-Version 2.4.1 (...)
+Version 2.4.1 (13 August, 2007)
 
 - Added the org.clapper.util.misc.SparseArrayList class.
 
