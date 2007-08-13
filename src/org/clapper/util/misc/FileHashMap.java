@@ -134,7 +134,7 @@ import java.util.TreeSet;
  * statement</p>
  *
  * <blockquote><pre>
- * Map map = new FileHashMap ("/tmp/mymap");
+ * Map map = new FileHashMap("/tmp/mymap");
  * </pre></blockquote>
  *
  * <p>the serialized value objects will be stored in file "/tmp/mymap.db",
@@ -179,12 +179,12 @@ import java.util.TreeSet;
  * the data file sequentially:</p>
  *
  * <blockquote><pre>
- * FileHashMap map = new FileHashMap ("myfile");
+ * FileHashMap map = new FileHashMap("myfile");
  *
  * for (Iterator values = map.values().iterator(); values.hasNext(); )
  * {
  *     Object value = it.next();
- *     System.out.println (value);
+ *     System.out.println(value);
  * }
  * </pre></blockquote>
  *
@@ -195,13 +195,13 @@ import java.util.TreeSet;
  * code fragment also accesses the data file sequentially:</p>
  *
  * <blockquote><pre>
- * FileHashMap map = new FileHashMap ("myfile");
+ * FileHashMap map = new FileHashMap("myfile");
  *
  * for (Iterator keys = map.keySet().iterator(); keys.hasNext(); )
  * {
  *     Object key   = it.next();
- *     Object value = map.get (key);
- *     System.out.println ("key=" + key + ", value=" + value);
+ *     Object value = map.get(key);
+ *     System.out.println("key=" + key + ", value=" + value);
  * }
  * </pre></blockquote>
  *
@@ -250,7 +250,7 @@ import java.util.TreeSet;
  * "gaps" in the file, and reuse them if possible. When a new object is
  * inserted into the map, and {@link #RECLAIM_FILE_GAPS} is enabled, the
  * object will attempt to find the smallest unused area in the file to
- * accomodate the new object. It will only add the new object to the end
+ * accommodate the new object. It will only add the new object to the end
  * of the file (enlarging the file) if it cannot find a suitable gap.</p>
  *
  * <p>This mode is not the default, because it can add time to processing.
