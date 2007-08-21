@@ -4,6 +4,12 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
+Version 2.4.2 (...)
+
+- Updated org.clapper.util.ant.JUnitSummaryFormatter to work with
+  Ant 1.7.
+
+
 Version 2.4.1 (13 August, 2007)
 
 - Added the org.clapper.util.misc.SparseArrayList class.
