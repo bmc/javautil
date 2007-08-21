@@ -95,10 +95,12 @@ public class JUnitSummaryFormatter
      *
      * @param out  the output object
      */
+    @Override
     public void setOutput(OutputStream out)
     {
         this.out = out;
         this.pOut = new PrintWriter(out);
+        super.setOutput(out);
     }
 
     /**
@@ -107,6 +109,7 @@ public class JUnitSummaryFormatter
      *
      * @param suite  the test suite
      */
+    @Override
     public void endTestSuite(JUnitTest suite)
     {
         pOut.println(suite.getName());
