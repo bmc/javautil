@@ -121,7 +121,7 @@
     <pathelement location="${third.party.jar.dir}/bsf.jar"/>
     <pathelement location="${ant.home}/lib/ant.jar"/>
     <pathelement location="${ant.home}/lib/ant-junit.jar"/>
-    <pathelement location="${third.party.jar.dir}/junit.jar"/>
+    <pathelement location="${third.party.jar.dir}/junit-4.4.jar"/>
   </path>
   
   <path id="test.class.path">
@@ -130,6 +130,8 @@
     <pathelement location="${compiled.classes.dir}"/>
     <pathelement location="${third.party.jar.dir}/junit.jar"/>
     <pathelement location="${third.party.jar.dir}/js.jar"/>
+    <pathelement location="${third.party.jar.dir}/bsf.jar"/>
+    <pathelement location="${third.party.jar.dir}/log4j.jar"/>
   </path>
 
   <path id="installer.class.path">
