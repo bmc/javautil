@@ -9,6 +9,13 @@ Version 2.4.2 (...)
 - Updated org.clapper.util.ant.JUnitSummaryFormatter to work with
   Ant 1.7.
 
+- Fixed a bug in the org.clapper.util.io.RollingFileWriter class: If the
+  file pattern is incorrect, the class throws an exception. However, the
+  exception message used a java.text.MessageFormat format that caused
+  MessageFormat to gag. Thanks to Daniel Carr 
+  <daniel.carr at clipsal dot com dot au> for finding and reporting the
+  bug.
+
 
 Version 2.4.1 (13 August, 2007)
 

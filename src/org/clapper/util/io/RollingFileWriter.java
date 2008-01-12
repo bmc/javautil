@@ -991,7 +991,7 @@ public class RollingFileWriter extends PrintWriter
                 throw new IOExceptionExt(Package.BUNDLE_NAME,
                                          "RollingFileWriter.badPattern",
                                          "File pattern \"{0}\" is missing " +
-                                         "the \"$\\{n\\}\" marker.",
+                                         "the \"$'{n}'\" marker.",
                                          new Object[] {fileNamePattern});
             }
 
