@@ -211,7 +211,7 @@ public abstract class CommandLineUtility
      *
      * @param args  The command-line parameters
      *
-     * @throws CommandLineUtilityException  command failed
+     * @throws CommandLineException command failed
      */
     public final void execute (String[] args)
         throws CommandLineException
