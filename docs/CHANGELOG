@@ -4,7 +4,7 @@ CHANGELOG: org.clapper.util Java API
 $Id$
 ---------------------------------------------------------------------------
 
-Version 2.4.2 (...)
+Version 2.4.2 (12 January, 2008)
 
 - Updated org.clapper.util.ant.JUnitSummaryFormatter to work with
   Ant 1.7.
