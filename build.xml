@@ -637,7 +637,7 @@
         <filter token="INSTALL_TMP" value="${install.tmp}"/>
         <filter token="SRC_INSTALL" value="${src.install}"/>
         <filter token="RELEASE_DIR" value="${release.dir}"/>
-        <filter token="THIRD_PARTY_JAR_DIR" value="${env.wwwtest}"/>
+        <filter token="THIRD_PARTY_JAR_DIR" value="${env.HOME}/java/classes"/>
         <filter token="TOP_DIR" value="${top.dir}"/>
         <filter token="SRC_TOP" value="${src.top}"/>
         <filter token="SRC_TOP_RELATIVE" value="${src.top.relative}"/>

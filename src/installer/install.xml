@@ -112,15 +112,15 @@
 
       <!-- third-party jars -->
 
-      <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/activation.jar"
+      <file src="@THIRD_PARTY_JAR_DIR@/activation.jar"
             targetdir="$INSTALL_PATH/lib"/>
-      <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/mail.jar"
+      <file src="@THIRD_PARTY_JAR_DIR@/mail.jar"
             targetdir="$INSTALL_PATH/lib"/>
-      <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/asm-2.2.3.jar"
+      <file src="@THIRD_PARTY_JAR_DIR@/asm-2.2.3.jar"
             targetdir="$INSTALL_PATH/lib"/>
-      <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/asm-commons-2.2.3.jar"
+      <file src="@THIRD_PARTY_JAR_DIR@/asm-commons-2.2.3.jar"
             targetdir="$INSTALL_PATH/lib"/>
-      <file src="@THIRD_PARTY_JAR_DIR@/software/java/third-party/asm-util-2.2.3.jar"
+      <file src="@THIRD_PARTY_JAR_DIR@/asm-util-2.2.3.jar"
             targetdir="$INSTALL_PATH/lib"/>
 
       <!-- for cleaning up -->
