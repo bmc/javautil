@@ -58,7 +58,6 @@ import javax.mail.Transport;
 import javax.mail.Session;
 import javax.mail.Message;
 
-import javax.mail.internet.InternetAddress;
 import javax.mail.MessagingException;
 
 import javax.mail.internet.MimeMultipart;
@@ -113,7 +112,7 @@ public class SMTPEmailTransport implements EmailTransport
     public SMTPEmailTransport()
         throws EmailException
     {
-        this ("localhost");
+        this("localhost");
     }
 
     /**
@@ -126,7 +125,26 @@ public class SMTPEmailTransport implements EmailTransport
      *
      * @see #send(EmailMessage)
      */
-    public SMTPEmailTransport (String smtpHost)
+    public SMTPEmailTransport(String smtpHost)
+        throws EmailException
+    {
+        this("localhost", null);
+    }
+
+    /**
+     * Constructs a new <tt>SMTPEmailTransport</tt> object, with the specified
+     * SMTP host.
+     *
+     * @param smtpHost The SMTP host to use to send messages
+     * @param thisHost The name to use for this host. If null, then
+     *                 <tt>InetAddress.getLocalHost().getHostName()</tt> is
+     *                 used.
+     *
+     * @throws EmailException  unable to initialize
+     *
+     * @see #send(EmailMessage)
+     */
+    public SMTPEmailTransport(String smtpHost, String thisHost)
         throws EmailException
     {
         this.smtpHost = smtpHost;
@@ -134,20 +152,23 @@ public class SMTPEmailTransport implements EmailTransport
         {
             Properties props = new Properties();
 
-            props.put ("mail.smtp.host", smtpHost);
-            props.put ("mail.smtp.allow8bitmime", "true");
+            if (thisHost != null)
+                props.put("mail,smtp.localhost", thisHost);
 
-            session = Session.getDefaultInstance (props, null);
-            transport = session.getTransport ("smtp");
+            props.put("mail.smtp.host", smtpHost);
+            props.put("mail.smtp.allow8bitmime", "true");
+
+            session = Session.getDefaultInstance(props, null);
+            transport = session.getTransport("smtp");
         }
 
         catch (MessagingException ex)
         {
-            throw new EmailException ("Unable to initialize transport to " +
-                                      "SMTP host \"" +
-                                      smtpHost +
-                                      "\"",
-                                      ex);
+            throw new EmailException("Unable to initialize transport to " +
+                                     "SMTP host \"" +
+                                     smtpHost +
+                                     "\"",
+                                     ex);
         }
     }
 
@@ -165,11 +186,11 @@ public class SMTPEmailTransport implements EmailTransport
      * @param out      where to dump debug messages, or null for standard
      *                 output. Ignored unless <tt>debug</tt> is <tt>true</tt>.
      */
-    public void setDebug (boolean debug, PrintStream out)
+    public void setDebug(boolean debug, PrintStream out)
     {
-        session.setDebug (debug);
+        session.setDebug(debug);
         if (debug)
-            session.setDebugOut (out);
+            session.setDebugOut(out);
     }
 
     /**
@@ -179,7 +200,8 @@ public class SMTPEmailTransport implements EmailTransport
      *
      * @exception EmailException Failed to send the message.
      */
-    public void send (EmailMessage message)
+    @SuppressWarnings("static-access")
+    public void send(EmailMessage message)
         throws EmailException
     {
         MimeMessage      javamailMessage;
@@ -198,38 +220,38 @@ public class SMTPEmailTransport implements EmailTransport
         {
             // Create the Java Mail API message.
 
-            javamailMessage = new MimeMessage (session);
+            javamailMessage = new MimeMessage(session);
 
             // Create the body that will be put in the message, and set the
             // multipart subtype.
 
             body = new MimeMultipart();
             multipartSubtype = message.getMultipartSubtype();
-            body.setSubType (multipartSubtype.getSubtypeString());
+            body.setSubType(multipartSubtype.getSubtypeString());
 
             // Set the sender
 
             EmailAddress senderAddress = message.getSender();
-            javamailMessage.setFrom (senderAddress.getInternetAddress());
+            javamailMessage.setFrom(senderAddress.getInternetAddress());
 
             // Set the various recipients.
 
-            to  = message.getToAddresses();
-            cc  = message.getCcAddresses();
+            to = message.getToAddresses();
+            cc = message.getCcAddresses();
             bcc = message.getBccAddresses();
 
             if (to.size() == 0)
             {
-                throw new EmailException ("No \"To:\" addresses in message");
+                throw new EmailException("No \"To:\" addresses in message");
             }
 
-            setRecipients (javamailMessage, Message.RecipientType.TO, to);
-            setRecipients (javamailMessage, Message.RecipientType.CC, cc);
-            setRecipients (javamailMessage, Message.RecipientType.BCC, bcc);
+            setRecipients(javamailMessage, Message.RecipientType.TO, to);
+            setRecipients(javamailMessage, Message.RecipientType.CC, cc);
+            setRecipients(javamailMessage, Message.RecipientType.BCC, bcc);
 
             // Set the subject.
 
-            javamailMessage.setSubject (message.getSubject());
+            javamailMessage.setSubject(message.getSubject());
 
             // Note: The Java Mail API wants *some* content. If the text
             // part is null and there are no attachments, build an empty
@@ -239,46 +261,46 @@ public class SMTPEmailTransport implements EmailTransport
             totalAttachments = attachments.size();
 
             textPart = message.getTextPart();
-            if ( (textPart == null) && (totalAttachments == 0) )
+            if ((textPart == null) && (totalAttachments == 0))
             {
-                message.setText ("");
+                message.setText("");
                 textPart = message.getTextPart();
             }
 
             // Build the text part of the message.
 
             if (textPart != null)
-                body.addBodyPart (textPart);
+                body.addBodyPart(textPart);
 
             // Build the attachments.
 
-            if (totalAttachments > 0)
-            {
-                for (it = attachments.iterator(); it.hasNext(); )
-                    body.addBodyPart ((MimeBodyPart) it.next());
+            if (totalAttachments > 0) {
+                for (it = attachments.iterator(); it.hasNext();) {
+                    body.addBodyPart((MimeBodyPart) it.next());
+                }
             }
 
             // Set the message body, if any.
 
-            if (body.getCount() > 0)
-                javamailMessage.setContent (body);
+            if (body.getCount() > 0) {
+                javamailMessage.setContent(body);
+            }
 
             // Set additional headers.
 
             for (it = message.getAdditionalHeaders().iterator();
-                 it.hasNext(); )
-            {
-                javamailMessage.addHeaderLine ((String) it.next());
+                    it.hasNext();) {
+                javamailMessage.addHeaderLine((String) it.next());
             }
 
             // Set the sent date.
 
-            javamailMessage.setSentDate (new Date());
+            javamailMessage.setSentDate(new Date());
 
             // Send it.
 
             transport.connect();
-	    transport.send (javamailMessage);
+            transport.send(javamailMessage);
             transport.close();
         }
 
@@ -302,9 +324,9 @@ public class SMTPEmailTransport implements EmailTransport
      *
      * @throws MessagingException  Java Mail API error
      */
-    private void setRecipients (MimeMessage           msg,
-                                Message.RecipientType recipientType,
-                                Collection            addresses)
+    private void setRecipients(MimeMessage msg,
+                               Message.RecipientType recipientType,
+                               Collection addresses)
         throws MessagingException
     {
         InternetAddress[] recipients;
@@ -321,7 +343,7 @@ public class SMTPEmailTransport implements EmailTransport
                 recipients[i] = addr.getInternetAddress();
             }
 
-            msg.setRecipients (recipientType, recipients);
+            msg.setRecipients(recipientType, recipients);
         }
     }
 }

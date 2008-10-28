@@ -366,6 +366,7 @@ public class EmailMessage implements Serializable
     /**
      * Destructor.
      */
+    @Override
     protected void finalize()
         throws Throwable
     {
