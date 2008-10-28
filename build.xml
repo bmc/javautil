@@ -602,6 +602,13 @@
           tofile="${release.dir}/${versioned_code.jar.file}"/>
   </target>
 
+  <target name="release-no-test"
+          depends="build,-set.version.properties,-srczip,-doczip"
+          description="Generate the distribution and source jars">
+    <copy file="${code.jar.path}"
+          tofile="${release.dir}/${versioned_code.jar.file}"/>
+  </target>
+
   <!--
   ***************************************************************************
                              Installer Target
