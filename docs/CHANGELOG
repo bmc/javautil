@@ -1,7 +1,13 @@
 ---------------------------------------------------------------------------
 CHANGELOG: org.clapper.util Java API
 
-$Id$
+---------------------------------------------------------------------------
+
+Version 2.4.3 (...)
+
+- org.clapper.util.mail.SMTPEmailTransport now allows you to set the
+  name of the localhost.
+
 ---------------------------------------------------------------------------
 
 Version 2.4.2 (12 January, 2008)
