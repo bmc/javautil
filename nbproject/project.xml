@@ -73,7 +73,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>src</package-root>
-                <classpath mode="compile">build/classes:/Users/bmc/java/classes/commons-logging-1.1.jar:/Users/bmc/java/classes/commons-logging-adapters-1.1.jar:/Users/bmc/java/classes/commons-logging-api-1.1.jar:/Users/bmc/java/ant/lib/ant-apache-bsf.jar:/Users/bmc/java/ant/lib/ant.jar:/Users/bmc/java/classes/activation.jar:/Users/bmc/java/classes/mail.jar:/Users/bmc/java/apache-ant-1.7.0/lib/ant.jar:/Users/bmc/java/classes/asm-2.2.3.jar:/Users/bmc/java/classes/asm-util-2.2.3.jar:/Users/bmc/java/classes/bsf.jar:/Users/bmc/java/classes/junit-4.4.jar</classpath>
+                <classpath mode="compile">build/classes:/Users/bmc/java/classes/commons-logging-1.1.jar:/Users/bmc/java/classes/commons-logging-adapters-1.1.jar:/Users/bmc/java/classes/commons-logging-api-1.1.jar:/Users/bmc/java/ant/lib/ant-apache-bsf.jar:/Users/bmc/java/ant/lib/ant.jar:/Users/bmc/java/classes/activation.jar:/Users/bmc/java/classes/mail.jar:/Users/bmc/java/apache-ant-1.7.0/lib/ant.jar:/Users/bmc/java/classes/asm-2.2.3.jar:/Users/bmc/java/classes/asm-util-2.2.3.jar:/Users/bmc/java/classes/bsf.jar</classpath>
                 <built-to>build/classes</built-to>
                 <built-to>build/classes_junit</built-to>
                 <source-level>1.5</source-level>
@@ -81,6 +81,7 @@
             <compilation-unit>
                 <package-root>junit/src</package-root>
                 <unit-tests/>
+                <classpath mode="compile">/Users/bmc/java/classes/junit-4.4.jar:build/classes</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

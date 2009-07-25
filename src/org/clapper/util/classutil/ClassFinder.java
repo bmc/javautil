@@ -584,7 +584,7 @@ public class ClassFinder
 
             catch (IOException ex)
             {
-                log.error ("Can't open \"" + f.getPath() + "\": ", ex);
+                log.error ("Can't open \"" + path + "\": ", ex);
             }
 
             catch (ClassUtilException ex)
@@ -595,7 +595,19 @@ public class ClassFinder
             finally
             {
                 if (is != null)
-                    is.close();
+                {
+                    try
+                    {
+                        is.close();
+                    }
+
+                    catch (IOException ex)
+                    {
+                        log.error("Can't close InputStream for \"" +
+                                  path + "\"",
+                                  ex);
+                    }
+                }
             }
         }
     }
