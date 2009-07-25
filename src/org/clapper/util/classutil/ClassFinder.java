@@ -575,9 +575,11 @@ public class ClassFinder
         {
             String path = f.getPath();
             log.debug ("Loading " + f.getPath());
+            InputStream is = null;
             try
             {
-                loadClassData (new FileInputStream (f), classVisitor);
+                is = new FileInputStream(f);
+                loadClassData (is, classVisitor);
             }
 
             catch (IOException ex)
@@ -588,6 +590,12 @@ public class ClassFinder
             catch (ClassUtilException ex)
             {
                 log.error ("Can't open \"" + path + "\": ", ex);
+            }
+
+            finally
+            {
+                if (is != null)
+                    is.close();
             }
         }
     }

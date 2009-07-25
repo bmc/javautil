@@ -8,6 +8,16 @@ Version 2.4.3 (...)
 - org.clapper.util.mail.SMTPEmailTransport now allows you to set the
   name of the localhost.
 
+- Fixed an open file leak in org.clapper.util.classutil.ClassFinder. When
+  called with a classpath consisting of a lot of directories (not jar files),
+  it was possible to end up with too many open files, because the files
+  weren't explicitly closed. While they'd eventually be collected and closed
+  by the garbage collector, the files could be opened in rapid succession,
+  leading to many open files before the garbage collector ever ran.
+
+  Thanks to Robert von Burg <eitch at eitchnet.ch> for reporting and
+  diagnosing the bug.
+
 ---------------------------------------------------------------------------
 
 Version 2.4.2 (12 January, 2008)
@@ -19,7 +29,7 @@ Version 2.4.2 (12 January, 2008)
   file pattern is incorrect, the class throws an exception. However, the
   exception message used a java.text.MessageFormat format that caused
   MessageFormat to gag. Thanks to Daniel Carr 
-  <daniel.carr at clipsal dot com dot au> for finding and reporting the
+  <daniel.carr at clipsal.com.au> for finding and reporting the
   bug.
 
 
