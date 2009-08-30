@@ -1,6 +1,15 @@
 ---------------------------------------------------------------------------
 CHANGELOG: org.clapper.util Java API
 
+Version 2.5 (...)
+
+- Updated to ASM version 3.2. Thanks to Charles Johnson 
+  (cj <at> technojeeves.com) for suggesting this upgrade and for providing
+  required changes to the org.clapper.util.classutil classes.
+- The build.xml file now honors the value of the ASM_HOME environment
+  variable, to find the location of the ASM bytecode library. If the bytecode
+  library isn't present, the org.clapper.util.classutil package isn't built.
+
 ---------------------------------------------------------------------------
 
 Version 2.4.3 (25 July, 2009)
@@ -111,7 +120,7 @@ Version 2.4 (17 April, 2007)
 - The convertCharacterEntities() method in org.clapper.util.html.HTMLUtil
   handled decimal character entities (e.g., "&#8482;") but not hexadecimal
   ones (e.g., "&#x2122;"). It does now. Thanks to Arjumand Bonhomme 
-  (jumand <at> gmail <dot> com) for finding the problem and suggesting a
+  (jumand <at> gmail.com) for finding the problem and suggesting a
   fix. (I've adapted his patch.)
 
 - The makeCharacterEntities() method in org.clapper.util.html.HTMLUtil

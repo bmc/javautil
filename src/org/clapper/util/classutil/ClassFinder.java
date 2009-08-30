@@ -672,7 +672,7 @@ public class ClassFinder
         try
         {
             ClassReader cr = new ClassReader (is);
-            cr.accept (classVisitor, true);
+            cr.accept(classVisitor, ClassInfo.ASM_CR_ACCEPT_CRITERIA);
         }
 
         catch (Exception ex)

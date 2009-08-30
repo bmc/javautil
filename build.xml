@@ -98,6 +98,24 @@
   <property name="zip.dir.prefix" value="util/"/>
   <property name="release.dir" value="${build.dir}/release"/>
   <property file="build.properties"/>
+
+  <!--
+      asm.home refers to the location of the ASM byte code library jar files.
+      It can be set manually here, or it can be derived from the ASM_HOME
+      environment variable. Either way, it should point to the top-level
+      directory where the ASM distribution was unpacked.
+
+      To set it manually, ensure that there's no ASM_HOME environment
+      variable, and change the value of asm.home.default, below.
+  -->
+  <property name="asm.home.default" value=""/>
+  <condition property="asm.home"
+             value="${env.ASM_HOME}"
+             else="${asm.home.default}">
+    <isset property="env.ASM_HOME"/>
+  </condition>
+  <echo>asm.home=${asm.home}</echo>
+
   <!--
   ***************************************************************************
                             Paths and Patterns
@@ -114,17 +132,17 @@
     <pathelement location="lib/"/>
     <pathelement location="${third.party.jar.dir}/activation.jar"/>
     <pathelement location="${third.party.jar.dir}/mail.jar"/>
-    <pathelement location="${third.party.jar.dir}/asm-2.2.3.jar"/>
-    <pathelement location="${third.party.jar.dir}/asm-commons-2.2.3.jar"/>
-    <pathelement location="${third.party.jar.dir}/asm-util-2.2.3.jar"/>
+    <fileset dir="${asm.home}">
+	<include name="lib/**.jar"/>
+    </fileset>
     <pathelement location="${third.party.jar.dir}/commons-logging-1.1.jar"/>
     <pathelement location="${third.party.jar.dir}/bsf.jar"/>
     <pathelement location="${ant.home}/lib/ant.jar"/>
     <pathelement location="${ant.home}/lib/ant-junit.jar"/>
     <pathelement location="${third.party.jar.dir}/junit-4.4.jar"/>
-  </path>
-  
-  <path id="test.class.path">
+</path>
+
+<path id="test.class.path">
     <path refid="project.class.path"/>
     <pathelement location="${compiled.test.classes.dir}"/>
     <pathelement location="${compiled.classes.dir}"/>
@@ -132,105 +150,105 @@
     <pathelement location="${third.party.jar.dir}/js.jar"/>
     <pathelement location="${third.party.jar.dir}/bsf.jar"/>
     <pathelement location="${third.party.jar.dir}/log4j.jar"/>
-  </path>
+</path>
 
-  <path id="installer.class.path">
+<path id="installer.class.path">
     <path refid="project.class.path"/>
     <pathelement location="${third.party.jar.dir}/izpack-compiler.jar"/>
-  </path>
+</path>
 
-  <!--
-  ***************************************************************************
-                          Initialization Targets
-  ***************************************************************************
-  -->
+<!--
+***************************************************************************
+Initialization Targets
+***************************************************************************
+-->
 
-  <target name="init">
+<target name="init">
     <!-- Create the time stamp -->
     <tstamp>
-      <format property="build.date" pattern="dd MMMM, yyyy HH:mm:ss z"
-              locale="en"/>
+	<format property="build.date" pattern="dd MMMM, yyyy HH:mm:ss z"
+	    locale="en"/>
     </tstamp>
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${compiled.classes.dir}"/>
     <depend srcdir="${src.dir}" destdir="${compiled.classes.dir}"/>
-  </target>
+</target>
 
-  <!--
-  ***************************************************************************
-                               Code Targets
-  ***************************************************************************
-  -->
+<!--
+***************************************************************************
+Code Targets
+***************************************************************************
+-->
 
-  <target name="build" depends="code.jar"/>
-  <target name="compile" depends="init,lib,bundles,-build.info,testers"/>
-  <target name="compile-all" depends="compile,test-compile"/>
+<target name="build" depends="code.jar"/>
+<target name="compile" depends="init,lib,bundles,-build.info,testers"/>
+<target name="compile-all" depends="compile,test-compile"/>
 
-  <target name="bundles">
+<target name="bundles">
     <copy todir="${compiled.classes.dir}">
-      <fileset dir="${src.top}">
-        <include name="**/*.properties"/>
-      </fileset>
+	<fileset dir="${src.top}">
+	    <include name="**/*.properties"/>
+	</fileset>
     </copy>
-  </target>
+</target>
 
-  <target name="testers" depends="lib,lib.testers,mail.testers"/>
-  <target name="lib" depends="lib.unconditional,lib.conditional"/>
+<target name="testers" depends="lib,lib.testers,mail.testers"/>
+<target name="lib" depends="lib.unconditional,lib.conditional"/>
 
-  <target name="lib.unconditional" depends="init">
+<target name="lib.unconditional" depends="init">
     <echo>third.party.jar.dir=${third.party.jar.dir}</echo>
     <javac srcdir="${javac.src.dir}"
-           source="${javac.source}"
-           target="${javac.target}"
-           debug="${javac.debug}"
-           listfiles="${javac.listfiles}"
-           deprecation="yes"
-           destdir="${compiled.classes.dir}">
+	source="${javac.source}"
+	target="${javac.target}"
+	debug="${javac.debug}"
+	listfiles="${javac.listfiles}"
+	deprecation="yes"
+	destdir="${compiled.classes.dir}">
 
-      <compilerarg compiler="jikes" value="+Peffective-java"/>
-      <compilerarg compiler="jikes" value="+Punused-type-imports"/>
-      <compilerarg compiler="jikes" value="+Punused-package-imports"/>
-      <compilerarg compiler="jikes" value="+Pmodifier-order"/>
-      <compilerarg compiler="jikes" value="+Pserial"/>
+	<compilerarg compiler="jikes" value="+Peffective-java"/>
+	<compilerarg compiler="jikes" value="+Punused-type-imports"/>
+	<compilerarg compiler="jikes" value="+Punused-package-imports"/>
+	<compilerarg compiler="jikes" value="+Pmodifier-order"/>
+	<compilerarg compiler="jikes" value="+Pserial"/>
 
-      <compilerarg compiler="modern" value="${javac.lint.unchecked.opt}"/>
-      <compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
-      <compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
-      <!--
-      <compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
-      -->
+	<compilerarg compiler="modern" value="${javac.lint.unchecked.opt}"/>
+	<compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
+	<compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
+	<!--
+	<compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
+	-->
 
-      <classpath refid="project.class.path"/>
+	<classpath refid="project.class.path"/>
 
-      <include name="**/*.java"/>
-      <exclude name="${pkg.path}/mail/*.java"/>
-      <exclude name="${pkg.path}/classutil/*.java"/>
-      <exclude name="**/test/*.java"/>
+	<include name="**/*.java"/>
+	<exclude name="${pkg.path}/mail/*.java"/>
+	<exclude name="${pkg.path}/classutil/*.java"/>
+	<exclude name="**/test/*.java"/>
 
     </javac>
-  </target>
+</target>
 
-  <target name="lib.conditional" depends="mail,classutil"/>
+<target name="lib.conditional" depends="mail,classutil"/>
 
-  <!--
-  Can only build the "mail" component if the Java Mail API and
-  the Java Activation Framework are both in the CLASSPATH
-  -->
+<!--
+Can only build the "mail" component if the Java Mail API and
+the Java Activation Framework are both in the CLASSPATH
+-->
 
-  <target name="-check.javamail.exists">
+<target name="-check.javamail.exists">
     <condition property="javamail.exists">
-      <and>
-        <available classname="javax.activation.DataHandler" 
-                   classpathref="project.class.path"/>
-        <available classname="javax.mail.Transport"
-                   classpathref="project.class.path"/>
-      </and>
+	<and>
+	    <available classname="javax.activation.DataHandler" 
+		classpathref="project.class.path"/>
+	    <available classname="javax.mail.Transport"
+		classpathref="project.class.path"/>
+	</and>
     </condition>
-  </target>
+</target>
 
-  <target name="-check.javamail"
-          depends="-check.javamail.exists"
-          unless="javamail.exists">
+<target name="-check.javamail"
+    depends="-check.javamail.exists"
+    unless="javamail.exists">
     <echo>
 *** Ant cannot find the Java Mail API and/or the Java Activation Framework,
 *** so, all components that require those packages will be skipped. To enable
@@ -238,397 +256,418 @@
 *** and make them available in your CLASSPATH. Both packages can be found
 *** at http://java.sun.com/
     </echo>
-  </target>
+</target>
 
-  <target name="mail" depends="-check.javamail" if="javamail.exists">
+<target name="-check.asm.home.exists">
+    <condition property="asm.home.exists">
+	<not>
+	    <equals arg1="${asm.home}" arg2="" />
+	</not>
+    </condition>
+</target>
+
+<target name="-check.asm.home"
+    depends="-check.asm.home.exists"
+    unless="asm.home.exists">
+    <echo>
+*** The ASM_HOME environment variable or the asm.home Ant property must be
+*** set to the top of the ASM installation for ASM-dependent targets to be
+*** built. Either (a) neither property is set, or (b) the value is set, but
+*** points to a nonexistent directory.
+***
+*** All components that depend on the ASM packages will be skipped.
+    </echo>
+</target>
+
+<target name="mail" depends="-check.javamail" if="javamail.exists">
     <echo level="verbose">Found Java Mail API. Compiling mail classes.</echo>
     <javac srcdir="${javac.src.dir}"
-           source="${javac.source}"
-           target="${javac.target}"
-           debug="${javac.debug}"
-           listfiles="${javac.listfiles}"
-           deprecation="yes"
-           destdir="${compiled.classes.dir}">
+	source="${javac.source}"
+	target="${javac.target}"
+	debug="${javac.debug}"
+	listfiles="${javac.listfiles}"
+	deprecation="yes"
+	destdir="${compiled.classes.dir}">
 
-      <compilerarg compiler="jikes" value="+Peffective-java"/>
-      <compilerarg compiler="jikes" value="+Punused-type-imports"/>
-      <compilerarg compiler="jikes" value="+Punused-package-imports"/>
-      <compilerarg compiler="jikes" value="+Pmodifier-order"/>
-      <compilerarg compiler="jikes" value="+Pserial"/>
+	<compilerarg compiler="jikes" value="+Peffective-java"/>
+	<compilerarg compiler="jikes" value="+Punused-type-imports"/>
+	<compilerarg compiler="jikes" value="+Punused-package-imports"/>
+	<compilerarg compiler="jikes" value="+Pmodifier-order"/>
+	<compilerarg compiler="jikes" value="+Pserial"/>
 
-      <compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
-      <compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
-      <!--
-      <compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
-      -->
+	<compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
+	<compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
+	<!--
+	<compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
+	-->
 
-      <classpath refid="project.class.path"/>
+	<classpath refid="project.class.path"/>
 
-      <include name="${pkg.path}/mail/*.java"/>
+	<include name="${pkg.path}/mail/*.java"/>
     </javac>
-  </target>
+</target>
 
-  <!--
-  Can only build the "classutil" component if the ASM API is available.
-  -->
+<!--
+Can only build the "classutil" component if the ASM API is available.
+-->
 
-  <target name="-check.asm.exists">
+<target name="-check.asm.exists">
     <condition property="asm.exists">
-      <and>
-        <available classname="org.objectweb.asm.ClassReader" classpathref="project.class.path"/>
-      </and>
+	<and>
+	    <available classname="org.objectweb.asm.ClassReader" classpathref="project.class.path"/>
+	</and>
     </condition>
-  </target>
+</target>
 
-  <target name="-check.asm"
-          depends="-check.asm.exists"
-          unless="asm.exists">
+<target name="-check.asm"
+    depends="-check.asm.exists"
+    unless="asm.exists">
     <echo>
 *** Ant cannot find the ASM API. All components that require the ASM API
 *** will be skipped. To enable, install the ASM API, and make it available
 *** in your CLASSPATH. ASM can be found at http://asm.objecweb.org/
     </echo>
-  </target>
+</target>
 
-  <target name="classutil" depends="-check.asm" if="asm.exists">
+<target name="classutil" depends="-check.asm.home,-check.asm" if="asm.exists">
     <echo level="verbose">Found ASM API. Compiling classutil classes.</echo>
     <javac srcdir="${javac.src.dir}"
-           source="${javac.source}"
-           target="${javac.target}"
-           debug="${javac.debug}"
-           listfiles="${javac.listfiles}"
-           deprecation="yes"
-           destdir="${compiled.classes.dir}">
+	source="${javac.source}"
+	target="${javac.target}"
+	debug="${javac.debug}"
+	listfiles="${javac.listfiles}"
+	deprecation="yes"
+	destdir="${compiled.classes.dir}">
 
-      <compilerarg compiler="jikes" value="+Peffective-java"/>
-      <compilerarg compiler="jikes" value="+Punused-type-imports"/>
-      <compilerarg compiler="jikes" value="+Punused-package-imports"/>
-      <compilerarg compiler="jikes" value="+Pmodifier-order"/>
-      <compilerarg compiler="jikes" value="+Pserial"/>
+	<compilerarg compiler="jikes" value="+Peffective-java"/>
+	<compilerarg compiler="jikes" value="+Punused-type-imports"/>
+	<compilerarg compiler="jikes" value="+Punused-package-imports"/>
+	<compilerarg compiler="jikes" value="+Pmodifier-order"/>
+	<compilerarg compiler="jikes" value="+Pserial"/>
 
-      <compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
-      <compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
-      <!--
-      <compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
-      -->
+	<compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
+	<compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
+	<!--
+	<compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
+	-->
 
-      <classpath refid="project.class.path"/>
+	<classpath refid="project.class.path"/>
 
-      <include name="${pkg.path}/classutil/*.java"/>
+	<include name="${pkg.path}/classutil/*.java"/>
     </javac>
-  </target>
+</target>
 
-  <!-- Load the API version from the appropriate resource bundle -->
+<!-- Load the API version from the appropriate resource bundle -->
 
-  <target name="-get.version" description="Get the version stamp">
+<target name="-get.version" description="Get the version stamp">
     <property file="${compiled.classes.dir}/org/clapper/util/misc/Bundle.properties"/>
     <echo>API Version: ${api.version}</echo>
-  </target>
+</target>
 
-  <target name="version" depends="-get.version"/>
+<target name="version" depends="-get.version"/>
 
-  <target name="-build.info" depends="-get.version"
-          description="Create build info properties file">
+<target name="-build.info" depends="-get.version"
+    description="Create build info properties file">
 
     <taskdef name="make_build_info"
-             classname="org.clapper.util.ant.MakeBuildInfoTask"
-             classpath="${compiled.classes.dir}"/>
+	classname="org.clapper.util.ant.MakeBuildInfoTask"
+	classpath="${compiled.classes.dir}"/>
 
     <condition property="compiler" value="${build.compiler}">
-      <isset property="build.compiler"/>
+	<isset property="build.compiler"/>
     </condition>
 
     <condition property="compiler" value="javac">
-      <not>
-        <isset property="build.compiler"/>
-      </not>
+	<not>
+	    <isset property="build.compiler"/>
+	</not>
     </condition>
 
     <make_build_info file="${build.info.file}"
-                     antversion="${ant.version}"
-                     compiler="${compiler}"/>
-  </target>
+	antversion="${ant.version}"
+	compiler="${compiler}"/>
+</target>
 
-  <target name="mail.testers" depends="-check.javamail,lib"
-          if="javamail.exists"
-          description="compile the mail testers">
+<target name="mail.testers" depends="-check.javamail,lib"
+    if="javamail.exists"
+    description="compile the mail testers">
     <!-- Create the distribution directory -->
     <javac srcdir="${javac.src.dir}"
-           source="${javac.source}"
-           target="${javac.target}"
-           debug="${javac.debug}"
-           listfiles="${javac.listfiles}"
-           deprecation="yes"
-           destdir="${compiled.classes.dir}">
+	source="${javac.source}"
+	target="${javac.target}"
+	debug="${javac.debug}"
+	listfiles="${javac.listfiles}"
+	deprecation="yes"
+	destdir="${compiled.classes.dir}">
 
-      <compilerarg compiler="jikes" value="+Peffective-java"/>
-      <compilerarg compiler="jikes" value="+Punused-type-imports"/>
-      <compilerarg compiler="jikes" value="+Punused-package-imports"/>
-      <compilerarg compiler="jikes" value="+Pmodifier-order"/>
-      <compilerarg compiler="jikes" value="+Pserial"/>
+	<compilerarg compiler="jikes" value="+Peffective-java"/>
+	<compilerarg compiler="jikes" value="+Punused-type-imports"/>
+	<compilerarg compiler="jikes" value="+Punused-package-imports"/>
+	<compilerarg compiler="jikes" value="+Pmodifier-order"/>
+	<compilerarg compiler="jikes" value="+Pserial"/>
 
-      <compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
-      <compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
-      <!--
-      <compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
-      -->
+	<compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
+	<compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
+	<!--
+	<compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
+	-->
 
-      <classpath refid="project.class.path"/>
+	<classpath refid="project.class.path"/>
 
-      <include name="${pkg.path}/mail/test/*.java"/>
+	<include name="${pkg.path}/mail/test/*.java"/>
 
     </javac>
-  </target>
+</target>
 
-  <target name="lib.testers"
-          description="compile the testers">
+<target name="lib.testers"
+    description="compile the testers">
     <!-- Create the distribution directory -->
     <javac srcdir="${javac.src.dir}"
-           source="${javac.source}"
-           target="${javac.target}"
-           debug="${javac.debug}"
-           listfiles="${javac.listfiles}"
-           destdir="${compiled.classes.dir}">
+	source="${javac.source}"
+	target="${javac.target}"
+	debug="${javac.debug}"
+	listfiles="${javac.listfiles}"
+	destdir="${compiled.classes.dir}">
 
-      <compilerarg compiler="jikes" value="+Peffective-java"/>
-      <compilerarg compiler="jikes" value="+Punused-type-imports"/>
-      <compilerarg compiler="jikes" value="+Punused-package-imports"/>
-      <compilerarg compiler="jikes" value="+Pmodifier-order"/>
-      <compilerarg compiler="jikes" value="+Pserial"/>
+	<compilerarg compiler="jikes" value="+Peffective-java"/>
+	<compilerarg compiler="jikes" value="+Punused-type-imports"/>
+	<compilerarg compiler="jikes" value="+Punused-package-imports"/>
+	<compilerarg compiler="jikes" value="+Pmodifier-order"/>
+	<compilerarg compiler="jikes" value="+Pserial"/>
 
-      <compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
-      <compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
-      <!--
-      <compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
-      -->
+	<compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
+	<compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
+	<!--
+	<compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
+	-->
 
-      <classpath refid="project.class.path"/>
+	<classpath refid="project.class.path"/>
 
-      <include name="**/test/*.java"/>
-      <exclude name="${pkg.path}/mail/test/*.java"/>
+	<include name="**/test/*.java"/>
+	<exclude name="${pkg.path}/mail/test/*.java"/>
 
     </javac>
-  </target>
+</target>
 
-  <!--
-  ***************************************************************************
-                               JUnit targets
-  ***************************************************************************
-  -->
-
-  <target name="test-compile">
-    <mkdir dir="${compiled.test.classes.dir}"/>
-    <javac srcdir="${test.src.dir}"
-           source="${javac.source}"
-           target="${javac.target}"
-           debug="${javac.debug}"
-           listfiles="${javac.listfiles}"
-           deprecation="yes"
-           destdir="${compiled.test.classes.dir}">
-      <compilerarg compiler="jikes" value="+Peffective-java"/>
-      <compilerarg compiler="jikes" value="+Punused-type-imports"/>
-      <compilerarg compiler="jikes" value="+Punused-package-imports"/>
-      <compilerarg compiler="jikes" value="+Pmodifier-order"/>
-      <compilerarg compiler="jikes" value="+Pserial"/>
-
-      <compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
-      <compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
-      <!--
-      <compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
-      -->
-      <classpath refid="test.class.path"/>
-      <include name="**/*.java"/>
-    </javac>
-  </target>
-    
-  <target name="junit" depends="test" description="Synonym for 'test'"/>
-
-  <target name="test" depends="compile,test-compile"
-          description="Run all JUnit tests">
-    <mkdir dir="${test.run.dir}"/>
-    <mkdir dir="${test.output.dir}"/>
-    <junit haltonfailure="true"
-           haltonerror="true"
-           printsummary="off"
-           dir="${test.run.dir}"
-           tempdir="${test.run.dir}"
-           forkmode="once">
-      <assertions>
-        <enable/>
-      </assertions>
-      <batchtest fork="yes" todir="${test.output.dir}">
-        <fileset dir="${test.src.dir}">
-          <include name="${pkg.path}/**/*Test.java"/>
-        </fileset>
-      </batchtest>
-      <jvmarg value="-Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Log4JLogger"/>
-      <jvmarg value="-Dlog4j.configuration=file:${test.top.dir}/log4j.properties"/>
 <!--
-<jvmarg value="-Xdebug"/>
-<jvmarg value="-Xnoagent"/>
-<jvmarg value="-Djava.compiler=none"/>
-<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9001"/>
+***************************************************************************
+JUnit targets
+***************************************************************************
 -->
 
-      <formatter classname="org.clapper.util.ant.JUnitSummaryFormatter"
-                 usefile="false"/>
-      <formatter type="plain"/>
-      <classpath refid="test.class.path"/>
-    </junit>
-  </target>
+<target name="test-compile">
+    <mkdir dir="${compiled.test.classes.dir}"/>
+    <javac srcdir="${test.src.dir}"
+	source="${javac.source}"
+	target="${javac.target}"
+	debug="${javac.debug}"
+	listfiles="${javac.listfiles}"
+	deprecation="yes"
+	destdir="${compiled.test.classes.dir}">
+	<compilerarg compiler="jikes" value="+Peffective-java"/>
+	<compilerarg compiler="jikes" value="+Punused-type-imports"/>
+	<compilerarg compiler="jikes" value="+Punused-package-imports"/>
+	<compilerarg compiler="jikes" value="+Pmodifier-order"/>
+	<compilerarg compiler="jikes" value="+Pserial"/>
 
-  <target name="test.single" depends="test-compile"
-          description="Run the JUnit test for a single class">
+	<compilerarg compiler="javac1.5" value="${javac.lint.unchecked.opt}"/>
+	<compilerarg compiler="javac1.6" value="${javac.lint.unchecked.opt}"/>
+	<!--
+	<compilerarg compiler="javac1.5" value="${javac.lint.deprecation.opt}"/>
+	-->
+	<classpath refid="test.class.path"/>
+	<include name="**/*.java"/>
+    </javac>
+</target>
+
+<target name="junit" depends="test" description="Synonym for 'test'"/>
+
+<target name="test" depends="compile,test-compile"
+    description="Run all JUnit tests">
     <mkdir dir="${test.run.dir}"/>
     <mkdir dir="${test.output.dir}"/>
     <junit haltonfailure="true"
-           haltonerror="true"
-           printsummary="off"
-           showoutput="false"
-           dir="${test.run.dir}"
-           tempdir="${test.run.dir}"
-           forkmode="once">
-      <assertions>
-        <enable/>
-      </assertions>
-      <test name="${test.class}"/>
-      <formatter classname="org.clapper.util.ant.JUnitSummaryFormatter"
-                 usefile="false"
-                 extension=".txt"/>
-      <classpath refid="test.class.path"/>
+	haltonerror="true"
+	printsummary="off"
+	dir="${test.run.dir}"
+	tempdir="${test.run.dir}"
+	forkmode="once">
+	<assertions>
+	    <enable/>
+	</assertions>
+	<batchtest fork="yes" todir="${test.output.dir}">
+	    <fileset dir="${test.src.dir}">
+		<include name="${pkg.path}/**/*Test.java"/>
+	    </fileset>
+	</batchtest>
+	<jvmarg value="-Dorg.apache.commons.logging.log=org.apache.commons.logging.impl.Log4JLogger"/>
+	<jvmarg value="-Dlog4j.configuration=file:${test.top.dir}/log4j.properties"/>
+	<!--
+	<jvmarg value="-Xdebug"/>
+	<jvmarg value="-Xnoagent"/>
+	<jvmarg value="-Djava.compiler=none"/>
+	<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9001"/>
+	-->
+
+	<formatter classname="org.clapper.util.ant.JUnitSummaryFormatter"
+	    usefile="false"/>
+	<formatter type="plain"/>
+	<classpath refid="test.class.path"/>
     </junit>
-  </target>
+</target>
 
-  <!--
-  ***************************************************************************
-                              Javadoc targets
-  ***************************************************************************
-  -->
+<target name="test.single" depends="test-compile"
+    description="Run the JUnit test for a single class">
+    <mkdir dir="${test.run.dir}"/>
+    <mkdir dir="${test.output.dir}"/>
+    <junit haltonfailure="true"
+	haltonerror="true"
+	printsummary="off"
+	showoutput="false"
+	dir="${test.run.dir}"
+	tempdir="${test.run.dir}"
+	forkmode="once">
+	<assertions>
+	    <enable/>
+	</assertions>
+	<test name="${test.class}"/>
+	<formatter classname="org.clapper.util.ant.JUnitSummaryFormatter"
+	    usefile="false"
+	    extension=".txt"/>
+	<classpath refid="test.class.path"/>
+    </junit>
+</target>
 
-  <target name="doc"
-          description="Generate API Javadocs">
+<!--
+***************************************************************************
+Javadoc targets
+***************************************************************************
+-->
+
+<target name="doc"
+    description="Generate API Javadocs">
     <mkdir dir="${javadocs.api.dir}"/>
     <javadoc destdir="${javadocs.api.dir}"
-             sourcepath="${src.top}"
-             source="${javac.source}"
-             author="true"
-             version="true"
-             breakiterator="true"
-             splitindex="true"
-             use="true"
-             stylesheetfile="${src.top}/javadoc/stylesheet.css"
-             overview="overview.html"
-             excludepackagenames="org.clapper.util.*.test"
-             packagenames="org.clapper.util.*"
-             classpathref="project.class.path"
-             windowtitle="clapper.org Utility API">
-      <doctitle><![CDATA[<h1>clapper.org Utility API Documentation</h1>]]></doctitle>
-      <bottom><![CDATA[<i>Copyright &#169; 2004-2007 Brian M. Clapper. All Rights Reserved.</i>]]></bottom>
+	sourcepath="${src.top}"
+	source="${javac.source}"
+	author="true"
+	version="true"
+	breakiterator="true"
+	splitindex="true"
+	use="true"
+	stylesheetfile="${src.top}/javadoc/stylesheet.css"
+	overview="overview.html"
+	excludepackagenames="org.clapper.util.*.test"
+	packagenames="org.clapper.util.*"
+	classpathref="project.class.path"
+	windowtitle="clapper.org Utility API">
+	<doctitle><![CDATA[<h1>clapper.org Utility API Documentation</h1>]]></doctitle>
+	<bottom><![CDATA[<i>Copyright &#169; 2004-2007 Brian M. Clapper. All Rights Reserved.</i>]]></bottom>
     </javadoc>
-  </target>
+</target>
 
-  <target name="docs" depends="doc"/>
-  <target name="javadocs" depends="doc"/>
-  <target name="javadoc" depends="doc"/>
+<target name="docs" depends="doc"/>
+<target name="javadocs" depends="doc"/>
+<target name="javadoc" depends="doc"/>
 
-  <!--
-  ***************************************************************************
-                             Packaging Targets
-  ***************************************************************************
-  -->
+<!--
+***************************************************************************
+Packaging Targets
+***************************************************************************
+-->
 
-  <target name="-set.version.properties" depends="-get.version">
+<target name="-set.version.properties" depends="-get.version">
     <property name="versioned_src_zipfile"
-              value="src-${api.version}.zip"/>
+	value="src-${api.version}.zip"/>
 
     <property name="versioned_code.jar.file"
-              value="${code.jar.name}-${api.version}.jar"/>
+	value="${code.jar.name}-${api.version}.jar"/>
 
     <property name="versioned_docs_zipfile"
-              value="docs-${api.version}.zip"/>
+	value="docs-${api.version}.zip"/>
 
     <property name="versioned_javadocs_zipfile"
-              value="javadocs-${api.version}.zip"/>
-  </target>
+	value="javadocs-${api.version}.zip"/>
+</target>
 
-  <target name="jar" depends="code.jar" description="Synonym for 'code.jar'"/>
+<target name="jar" depends="code.jar" description="Synonym for 'code.jar'"/>
 
-  <target name="code.jar" depends="compile-all"
-          description="Generate the distribution">
+<target name="code.jar" depends="compile-all"
+    description="Generate the distribution">
     <mkdir dir="${build.dir}/lib"/>
     <jar jarfile="${code.jar.path}" basedir="${compiled.classes.dir}"/>
-  </target>
+</target>
 
-  <target name="-doczip" depends="doc"
-          description="Builds the javadocs zip file">
+<target name="-doczip" depends="doc"
+    description="Builds the javadocs zip file">
     <mkdir dir="${release.dir}"/>
     <zip destfile="${release.dir}/${versioned_docs_zipfile}">
-      <zipfileset dir="${docs.top.dir}"
-                  prefix="${zip.dir.prefix}"/>
+	<zipfileset dir="${docs.top.dir}"
+	    prefix="${zip.dir.prefix}"/>
     </zip>
     <zip destfile="${release.dir}/${versioned_javadocs_zipfile}">
-      <zipfileset dir="${javadocs.dir}"
-                  prefix="${zip.dir.prefix}"/>
+	<zipfileset dir="${javadocs.dir}"
+	    prefix="${zip.dir.prefix}"/>
     </zip>
-  </target>
+</target>
 
-  <target name="srczip" depends="-srczip"/>
-  <target name="-srczip" depends=""
-          description="Generate the source zip">
+<target name="srczip" depends="-srczip"/>
+<target name="-srczip" depends=""
+    description="Generate the source zip">
     <mkdir dir="${release.dir}"/>
     <zip destfile="${release.dir}/${versioned_src_zipfile}">
-      <!--
-          WARNING: This file set is essentially duplicated in the installer's
-          config file, below. There's no way around that, unfortunately.
-      -->
-      <zipfileset dir="." prefix="${zip.dir.prefix}" casesensitive="yes">
-        <include name="LICENSE"/>
-        <include name="*.html"/>
-        <include name="build.xml"/>
-        <include name="docs/**"/>
-        <include name="junit/**"/>
-        <include name="src/**"/>
-        <exclude name="${compiled.classes.dir}"/>
-        <exclude name="nbproject"/>
-        <exclude name="${build.dir}/**"/>
-      </zipfileset>
+	<!--
+	WARNING: This file set is essentially duplicated in the installer's
+	config file, below. There's no way around that, unfortunately.
+	-->
+	<zipfileset dir="." prefix="${zip.dir.prefix}" casesensitive="yes">
+	    <include name="LICENSE"/>
+	    <include name="*.html"/>
+	    <include name="build.xml"/>
+	    <include name="docs/**"/>
+	    <include name="junit/**"/>
+	    <include name="src/**"/>
+	    <exclude name="${compiled.classes.dir}"/>
+	    <exclude name="nbproject"/>
+	    <exclude name="${build.dir}/**"/>
+	</zipfileset>
     </zip>
-  </target>
+</target>
 
-  <target name="release"
-          depends="build,test,-set.version.properties,-srczip,-doczip"
-          description="Generate the distribution and source jars">
+<target name="release"
+    depends="build,test,-set.version.properties,-srczip,-doczip"
+    description="Generate the distribution and source jars">
     <copy file="${code.jar.path}"
-          tofile="${release.dir}/${versioned_code.jar.file}"/>
-  </target>
+	tofile="${release.dir}/${versioned_code.jar.file}"/>
+</target>
 
-  <target name="release-no-test"
-          depends="build,-set.version.properties,-srczip,-doczip"
-          description="Generate the distribution and source jars">
+<target name="release-no-test"
+    depends="build,-set.version.properties,-srczip,-doczip"
+    description="Generate the distribution and source jars">
     <copy file="${code.jar.path}"
-          tofile="${release.dir}/${versioned_code.jar.file}"/>
-  </target>
+	tofile="${release.dir}/${versioned_code.jar.file}"/>
+</target>
 
-  <!--
-  ***************************************************************************
-                             Installer Target
-  ***************************************************************************
-  -->
+<!--
+***************************************************************************
+Installer Target
+***************************************************************************
+-->
 
-  <!--
-      If you're going to build the installer, you'll need the IzPack
-      utility (http://www.izforge.com/izpack/), and you'll have to set
-      this value to the location of the IzPack installation.
-  -->
-  <property name="izpack.home" value="${env.HOME}/java/IzPack"/>
-  <property name="src.install" value="${src.top}/installer"/>
+<!--
+If you're going to build the installer, you'll need the IzPack
+utility (http://www.izforge.com/izpack/), and you'll have to set
+this value to the location of the IzPack installation.
+-->
+<property name="izpack.home" value="${env.HOME}/java/IzPack"/>
+<property name="src.install" value="${src.top}/installer"/>
 
-  <target name="-installer.prep">
+<target name="-installer.prep">
 
     <!-- Define the IzPack task -->
 
     <taskdef name="izpack" classname="com.izforge.izpack.ant.IzPackTask"
-             classpathref="installer.class.path"/>
+	classpathref="installer.class.path"/>
 
     <!-- Create a temporary installation directory -->
 
@@ -639,53 +678,53 @@
     <!-- Edit the installer template -->
 
     <copy file="${src.install}/install.xml" todir="${install.tmp}">
-      <filterset>
-        <filter token="OCUTIL_VERSION" value="${api.version}"/>
-        <filter token="INSTALL_TMP" value="${install.tmp}"/>
-        <filter token="SRC_INSTALL" value="${src.install}"/>
-        <filter token="RELEASE_DIR" value="${release.dir}"/>
-        <filter token="THIRD_PARTY_JAR_DIR" value="${env.HOME}/java/classes"/>
-        <filter token="TOP_DIR" value="${top.dir}"/>
-        <filter token="SRC_TOP" value="${src.top}"/>
-        <filter token="SRC_TOP_RELATIVE" value="${src.top.relative}"/>
-        <filter token="CLASSES_DIR" value="${compiled.classes.dir}"/>
-        <filter token="BUILD_DIR" value="${build.dir}"/>
-        <filter token="BUILD_DIR_RELATIVE" value="${build.dir.relative}"/>
-        <filter token="DOCS_DIR" value="${docs.dir}"/>
-        <filter token="JAVADOCS_DIR" value="${javadocs.dir}"/>
-        <filter token="JAVADOCS_API_DIR" value="${javadocs.api.dir}"/>
-        <filter token="VERSIONED_CODE_JAR_FILE"
-                value="${versioned_code.jar.file}"/>
-      </filterset>
+	<filterset>
+	    <filter token="OCUTIL_VERSION" value="${api.version}"/>
+	    <filter token="INSTALL_TMP" value="${install.tmp}"/>
+	    <filter token="SRC_INSTALL" value="${src.install}"/>
+	    <filter token="RELEASE_DIR" value="${release.dir}"/>
+	    <filter token="THIRD_PARTY_JAR_DIR" value="${env.HOME}/java/classes"/>
+	    <filter token="TOP_DIR" value="${top.dir}"/>
+	    <filter token="SRC_TOP" value="${src.top}"/>
+	    <filter token="SRC_TOP_RELATIVE" value="${src.top.relative}"/>
+	    <filter token="CLASSES_DIR" value="${compiled.classes.dir}"/>
+	    <filter token="BUILD_DIR" value="${build.dir}"/>
+	    <filter token="BUILD_DIR_RELATIVE" value="${build.dir.relative}"/>
+	    <filter token="DOCS_DIR" value="${docs.dir}"/>
+	    <filter token="JAVADOCS_DIR" value="${javadocs.dir}"/>
+	    <filter token="JAVADOCS_API_DIR" value="${javadocs.api.dir}"/>
+	    <filter token="VERSIONED_CODE_JAR_FILE"
+		value="${versioned_code.jar.file}"/>
+	</filterset>
     </copy>
- </target>
+</target>
 
-  <target name="installer"
-          depends="-set.version.properties, -installer.prep">
+<target name="installer"
+    depends="-set.version.properties, -installer.prep">
 
     <!-- Build the installer -->
 
     <izpack input="${install.tmp}/install.xml"
-            output="${release.dir}/install-ocutil-${api.version}.jar"
-            installerType="standard"
-            basedir="."
-            izPackDir="${izpack.home}">
+	output="${release.dir}/install-ocutil-${api.version}.jar"
+	installerType="standard"
+	basedir="."
+	izPackDir="${izpack.home}">
     </izpack>
-  </target>
+</target>
 
-  <!--
-  ***************************************************************************
-                             Clean-up Targets
-  ***************************************************************************
-  -->
+<!--
+***************************************************************************
+Clean-up Targets
+***************************************************************************
+-->
 
-  <target name="clean"
-        description="clean up" >
+<target name="clean"
+    description="clean up" >
 
     <delete failonerror="false" includeEmptyDirs="true">
-      <fileset dir="${build.dir}"/>
+	<fileset dir="${build.dir}"/>
     </delete>
 
     <delete dir="${install.tmp}"/>
-  </target>
+</target>
 </project>

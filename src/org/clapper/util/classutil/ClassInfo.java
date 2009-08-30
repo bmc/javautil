@@ -72,6 +72,10 @@ import org.objectweb.asm.Opcodes;
  */
 public class ClassInfo extends EmptyVisitor
 {
+    static int ASM_CR_ACCEPT_CRITERIA = ClassReader.SKIP_DEBUG |
+                                        ClassReader.SKIP_FRAMES |
+                                        ClassReader.SKIP_CODE;
+
     /*----------------------------------------------------------------------*\
                             Private Data Items
     \*----------------------------------------------------------------------*/
@@ -98,7 +102,7 @@ public class ClassInfo extends EmptyVisitor
         try
         {
             ClassReader cr = new ClassReader(new FileInputStream(classFile));
-            cr.accept(this, true);
+            cr.accept(this, ASM_CR_ACCEPT_CRITERIA);
         }
 
         catch (IOException ex)
@@ -123,7 +127,7 @@ public class ClassInfo extends EmptyVisitor
         try
         {
             ClassReader cr = new ClassReader(is);
-            cr.accept(this, true);
+            cr.accept(this, ASM_CR_ACCEPT_CRITERIA);
         }
 
         catch (IOException ex)
