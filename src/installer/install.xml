@@ -116,11 +116,11 @@
             targetdir="$INSTALL_PATH/lib"/>
       <file src="@THIRD_PARTY_JAR_DIR@/mail.jar"
             targetdir="$INSTALL_PATH/lib"/>
-      <file src="@THIRD_PARTY_JAR_DIR@/asm-2.2.3.jar"
+      <file src="@THIRD_PARTY_JAR_DIR@/asm-3.2.jar"
             targetdir="$INSTALL_PATH/lib"/>
-      <file src="@THIRD_PARTY_JAR_DIR@/asm-commons-2.2.3.jar"
+      <file src="@THIRD_PARTY_JAR_DIR@/asm-commons-3.2.jar"
             targetdir="$INSTALL_PATH/lib"/>
-      <file src="@THIRD_PARTY_JAR_DIR@/asm-util-2.2.3.jar"
+      <file src="@THIRD_PARTY_JAR_DIR@/asm-util-3.2.jar"
             targetdir="$INSTALL_PATH/lib"/>
 
       <!-- for cleaning up -->
