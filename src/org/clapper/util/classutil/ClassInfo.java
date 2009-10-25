@@ -53,6 +53,11 @@ import java.io.InputStream;
 
 import java.lang.reflect.Modifier;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.EmptyVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
@@ -72,19 +77,19 @@ import org.objectweb.asm.Opcodes;
  */
 public class ClassInfo extends EmptyVisitor
 {
-    static int ASM_CR_ACCEPT_CRITERIA = ClassReader.SKIP_DEBUG |
-                                        ClassReader.SKIP_FRAMES |
-                                        ClassReader.SKIP_CODE;
+    static int ASM_CR_ACCEPT_CRITERIA = 0;
 
     /*----------------------------------------------------------------------*\
                             Private Data Items
     \*----------------------------------------------------------------------*/
 
-    private int      modifier = 0;
-    private String   className = null;
-    private String   superClassName = null;
-    private String[] implementedInterfaces = null;
-    private File     locationFound = null;
+    private int             modifier = 0;
+    private String          className = null;
+    private String          superClassName = null;
+    private String[]        implementedInterfaces = null;
+    private File            locationFound = null;
+    private Set<FieldInfo>  fields = new HashSet<FieldInfo>();
+    private Set<MethodInfo> methods = new HashSet<MethodInfo>();
 
     /*----------------------------------------------------------------------*\
                                 Constructor
@@ -225,6 +230,26 @@ public class ClassInfo extends EmptyVisitor
     }
 
     /**
+     * Get the set of fields in the class.
+     *
+     * @return the set of fields, if any.
+     */
+    public Set<FieldInfo> getFields()
+    {
+        return fields;
+    }
+
+    /**
+     * Get the set of methods in the class.
+     *
+     * @return the set of methods, if any
+     */
+    public Set<MethodInfo> getMethods()
+    {
+        return methods;
+    }
+
+    /**
      * Get a string representation of this object.
      *
      * @return the string representation
@@ -283,6 +308,7 @@ public class ClassInfo extends EmptyVisitor
      * @param interfaces  internal names of all directly implemented
      *                    interfaces
      */
+    @Override
     public void visit(int      version,
                       int      access,
                       String   name,
@@ -291,6 +317,58 @@ public class ClassInfo extends EmptyVisitor
                       String[] interfaces)
     {
         setClassFields(name, superName, interfaces, access, null);
+    }
+
+    /**
+     * "Visit" a field.
+     *
+     * @param access      field access modifiers, etc.
+     * @param name        field name
+     * @param description field description
+     * @param signature   field signature
+     * @param value       field value, if any
+     *
+     * @return null.
+     */
+    @Override
+    public FieldVisitor visitField(int access,
+                                   String name,
+                                   String description,
+                                   String signature,
+                                   Object value)
+    {
+        fields.add(new FieldInfo(access,
+                                 name,
+                                 description,
+                                 signature,
+                                 value));
+        return null;
+    }
+
+    /**
+     * "Visit" a method.
+     *
+     * @param access      field access modifiers, etc.
+     * @param name        field name
+     * @param description field description
+     * @param signature   field signature
+     * @param exceptions  list of exception names the method throws
+     *
+     * @return null.
+     */
+    @Override
+    public MethodVisitor visitMethod(int access,
+                                     String name,
+                                     String description,
+                                     String signature,
+                                     String[] exceptions)
+    {
+        methods.add(new MethodInfo(access,
+                                   name,
+                                   description,
+                                   signature,
+                                   exceptions));
+        return null;
     }
 
     /*----------------------------------------------------------------------*\

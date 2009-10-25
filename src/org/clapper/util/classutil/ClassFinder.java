@@ -115,7 +115,7 @@ import org.objectweb.asm.ClassReader;
  *     {
  *         ClassFinder finder = new ClassFinder();
  *         for (String arg : args)
- *             finder.add (arg);
+ *             finder.add(new File(arg));
  *
  *         ClassFilter filter =
  *             new AndClassFilter
