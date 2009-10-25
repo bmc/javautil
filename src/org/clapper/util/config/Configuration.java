@@ -805,7 +805,7 @@ public class Configuration
         throws NoSuchSectionException,
                NoSuchVariableException
     {
-        Section section = (Section) sectionsByName.get (sectionName);
+        Section section = sectionsByName.get (sectionName);
         if (section == null)
             throw new NoSuchSectionException (sectionName);
 
@@ -843,7 +843,7 @@ public class Configuration
         throws NoSuchSectionException,
                NoSuchVariableException
     {
-        Section section = (Section) sectionsByName.get (sectionName);
+        Section section = sectionsByName.get (sectionName);
         if (section == null)
             throw new NoSuchSectionException (sectionName);
 
@@ -895,9 +895,7 @@ public class Configuration
      * @return the value tokens for the variable, or null if the value
      *         exists but was empty
      *
-     * @throws NoSuchSectionException  the named section does not exist
-     * @throws NoSuchVariableException the section has no such variable
-     * @throws ConfigurationException  some other error
+     * @throws ConfigurationException  some configuration error
      *
      * @see #getConfigurationValue
      *
@@ -905,11 +903,9 @@ public class Configuration
      */
     public String[] getConfigurationTokens (String sectionName,
                                             String variableName)
-        throws NoSuchSectionException,
-               NoSuchVariableException,
-               ConfigurationException
+        throws ConfigurationException
     {
-        Section section = (Section) sectionsByName.get (sectionName);
+        Section section = sectionsByName.get (sectionName);
         if (section == null)
             throw new NoSuchSectionException (sectionName);
 
@@ -999,8 +995,7 @@ public class Configuration
      *
      * @return the value, or the default value if not found
      *
-     * @throws NoSuchSectionException no such section
-     * @throws ConfigurationException bad numeric value
+     * @throws ConfigurationException some configuration error
      *
      * @see #getOptionalCardinalValue
      * @see #getRequiredIntegerValue
@@ -1008,8 +1003,7 @@ public class Configuration
     public int getOptionalIntegerValue (String sectionName,
                                         String variableName,
                                         int    defaultValue)
-        throws NoSuchSectionException,
-               ConfigurationException
+        throws ConfigurationException
     {
         int result = defaultValue;
 
@@ -1034,18 +1028,15 @@ public class Configuration
      *
      * @return the value
      *
-     * @throws NoSuchSectionException  no such section
-     * @throws NoSuchVariableException no such variable
-     * @throws ConfigurationException  bad numeric value
+     * @throws ConfigurationException  some configuration error, including bad
+     *                                 numeric value
      *
      * @see #getRequiredCardinalValue
      * @see #getOptionalIntegerValue
      */
     public int getRequiredIntegerValue (String sectionName,
                                         String variableName)
-        throws NoSuchSectionException,
-               NoSuchVariableException,
-               ConfigurationException
+        throws ConfigurationException
     {
         String sNum = getConfigurationValue (sectionName, variableName);
 
@@ -1084,8 +1075,7 @@ public class Configuration
      *
      * @return the value, or the default value if not found
      *
-     * @throws NoSuchSectionException no such section
-     * @throws ConfigurationException bad numeric value
+     * @throws ConfigurationException bad numeric value, or other config error
      *
      * @see #getOptionalIntegerValue
      * @see #getRequiredCardinalValue
@@ -1093,8 +1083,7 @@ public class Configuration
     public int getOptionalCardinalValue (String sectionName,
                                          String variableName,
                                          int    defaultValue)
-        throws NoSuchSectionException,
-               ConfigurationException
+        throws ConfigurationException
     {
         assert (defaultValue >= 0);
         int result = defaultValue;
@@ -1120,18 +1109,14 @@ public class Configuration
      *
      * @return the value
      *
-     * @throws NoSuchSectionException  no such section
-     * @throws NoSuchVariableException no such variable
-     * @throws ConfigurationException  bad numeric value
+     * @throws ConfigurationException  bad numeric value, or other config error
      *
      * @see #getOptionalCardinalValue
      * @see #getRequiredIntegerValue
      */
     public int getRequiredCardinalValue (String sectionName,
                                          String variableName)
-        throws NoSuchSectionException,
-               NoSuchVariableException,
-               ConfigurationException
+        throws ConfigurationException
     {
         String sNum = getConfigurationValue (sectionName, variableName);
         int i = getRequiredIntegerValue (sectionName, variableName);
@@ -1164,14 +1149,12 @@ public class Configuration
      *
      * @return the value, or the default value if not found
      *
-     * @throws NoSuchSectionException no such section
-     * @throws ConfigurationException bad numeric value
+     * @throws ConfigurationException bad numeric value or other config error
      */
     public double getOptionalDoubleValue (String sectionName,
                                           String variableName,
                                           double defaultValue)
-        throws NoSuchSectionException,
-               ConfigurationException
+        throws ConfigurationException
     {
         double result = defaultValue;
 
@@ -1197,15 +1180,11 @@ public class Configuration
      *
      * @return the value
      *
-     * @throws NoSuchSectionException  no such section
-     * @throws NoSuchVariableException no such variable
-     * @throws ConfigurationException  bad numeric value
+     * @throws ConfigurationException  bad numeric value or other config error
      */
     public double getRequiredDoubleValue (String sectionName,
                                           String variableName)
-        throws NoSuchSectionException,
-               NoSuchVariableException,
-               ConfigurationException
+        throws ConfigurationException
     {
         String sNum = getConfigurationValue (sectionName, variableName);
 
@@ -1241,16 +1220,14 @@ public class Configuration
      *
      * @return the value, or the default value if not found
      *
-     * @throws NoSuchSectionException no such section
-     * @throws ConfigurationException bad numeric value
+     * @throws ConfigurationException bad numeric value, or other config error
      */
     public boolean getOptionalBooleanValue (String  sectionName,
                                             String  variableName,
                                             boolean defaultValue)
-        throws NoSuchSectionException,
-               ConfigurationException
+        throws ConfigurationException
     {
-        boolean result = defaultValue;
+        boolean result;
 
         try
         {
@@ -1283,19 +1260,15 @@ public class Configuration
      *
      * @return the value
      *
-     * @throws NoSuchSectionException  no such section
-     * @throws NoSuchVariableException no such variable
-     * @throws ConfigurationException  bad numeric value
+     * @throws ConfigurationException  bad numeric value, or other config error
      */
     public boolean getRequiredBooleanValue (String sectionName,
                                             String variableName)
-        throws NoSuchSectionException,
-               ConfigurationException,
-               NoSuchVariableException
+        throws ConfigurationException
+
     {
-        return Boolean.valueOf (getConfigurationValue (sectionName,
-                                                       variableName))
-                      .booleanValue();
+        return Boolean.getBoolean(getConfigurationValue(sectionName,
+                                                        variableName));
     }
 
     /**
@@ -1309,14 +1282,12 @@ public class Configuration
      *
      * @return the value, or the default value if not found
      *
-     * @throws NoSuchSectionException no such section
-     * @throws ConfigurationException bad numeric value
+     * @throws ConfigurationException bad numeric value or other config error
      */
     public String getOptionalStringValue (String sectionName,
                                           String variableName,
                                           String defaultValue)
-        throws NoSuchSectionException,
-               ConfigurationException
+        throws ConfigurationException
     {
         String result;
 
@@ -1358,7 +1329,7 @@ public class Configuration
         throws VariableSubstitutionException
     {
         int                  i;
-        Section              section = null;
+        Section              section;
         String               sectionName;
         String               value = null;
         SubstitutionContext  substContext = (SubstitutionContext) context;
@@ -1518,16 +1489,14 @@ public class Configuration
      *
      * @throws IOException                  read error
      * @throws ConfigurationException       parse error
-     * @throws UnsupportedEncodingException bad encoding
      */
     public void load(File file, String encoding)
         throws IOException,
-               ConfigurationException,
-               UnsupportedEncodingException
+               ConfigurationException
     {
         clear();
         URL url = file.toURI().toURL();
-        parse (new FileInputStream (file), encoding, url);
+        parse (new FileInputStream(file), encoding, url);
         this.configURL = url;
     }
 
@@ -1541,52 +1510,32 @@ public class Configuration
      * @throws IOException             can't open or read file
      * @throws ConfigurationException  error in configuration data
      */
-    public void load (String path)
-        throws FileNotFoundException,
-               IOException,
+    public void load(String path)
+        throws IOException,
                ConfigurationException
     {
-        clear();
-        URL url = new File (path).toURI().toURL();
-        parse (new FileInputStream (path), url);
-        this.configURL = url;
+        load(path, null);
     }
 
     /**
-     * Load configuration from a file specified as a pathname. Any existing
-     * data is discarded.
+     * Load configuration from a file specified as a pathname. Any existing data
+     * is discarded.
      *
-     * @param path  the path
+     * @param path     the path
+     * @param encoding the encoding to use, or null for the default
      *
-     * @throws FileNotFoundException   specified file doesn't exist
-     * @throws IOException             can't open or read file
-     * @throws ConfigurationException  error in configuration data
+     * @throws FileNotFoundException        specified file doesn't exist
+     * @throws IOException                  can't open or read file
+     * @throws ConfigurationException       error in configuration data
+     * @throws UnsupportedEncodingException bad encoding
      */
-    public void load (String path)
-        throws FileNotFoundException,
-               IOException,
-               ConfigurationException
-    {
-        clear();
-        URL url = new File (path).toURI().toURL();
-        parse (new FileInputStream (path), url);
-        this.configURL = url;
-    }
-
-    /**
-     * Load configuration from a URL. Any existing data is discarded.
-     *
-     * @param url  the URL
-     *
-     * @throws IOException            read error
-     * @throws ConfigurationException parse error
-     */
-    public void load (URL url)
+    public void load(String path, String encoding)
         throws IOException,
                ConfigurationException
     {
         clear();
-        parse (url.openStream(), url);
+        URL url = new File(path).toURI().toURL();
+        parse(new FileInputStream(path), encoding, url);
         this.configURL = url;
     }
 
@@ -1599,12 +1548,30 @@ public class Configuration
      * @throws IOException             can't open or read URL
      * @throws ConfigurationException  error in configuration data
      */
-    public void load (InputStream iStream)
+    public void load(InputStream iStream)
+        throws IOException,
+               ConfigurationException
+    {
+        load(iStream, null);
+    }
+
+    /**
+     * Load configuration from an <tt>InputStream</tt>. Any existing data
+     * is discarded.
+     *
+     * @param iStream  the <tt>InputStream</tt>
+     * @param encoding the encoding to use, or null for the default
+     *
+     * @throws IOException                  can't open or read URL
+     * @throws ConfigurationException       error in configuration data
+     * @throws UnsupportedEncodingException bad encoding
+     */
+    public void load(InputStream iStream, String encoding)
         throws IOException,
                ConfigurationException
     {
         clear();
-        parse (iStream, null);
+        parse(iStream, encoding, null);
     }
 
     /**
@@ -1636,7 +1603,7 @@ public class Configuration
         if (section == null)
             throw new NoSuchSectionException (sectionName);
 
-        Variable variable = null;
+        Variable variable;
 
         try
         {
@@ -1782,7 +1749,8 @@ public class Configuration
      * @param encoding the encoding to use, or null for the default
      * @param url      the URL associated with the stream, or null if not known
      *
-     * @throws ConfigurationException parse error
+     * @throws ConfigurationException       parse error
+     * @throws UnsupportedEncodingException bad encoding
      */
     private synchronized void parse (InputStream in, String encoding, URL url)
         throws ConfigurationException,
@@ -1801,14 +1769,13 @@ public class Configuration
      * @param url          URL associated with the stream, or null if not known
      * @param parseContext current parsing context
      *
-     * @throws IOException                  read error
      * @throws ConfigurationException       parse error
      * @throws UnsupportedEncodingException bad encoding
      */
-    private void loadConfiguration (InputStream  in,
-                                    String       encoding,
-                                    URL          url,
-                                    ParseContext parseContext)
+    private void loadConfiguration(InputStream  in,
+                                   String       encoding,
+                                   URL          url,
+                                   ParseContext parseContext)
         throws ConfigurationException,
                UnsupportedEncodingException
     {
@@ -1848,7 +1815,7 @@ public class Configuration
 
         InputStreamReader ir;
         if (encoding == null)
-            ir = new InputStreamReader (in)
+            ir = new InputStreamReader(in);
         else
             ir = new InputStreamReader(in, encoding);
         r = new BufferedReader(ir);
@@ -2100,11 +2067,9 @@ public class Configuration
     private void checkVariableName (String varName)
         throws ConfigurationException
     {
-        char[] ch = varName.toCharArray();
-
-        for (int i = 0; i < ch.length; i++)
+        for (char c : varName.toCharArray())
         {
-            if (! legalVariableCharacter (ch[i]))
+            if (! legalVariableCharacter (c))
             {
                 throw new ConfigurationException
                                       (Package.BUNDLE_NAME,
@@ -2125,15 +2090,13 @@ public class Configuration
      *
      * @throws IOException                  I/O error opening or reading include
      * @throws ConfigurationException       configuration error
-     * @throws UnsupportedEncodingException bad encoding
      */
     private void handleInclude (Line         line,
                                 URL          url,
                                 String       encoding,
                                 ParseContext parseContext)
         throws IOException,
-               ConfigurationException,
-               UnsupportedEncodingException
+               ConfigurationException
     {
         if (parseContext.includeFileNestingLevel >= MAX_INCLUDE_NESTING_LEVEL)
         {
@@ -2426,8 +2389,6 @@ public class Configuration
      *
      * @param var The current variable being processed
      *
-     * @return the expanded result
-     *
      * @throws VariableSubstitutionException variable substitution error
      * @throws ConfigurationException        some other configuration error
      */
@@ -2437,9 +2398,8 @@ public class Configuration
     {
         ValueSegment[] segments = var.getCookedSegments();
 
-        for (int i = 0; i < segments.length; i++)
+        for (ValueSegment segment : segments)
         {
-            ValueSegment segment = segments[i];
             if (segment.isLiteral)
                 continue;
 
@@ -2454,8 +2414,6 @@ public class Configuration
      * @param substituter    VariableSubstituter to use
      * @param concatSegments Re-concatenate the segments
      *
-     * @return the expanded result
-     *
      * @throws VariableSubstitutionException variable substitution error
      * @throws ConfigurationException        some other configuration error
      */
@@ -2468,14 +2426,13 @@ public class Configuration
         ValueSegment[] segments = var.getCookedSegments();
         SubstitutionContext context = new SubstitutionContext (var);
 
-        for (int i = 0; i < segments.length; i++)
+        for (ValueSegment segment : segments)
         {
             // Keep substituting the current variable's value until there
             // no more substitutions are performed. This handles the case
             // where a dereferenced variable value contains its own
             // variable references.
 
-            ValueSegment segment = segments[i];
             if (segment.isLiteral)
                 continue;
 
@@ -2493,19 +2450,6 @@ public class Configuration
 
         if (concatSegments)
             var.reassembleCookedValueFromSegments();
-    }
-
-    /**
-     * Get index of first non-whitespace character.
-     *
-     * @param s     string to check
-     * @param start starting point
-     *
-     * @return index of first non-whitespace character past "start", or -1
-     */
-    private int skipWhitespace (String s, int start)
-    {
-        return skipWhitespace (s.toCharArray(), start);
     }
 
     /**

@@ -1,6 +1,13 @@
 ---------------------------------------------------------------------------
 CHANGELOG: org.clapper.util Java API
 
+Version 2.5.1 (...)
+
+- org.clapper.util.config.Configuration now permits specification of encoding
+  on the file or URL being loaded.
+
+---------------------------------------------------------------------------
+
 Version 2.5 (25 October, 2009)
 
 - Updated to ASM version 3.2. Thanks to Charles Johnson 
