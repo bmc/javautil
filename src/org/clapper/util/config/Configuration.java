@@ -1540,6 +1540,39 @@ public class Configuration
     }
 
     /**
+     * Load the configuration from a URL.
+     *
+     * @param url      the URL
+     *
+     * @throws IOException            on I/O error
+     * @throws ConfigurationException on configuration error
+     */
+    public void load(URL url)
+        throws IOException,
+               ConfigurationException
+    {
+            load(url, null);
+    }
+
+    /**
+     * Load the configuration from a URL.
+     *
+     * @param url      the URL
+     * @param encoding the encoding, if known, or null
+     *
+     * @throws IOException            on I/O error
+     * @throws ConfigurationException on configuration error
+     */
+    public void load(URL url, String encoding)
+        throws IOException,
+               ConfigurationException
+    {
+        clear();
+        parse(url.openStream(), encoding, url);
+        this.configURL = url;
+    }
+
+    /**
      * Load configuration from an <tt>InputStream</tt>. Any existing data
      * is discarded.
      *
