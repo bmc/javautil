@@ -108,7 +108,7 @@
       To set it manually, ensure that there's no ASM_HOME environment
       variable, and change the value of asm.home.default, below.
   -->
-  <property name="asm.home.default" value="${top.dir}/lib/asm"/>
+  <property name="asm.home.default" value=""/>
   <condition property="asm.home"
              value="${env.ASM_HOME}"
              else="${asm.home.default}">
@@ -122,7 +122,7 @@
   ***************************************************************************
   -->
 
-  <condition property="third.party.jar.dir" value="${top.dir}/lib">
+  <condition property="third.party.jar.dir" value="${env.HOME}/java/classes">
     <not>
       <isset property="third.party.jar.dir"/>
     </not>
