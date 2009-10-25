@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------------
 CHANGELOG: org.clapper.util Java API
 
-Version 2.5 (...)
+Version 2.5 (25 October, 2009)
 
 - Updated to ASM version 3.2. Thanks to Charles Johnson 
   (cj <at> technojeeves.com) for suggesting this upgrade and for providing
@@ -9,6 +9,8 @@ Version 2.5 (...)
 - The build.xml file now honors the value of the ASM_HOME environment
   variable, to find the location of the ASM bytecode library. If the bytecode
   library isn't present, the org.clapper.util.classutil package isn't built.
+- org.clapper.util.classutil.ClassInfo now contains information about a class's
+  methods and fields.
 
 ---------------------------------------------------------------------------
 
