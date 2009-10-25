@@ -46,15 +46,7 @@
 
 package org.clapper.util.config;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
+import java.io.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -625,80 +617,6 @@ public class Configuration
     public Configuration()
     {
         // Nothing to do
-    }
-
-    /**
-     * Construct a <tt>Configuration</tt> object that parses data from
-     * the specified file.
-     *
-     * @param f  The <tt>File</tt> to open and parse
-     *
-     * @throws IOException             can't open or read file
-     * @throws ConfigurationException  error in configuration data
-     *
-     * @deprecated as of 2.3 (unsafe); use {@link #load(File)} instead
-     */
-    public Configuration (File f)
-        throws IOException,
-               ConfigurationException
-    {
-        load (f);                                                   // NOPMD
-    }
-
-    /**
-     * Construct a <tt>Configuration</tt> object that parses data from
-     * the specified file.
-     *
-     * @param path  the path to the file to parse
-     *
-     * @throws FileNotFoundException   specified file doesn't exist
-     * @throws IOException             can't open or read file
-     * @throws ConfigurationException  error in configuration data
-     *
-     * @deprecated as of version 2.3 (unsafe); use {@link #load(File)} instead
-     */
-    public Configuration (String path)
-        throws FileNotFoundException,
-               IOException,
-               ConfigurationException
-    {
-        load (path);                                                   // NOPMD
-    }
-
-    /**
-     * Construct a <tt>Configuration</tt> object that parses data from
-     * the specified URL.
-     *
-     * @param url  the URL to open and parse
-     *
-     * @throws IOException             can't open or read URL
-     * @throws ConfigurationException  error in configuration data
-     *
-     * @deprecated as of version 2.3 (unsafe); use {@link #load(File)} instead
-     */
-    public Configuration (URL url)
-        throws IOException,
-               ConfigurationException
-    {
-        load (url);                                                   // NOPMD
-    }
-
-    /**
-     * Construct a <tt>Configuration</tt> object that parses data from
-     * the specified <tt>InputStream</tt>.
-     *
-     * @param iStream  the <tt>InputStream</tt>
-     *
-     * @throws IOException             can't read from <tt>InputStream</tt>
-     * @throws ConfigurationException  error in configuration data
-     *
-     * @deprecated as of version 2.3 (unsafe); use {@link #load(File)} instead
-     */
-    public Configuration (InputStream iStream)
-        throws IOException,
-               ConfigurationException
-    {
-        load (iStream);                                                   // NOPMD
     }
 
     /*----------------------------------------------------------------------*\
@@ -1584,13 +1502,53 @@ public class Configuration
      * @throws IOException            read error
      * @throws ConfigurationException parse error
      */
-    public void load (File file)
+    public void load(File file)
         throws IOException,
                ConfigurationException
     {
+        load(file, null);
+    }
+
+    /**
+     * Load configuration from a <tt>File</tt>. Any existing data is
+     * discarded.
+     *
+     * @param file     the file
+     * @param encoding the encoding to use, or null for the default
+     *
+     * @throws IOException                  read error
+     * @throws ConfigurationException       parse error
+     * @throws UnsupportedEncodingException bad encoding
+     */
+    public void load(File file, String encoding)
+        throws IOException,
+               ConfigurationException,
+               UnsupportedEncodingException
+    {
         clear();
         URL url = file.toURI().toURL();
-        parse (new FileInputStream (file), url);
+        parse (new FileInputStream (file), encoding, url);
+        this.configURL = url;
+    }
+
+    /**
+     * Load configuration from a file specified as a pathname. Any existing
+     * data is discarded.
+     *
+     * @param path  the path
+     *
+     * @throws FileNotFoundException   specified file doesn't exist
+     * @throws IOException             can't open or read file
+     * @throws ConfigurationException  error in configuration data
+     */
+    public void load (String path)
+        throws FileNotFoundException,
+               IOException,
+               ConfigurationException
+    {
+        clear();
+        URL url = new File (path).toURI().toURL();
+        parse (new FileInputStream (path), url);
         this.configURL = url;
     }
 
@@ -1820,15 +1778,17 @@ public class Configuration
     /**
      * Parse configuration data from the specified stream.
      *
-     * @param in    the input stream
-     * @param url   the URL associated with the stream, or null if not known
+     * @param in       the input stream
+     * @param encoding the encoding to use, or null for the default
+     * @param url      the URL associated with the stream, or null if not known
      *
      * @throws ConfigurationException parse error
      */
-    private synchronized void parse (InputStream in, URL url)
-        throws ConfigurationException
+    private synchronized void parse (InputStream in, String encoding, URL url)
+        throws ConfigurationException,
+               UnsupportedEncodingException
     {
-        loadConfiguration (in, url, new ParseContext());
+        loadConfiguration (in, encoding, url, new ParseContext());
     }
 
     /**
@@ -1837,16 +1797,20 @@ public class Configuration
      * though.
      *
      * @param in           input stream
+     * @param encoding     the encoding to use, or null for the default
      * @param url          URL associated with the stream, or null if not known
      * @param parseContext current parsing context
      *
-     * @throws IOException            read error
-     * @throws ConfigurationException parse error
+     * @throws IOException                  read error
+     * @throws ConfigurationException       parse error
+     * @throws UnsupportedEncodingException bad encoding
      */
     private void loadConfiguration (InputStream  in,
+                                    String       encoding,
                                     URL          url,
                                     ParseContext parseContext)
-        throws ConfigurationException
+        throws ConfigurationException,
+               UnsupportedEncodingException
     {
         BufferedReader r;
         Line           line = new Line();
@@ -1882,7 +1846,13 @@ public class Configuration
         // Parse the entire file into memory before doing variable
         // substitution and metacharacter expansion.
 
-        r = new BufferedReader (new InputStreamReader (in));
+        InputStreamReader ir;
+        if (encoding == null)
+            ir = new InputStreamReader (in)
+        else
+            ir = new InputStreamReader(in, encoding);
+        r = new BufferedReader(ir);
+
         while (readLogicalLine (r, line))
         {
             try
@@ -1894,7 +1864,7 @@ public class Configuration
                         break;
 
                     case INCLUDE:
-                        handleInclude (line, url, parseContext);
+                        handleInclude (line, url, encoding, parseContext);
                         break;
 
                     case SECTION:
@@ -2149,17 +2119,21 @@ public class Configuration
      * Handle an include directive.
      *
      * @param line         line buffer
+     * @param encoding     the encoding to use, or null for the default
      * @param url          URL currently being processed, or null if unknown
      * @param parseContext current parsing context
      *
-     * @throws IOException             I/O error opening or reading include
-     * @throws ConfigurationException  configuration error
+     * @throws IOException                  I/O error opening or reading include
+     * @throws ConfigurationException       configuration error
+     * @throws UnsupportedEncodingException bad encoding
      */
     private void handleInclude (Line         line,
                                 URL          url,
+                                String       encoding,
                                 ParseContext parseContext)
         throws IOException,
-               ConfigurationException
+               ConfigurationException,
+               UnsupportedEncodingException
     {
         if (parseContext.includeFileNestingLevel >= MAX_INCLUDE_NESTING_LEVEL)
         {
@@ -2225,7 +2199,7 @@ public class Configuration
 
         try
         {
-            loadInclude (new URL (includeTarget), parseContext);
+            loadInclude (new URL (includeTarget), encoding, parseContext);
         }
 
         catch (MalformedURLException ex)
@@ -2240,6 +2214,7 @@ public class Configuration
                                       url.getHost(),
                                       url.getPort(),
                                       includeTarget),
+                             encoding,
                              parseContext);
             }
 
@@ -2252,6 +2227,7 @@ public class Configuration
                 if (url == null)
                 {
                     loadInclude (new File (includeTarget).toURI().toURL(),
+                                 encoding,
                                  parseContext);
                 }
 
@@ -2266,6 +2242,7 @@ public class Configuration
                                           url.getHost(),
                                           url.getPort(),
                                           parent + "/" + includeTarget),
+                                 encoding,
                                  parseContext);
                 }
             }
@@ -2279,16 +2256,19 @@ public class Configuration
      * a simplified front-end to loadConfiguration().
      *
      * @param url          the URL to be included
+     * @param encoding     the encoding to use, or null for the default
      * @param parseContext current parsing context
      *
      * @throws IOException  I/O error
      * @throws ConfigurationException configuration error
      */
-    private void loadInclude (URL url, ParseContext parseContext)
+    private void loadInclude (URL url,
+                              String encoding,
+                              ParseContext parseContext)
         throws IOException,
                ConfigurationException
     {
-        loadConfiguration (url.openStream(), url, parseContext);
+        loadConfiguration (url.openStream(), encoding, url, parseContext);
     }
 
     /**
