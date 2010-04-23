@@ -5,6 +5,7 @@ Version 2.5.2 (23 April, 2010)
 
 - Fixed problem with parsing of boolean flags in configuration files,
   introduced in previous release.
+- Changed license to a true, new-style BSD license.
 
 ---------------------------------------------------------------------------
 
