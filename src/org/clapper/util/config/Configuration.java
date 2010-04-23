@@ -1267,8 +1267,22 @@ public class Configuration
         throws ConfigurationException
 
     {
-        return Boolean.getBoolean(getConfigurationValue(sectionName,
-                                                        variableName));
+        String val = getConfigurationValue(sectionName, variableName);
+        try
+        {
+            return TextUtil.booleanFromString(val);
+        }
+
+        catch (IllegalArgumentException ex)
+        {
+            throw new ConfigurationException
+                (Package.BUNDLE_NAME,
+                 "Configuration.badBooleanValue",
+                 "Bad boolean value \"{0}\" for variable \"{1}\" in " +
+                 "section \"{2}\".\n",
+                 new Object[] {val, variableName, sectionName});
+        }
+
     }
 
     /**
