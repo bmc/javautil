@@ -10,7 +10,6 @@ The library is Copyright &copy; 2004-2010, Brian M. Clapper, is released
 under a BSD License.
 
 Please see the [home page][] for more information, downloads, and the like.
-please visit the [*curn* home page][].
 
 [home page]: http://bmc.github.com/javautil/
 
