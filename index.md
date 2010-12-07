@@ -95,7 +95,7 @@ Linux users may find packages (RPMs, DEBs, etc.) for those libraries.
    `build.xml` file), create a file called `build.properties` containing the
    following line:
    
->    third.party.jar.dir: /path/to/directory/containing/jars
+    `third.party.jar.dir: /path/to/directory/containing/jars`
 
 ## Building
 
