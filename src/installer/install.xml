@@ -54,7 +54,7 @@
     <authors>
       <author name="Brian Clapper" email="bmc@clapper.org"/>
     </authors>
-    <url>http://www.clapper.org/software/java/util/</url>
+    <url>http://software.clapper.org/javautil/</url>
     <javaversion>1.5</javaversion>
   </info>
 

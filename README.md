@@ -11,5 +11,5 @@ under a BSD License.
 
 Please see the [home page][] for more information, downloads, and the like.
 
-[home page]: http://bmc.github.com/javautil/
+[home page]: http://software.clapper.org/javautil/
 
