@@ -6,7 +6,8 @@ layout: default
 Version 3.0 (16 September, 2011)
 
 * Now builds with Maven.
-* Now published to org.clapper Maven repository.
+* Now published to org.clapper Maven repository. See the
+  [web page](http://software.clapper.org/javautil/) for details.
 * `org.clapper.util.ant` has been removed.
 * `org.clapper.util.scripting` has been removed.
 
