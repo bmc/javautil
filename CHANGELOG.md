@@ -3,6 +3,17 @@ title: Change log for org.clapper.util Java Utility Library
 layout: default
 ---
 
+Version 3.0.1 (17 September, 2011)
+
+* Switched to Apache [Buildr][], because Buildr's Ruby-based build files
+  are more powerful and flexible, and much easier to read and maintain,
+  than [Maven][]'s POM files.
+
+[Buildr]: http://buildr.apache.org/
+[Maven]: http://maven.apache.org/
+
+----
+
 Version 3.0 (16 September, 2011)
 
 * Now builds with Maven.
