@@ -12,51 +12,50 @@ frequently update and revise its contents.
 
 # Installation
 
-There are two ways to install the *org.clapper.util* library:
+The easiest way to install the jar is via [Maven][]. The Java Utility Library
+is published to my personal Maven repository at *maven.clapper.org*. To access
+it, add the following repository to your `pom.xml`:
 
-* Via an [IzPack][] installer jar, available on the [Downloads][] page
-* Manually
+    <repositories>
+      <repository>
+        <releases>
+          <enabled>true</enabled>
+          <updatePolicy>always</updatePolicy>
+          <checksumPolicy>warn</checksumPolicy>
+        </releases>
+        <id>clapper-org-maven-repo</id>
+        <name>org.clapper Maven Repo</name>
+        <url>http://maven.clapper.org/</url>
+        <layout>default</layout>
+      </repository>
+      ...
+    </repositories>
 
-Each method is described below.
+Then, add the following dependency to your `<dependencies>` section:
 
-Unfortunately, this library is not yet available via any [Maven][]
-repository.
-
-## Installing with the Installer Jar
-
-[IzPack][] installers support both a graphical installation mode (the
-default) and a command-line installation mode (by specifying a `-console`
-parameter to the invocation).
-
-This installation method is preferred, since it's simple, it automatically
-bundles and installs all dependent third-party libraries, and it provides a
-convenient way to upgrade or uninstall the package.
-
-To install via the graphical installer:
-
-* Download the installer jar from the [Downloads][] page.
-* Run the installer jar: `java -jar install-ocutil-xxxx.jar`
-* Follow the instructions in the graphical installation screens.
-
-Once you've installed the library via the installer, be sure to add the
-path to the library's jar file to your `CLASSPATH`.
+    <dependency>
+      <groupId>org.clapper</groupId>
+      <artifactId>javautil</artifactId>
+      <version>3.0</version>
+    </dependency>
 
 ## Installing Manually
 
-Instead of using the installer, you can install the binary jar file
-manually. Doing so means you're also responsible for ensuring that the
-dependent third-party jar files are available on your system.
+If you're not using Maven (e.g., if you're still using [Ant][]), you'll
+have to download the jar and its dependent jars, and install them manually.
 
-To install the binary jar file (see the [Downloads][] page), simply place
-it somewhere in your CLASSPATH. This software assumes a 1.5 JDK or better,
-and it depends on the following third-party libraries:
+The compiled jar is located at
+<http://maven.clapper.org/org/clapper/javautil/3.0/javautil-3.0.jar>.
+
+This software assumes a 1.5 JDK or better, and it depends on the following
+third-party libraries:
 
 * The [JavaMail][] jar.
 * The [JavaBeans Activation Framework][jaf] (JAF), if you're using a 1.5 JDK.
   (JAF is bundled with Java 1.6.)
-* The jars for version 2 of the [ASM][] bytecode manipulation library.
+* The jars for version 3.3.1 of the [ASM][] bytecode manipulation library.
 
-*However...* you're much better off just using the graphical installer.
+*However...* you're much better off using Maven, if you can.
 
 # Documentation
 
@@ -66,50 +65,21 @@ and it depends on the following third-party libraries:
 
 # Building from Source
 
-The library does not currently build with [Maven][], so building it from
-source is a bit of a pain.
+The library builds with [Maven][], so building from source is generally
+straightforward.
 
-## Third-party Software
+First, clone a copy of the Git repository:
 
-Before building *org.clapper.util*, you'll need
+    git clone git://github.com/bmc/javautil.git
 
-* [Jakarta Ant][Ant], version 1.6.5 or better.
-* The [JavaMail][] jar.
-* The [JavaBeans Activation Framework][jaf] (JAF), if you're using a 1.5 JDK.
-  (JAF is bundled with Java 1.6.)
-* The jars for version 2 of the [ASM][] bytecode manipulation library.
-* The `izpack-compiler.jar` file from the [IzPack][] distribution. This is
-  only necessary if you're going to build the installer.
+Then, change your working directory to the newly-created `javautil` directory,
+and type:
 
-[FreeBSD][] users will find ports for many of the third-party libraries.
-Linux users may find packages (RPMs, DEBs, etc.) for those libraries.
-
-## Prepare the Build Environment
-
-1. Once you've downloaded the various third-party jar files, place them in
-   a directory somewhere.
-2. Download the source from the [downloads area][] and unzip it, or
-   get the code from the [GitHub repository][].
-3. Change your working directory to the top-level `javautil` source directory.
-4. In the topmost source directory (i.e., the directory containing the
-   `build.xml` file), create a file called `build.properties` containing the
-   following line:
-   
-    `third.party.jar.dir: /path/to/directory/containing/jars`
-
-## Building
-
-* Type `ant build` to compile the code and create the jar file. The jar file
-  ends up in the `build/lib` subdirectory.
-* To create the Javadocs, type `ant javadocs`. (This step is optional.)
-* To create version-stamped release files, type `ant release`. The
-  resulting files end up in the `build/release` directory.
-* To create the installer, type `ant release installer`. The installer jar
-  file will end up in the `build/release` directory.
+    mvn package
 
 # Copyright and License
 
-This library is copyright &copy; 2004-2010 Brian M. Clapper and is released
+This library is copyright &copy; 2004-2011 Brian M. Clapper and is released
 under a [BSD License][].
 
 # Patches
@@ -122,6 +92,7 @@ request. Along with any patch you send:
 * Please indicate that you license the work to the *org.clapper.util* project
   under a [BSD License][].
 
+[Ant]: http://ant.apache.org/
 [BSD License]: license.html
 [GitHub repository]: http://github.com/bmc/javautil
 [GitHub]: http://github.com/bmc/
