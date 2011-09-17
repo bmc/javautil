@@ -136,7 +136,7 @@ request. Along with any patch you send:
 [jaf]: http://java.sun.com/products/archive/javabeans/jaf102.html
 [ASM]: http://asm.ow2.org/
 [javadocs]: api/index.html
-[CHANGELOG]: CHANGELOG.txt
+[CHANGELOG]: CHANGELOG.html
 [Buildr]: http://buildr.apache.org/
 [SBT]: https://github.com/harrah/xsbt/
 [download and install Buildr]: http://buildr.apache.org/installing.html
