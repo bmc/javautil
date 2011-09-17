@@ -81,4 +81,12 @@
     </plugins>
   </build>
 
+  <distributionManagement>
+    <repository>
+      <id>clapper-org-maven-repo</id>
+      <name>clapper.org Maven Repository</name>
+      <url>scp://maven.clapper.org/var/www/maven.clapper.org/html</url>
+    </repository>
+  </distributionManagement>
+
 </project>
