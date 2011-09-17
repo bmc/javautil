@@ -52,8 +52,9 @@ If you're using Apache [Buildr][], the following lines should do the trick:
 
 ## Installing Manually
 
-If you're not using Maven (e.g., if you're still using [Ant][]), you'll
-have to download the jar and its dependent jars, and install them manually.
+If you're not using [Maven][], or [Buildr][], or [SBT][] or somthing else
+reasonably sane (e.g., if you're still using [Ant][]), you'll have to
+download the jar and its dependent jars, and install them manually.
 
 The compiled jar is located at
 <http://maven.clapper.org/org/clapper/javautil/3.0.1/javautil-3.0.1.jar>.
