@@ -72,11 +72,8 @@ public class FileHashMapTest extends MapTestBase
             map.put("a", 1);
             map.put("b", 2);
             map.put("c", 3);
-
-            System.out.println("Writing map.");
             map.save();
 
-            System.out.println("Rereading map.");
             FileHashMap<String,Integer> map2 =
                 new FileHashMap<String,Integer>(FILE_PREFIX, 0);
 

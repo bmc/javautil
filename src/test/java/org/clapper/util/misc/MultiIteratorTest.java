@@ -173,7 +173,7 @@ public class MultiIteratorTest extends TestCase
 
         while (it.hasNext())
         {
-            System.out.println("Removing " + it.next());
+            it.next();
             it.remove();
         }
 
