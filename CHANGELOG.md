@@ -1,6 +1,6 @@
 # CHANGELOG: org.clapper.util Java API
 
-Version 3.0 (...)
+Version 3.0 (16 September, 2011)
 
 * Now builds with Maven.
 * Now published to org.clapper Maven repository.
