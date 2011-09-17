@@ -3,19 +3,24 @@
 # ---------------------------------------------------------------------------
 
 # Dependencies.
-JAVAX           = 'javax.activation:activation:jar:1.1-rev-1'
-JAVAMAIL        = 'javax.mail:mail:jar:1.4.4'
-ASM             = 'asm:asm:jar:3.3.1'
-ASM_COMMONS     = 'asm:asm-commons:jar:3.3.1'
-COMMONS_LOGGING = transitive('commons-logging:commons-logging:jar:1.1.1')
+JAVAX            = 'javax.activation:activation:jar:1.1-rev-1'
+JAVAMAIL         = 'javax.mail:mail:jar:1.4.4'
+ASM              = 'asm:asm:jar:3.3.1'
+ASM_COMMONS      = 'asm:asm-commons:jar:3.3.1'
+COMMONS_LOGGING  = transitive('commons-logging:commons-logging:jar:1.1.1')
 
-LOG4J           = 'log4j:log4j:jar:1.2.16'
+LOG4J            = 'log4j:log4j:jar:1.2.16'
 
 # Where we publish
-UPLOAD_REPO     = 'sftp://maven.clapper.org/var/www/maven.clapper.org/html'
+UPLOAD_REPO      = 'sftp://maven.clapper.org/var/www/maven.clapper.org/html'
+
+# Where we copy the API docs and change log
+API_DOC_TARGET   = '../gh-pages/api'
+CHANGELOG_TARGET = '../gh-pages/CHANGELOG.md'
 
 # Some local tasks and task aliases
 Project.local_task :publish
+Project.local_task :copydoc
 
 # The project definition itself.
 define 'javautil' do
@@ -35,5 +40,12 @@ define 'javautil' do
   repositories.release_to[:username] = 'bmc'
 
   # Task alias, because I forget that it's "upload".
-  task :publish => :upload
+  task :publish => [:upload, :copydoc]
+
+  task :copydoc => :doc do
+    rm_r API_DOC_TARGET
+    cp_r 'target/doc', API_DOC_TARGET
+    cp 'CHANGELOG.md', CHANGELOG_TARGET
+  end
+
 end
