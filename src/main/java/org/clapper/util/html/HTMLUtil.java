@@ -193,7 +193,7 @@ public final class HTMLUtil
      * @see #stripHTMLTags
      * @see #makeCharacterEntities
      */
-    public static String convertCharacterEntities (String s)
+    public static String convertCharacterEntities(String s)
     {
         // The resource bundle contains the mappings for symbolic entity
         // names like "amp". Note: Must protect matching and MatchResult in
@@ -205,7 +205,7 @@ public final class HTMLUtil
             try
             {
                 if (entityPattern == null)
-                    entityPattern = Pattern.compile ("&(#?[^; \t]+);");
+                    entityPattern = Pattern.compile ("&(#?[^;\\s&]+);?");
             }
 
             catch (PatternSyntaxException ex)
@@ -217,7 +217,6 @@ public final class HTMLUtil
             }
         }
 
-        ResourceBundle bundle = getResourceBundle();
         XStringBuffer buf = new XStringBuffer();
         Matcher matcher = null;
 
@@ -231,79 +230,27 @@ public final class HTMLUtil
             String match = null;
             String preMatch = null;
             String postMatch = null;
-
             if (! matcher.find())
                 break;
 
-            match = matcher.group (1);
+            match = matcher.group(1);
             preMatch = s.substring (0, matcher.start (1) - 1);
-            postMatch = s.substring (matcher.end (1) + 1);
 
             if (preMatch != null)
-                buf.append (preMatch);
+                buf.append(preMatch);
 
-            if (match.charAt (0) == '#')
+            if (s.charAt(matcher.end() - 1) != ';')
             {
-                if (match.length() == 1)
-                    buf.append ('#');
-
-                else
-                {
-                    // It might be a numeric entity code. Try to parse it
-                    // as a number. If the parse fails, just put the whole
-                    // string in the result, as is. Be sure to handle both
-                    // the decimal form (e.g., &#8482;) and the hexadecimal
-                    // form (e.g., &#x2122;).
-
-                    int cc;
-                    boolean isHex = (match.length() > 2) &&
-                                    (match.charAt(1) == 'x');
-                    boolean isLegal = false;
-                    try
-                    {
-                        if (isHex)
-                            cc = Integer.parseInt(match.substring(2), 16);
-                        else
-                            cc = Integer.parseInt(match.substring(1));
-
-                        // It parsed. Is it a valid Unicode character?
-
-                        if (Character.isDefined((char) cc))
-                        {
-                            buf.append((char) cc);
-                            isLegal = true;
-                        }
-                    }
-
-                    catch (NumberFormatException ex)
-                    {
-                    }
-
-                    if (! isLegal)
-                    {
-                        buf.append("&#");
-                        if (isHex)
-                            buf.append('x');
-                        buf.append(match + ";");
-                    }
-                }
+                // Not a well-formed entity. Copy into the buffer.
+                buf.append(s.substring(matcher.start(), matcher.end()));
+                postMatch = s.substring(matcher.end(1)); 
             }
 
             else
             {
-                // Not a numeric entity. Try to find a matching symbolic
-                // entity.
-
-                try
-                {
-                    String rep = bundle.getString ("html_" + match);
-                    buf.append (rep);
-                }
-
-                catch (MissingResourceException ex)
-                {
-                    buf.append ("&" + match + ";");
-                }
+                // Well-formed entity.
+                postMatch = s.substring(matcher.end(1) + 1); 
+                buf.append(convertEntity(match));
             }
 
             if (postMatch == null)
@@ -410,7 +357,7 @@ public final class HTMLUtil
      * @see #convertCharacterEntities
      * @see #stripHTMLTags
      */
-    public static String textFromHTML (String s)
+    public static String textFromHTML(String s)
     {
         String        stripped = convertCharacterEntities (stripHTMLTags (s));
         char[]        ch = stripped.toCharArray();
@@ -431,6 +378,8 @@ public final class HTMLUtil
                     break;
 
                 case Unicode.EM_DASH:
+                case Unicode.NON_BREAKING_HYPHEN:
+                case Unicode.HYPHEN:
                     buf.append ("--");
                     break;
 
@@ -438,8 +387,20 @@ public final class HTMLUtil
                     buf.append ('-');
                     break;
 
+                case Unicode.ZERO_WIDTH_JOINER:
+                case Unicode.ZERO_WIDTH_NON_JOINER:
+                    break;
+
                 case Unicode.TRADEMARK:
                     buf.append ("[TM]");
+                    break;
+
+                case Unicode.NBSP:
+                case Unicode.THIN_SPACE:
+                case Unicode.HAIR_SPACE:
+                case Unicode.EM_SPACE:
+                case Unicode.EN_SPACE:
+                    buf.append(' ');
                     break;
 
                 default:
@@ -454,6 +415,78 @@ public final class HTMLUtil
     /*----------------------------------------------------------------------*\
                               Private Methods
     \*----------------------------------------------------------------------*/
+
+    /**
+     * Match an entity, minus the leading "&" and ";" characters.
+     */
+    private static String convertEntity(String s)
+    {
+        StringBuilder buf = new StringBuilder();
+        ResourceBundle bundle = getResourceBundle();
+
+        if (s.charAt(0) == '#')
+        {
+            if (s.length() == 1)
+                buf.append('#');
+
+            else
+            {
+                // It might be a numeric entity code. Try to parse it as a
+                // number. If the parse fails, just put the whole string in the
+                // result, as is. Be sure to handle both the decimal form
+                // (e.g., &#8482;) and the hexadecimal form (e.g., &#x2122;).
+
+                int cc;
+                boolean isHex = (s.length() > 2) && (s.charAt(1) == 'x');
+                boolean isLegal = false;
+                try
+                {
+                    if (isHex)
+                        cc = Integer.parseInt(s.substring(2), 16);
+                    else
+                        cc = Integer.parseInt(s.substring(1));
+
+                    // It parsed. Is it a valid Unicode character?
+
+                    if (Character.isDefined((char) cc))
+                    {
+                        buf.append((char) cc);
+                        isLegal = true;
+                    }
+                }
+
+                catch (NumberFormatException ex)
+                {
+                }
+
+                if (! isLegal)
+                {
+                    buf.append("&#");
+                    if (isHex)
+                        buf.append('x');
+                    buf.append(s + ";");
+                }
+            }
+        }
+
+        else
+        {
+            // Not a numeric entity. Try to find a matching symbolic
+            // entity.
+
+            try
+            {
+                buf.append(bundle.getString("html_" + s));
+            }
+
+            catch (MissingResourceException ex)
+            {
+                buf.append("&" + s + ";");
+            }
+        }
+
+        return buf.toString();
+    }
 
     /**
      * Load the resource bundle, if it hasn't already been loaded.

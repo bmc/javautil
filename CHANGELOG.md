@@ -3,6 +3,21 @@ title: Change log for org.clapper.util Java Utility Library
 layout: default
 ---
 
+Version 3.0.2 (31 March, 2012)
+
+- Fixed [Issue #7][]: `HTMLUtil.textFromHTML()` and 
+  `HTMLUtil.convertCharacterEntities()` improperly converted certain HTML
+  entities. The problem stemmed from failing to handled ill-formed entities
+  such as `&foobar` (i.e., no trailing ";").
+
+- Added some conversions to `HTML.textFromHTML()`. Specifically, various space
+  characters now convert to a single space, Unicode joiners convert to nothing,
+  and Unicode hyphens are now handled.
+
+[Issue #7]: https://github.com/bmc/javautil/issues/7
+
+----
+
 Version 3.0.1 (17 September, 2011)
 
 * Switched to Apache [Buildr][], because Buildr's Ruby-based build files

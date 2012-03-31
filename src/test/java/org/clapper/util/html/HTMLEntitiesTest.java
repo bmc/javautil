@@ -7,31 +7,34 @@ import org.clapper.util.text.XStringBuilder;
 
 public class HTMLEntitiesTest
 {
+    class TestData
+    {
+        String before;
+        String after;
+
+        TestData(String before, String after)
+        {
+            this.before = before;
+            this.after = after;
+        }
+    }
+
     public HTMLEntitiesTest()
     {
     }
 
     @Test public void convertHTMLEntities()
     {
-        class TestData
-        {
-            String before;
-            String after;
-
-            TestData(String before, String after)
-            {
-                this.before = before;
-                this.after = after;
-            }
-        }
-
         TestData[] testData = new TestData[]
         {
             new TestData("&#8482;", "\u2122"),
             new TestData("&#8482", "&#8482"),
             new TestData("&#x2122;", "\u2122"),
             new TestData("&#x2122", "&#x2122"),
-            new TestData("&#x7F;", "\u007f")
+            new TestData("&#x7F;", "\u007f"),
+            new TestData("&foobar&nbsp;baz", "&foobar\u00a0baz"),
+            new TestData("&foobar;&nbsp;baz", "&foobar;\u00a0baz"),
+            new TestData("&foobar;&nbsp baz", "&foobar;&nbsp baz")
         };
 
         XStringBuilder bufAfter = new XStringBuilder();
@@ -51,20 +54,37 @@ public class HTMLEntitiesTest
         }
     }
 
+    @Test public void textFromHTML()
+    {
+        TestData[] testData = new TestData[]
+        {
+            new TestData("&foobar&nbsp;baz", "&foobar baz"),
+            new TestData("&foobar;&nbsp;baz", "&foobar; baz"),
+            new TestData("&foobar;&nbsp baz", "&foobar;&nbsp baz")
+        };
+
+        XStringBuilder bufBefore = new XStringBuilder();
+        XStringBuilder bufExpected = new XStringBuilder();
+        XStringBuilder bufActual = new XStringBuilder();
+        for (TestData data : testData)
+        {
+            String after = HTMLUtil.textFromHTML(data.before);
+            bufActual.reset(after);
+            bufActual.encodeMetacharacters();
+            bufExpected.reset(data.after);
+            bufExpected.encodeMetacharacters();
+            bufBefore.reset(data.before);
+            bufBefore.encodeMetacharacters();
+            assertEquals(bufBefore.toString() + " converts to \"" +
+                         bufActual.toString() +
+                         "\", instead of the expected value of \"" +
+                         bufExpected.toString() + "\"",
+                         data.after, after);
+        }
+    }
+
     @Test public void makeCharacterEntities()
     {
-        class TestData
-        {
-            String before;
-            String after;
-
-            TestData(String before, String after)
-            {
-                this.before = before;
-                this.after = after;
-            }
-        }
-
         TestData[] testData = new TestData[]
         {
             new TestData("\u00a0", "&nbsp;"),

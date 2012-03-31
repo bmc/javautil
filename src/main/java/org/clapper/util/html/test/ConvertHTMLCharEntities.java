@@ -26,7 +26,7 @@
 
 package org.clapper.util.html.test;
 
-import org.clapper.util.text.*;
+import org.clapper.util.html.*;
 import java.io.*;
 
 /**
