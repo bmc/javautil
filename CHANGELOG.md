@@ -14,6 +14,8 @@ Version 3.0.2 (31 March, 2012)
   characters now convert to a single space, Unicode joiners convert to nothing,
   and Unicode hyphens are now handled.
 
+- Added unit tests for the above.
+
 [Issue #7]: https://github.com/bmc/javautil/issues/7
 
 ----
