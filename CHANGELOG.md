@@ -5,6 +5,8 @@ layout: default
 
 Version 3.1.0 (31 March, 2012)
 
+* Fixed [Issue #6][]: Generate POM lack dependencies. Fixing this problem
+  required a hack to Buildr.
 * Fixed [Issue #7][]: `HTMLUtil.textFromHTML()` and 
   `HTMLUtil.convertCharacterEntities()` improperly converted certain HTML
   entities. The problem stemmed from failing to handled ill-formed entities
@@ -17,6 +19,7 @@ Version 3.1.0 (31 March, 2012)
 * Changed repo to Maven Central, for downloading artifacts.
 * Now uses SLF4J, instead of Log4J, when testing.
 
+[Issue #6]: https://github.com/bmc/javautil/issues/6
 [Issue #7]: https://github.com/bmc/javautil/issues/7
 
 ----
