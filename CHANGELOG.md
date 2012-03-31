@@ -3,6 +3,27 @@ title: Change log for org.clapper.util Java Utility Library
 layout: default
 ---
 
+Version 3.1.0 (31 March, 2012)
+
+* Fixed [Issue #6][]: Generate POM lack dependencies. Fixing this problem
+  required a hack to Buildr.
+* Fixed [Issue #7][]: `HTMLUtil.textFromHTML()` and 
+  `HTMLUtil.convertCharacterEntities()` improperly converted certain HTML
+  entities. The problem stemmed from failing to handled ill-formed entities
+  such as `&foobar` (i.e., no trailing ";").
+* Added some conversions to `HTML.textFromHTML()`. Specifically, various space
+  characters now convert to a single space, Unicode joiners convert to nothing,
+  and Unicode hyphens are now handled. **NOTE: This change could potentially
+  break expected behavior.**
+* Added unit tests for the above.
+* Changed repo to Maven Central, for downloading artifacts.
+* Now uses SLF4J, instead of Log4J, when testing.
+
+[Issue #6]: https://github.com/bmc/javautil/issues/6
+[Issue #7]: https://github.com/bmc/javautil/issues/7
+
+----
+
 Version 3.0.1 (17 September, 2011)
 
 * Switched to Apache [Buildr][], because Buildr's Ruby-based build files
