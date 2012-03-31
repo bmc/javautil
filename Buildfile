@@ -18,6 +18,14 @@ UPLOAD_REPO      = 'sftp://maven.clapper.org/var/www/maven.clapper.org/html'
 API_DOC_TARGET   = '../gh-pages/api'
 CHANGELOG_TARGET = '../gh-pages/CHANGELOG.md'
 
+MAIN_BUNDLE      = 'src/main/resources/org/clapper/util/misc/Bundle.properties'
+
+# Buildr needs THIS_VERSION to be a string.
+VERSION          = File.open(MAIN_BUNDLE) do |f|
+  f.readlines.select {|s| s =~ /^api\.version/}.map {|s| s.chomp.sub(/^.*=/, '')}
+end[0]
+THIS_VERSION     = "#{VERSION}"
+
 # Some local tasks and task aliases
 Project.local_task :publish
 Project.local_task :copydoc
@@ -38,6 +46,10 @@ define 'javautil' do
   repositories.remote << 'http://repo.maven.apache.org/maven2/'
   repositories.release_to[:url] = UPLOAD_REPO
   repositories.release_to[:username] = 'bmc'
+
+  task :version do
+    $stderr.puts "*** #{THIS_VERSION}"
+  end
 
   # Task alias, because I forget that it's "upload".
   task :publish => [:upload, :copydoc]
