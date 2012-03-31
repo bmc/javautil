@@ -9,7 +9,7 @@ ASM              = 'asm:asm:jar:3.3.1'
 ASM_COMMONS      = 'asm:asm-commons:jar:3.3.1'
 COMMONS_LOGGING  = transitive('commons-logging:commons-logging:jar:1.1.1')
 
-LOG4J            = 'log4j:log4j:jar:1.2.16'
+SLF4J            = 'org.slf4j:slf4j-jdk14:jar:1.6.4'
 
 # Where we publish
 UPLOAD_REPO      = 'sftp://maven.clapper.org/var/www/maven.clapper.org/html'
@@ -33,9 +33,9 @@ define 'javautil' do
   compile.with JAVAX, JAVAMAIL, ASM, ASM_COMMONS, COMMONS_LOGGING
 
   test.using :environment => {}, :fork => true
-  test.with LOG4J
+  test.with SLF4J
 
-  repositories.remote << 'http://www.ibiblio.org/maven2/'
+  repositories.remote << 'http://repo.maven.apache.org/maven2/'
   repositories.release_to[:url] = UPLOAD_REPO
   repositories.release_to[:username] = 'bmc'
 
