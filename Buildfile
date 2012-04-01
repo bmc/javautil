@@ -114,13 +114,11 @@ end
 # Gross and ugly hacks
 # ---------------------------------------------------------------------------
 
-class Local
-  # Create a POM that has dependencies in it. Uses the buildr/resolver gem.
-  def self.make_pom
-    mkdir_p File.dirname(THIS_POM)
-    deps = Buildr::Resolver.resolve(DEPS)
-    Buildr::Resolver.write_pom(ARTIFACT, THIS_POM)
-  end
+# Create a POM that has dependencies in it. Uses the buildr/resolver gem.
+def make_pom
+  mkdir_p File.dirname(THIS_POM)
+  deps = Buildr::Resolver.resolve(DEPS)
+  Buildr::Resolver.write_pom(ARTIFACT, THIS_POM)
 end
 
 module Buildr
@@ -132,7 +130,7 @@ module Buildr
     alias :old_package :package
     def package(*args)
       old_package *args
-      Local.make_pom
+      make_pom
     end
 
   end
@@ -140,7 +138,7 @@ module Buildr
   module ActsAsArtifact
 
     def pom_xml
-      Local.make_pom
+      make_pom
       File.open(THIS_POM).readlines.join('')
     end
   end
