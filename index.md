@@ -40,7 +40,7 @@ Then, add the following dependency to your `<dependencies>` section:
     <dependency>
       <groupId>org.clapper</groupId>
       <artifactId>javautil</artifactId>
-      <version>3.1.0</version>
+      <version>3.1.1</version>
     </dependency>
     
 ## Building with Apache Buildr
@@ -48,7 +48,7 @@ Then, add the following dependency to your `<dependencies>` section:
 If you're using Apache [Buildr][], the following lines should do the trick:
 
     repositories.remote << 'http://maven.clapper.org/'
-    compile.with 'org.clapper:javautil:jar:3.1.0'
+    compile.with 'org.clapper:javautil:jar:3.1.1'
 
 ## Installing Manually
 
@@ -57,7 +57,7 @@ reasonably sane (e.g., if you're still using [Ant][]), you'll have to
 download the jar and its dependent jars, and install them manually.
 
 The compiled jar is located at
-<http://maven.clapper.org/org/clapper/javautil/3.1.0/javautil-3.1.0.jar>.
+<http://maven.clapper.org/org/clapper/javautil/3.1.1/javautil-3.1.1.jar>.
 
 This software assumes a 1.5 JDK or better, and it depends on the following
 third-party libraries:

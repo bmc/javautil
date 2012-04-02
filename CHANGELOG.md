@@ -3,6 +3,14 @@ title: Change log for org.clapper.util Java Utility Library
 layout: default
 ---
 
+Version 3.1.1 (2 April, 2012)
+
+* Fixed [Issue #8][]: Single hyphen replaced by double hyphen.
+
+[Issue #8]: https://github.com/bmc/javautil/issues/8
+
+----
+
 Version 3.1.0 (31 March, 2012)
 
 * Fixed [Issue #6][]: Generate POM lack dependencies. Fixing this problem
