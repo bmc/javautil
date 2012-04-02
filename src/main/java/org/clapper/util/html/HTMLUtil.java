@@ -378,12 +378,11 @@ public final class HTMLUtil
                     break;
 
                 case Unicode.EM_DASH:
-                case Unicode.NON_BREAKING_HYPHEN:
-                case Unicode.HYPHEN:
                     buf.append ("--");
                     break;
 
                 case Unicode.EN_DASH:
+                case Unicode.NON_BREAKING_HYPHEN:
                     buf.append ('-');
                     break;
 

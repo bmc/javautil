@@ -4,6 +4,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 import org.clapper.util.text.XStringBuilder;
+import org.clapper.util.text.Unicode;
 
 public class HTMLEntitiesTest
 {
@@ -60,7 +61,15 @@ public class HTMLEntitiesTest
         {
             new TestData("&foobar&nbsp;baz", "&foobar baz"),
             new TestData("&foobar;&nbsp;baz", "&foobar; baz"),
-            new TestData("&foobar;&nbsp baz", "&foobar;&nbsp baz")
+            new TestData("&foobar;&nbsp baz", "&foobar;&nbsp baz"),
+            new TestData("foo" + Unicode.EN_SPACE + "bar", "foo bar"),
+            new TestData("foo" + Unicode.EM_SPACE + "bar", "foo bar"),
+            new TestData("foo" + Unicode.EM_DASH + "bar", "foo--bar"),
+            new TestData("foo" + Unicode.EN_DASH + "bar", "foo-bar"),
+            new TestData("foo" + Unicode.NON_BREAKING_HYPHEN + "bar", "foo-bar"),
+            new TestData("foo-bar", "foo-bar"),
+            new TestData("foo" + Unicode.ZERO_WIDTH_NON_JOINER + "bar", "foobar"),
+            new TestData("foo" + Unicode.ZERO_WIDTH_JOINER + "bar", "foobar")
         };
 
         XStringBuilder bufBefore = new XStringBuilder();
@@ -87,7 +96,7 @@ public class HTMLEntitiesTest
     {
         TestData[] testData = new TestData[]
         {
-            new TestData("\u00a0", "&nbsp;"),
+            new TestData(Unicode.NBSP + "", "&nbsp;"),
             new TestData("\u00b9", "&sup1;"),
             new TestData("\u00cb", "&Euml;"),
             new TestData("\u2288", "&#8840;"),
