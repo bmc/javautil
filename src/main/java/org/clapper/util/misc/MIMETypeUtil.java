@@ -92,7 +92,7 @@ import java.util.ResourceBundle;
  * syntax:</p>
  *
  * <pre>
- * # The format is <mime type> <space separated file extensions>
+ * # The format is &lt;mime type&gt; &lt;space separated file extensions&gt;
  * # Comments begin with a '#'
  *
  * text/plain             txt text TXT
@@ -449,7 +449,8 @@ public class MIMETypeUtil
         // Now, check every directory in the classpath.
 
         String   pathSep = System.getProperty ("path.separator");
-        String[] pathComponents = TextUtil.split (pathSep);
+        String   classPath = System.getProperty ("java.class.path");
+        String[] pathComponents = TextUtil.split (classPath, pathSep);
         int      i;
 
         for (i = 0; i < pathComponents.length; i++)
