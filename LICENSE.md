@@ -1,5 +1,5 @@
 This software is released under a BSD license, adapted from
-<http://opensource.org/licenses/bsd-license.php>
+<http://opensource.org/licenses/BSD-3-Clause>
 
 Copyright (c) 2004-2011 Brian M. Clapper.
 All rights reserved.
