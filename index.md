@@ -124,7 +124,7 @@ request. Along with any patch you send:
   under a [BSD License][].
 
 [Ant]: http://ant.apache.org/
-[BSD License]: license.html
+[BSD License]: https://github.com/bmc/javautil/blob/master/LICENSE.md
 [GitHub repository]: http://github.com/bmc/javautil
 [GitHub]: http://github.com/bmc/
 [Git]: http://git-scm.com/
