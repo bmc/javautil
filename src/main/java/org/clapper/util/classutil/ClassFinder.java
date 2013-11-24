@@ -474,7 +474,7 @@ public class ClassFinder
         {
             try
             {
-                jar.close();
+                if (jar != null) jar.close();
             }
 
             catch (IOException ex)
@@ -508,7 +508,7 @@ public class ClassFinder
         {
             try
             {
-                zip.close();
+                if (zip != null) zip.close();
             }
 
             catch (IOException ex)
