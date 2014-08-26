@@ -710,7 +710,7 @@ public class MultiValueMap<K,V> extends AbstractMap<K,V> implements Cloneable
      * @return <tt>Collection</tt> of values associated with specified key,
      *         or <tt>null</tt> if there was no mapping for key.
      */
-    public Collection<V> remove(K key)
+    public Collection<V> delete(K key)
     {
         return this.map.remove(key);
     }

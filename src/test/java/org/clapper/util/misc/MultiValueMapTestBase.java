@@ -46,7 +46,7 @@ public abstract class MultiValueMapTestBase extends MapTestBase
                      B_SIZE, values.size());
         assertNull("Found collection for nonexistent key",
                    map.getCollection("c"));
-        map.remove("b");
+        map.delete("b");
         assertEquals("After removing \"b\" values, map is wrong size",
                      A_SIZE, map.size());
         values = map.getCollection("b");
