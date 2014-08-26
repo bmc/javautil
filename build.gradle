@@ -1,0 +1,143 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+import java.io.FileReader
+import java.io.File
+import java.io.BufferedReader
+import java.util.Properties
+import org.gradle.plugins.signing.Sign
+
+defaultTasks 'build'
+
+sourceCompatibility = 1.6
+
+def projectVersion = {
+  Properties props = new Properties()
+  props.load(new FileReader('src/main/resources/org/clapper/util/misc/Bundle.properties'))
+  props.getProperty('api.version')
+}
+
+String userHome = System.getProperties().getProperty("user.home")
+String gnupgDir = userHome + "/.gnupg/"
+String signingKeyFile = gnupgDir + "/signing-key"
+
+class BintrayConfig {
+  def username = ""
+  def key = ""
+
+  public BintrayConfig() {
+    Properties props = new Properties()
+    String path = System.getProperties().getProperty("user.home") +
+                  "/.bintray/.credentials"
+    props.load(new FileReader(path))
+    username = props.getProperty("user")
+    key      = props.getProperty("password")
+  }
+}
+
+def bintrayConfig = new BintrayConfig()
+
+def readPassword(String prompt) {
+  new String(System.console().readPassword("\n" + prompt + ": "))
+}
+
+def readString(String prompt) {
+  System.console().readLine("\n" + prompt + ": ")
+}
+
+def signingKey = new BufferedReader(new FileReader(new File(signingKeyFile))).readLine()
+
+signing {
+  sign configurations.archives
+}
+
+// See http://www.gradle.org/docs/current/userguide/signing_plugin.html
+gradle.taskGraph.whenReady { taskGraph ->
+  if (taskGraph.allTasks.any { it instanceof Sign }) {
+    def id = signingKey
+    def secring = gnupgDir + "/secring.gpg"
+    def password = readPassword("GNUPG passphrase")
+
+    allprojects { ext."signing.keyId"             = id }
+    allprojects { ext."signing.secretKeyRingFile" = secring }
+    allprojects { ext."signing.password"          = password }
+  }
+}
+
+group = "org.clapper"
+version = projectVersion()
+
+configurations {
+  deployerJars
+  archives
+}
+
+project.ext {
+  author = "Brian M. Clapper"
+  version = projectVersion
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+
+      configuration = configurations.deployerJars
+
+/*
+      repository(id: "Bintray", url: "https://api.bintray.com/maven/bmc/public/javautil") {
+        authentication(userName: bintrayConfig.username, password: bintrayConfig.key)
+      }
+*/
+      // See http://www.jnegre.org/news/2011/12/23/deploy_to_maven_repository_via_scp_with_gradle.html
+      repository(url: "scp://maven.clapper.org/var/www/maven.clapper.org/html") {
+        String username = readString("Maven user name")
+        String password = readPassword("Maven password")
+        authentication(userName: username, password: password)
+      }
+
+      beforeDeployment { MavenDeployment dep ->
+        signing.signPom(dep)
+/*
+        String prompt = "Ensure that version " + version +
+                        " exists in Bintray. Then, press RETURN"
+        readString(prompt)
+*/
+      }
+    }
+
+  }
+}
+repositories {
+  mavenLocal()
+  jcenter()
+}
+
+dependencies {
+  compile group: 'javax.activation', name: 'activation', version: '1.1'
+  compile group: 'javax.mail', name: 'mail', version: '1.4+'
+  compile group: 'asm', name: 'asm', version: '3.3+'
+  compile group: 'asm', name: 'asm-commons', version: '3.3+'
+  compile group: 'commons-logging', name: 'commons-logging', version: '1.1.1+'
+  compile group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.6.4'
+
+  testCompile group: 'junit', name: 'junit', version: '4+'
+
+  //deployerJars group: 'org.apache.maven', name: 'wagon-ssh', version: '2.2'
+  deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
+}
+
+task sourceJar(type: Jar) {
+  from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  from javadoc.destinationDir
+}
+
+task publish(dependsOn: 'uploadArchives')
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.0'
+}
+
