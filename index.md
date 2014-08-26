@@ -40,7 +40,7 @@ Then, add the following dependency to your `<dependencies>` section:
     <dependency>
       <groupId>org.clapper</groupId>
       <artifactId>javautil</artifactId>
-      <version>3.1.1</version>
+      <version>3.1.2</version>
     </dependency>
     
 ## Building with Apache Buildr
@@ -48,7 +48,7 @@ Then, add the following dependency to your `<dependencies>` section:
 If you're using Apache [Buildr][], the following lines should do the trick:
 
     repositories.remote << 'http://maven.clapper.org/'
-    compile.with 'org.clapper:javautil:jar:3.1.1'
+    compile.with 'org.clapper:javautil:jar:3.1.2'
 
 ## Installing Manually
 
