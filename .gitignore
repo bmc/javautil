@@ -1,4 +1,9 @@
-target
-reports
+/target
+/reports
 .envrc
 .rvmrc
+.idea
+.ruby-version
+*.iml
+.gradle
+/build

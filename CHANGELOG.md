@@ -3,6 +3,14 @@ title: Change log for org.clapper.util Java Utility Library
 layout: default
 ---
 
+Version 3.1.2 (26 August, 2014)
+
+* Merged change from Shilad Shen (shilad *at* gmail.com): Handle edge-case
+  `NullPointerException` errors in `ClassFinder`.
+* Renamed type-safe version of `MultiValueMap.remove()` to
+  `MultiValueMap.delete()`, to get past Java 1.7 compiler complaints.
+* Switched to Gradle build.
+
 Version 3.1.1 (2 April, 2012)
 
 * Fixed [Issue #8][]: Single hyphen replaced by double hyphen.
