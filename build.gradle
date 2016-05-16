@@ -91,8 +91,8 @@ uploadArchives {
 */
       // See http://www.jnegre.org/news/2011/12/23/deploy_to_maven_repository_via_scp_with_gradle.html
       repository(url: "scp://maven.clapper.org/var/www/maven.clapper.org/html") {
-        String username = readString("Maven user name")
-        String password = readPassword("Maven password")
+        String username = readString("maven.clapper.org user name")
+        String password = readPassword("maven.clapper.org password")
         authentication(userName: username, password: password)
       }
 
