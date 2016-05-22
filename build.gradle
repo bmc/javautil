@@ -40,7 +40,11 @@ def projectVersion = {
 
 String userHome = System.getProperties().getProperty("user.home")
 Properties bintrayProps = new Properties()
-bintrayProps.load(new FileReader(userHome + "/.bintray/.credentials"))
+File bintrayCredentials = new File(userHome + "/.bintray/.credentials")
+if (bintrayCredentials.exists()) {
+  bintrayProps.load(new FileReader(bintrayCredentials))
+}
+
 String gnupgDir = userHome + "/.gnupg/"
 String signingKeyFile = gnupgDir + "/signing-key"
 String mavenGroupID = "org.clapper"
