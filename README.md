@@ -1,6 +1,8 @@
 *org.clapper.util* Java Utility Library
 =======================================
 
+[![Build Status](https://travis-ci.org/bmc/javautil.svg?branch=master)](https://travis-ci.org/bmc/javautil)
+
 The *org.clapper.util* Java Utility Library is a library of miscellaneous
 utility classes and methods. As a general-purpose set of tools, this API is
 a conceptual extension of the JDK. I use this library myself, so I
