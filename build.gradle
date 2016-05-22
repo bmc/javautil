@@ -52,8 +52,6 @@ String mavenGroupID = "org.clapper"
 group = mavenGroupID
 version = projectVersion()
 
-def signingKey = new BufferedReader(new FileReader(new File(signingKeyFile))).readLine()
-
 publishing {
   publications {
     JavaUtil(MavenPublication) {
