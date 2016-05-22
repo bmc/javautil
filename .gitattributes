@@ -1,6 +1,1 @@
-*.java		ident
-*.xml		ident
-*.properties	ident
-README		ident
-CHANGELOG	ident
-NOTICE		ident
+*.bat text eol=crlf

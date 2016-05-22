@@ -3,6 +3,10 @@ title: Change log for org.clapper.util Java Utility Library
 layout: default
 ---
 
+Version 3.1.3 (22 May, 2016)
+
+* Updated Gradle build to use Bintray plugin, allowing publishing to Bintray.
+
 Version 3.1.2 (26 August, 2014)
 
 * Merged change from Shilad Shen (shilad *at* gmail.com): Handle edge-case

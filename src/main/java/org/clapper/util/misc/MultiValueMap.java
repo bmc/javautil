@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------*\
-  $Id$
+  $Id: d6cc823afcb0c93a99ba1d780a563546ad80584c $
 \*---------------------------------------------------------------------------*/
 
 package org.clapper.util.misc;
@@ -725,11 +725,11 @@ public class MultiValueMap<K,V> extends AbstractMap<K,V> implements Cloneable
      * @return <tt>true</tt> if the value was found and removed.
      *         <tt>false</tt> if the value isn't associated with the key.
      */
-    public boolean remove(K key, V value)
+    public boolean remove(Object key, Object value)
     {
         boolean removed = false;
 
-        synchronized (map)
+        synchronized (this)
         {
             Collection<V> values = map.get(key);
 
