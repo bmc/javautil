@@ -12,106 +12,125 @@ frequently update and revise its contents.
 
 # Installation
 
-The Java Utility Library is published to my personal [Maven][] repository
-at *maven.clapper.org*.
+The Java Utility Library is published to the
+[Bintray Maven repository](https://bintray.com/bmc/maven), which is
+automatically linked to Bintray's [JCenter](https://bintray.com/bintray/jcenter)
+repository. (From JCenter, it's eventually pushed to the
+[Maven Central Repository](http://search.maven.org/).)
 
 ## Using from Maven
 
-If you're building your project with [Maven][], add the following
-repository to your `pom.xml`:
+If you're building your project with [Maven][], just specify the artifact
+as a dependency:
 
-    <repositories>
-      <repository>
-        <releases>
-          <enabled>true</enabled>
-          <updatePolicy>always</updatePolicy>
-          <checksumPolicy>warn</checksumPolicy>
-        </releases>
-        <id>clapper-org-maven-repo</id>
-        <name>org.clapper Maven Repo</name>
-        <url>http://maven.clapper.org/</url>
-        <layout>default</layout>
-      </repository>
-      ...
-    </repositories>
+```
+<dependency>
+  <groupId>org.clapper</groupId>
+  <artifactId>javautil</artifactId>
+  <version>3.1.3</version>
+</dependency>
+```
 
-Then, add the following dependency to your `<dependencies>` section:
+If you cannot resolve the artifact, then add the JCenter repository:
 
-    <dependency>
-      <groupId>org.clapper</groupId>
-      <artifactId>javautil</artifactId>
-      <version>3.1.2</version>
-    </dependency>
-    
-## Building with Apache Buildr
+```
+<repositories>
+  <repository>
+    <snapshots>
+      <enabled>false</enabled>
+    </snapshots>
+    <id>central</id>
+    <name>bintray</name>
+    <url>http://jcenter.bintray.com</url>
+  </repository>
+  ...
+</repositories>
+```
 
-If you're using Apache [Buildr][], the following lines should do the trick:
+## Building with Gradle
 
-    repositories.remote << 'http://maven.clapper.org/'
-    compile.with 'org.clapper:javautil:jar:3.1.2'
+If you're using [Gradle][], the following lines should do the
+trick:
+
+```
+buildscript {
+  repositories {
+    jcenter()
+    mavenLocal()
+  }
+}
+
+dependencies {
+  compile group: 'org.clapper', name: 'javautil', version: '3.1.3'
+  ...
+}
+```
 
 ## Installing Manually
 
-If you're not using [Maven][], or [Buildr][], or [SBT][] or somthing else
-reasonably sane (e.g., if you're still using [Ant][]), you'll have to
+If you're not using [Maven][] or [Gradle][] or [SBT][] or something else
+reasonably sane (e.g., if you're still using Ant), you'll have to
 download the jar and its dependent jars, and install them manually.
 
 The compiled jar is located at
-<http://maven.clapper.org/org/clapper/javautil/3.1.1/javautil-3.1.1.jar>.
+<https://bintray.com/bmc/maven/download_file?file_path=org%2Fclapper%2Fjavautil%2F3.1.3%2Fjavautil-3.1.3.jar>
 
-This software assumes a 1.5 JDK or better, and it depends on the following
+This software assumes a 1.6 JDK or better, and it depends on the following
 third-party libraries:
 
 * The [JavaMail][] jar.
-* The [JavaBeans Activation Framework][jaf] (JAF), if you're using a 1.5 JDK.
-  (JAF is bundled with Java 1.6.)
 * The jars for version 3.3.1 of the [ASM][] bytecode manipulation library.
 
 *However...* you're much better off using a [Maven][]-aware build tool,
-such as [Maven][], [SBT][] or [Buildr][], if you can.
+such as [Maven][], [SBT][] or [Gradle][], if you can.
 
 # Documentation
 
 * You can find javadocs for the *org.clapper.util* library [here][javadocs].
-* Also see the [CHANGELOG][] for a list of changes associated with each 
+* Also see the [CHANGELOG][] for a list of changes associated with each
   release.
 
 # Building from Source
 
 ## Prerequisites
 
-### Git
+### Gradle
 
-The source for the Java Utility Library is in a [GitHub repository][]. The
-easiest way to obtain it is via [Git][], which runs on Unix-like operating
-systems (such as Linux and FreeBSD), Windows, and Mac OS X.
-
-### Buildr
-
-The library builds with Apache [Buildr][], because Buildr's Ruby-based
+The library builds with Apache [Gradle][], because Gradle's Groovy-based
 build files are more powerful and flexible, and much easier to read and
-maintain, than [Maven][]'s POM files. If you're building this library from
-source, you must first [download and install Buildr][].
+maintain, than [Maven][]'s POM files.
+
+If you're building this library from source, you do _not_ need to install
+Gradle, however, as there are auto-downloading scripts in the top-level
+directory.
 
 ## Building
 
 First, clone a copy of the Git repository:
 
-    git clone git://github.com/bmc/javautil.git
+```
+git clone git://github.com/bmc/javautil.git
+```
 
 Then, change your working directory to the newly-created `javautil` directory,
 and type:
 
-    buildr compile
+```
+./gradlew build
+```
 
-to compile the code. To install it in your local Maven repository, type
+to compile the code. The resulting jar file will be in `./build/libs`.
 
-    buildr install
+To install it in your local Maven repository, type
+
+```
+./gradlew install
+```
 
 # Copyright and License
 
-This library is copyright &copy; 2004-2011 Brian M. Clapper and is released
-under a [BSD License][].
+This library is copyright &copy; 2004-2016 Brian M. Clapper and is released
+under a [New BSD License][].
 
 # Patches
 
@@ -121,10 +140,9 @@ request. Along with any patch you send:
 
 * Please state that the patch is your original work.
 * Please indicate that you license the work to the *org.clapper.util* project
-  under a [BSD License][].
+  under a [New BSD License][].
 
-[Ant]: http://ant.apache.org/
-[BSD License]: https://github.com/bmc/javautil/blob/master/LICENSE.md
+[New BSD License]: http://opensource.org/licenses/BSD-3-Clause
 [GitHub repository]: http://github.com/bmc/javautil
 [GitHub]: http://github.com/bmc/
 [Git]: http://git-scm.com/
@@ -137,6 +155,7 @@ request. Along with any patch you send:
 [ASM]: http://asm.ow2.org/
 [javadocs]: api/index.html
 [CHANGELOG]: CHANGELOG.html
+[Gradle]: (http://gradle.org)
 [Buildr]: http://buildr.apache.org/
 [SBT]: https://github.com/harrah/xsbt/
 [download and install Buildr]: http://buildr.apache.org/installing.html
