@@ -150,7 +150,7 @@ request. Along with any patch you send:
 [jaf]: http://java.sun.com/products/archive/javabeans/jaf102.html
 [ASM]: http://asm.ow2.org/
 [javadocs]: api/index.html
-[CHANGELOG]: https://github.com/bmc/javautil/CHANGELOG.md
+[CHANGELOG]: https://github.com/bmc/javautil/blob/master/CHANGELOG.md
 [Gradle]: (http://gradle.org)
 [Buildr]: http://buildr.apache.org/
 [SBT]: https://github.com/harrah/xsbt/
