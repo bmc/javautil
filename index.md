@@ -78,7 +78,7 @@ download the jar and its dependent jars, and install them manually.
 The compiled jar is located at
 <https://bintray.com/bmc/maven/download_file?file_path=org%2Fclapper%2Fjavautil%2F3.2.0%2Fjavautil-3.2.0.jar>
 
-This software assumes a 1.6 JDK or better, and it depends on the following
+This software assumes a 1.7 JDK or better, and it depends on the following
 third-party libraries:
 
 * The [JavaMail][] jar.
@@ -118,13 +118,23 @@ and type:
 bin/activator package
 ```
 
-to compile the code. The resulting jar file will be in `./target`
+to compile the code. The resulting jar file will be in `./target`.
+
+If you're using Windows, `bin/activator` may not work, as it is a Bash
+script. In that case, download and install [SBT](http://www.scala-sbt.org).
+Then, run:
+
+```
+sbt package
+```
 
 To install it in your local Maven repository, type
 
 ```
 bin/activator publish-local
 ```
+
+(or `sbt publish-local` on Windows).
 
 # Copyright and License
 
