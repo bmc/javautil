@@ -152,13 +152,15 @@ under a [New BSD License][].
 
 # Patches
 
-I gladly accept patches from their original authors. Feel free to email
-patches to me or to fork the [GitHub repository][] and send me a pull
-request. Along with any patch you send:
+I gladly accept patches from their original authors. Feel free to 
+fork the [GitHub repository][] and send me a pull request. 
 
-* Please state that the patch is your original work.
-* Please indicate that you license the work to the *org.clapper.util* project
-  under a [New BSD License][].
+**Note**: I assume that any pull request is:
+
+* original work of the author, and
+* licensed to me for inclusion in the project, under a [New BSD License][].
+
+If those terms are unacceptable, then don't send me a PR.
 
 [New BSD License]: http://opensource.org/licenses/BSD-3-Clause
 [GitHub repository]: http://github.com/bmc/javautil
