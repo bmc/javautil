@@ -3,6 +3,9 @@ title: org.clapper.util Java Utility Library
 layout: withTOC
 ---
 
+[![Build Status](https://travis-ci.org/bmc/javautil.svg?branch=master)](https://travis-ci.org/bmc/javautil)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.clapper/javautil/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.clapper/javautil)
+
 # Introduction
 
 The *org.clapper.util* Java Utility Library is a library of miscellaneous
