@@ -10,8 +10,17 @@ layout: withTOC
 
 The *org.clapper.util* Java Utility Library is a library of miscellaneous
 utility classes and methods. As a general-purpose set of tools, this API is
-a conceptual extension of the JDK. I use this library myself, so I
-frequently update and revise its contents.
+a conceptual extension of the JDK.
+
+**Note**: I don't use this library much any more. I do most of my JVM-based programming
+in [Scala](http://www.scala-lang.org), rather than Java, and my
+[Grizzled Scala](http://software.clapper.org/grizzled-scala) is the
+Scala-equivalent of this library.
+
+_However_, I _do_ ensure that this library is kept up-to-date, and if there
+are bugs in it, I try to fix them. If you run into a problem using this library,
+open an [issue](https://github.com/bmc/javautil/issues), and I will try
+to address it.
 
 # Installation
 
