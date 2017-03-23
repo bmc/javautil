@@ -1,17 +1,10 @@
 org.clapper.util.classutil
 org.clapper.util.cmdline
 org.clapper.util.config
-org.clapper.util.config.test
 org.clapper.util.html
-org.clapper.util.html.test
 org.clapper.util.io
-org.clapper.util.io.test
 org.clapper.util.logging
 org.clapper.util.mail
-org.clapper.util.mail.test
 org.clapper.util.misc
-org.clapper.util.misc.test
 org.clapper.util.regex
-org.clapper.util.regex.test
 org.clapper.util.text
-org.clapper.util.text.test
