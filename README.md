@@ -31,14 +31,16 @@ can't stand Maven, and I'm tired of fighting with Gradle).
 If you're on a *nix box (including MacOS), simply run:
 
 ```
-bin/activator compile
+bin/activator package
 ```
 
 If you're on Windows, you'll have to download SBT and run
 
 ```
-sbt build
+sbt package
 ```
+
+The resulting jar file will be in the `target` subdirectory.
 
 [home page]: http://software.clapper.org/javautil/
 
