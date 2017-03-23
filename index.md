@@ -27,7 +27,7 @@ as a dependency:
 <dependency>
   <groupId>org.clapper</groupId>
   <artifactId>javautil</artifactId>
-  <version>3.1.3</version>
+  <version>3.2.0</version>
 </dependency>
 ```
 
@@ -61,7 +61,7 @@ buildscript {
 }
 
 dependencies {
-  compile group: 'org.clapper', name: 'javautil', version: '3.1.3'
+  compile group: 'org.clapper', name: 'javautil', version: '3.2.0'
   ...
 }
 ```
@@ -73,7 +73,7 @@ reasonably sane (e.g., if you're still using Ant), you'll have to
 download the jar and its dependent jars, and install them manually.
 
 The compiled jar is located at
-<https://bintray.com/bmc/maven/download_file?file_path=org%2Fclapper%2Fjavautil%2F3.1.3%2Fjavautil-3.1.3.jar>
+<https://bintray.com/bmc/maven/download_file?file_path=org%2Fclapper%2Fjavautil%2F3.2.0%2Fjavautil-3.2.0.jar>
 
 This software assumes a 1.6 JDK or better, and it depends on the following
 third-party libraries:
@@ -92,17 +92,13 @@ such as [Maven][], [SBT][] or [Gradle][], if you can.
 
 # Building from Source
 
-## Prerequisites
+This software builds with [SBT](http://scala-sbt.org/), because I really
+dislike Maven, and I'm tired of fighting with Gradle.
 
-### Gradle
-
-The library builds with Apache [Gradle][], because Gradle's Groovy-based
-build files are more powerful and flexible, and much easier to read and
-maintain, than [Maven][]'s POM files.
-
-If you're building this library from source, you do _not_ need to install
-Gradle, however, as there are auto-downloading scripts in the top-level
-directory.
+If you're building this library from source on a Unix-like system (including
+MacOS), you do _not_ need to install SBT, however. The `bin/activator`
+script bundled with the repository will handle that for you. (If you
+insist on using Windows, you _will_ have to download SBT first.)
 
 ## Building
 
@@ -116,20 +112,20 @@ Then, change your working directory to the newly-created `javautil` directory,
 and type:
 
 ```
-./gradlew build
+bin/activator package
 ```
 
-to compile the code. The resulting jar file will be in `./build/libs`.
+to compile the code. The resulting jar file will be in `./target`
 
 To install it in your local Maven repository, type
 
 ```
-./gradlew install
+bin/activator publish-local
 ```
 
 # Copyright and License
 
-This library is copyright &copy; 2004-2016 Brian M. Clapper and is released
+This library is copyright &copy; 2004-2017 Brian M. Clapper and is released
 under a [New BSD License][].
 
 # Patches
@@ -154,7 +150,7 @@ request. Along with any patch you send:
 [jaf]: http://java.sun.com/products/archive/javabeans/jaf102.html
 [ASM]: http://asm.ow2.org/
 [javadocs]: api/index.html
-[CHANGELOG]: CHANGELOG.html
+[CHANGELOG]: https://github.com/bmc/javautil/CHANGELOG.md
 [Gradle]: (http://gradle.org)
 [Buildr]: http://buildr.apache.org/
 [SBT]: https://github.com/harrah/xsbt/
