@@ -1,49 +1,3 @@
-/*---------------------------------------------------------------------------*\
-  $Id$
-  ---------------------------------------------------------------------------
-  This software is released under a BSD-style license:
-
-  Copyright (c) 2004-2007 Brian M. Clapper. All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are
-  met:
-
-  1.  Redistributions of source code must retain the above copyright notice,
-      this list of conditions and the following disclaimer.
-
-  2.  The end-user documentation included with the redistribution, if any,
-      must include the following acknowlegement:
-
-        "This product includes software developed by Brian M. Clapper
-        (bmc@clapper.org, http://www.clapper.org/bmc/). That software is
-        copyright (c) 2004-2007 Brian M. Clapper."
-
-      Alternately, this acknowlegement may appear in the software itself,
-      if wherever such third-party acknowlegements normally appear.
-
-  3.  Neither the names "clapper.org", "clapper.org Java Utility Library",
-      nor any of the names of the project contributors may be used to
-      endorse or promote products derived from this software without prior
-      written permission. For written permission, please contact
-      bmc@clapper.org.
-
-  4.  Products derived from this software may not be called "clapper.org
-      Java Utility Library", nor may "clapper.org" appear in their names
-      without prior written permission of Brian M. Clapper.
-
-  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
-  NO EVENT SHALL BRIAN M. CLAPPER BE LIABLE FOR ANY DIRECT, INDIRECT,
-  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-\*---------------------------------------------------------------------------*/
-
 package org.clapper.util.regex;
 
 import org.clapper.util.misc.LRUMap;
@@ -163,7 +117,7 @@ public class RegexUtil
     \*----------------------------------------------------------------------*/
 
     /**
-     * This method implements Perl-like regular expression substitution. It
+     * <p>This method implements Perl-like regular expression substitution. It
      * takes an edit string representing the substitution, and a string to
      * be edited. It returns the possibly edited string. The substitution
      * syntax is similar to Perl:</p>
@@ -179,26 +133,27 @@ public class RegexUtil
      * though some of them aren't actually supported (but are present solely
      * for syntactical compatibility).</p>
      *
-     * <table border="0" cellpadding="2">
-     *   <tr valign="top">
+     * <table>
+     *   <caption>Modifiers and Meanings</caption>
+     *   <tr>
      *     <th>Modifier</th>
      *     <th>Meaning</th>
      *   </tr>
-     * 
-     *   <tr valign="top">
+     *
+     *   <tr>
      *     <td>g</td>
      *     <td>Substitute for all occurrences of the regular expression.
      *         not just the first one.</td>
      *   </tr>
-     * 
-     *   <tr valign="top">
+     *
+     *   <tr>
      *     <td>i</td>
      *     <td>Do case-insensitive pattern matching. This modifier corresponds
      *         to the <tt>java.util.regex.Pattern.CASE_INSENSITIVE</tt> flag.
      *     </td>
      *   </tr>
-     * 
-     *   <tr valign="top">
+     *
+     *   <tr>
      *     <td>m</td>
      *     <td>Treat the string is consisting of multiple lines. This modifier
      *         corresponds to the <tt>java.util.regex.Pattern.MULTILINE</tt>
@@ -209,15 +164,15 @@ public class RegexUtil
      *         the entire input sequence.
      *      </td>
      *   </tr>
-     * 
-     *   <tr valign="top">
+     *
+     *   <tr>
      *     <td>o</td>
      *     <td>Compile once. This modifier is ignored, since regular
      *         expressions are always compiled once and stored in the
      *         internal LRU buffer.</td>
      *   </tr>
-     * 
-     *   <tr valign="top">
+     *
+     *   <tr>
      *     <td>u</td>
      *     <td>Enables Unicode-aware case folding. This modifier corresponds
      *         to the <tt>java.util.regex.UNICODE_CASE</tt> flag. When this
@@ -230,7 +185,7 @@ public class RegexUtil
      *     </td>
      *   </tr>
      *
-     *   <tr valign="top">
+     *   <tr>
      *     <td>x</td>
      *     <td>Permits whitespace and comments in a pattern. This modifier
      *         corresponds to the <tt>java.util.regex.Pattern.COMMENTS</tt>

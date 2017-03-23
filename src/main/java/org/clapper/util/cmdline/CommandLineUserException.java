@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------*\
- $Id$
-\*---------------------------------------------------------------------------*/
-
 package org.clapper.util.cmdline;
 
 /**
@@ -21,8 +17,6 @@ package org.clapper.util.cmdline;
  *      error other than a command-line error.
  *  <li>For other errors, print (or log) a stack trace.
  * </ul>
- *
- * @version <tt>$Revision$</tt>
  */
 public class CommandLineUserException extends CommandLineException
 {

@@ -1,49 +1,3 @@
-/*---------------------------------------------------------------------------*\
-  $Id$
-  ---------------------------------------------------------------------------
-  This software is released under a BSD-style license:
-
-  Copyright (c) 2004-2007 Brian M. Clapper. All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are
-  met:
-
-  1.  Redistributions of source code must retain the above copyright notice,
-      this list of conditions and the following disclaimer.
-
-  2.  The end-user documentation included with the redistribution, if any,
-      must include the following acknowlegement:
-
-        "This product includes software developed by Brian M. Clapper
-        (bmc@clapper.org, http://www.clapper.org/bmc/). That software is
-        copyright (c) 2004-2007 Brian M. Clapper."
-
-      Alternately, this acknowlegement may appear in the software itself,
-      if wherever such third-party acknowlegements normally appear.
-
-  3.  Neither the names "clapper.org", "clapper.org Java Utility Library",
-      nor any of the names of the project contributors may be used to
-      endorse or promote products derived from this software without prior
-      written permission. For written permission, please contact
-      bmc@clapper.org.
-
-  4.  Products derived from this software may not be called "clapper.org
-      Java Utility Library", nor may "clapper.org" appear in their names
-      without prior written permission of Brian M. Clapper.
-
-  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
-  NO EVENT SHALL BRIAN M. CLAPPER BE LIABLE FOR ANY DIRECT, INDIRECT,
-  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-\*---------------------------------------------------------------------------*/
-
 package org.clapper.util.config;
 
 import java.io.*;
@@ -239,16 +193,17 @@ import org.clapper.util.io.FileUtil;
  * variables provided by the <tt>Configuration</tt> class. Those variables
  * are:</p>
  *
- * <table border="1" align="left" width="100%" class="nested-table">
- *   <tr valign="top">
- *     <th align="left">Variable</th>
- *     <th align="left">Description</th>
- *     <th align="left">Examples</th>
+ * <table border="1" class="nested-table">
+ *   <caption>Variables</caption>
+ *   <tr>
+ *     <th>Variable</th>
+ *     <th>Description</th>
+ *     <th>Examples</th>
  *   </tr>
  *
- *   <tr valign="top">
- *     <td align="left"><tt>cwd</tt></td>
- *     <td align="left">
+ *   <tr>
+ *     <td><tt>cwd</tt></td>
+ *     <td>
  *        the program's current working directory. Thus,
  *        <tt>${program:cwd}</tt> will substitute the working directory,
  *        with the appropriate system-specific file separator. On a Windows
@@ -256,12 +211,12 @@ import org.clapper.util.io.FileUtil;
  *        to ensure that it is properly interpreted by the configuration file
  *        parsing logic.
  *     </td>
- *     <td align="left">&nbsp;</td>
+ *     <td>&nbsp;</td>
  *   </tr>
  *
- *   <tr valign="top">
- *     <td align="left"><tt>cwd.url</tt></td>
- *     <td align="left">
+ *   <tr>
+ *     <td><tt>cwd.url</tt></td>
+ *     <td>
  *        the program's current working directory as a <tt>file</tt> URL,
  *        without the trailing "/". Useful when you need to create a URL
  *        reference to something relative to the current directory. This is
@@ -273,23 +228,23 @@ import org.clapper.util.io.FileUtil;
  *         always produces a valid URL, regardless of the underlying host
  *         operating system.
  *     </td>
- *     <td align="left">&nbsp;</td>
+ *     <td>&nbsp;</td>
  *   </tr>
  *
- *   <tr valign="top">
- *     <td align="left"><tt>now</tt></td>
- *     <td align="left">
+ *   <tr>
+ *     <td><tt>now</tt></td>
+ *     <td>
  *        the current time, formatted by calling
  *        <tt>java.util.Date.toString()</tt> with the default locale.
  *     </td>
- *     <td align="left">&nbsp;</td>
+ *     <td>&nbsp;</td>
  *   </tr>
  *
- *   <tr valign="top">
- *     <td align="left" nowrap>
+ *   <tr>
+ *     <td>
  *       <tt>now</tt> <i>delim</i> <i>fmt</i> [<i>delim</i> <i>lang delim country</i>]]
  *     </td>
- *     <td align="left">
+ *     <td>
  *        <p>The current date/time, formatted with the specified
  *        <tt>java.text.SimpleDateFormat</tt> format string. If specified,
  *        the given locale and country code will be used; otherwise, the
@@ -317,7 +272,7 @@ import org.clapper.util.io.FileUtil;
  *        <p>See <a href="#RawValues">Suppressing Metacharacter Expansion
  *        and Variable Substitution</a>, below, for more details.</p>
  *     </td>
- *     <td align="left">
+ *     <td>
  * <pre> ${program:now|yyyy.MM.dd 'at' hh:mm:ss z}
  * ${program:now|yyyy/MM/dd 'at' HH:mm:ss z|en|US}
  * ${program:now|dd MMM, yyyy hh:mm:ss z|fr|FR}</pre>
@@ -437,10 +392,6 @@ import org.clapper.util.io.FileUtil;
  * or a "!". This comment syntax is identical to the one supported by a
  * Java properties file. A blank line is a line containing no content, or
  * one containing only whitespace. Blank lines and comments are ignored.</p>
- *
- * @version <tt>$Revision$</tt>
- *
- * @author Copyright &copy; 2004-2007 Brian M. Clapper
  */
 public class Configuration
     implements VariableDereferencer, VariableNameChecker
@@ -1065,9 +1016,7 @@ public class Configuration
      * Convenience method to get and convert an optional non-negative integer
      * parameter. The default value applies if the variable is missing or
      * is there but has an empty value. (The term "cardinal" is borrowed from
-     * the
-     * {@link <a href="http://www.research.compaq.com/SRC/m3defn/html/ordinal.html">Modula-3</a>}
-     * language.)
+     * the Modula-3 language.)
      *
      * @param sectionName   section name
      * @param variableName  variable name

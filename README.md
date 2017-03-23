@@ -17,10 +17,27 @@ are bugs in it, I fix them. If you run into a problem using this library,
 open an [issue](https://github.com/bmc/javautil/issues), and I will try
 to address it.
 
-The library is Copyright &copy; 2004-2016, Brian M. Clapper, is released
+The library is Copyright &copy; 2004-2017, Brian M. Clapper, is released
 under a [New BSD License](LICENSE.md).
 
 Please see the [home page][] for more information, downloads, and the like.
+
+## Building from Source
+
+This software builds with [SBT][http://scala-sbt.org/] (mostly because I
+can't stand Maven, and I'm tired of fighting with Gradle).
+
+If you're on a *nix box (including MacOS), simply run:
+
+```
+bin/activator compile
+```
+
+If you're on Windows, you'll have to download SBT and run
+
+```
+sbt build
+```
 
 [home page]: http://software.clapper.org/javautil/
 

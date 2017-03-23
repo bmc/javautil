@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------*\
-  $Id: d6cc823afcb0c93a99ba1d780a563546ad80584c $
-\*---------------------------------------------------------------------------*/
-
 package org.clapper.util.misc;
 
 import java.util.AbstractMap;
@@ -24,8 +20,6 @@ import java.util.Set;
  *
  * <p>Any value placed into a <tt>MultivalueMap</tt> must implement
  * <tt>java.lang.Comparable</tt>.</p>
- *
- * @version <tt>$Revision$</tt>
  */
 public class MultiValueMap<K,V> extends AbstractMap<K,V> implements Cloneable
 {

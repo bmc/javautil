@@ -1,49 +1,3 @@
-/*---------------------------------------------------------------------------*\
-  $Id$
-  ---------------------------------------------------------------------------
-  This software is released under a BSD-style license:
-
-  Copyright (c) 2004-2007 Brian M. Clapper. All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are
-  met:
-
-  1.  Redistributions of source code must retain the above copyright notice,
-      this list of conditions and the following disclaimer.
-
-  2.  The end-user documentation included with the redistribution, if any,
-      must include the following acknowlegement:
-
-        "This product includes software developed by Brian M. Clapper
-        (bmc@clapper.org, http://www.clapper.org/bmc/). That software is
-        copyright (c) 2004-2007 Brian M. Clapper."
-
-      Alternately, this acknowlegement may appear in the software itself,
-      if wherever such third-party acknowlegements normally appear.
-
-  3.  Neither the names "clapper.org", "clapper.org Java Utility Library",
-      nor any of the names of the project contributors may be used to
-      endorse or promote products derived from this software without prior
-      written permission. For written permission, please contact
-      bmc@clapper.org.
-
-  4.  Products derived from this software may not be called "clapper.org
-      Java Utility Library", nor may "clapper.org" appear in their names
-      without prior written permission of Brian M. Clapper.
-
-  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
-  NO EVENT SHALL BRIAN M. CLAPPER BE LIABLE FOR ANY DIRECT, INDIRECT,
-  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-\*---------------------------------------------------------------------------*/
-
 package org.clapper.util.logging;
 
 import org.apache.commons.logging.LogFactory;
@@ -73,7 +27,7 @@ import java.util.ArrayList;
  *
  * <p>However, this class can be reimplemented in terms of other logging
  * layers (and, in fact, has been implemented solely in terms of the JDK
- * 1.4 native logging library in the past).</p> This object's main purpose
+ * 1.4 native logging library in the past). This object's main purpose
  * now is to insulate applications from the underlying logging technology,
  * so that technology can be changed, if necessary, without having an
  * impact on applications that use this class.</p>
@@ -82,38 +36,39 @@ import java.util.ArrayList;
  * by Commons Logging. (e.g.,, a "debug" message uses the same level as
  * a Commons Logging "debug" message.) Those mappings are:</p>
  *
- * <table border="1">
- *   <tr valign="top">
+ * <table>
+ *   <caption>Mappings</caption>
+ *   <tr>
  *     <th><tt>org.clapper.util.logging.Logger</tt> method</th>
  *     <th>Corresponding <tt>java.util.logging.Level</tt> value</th>
  *   </tr>
  *
- *   <tr valign="top">
+ *   <tr>
  *     <td><tt>debug()</tt></td>
  *     <td><tt>FINE</tt></td>
  *   </tr>
  *
- *   <tr valign="top">
+ *   <tr>
  *     <td><tt>error()</tt></td>
  *     <td><tt>SEVERE</tt></td>
  *   </tr>
  *
- *   <tr valign="top">
+ *   <tr>
  *     <td><tt>fatal()</tt></td>
  *     <td><tt>SEVERE</tt></td>
  *   </tr>
  *
- *   <tr valign="top">
+ *   <tr>
  *     <td><tt>info()</tt></td>
  *     <td><tt>INFO</tt></td>
  *   </tr>
  *
- *   <tr valign="top">
+ *   <tr>
  *     <td><tt>trace()</tt></td>
  *     <td><tt>FINEST</tt></td>
  *   </tr>
  *
- *   <tr valign="top">
+ *   <tr>
  *     <td><tt>warn()</tt></td>
  *     <td><tt>WARNING</tt></td>
  *   </tr>
@@ -152,10 +107,6 @@ import java.util.ArrayList;
  *
  * @see #enableLogging
  * @see <a href="http://jakarta.apache.org/commons/logging/index.html" target="_top">Jakarta Commons Logging API</a>
- *
- * @version <tt>$Revision$</tt>
- *
- * @author Copyright &copy; 2004-2007 Brian M. Clapper
  */
 public class Logger
 {

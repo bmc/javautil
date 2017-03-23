@@ -1,49 +1,3 @@
-/*---------------------------------------------------------------------------*\
-  $Id$
-  ---------------------------------------------------------------------------
-  This software is released under a BSD-style license:
-
-  Copyright (c) 2004-2007 Brian M. Clapper. All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are
-  met:
-
-  1.  Redistributions of source code must retain the above copyright notice,
-      this list of conditions and the following disclaimer.
-
-  2.  The end-user documentation included with the redistribution, if any,
-      must include the following acknowlegement:
-
-        "This product includes software developed by Brian M. Clapper
-        (bmc@clapper.org, http://www.clapper.org/bmc/). That software is
-        copyright (c) 2004-2007 Brian M. Clapper."
-
-      Alternately, this acknowlegement may appear in the software itself,
-      if wherever such third-party acknowlegements normally appear.
-
-  3.  Neither the names "clapper.org", "clapper.org Java Utility Library",
-      nor any of the names of the project contributors may be used to
-      endorse or promote products derived from this software without prior
-      written permission. For written permission, please contact
-      bmc@clapper.org.
-
-  4.  Products derived from this software may not be called "clapper.org
-      Java Utility Library", nor may "clapper.org" appear in their names
-      without prior written permission of Brian M. Clapper.
-
-  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
-  NO EVENT SHALL BRIAN M. CLAPPER BE LIABLE FOR ANY DIRECT, INDIRECT,
-  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-\*---------------------------------------------------------------------------*/
-
 package org.clapper.util.misc;
 
 import org.clapper.util.logging.Logger;
@@ -106,13 +60,14 @@ import java.util.TreeSet;
  * arrive at the actual file names.</p>
  *
  * <blockquote>
- * <table border="1">
- *   <tr valign="top">
+ * <table>
+ *   <caption>Extensions and Meanings</caption>
+ *   <tr>
  *     <th>Extension</th>
  *     <th>Meaning</th>
  *   </tr>
  *
- *   <tr valign="top">
+ *   <tr>
  *     <td>.ix</td>
  *     <td>The saved in-memory index. This file is created only if the
  *         <tt>FileHashMap</tt> is not marked as transient. (See below.)
@@ -120,7 +75,7 @@ import java.util.TreeSet;
  *         constant defines this string.</td>
  *   </tr>
  *
- *   <tr valign="top">
+ *   <tr>
  *     <td>.db</td>
  *     <td>The on-disk data (value) file, where the serialized objects are
  *         stored.
@@ -284,10 +239,6 @@ import java.util.TreeSet;
  *       at which changes to the buffer are propagated to the file is
  *       unspecified.")
  * </ul>
- *
- * @version <tt>$Revision$</tt>
- *
- * @author Copyright &copy; 2004-2007 Brian M. Clapper
  */
 public class FileHashMap<K,V> extends AbstractMap<K,V>
 {
@@ -1120,12 +1071,12 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
      * <p>The <tt>flags</tt> parameter consists of a set of logically OR'd
      * constants.
      *
-     * <p>If <tt>(flags & NO_CREATE)</tt> is zero, the constructor will
+     * <p>If <tt>(flags &amp; NO_CREATE)</tt> is zero, the constructor will
      * attempt to create the index files if they don't exist. Otherwise, it
      * expects to find a saved hash map, and it will throw an exception if
      * the files are not present.</p>
      *
-     * <p>If <tt>(flags & TRANSIENT)</tt> is non-zero, the constructor will
+     * <p>If <tt>(flags &amp; TRANSIENT)</tt> is non-zero, the constructor will
      * attempt to create a transient map. A transient map is not saved; its
      * disk files are removed when the map is finalized or manually closed.
      * You cannot create a transient map using a file prefix that specifies
@@ -1136,14 +1087,18 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
      * <tt>FileHashMap</tt>:</p>
      *
      * <blockquote><pre>
+     * {@code
      * Map map = new FileHashMap ("/my/temp/dir", FileHashMap.TRANSIENT);
+     * }
      * </pre></blockquote>
      *
      * <p>whereas this statements opens a persistent <tt>FileHashMap</tt>,
      * creating it if it doesn't already exist:</p>
      *
      * <blockquote><pre>
+     * {@code
      * Map map = new FileHashMap ("/my/map/dir", FileHashMap.CREATE);
+     * }
      * </pre></blockquote>
      *
      * @param pathPrefix   The pathname prefix to the files to be used
@@ -1270,7 +1225,7 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
     /**
      * Finalizer
      *
-     * @throws throwable on error
+     * @throws Throwable on error
      */
     protected void finalize()
         throws Throwable
@@ -1727,7 +1682,7 @@ public class FileHashMap<K,V> extends AbstractMap<K,V>
      *
      * <p>The collection is backed by the map, so changes to the map are
      * reflected in the set. If the map is modified while an iteration over
-     * the set is in progress, the results of the iteration are undefined.</p>
+     * the set is in progress, the results of the iteration are undefined.
      * The set does not support any of the <tt>add()</tt> methods.</p>
      *
      * <p><b>Warning:</b>: The <tt>toArray()</tt> methods can be dangerous,

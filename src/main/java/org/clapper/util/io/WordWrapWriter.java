@@ -1,49 +1,3 @@
-/*---------------------------------------------------------------------------*\
-  $Id$
-  ---------------------------------------------------------------------------
-  This software is released under a BSD-style license:
-
-  Copyright (c) 2004-2007 Brian M. Clapper. All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are
-  met:
-
-  1.  Redistributions of source code must retain the above copyright notice,
-      this list of conditions and the following disclaimer.
-
-  2.  The end-user documentation included with the redistribution, if any,
-      must include the following acknowlegement:
-
-        "This product includes software developed by Brian M. Clapper
-        (bmc@clapper.org, http://www.clapper.org/bmc/). That software is
-        copyright (c) 2004-2007 Brian M. Clapper."
-
-      Alternately, this acknowlegement may appear in the software itself,
-      if wherever such third-party acknowlegements normally appear.
-
-  3.  Neither the names "clapper.org", "clapper.org Java Utility Library",
-      nor any of the names of the project contributors may be used to
-      endorse or promote products derived from this software without prior
-      written permission. For written permission, please contact
-      bmc@clapper.org.
-
-  4.  Products derived from this software may not be called "clapper.org
-      Java Utility Library", nor may "clapper.org" appear in their names
-      without prior written permission of Brian M. Clapper.
-
-  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
-  NO EVENT SHALL BRIAN M. CLAPPER BE LIABLE FOR ANY DIRECT, INDIRECT,
-  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-\*---------------------------------------------------------------------------*/
-
 package org.clapper.util.io;
 
 import java.io.OutputStream;
@@ -55,7 +9,7 @@ import java.util.StringTokenizer;
 
 /**
  * <p>The <tt>WordWrapWriter</tt> class is a filter class. A
- * WordWrapWriter</tt> object wraps a <tt>Writer</tt> or
+ * <tt>WordWrapWriter</tt> object wraps a <tt>Writer</tt> or
  * <tt>OutputStream</tt> object, filtering output to the wrapped object so
  * that output lines are broken on word boundaries and fit nicely within
  * the proscribed output width. Messages may be written with prefixes or
@@ -115,7 +69,7 @@ import java.util.StringTokenizer;
  * that encounters an embedded newline. Thus, it's rarely necessary to call
  * <tt>flush()</tt> manually.</p>
  *
- * <p><b>Notes</b></b>
+ * <p><b>Notes</b></p>
  *
  * <ol>
  *   <li> The class does not do any special processing of tab characters.
@@ -135,10 +89,6 @@ import java.util.StringTokenizer;
  *
  * @see java.io.Writer
  * @see java.io.PrintWriter
- *
- * @version $Revision$
- *
- * @author Copyright &copy; 2004-2007 Brian M. Clapper
  */
 public class WordWrapWriter extends PrintWriter
 {
@@ -285,7 +235,7 @@ public class WordWrapWriter extends PrintWriter
     public WordWrapWriter (Writer output, int lineLength)
     {
         this (new PrintWriter (output), lineLength);
-    } 
+    }
 
     /**
      * Build an <code>WordWrapWriter</code> object that will write its
@@ -305,7 +255,7 @@ public class WordWrapWriter extends PrintWriter
     public WordWrapWriter (PrintWriter output, int lineLength)
     {
         this (output, lineLength, 0);
-    } 
+    }
 
     /**
      * Build an <code>WordWrapWriter</code> object that will write its
@@ -325,7 +275,7 @@ public class WordWrapWriter extends PrintWriter
     public WordWrapWriter (OutputStream output, int lineLength)
     {
         this (output, lineLength, 0);
-    } 
+    }
 
     /**
      * Build an <code>WordWrapWriter</code> object that will write its
@@ -348,7 +298,7 @@ public class WordWrapWriter extends PrintWriter
     public WordWrapWriter (Writer output, int lineLength, int indentSpaces)
     {
         this (new PrintWriter (output), lineLength, indentSpaces);
-    } 
+    }
 
     /**
      * Build an <code>WordWrapWriter</code> object that will write its
@@ -376,7 +326,7 @@ public class WordWrapWriter extends PrintWriter
         writer = output;
         setLineLength (lineLength);
         setIndentation (indentSpaces);
-    } 
+    }
 
     /**
      * Build an <code>WordWrapWriter</code> object that will write its
@@ -401,7 +351,7 @@ public class WordWrapWriter extends PrintWriter
                            int          indentSpaces)
     {
         this (new OutputStreamWriter (output), lineLength, indentSpaces);
-    } 
+    }
 
     /*----------------------------------------------------------------------*\
                               Public Methods
@@ -830,8 +780,8 @@ public class WordWrapWriter extends PrintWriter
      * a new line. Each line is indented according to this object's
      * defined indentation level.
      *
-     * @param cbuf Array of characters 
-     * @param off  Offset from which to start writing characters 
+     * @param cbuf Array of characters
+     * @param off  Offset from which to start writing characters
      * @param len  Number of characters to write
      */
     public void write (char cbuf[], int off, int len)
@@ -847,7 +797,7 @@ public class WordWrapWriter extends PrintWriter
      * defined indentation level.
      *
      * @param s    String from which to write
-     * @param off  Offset from which to start writing characters 
+     * @param off  Offset from which to start writing characters
      * @param len  Number of characters to write
      */
     public void write (String s, int off, int len)
@@ -868,7 +818,7 @@ public class WordWrapWriter extends PrintWriter
 
         this.write (cbuf, 0, cbuf.length);
     }
-    
+
     /**
      * Write an array of characters.
      *

@@ -1,9 +1,9 @@
 /target
+/project/project
+/project/target
 /reports
 .envrc
 .rvmrc
 .idea
 .ruby-version
 *.iml
-.gradle
-/build

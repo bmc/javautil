@@ -1,49 +1,3 @@
-/*---------------------------------------------------------------------------*\
-  $Id$
-  ---------------------------------------------------------------------------
-  This software is released under a BSD-style license:
-
-  Copyright (c) 2004-2007 Brian M. Clapper. All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are
-  met:
-
-  1.  Redistributions of source code must retain the above copyright notice,
-      this list of conditions and the following disclaimer.
-
-  2.  The end-user documentation included with the redistribution, if any,
-      must include the following acknowlegement:
-
-        "This product includes software developed by Brian M. Clapper
-        (bmc@clapper.org, http://www.clapper.org/bmc/). That software is
-        copyright (c) 2004-2007 Brian M. Clapper."
-
-      Alternately, this acknowlegement may appear in the software itself,
-      if wherever such third-party acknowlegements normally appear.
-
-  3.  Neither the names "clapper.org", "clapper.org Java Utility Library",
-      nor any of the names of the project contributors may be used to
-      endorse or promote products derived from this software without prior
-      written permission. For written permission, please contact
-      bmc@clapper.org.
-
-  4.  Products derived from this software may not be called "clapper.org
-      Java Utility Library", nor may "clapper.org" appear in their names
-      without prior written permission of Brian M. Clapper.
-
-  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
-  NO EVENT SHALL BRIAN M. CLAPPER BE LIABLE FOR ANY DIRECT, INDIRECT,
-  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-\*---------------------------------------------------------------------------*/
-
 package org.clapper.util.mail;
 
 import org.clapper.util.io.FileUtil;
@@ -108,11 +62,12 @@ import javax.mail.internet.MimeBodyPart;
  *
  * <p>The <tt>EmailMessage</tt> class supports both the MIME
  * "multipart/mixed" and "multipart/alternative" message types. According to
- * {@link <a href="http://www.ietf.org/rfc/rfc1341.txt">RFC 1341</a>},
+ * <a href="http://www.ietf.org/rfc/rfc1341.txt">RFC 1341</a>,
  * the differences between the two types are as follows:</p>
  *
- * <table border="1">
- *   <tr valign="top">
+ * <table>
+ *   <caption>How multipart types are handled</caption>
+ *   <tr>
  *     <td>multipart/mixed</td>
  *     <td>Intended for use when the body parts (i.e., the text and the
  *         attachments) are independent and intended to be displayed serially.
@@ -120,7 +75,7 @@ import javax.mail.internet.MimeBodyPart;
  *         would use a "multipart/mixed" message.</td>
  *   </tr>
  *
- *   <tr valign="top">
+ *   <tr>
  *     <td>multipart/alternative</td>
  *     <td>Each of the parts (i.e., the main text part and the attachments)
  *         is an alternative version of the same information. The most typical
@@ -194,15 +149,11 @@ import javax.mail.internet.MimeBodyPart;
  * </ul>
  *
  * <p>Both APIs are available from
- * {@link <a href="http://java.sun.com/">java.sun.com</a>}.</p>
- *
- * @version <tt>$Revision$</tt>
+ * <a href="http://java.sun.com/">java.sun.com</a>.</p>
  *
  * @see EmailTransport
  * @see SMTPEmailTransport
  * @see <a href="http://java.sun.com/products/javamail/">The Java Mail API home page</a>
- *
- * @author Copyright &copy; 2004-2007 Brian M. Clapper
  */
 public class EmailMessage implements Serializable
 {
@@ -481,10 +432,12 @@ public class EmailMessage implements Serializable
      *
      * <blockquote>
      * <pre>
+     * {@code
      * moe@example.com
      * Moe Howard <moe@example.com>
      * "Curley Howard" <curley@example.com>
      * larry@example.com (Larry Fine)
+     * }
      * </pre>
      * </blockquote>
      *
@@ -516,6 +469,8 @@ public class EmailMessage implements Serializable
      * object, to the list of "To" addresses to receive this message.
      *
      * @param emailAddress  the email address to add
+     *
+     * @throws EmailException on error
      *
      * @see #addTo(String[])
      * @see #addTo(String)
@@ -626,10 +581,12 @@ public class EmailMessage implements Serializable
      *
      * <blockquote>
      * <pre>
+     * {@code
      * moe@example.com
      * Moe Howard <moe@example.com>
      * "Curley Howard" <curley@example.com>
      * larry@example.com (Larry Fine)
+     * }
      * </pre>
      * </blockquote>
      *
@@ -773,10 +730,12 @@ public class EmailMessage implements Serializable
      *
      * <blockquote>
      * <pre>
+     * {@code
      * moe@example.com
      * Moe Howard <moe@example.com>
      * "Curley Howard" <curley@example.com>
      * larry@example.com (Larry Fine)
+     * }
      * </pre>
      * </blockquote>
      *
@@ -919,9 +878,11 @@ public class EmailMessage implements Serializable
      *
      * <blockquote>
      * <pre>
+     * {@code
      * message.clearTo();
      * message.clearCc();
      * message.clearBcc();
+     * }
      * </pre>
      * </blockquote>
      */
@@ -1017,14 +978,14 @@ public class EmailMessage implements Serializable
             }
         }
 
-        catch (IOException ex)
+        catch (MessagingException ex)
         {
             throw new EmailException ("Cannot retrieve text portion of " +
                                       "email message",
                                       ex);
         }
 
-        catch (MessagingException ex)
+        catch (IOException ex)
         {
             throw new EmailException ("Cannot retrieve text portion of " +
                                       "email message",
@@ -2301,10 +2262,12 @@ public class EmailMessage implements Serializable
      *
      * <blockquote>
      * <pre>
+     * {@code
      * vangogh@example.com
      * Vincent Van Gogh <vangogh@example.com>
      * "Vincent Van Gogh" <vangogh@example.com>
      * vangogh@example.com (Vincent Van Gogh)
+     * }
      * </pre>
      * </blockquote>
      *
@@ -2333,10 +2296,12 @@ public class EmailMessage implements Serializable
      *
      * <blockquote>
      * <pre>
+     * {@code
      * vangogh@example.com
      * Vincent Van Gogh <vangogh@example.com>
      * "Vincent Van Gogh" <vangogh@example.com>
      * vangogh@example.com (Vincent Van Gogh)
+     * }
      * </pre>
      * </blockquote>
      *

@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------*\
- $Id$
-\*---------------------------------------------------------------------------*/
-
 package org.clapper.util.text;
 
 import java.util.ArrayList;
@@ -26,10 +22,6 @@ import java.util.Map;
  * @see VariableDereferencer
  * @see VariableSubstituter
  * @see MapVariableDereferencer
- *
- * @version $Revision: 6735 $
- *
- * @author Copyright &copy; 2004-2007 Brian M. Clapper
  */
 public class MultipleMapVariableDereferencer implements VariableDereferencer
 {

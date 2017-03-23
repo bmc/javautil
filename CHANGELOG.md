@@ -3,6 +3,13 @@ title: Change log for org.clapper.util Java Utility Library
 layout: default
 ---
 
+Version 3.2.0 (22 March, 2017)
+
+* Now builds with SBT. I'm tired of fighting Gradle.
+* Removed all "test" classes that aren't JUnit tests.
+* Fixed Javadoc problems.
+* Removed copyrights from individual source files.
+
 Version 3.1.3 (22 May, 2016)
 
 * Updated Gradle build to use Bintray plugin, allowing publishing to Bintray.

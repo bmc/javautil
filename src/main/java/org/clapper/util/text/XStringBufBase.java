@@ -1,49 +1,3 @@
-/*---------------------------------------------------------------------------*\
-  $Id$
-  ---------------------------------------------------------------------------
-  This software is released under a BSD-style license:
-
-  Copyright (c) 2004-2007 Brian M. Clapper. All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are
-  met:
-
-  1.  Redistributions of source code must retain the above copyright notice,
-      this list of conditions and the following disclaimer.
-
-  2.  The end-user documentation included with the redistribution, if any,
-      must include the following acknowlegement:
-
-        "This product includes software developed by Brian M. Clapper
-        (bmc@clapper.org, http://www.clapper.org/bmc/). That software is
-        copyright (c) 2004-2007 Brian M. Clapper."
-
-      Alternately, this acknowlegement may appear in the software itself,
-      if wherever such third-party acknowlegements normally appear.
-
-  3.  Neither the names "clapper.org", "clapper.org Java Utility Library",
-      nor any of the names of the project contributors may be used to
-      endorse or promote products derived from this software without prior
-      written permission. For written permission, please contact
-      bmc@clapper.org.
-
-  4.  Products derived from this software may not be called "clapper.org
-      Java Utility Library", nor may "clapper.org" appear in their names
-      without prior written permission of Brian M. Clapper.
-
-  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
-  NO EVENT SHALL BRIAN M. CLAPPER BE LIABLE FOR ANY DIRECT, INDIRECT,
-  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-\*---------------------------------------------------------------------------*/
-
 package org.clapper.util.text;
 
 import java.util.Collection;
@@ -61,10 +15,6 @@ import java.io.IOException;
  * @see XStringBuilder
  * @see java.lang.StringBuffer
  * @see java.lang.StringBuilder
- *
- * @version <tt>$Revision$</tt>
- *
- * @author Copyright &copy; 2004-2007 Brian M. Clapper
  */
 public abstract class XStringBufBase implements CharSequence, Appendable
 {
@@ -163,7 +113,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      * @param end    The ending index, exclusive
      *
      * @throws IndexOutOfBoundsException  if <tt>start</tt> is negative,
-     *                                    greater than <tt>length()<tt>,
+     *                                    greater than <tt>length()</tt>,
      *                                    or greater than <tt>end</tt>
      */
     protected abstract void deleteCharacters (int start, int end)
@@ -211,8 +161,8 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *
      * @throws IndexOutOfBoundsException if <tt>start</tt> is negative,
      *                                   or greater than
-     *                                   <tt>length()<tt>, or greater
-     *                                   than <tt>end<tt>
+     *                                   <tt>length()</tt>, or greater
+     *                                   than <tt>end</tt>
      */
     protected abstract void replaceString (int start, int end, String str)
         throws IndexOutOfBoundsException;
@@ -251,8 +201,6 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      * @param c  The character to append.
      *
      * @return a reference to this object
-     *
-     * @throws IOException  I/O error
      */
     public XStringBufBase append (char c)
     {
@@ -596,7 +544,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      * @return This object
      *
      * @throws IndexOutOfBoundsException  if <tt>start</tt> is negative,
-     *                                    greater than <tt>length()<tt>,
+     *                                    greater than <tt>length()</tt>,
      *                                    or greater than <tt>end</tt>
      */
     public XStringBufBase delete (int start, int end)
@@ -628,8 +576,8 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *
      * @throws StringIndexOutOfBoundsException if <tt>start</tt> is negative,
      *                                         or greater than
-     *                                         <tt>length()<tt>, or greater
-     *                                         than <tt>end<tt>
+     *                                         <tt>length()</tt>, or greater
+     *                                         than <tt>end</tt>
      * @throws IOException                     I/O exception
      *
      * @see #encodeMetacharacters()
@@ -704,8 +652,8 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *
      * @throws StringIndexOutOfBoundsException if <tt>start</tt> is negative,
      *                                         or greater than
-     *                                         <tt>length()<tt>, or greater
-     *                                         than <tt>end<tt>
+     *                                         <tt>length()</tt>, or greater
+     *                                         than <tt>end</tt>
      *
      * @see #decodeMetacharacters()
      * @see #encodeMetacharacters(int,int)
@@ -872,6 +820,8 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *
      * @param index  Where to start inserting in the string buffer
      * @param val    The <tt>boolean</tt> value
+     *
+     * @return this object
      */
     public XStringBufBase insert (int index, boolean val)
     {
@@ -885,6 +835,8 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *
      * @param index  Where to start inserting in the string buffer
      * @param ch     The character to insert.
+     *
+     * @return this object
      */
     public XStringBufBase insert (int index, char ch)
     {
@@ -899,6 +851,8 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *
      * @param index  Where to start inserting in the string buffer
      * @param chars  The character array.
+     *
+     * @return this object
      */
     public XStringBufBase insert (int index, char chars[])
     {
@@ -915,6 +869,8 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      * @param chars  The character array.
      * @param offset The index of the first character to insert
      * @param len    The maximum number of characters to insert
+     *
+     * @return this object
      */
     public XStringBufBase insert (int  index,
                                   char chars[],
@@ -932,6 +888,8 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *
      * @param index  Where to start inserting in the string buffer
      * @param val    The <tt>double</tt> value
+     *
+     * @return this object
      */
     public XStringBufBase insert (int index, double val)
     {
@@ -945,6 +903,8 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *
      * @param index  Where to start inserting in the string buffer
      * @param val    The <tt>float</tt> value
+     *
+     * @return this object
      */
     public XStringBufBase insert (int index, float val)
     {
@@ -958,6 +918,8 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *
      * @param index  Where to start inserting in the string buffer
      * @param val    The <tt>int</tt> value
+     *
+     * @return this object
      */
     public XStringBufBase insert (int index, int val)
     {
@@ -971,6 +933,8 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *
      * @param index  Where to start inserting in the string buffer
      * @param val    The <tt>long</tt> value
+     *
+     * @return this object
      */
     public XStringBufBase insert (int index, long val)
     {
@@ -984,6 +948,8 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *
      * @param index  Where to start inserting in the string buffer
      * @param val    The <tt>short</tt> value
+     *
+     * @return this object
      */
     public XStringBufBase insert (int index, short val)
     {
@@ -997,6 +963,8 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *
      * @param index  Where to start inserting in the string buffer
      * @param obj    The object whose string representation is to be inserted
+     *
+     * @return this object
      */
     public XStringBufBase insert (int index, Object obj)
     {
@@ -1010,6 +978,8 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *
      * @param index  Where to start inserting in the string buffer
      * @param s      The string to insert
+     *
+     * @return this object
      */
     public XStringBufBase insert (int index, String s)
     {
@@ -1046,8 +1016,8 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      *
      * @throws StringIndexOutOfBoundsException if <tt>start</tt> is negative,
      *                                         or greater than
-     *                                         <tt>length()<tt>, or greater
-     *                                         than <tt>end<tt>
+     *                                         <tt>length()</tt>, or greater
+     *                                         than <tt>end</tt>
      */
     public XStringBufBase replace (int start, int end, String str)
         throws StringIndexOutOfBoundsException
@@ -1314,7 +1284,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      * @return the substring
      *
      * @throws StringIndexOutOfBoundsException if <tt>start</tt> is negative,
-     *                                         greater than <tt>length()<tt>,
+     *                                         greater than <tt>length()</tt>,
      *                                         or greater than <tt>end</tt>
      *
      * @see #subSequence
@@ -1338,7 +1308,7 @@ public abstract class XStringBufBase implements CharSequence, Appendable
      * @return the subsequence
      *
      * @throws IndexOutOfBoundsException if <tt>start</tt> is negative,
-     *                                   greater than <tt>length()<tt>,
+     *                                   greater than <tt>length()</tt>,
      *                                   or greater than <tt>end</tt>
      */
     public CharSequence subSequence (int start, int end)

@@ -1,49 +1,3 @@
-/*---------------------------------------------------------------------------*\
-  $Id$
-  ---------------------------------------------------------------------------
-  This software is released under a BSD-style license:
-
-  Copyright (c) 2004-2007 Brian M. Clapper. All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are
-  met:
-
-  1.  Redistributions of source code must retain the above copyright notice,
-      this list of conditions and the following disclaimer.
-
-  2.  The end-user documentation included with the redistribution, if any,
-      must include the following acknowlegement:
-
-        "This product includes software developed by Brian M. Clapper
-        (bmc@clapper.org, http://www.clapper.org/bmc/). That software is
-        copyright (c) 2004-2007 Brian M. Clapper."
-
-      Alternately, this acknowlegement may appear in the software itself,
-      if wherever such third-party acknowlegements normally appear.
-
-  3.  Neither the names "clapper.org", "clapper.org Java Utility Library",
-      nor any of the names of the project contributors may be used to
-      endorse or promote products derived from this software without prior
-      written permission. For written permission, please contact
-      bmc@clapper.org.
-
-  4.  Products derived from this software may not be called "clapper.org
-      Java Utility Library", nor may "clapper.org" appear in their names
-      without prior written permission of Brian M. Clapper.
-
-  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
-  NO EVENT SHALL BRIAN M. CLAPPER BE LIABLE FOR ANY DIRECT, INDIRECT,
-  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-\*---------------------------------------------------------------------------*/
-
 package org.clapper.util.text;
 
 import java.util.ArrayList;
@@ -53,10 +7,6 @@ import java.util.StringTokenizer;
 
 /**
  * Static class containing miscellaneous text utility methods.
- *
- * @version <tt>$Revision$</tt>
- *
- * @author Copyright &copy; 2004-2007 Brian M. Clapper
  */
 public final class TextUtil
 {
@@ -289,7 +239,7 @@ public final class TextUtil
     /**
      * <p>Split a string on white space, into one or more strings. This
      * method is intended to be reminiscent of the corresponding perl or
-     * awk <i>split()</i> function, though without regular expression
+     * awk <tt>split()</tt> function, though without regular expression
      * support.</p>
      *
      * <p>Note that the 1.4 JDK introduces a regular expression-based
@@ -551,7 +501,7 @@ public final class TextUtil
     /**
      * <p>Split a string into one or more strings, based on a delimiter.
      * This method is intended to be reminiscent of the corresponding perl
-     * or awk <i>split()</i> function, though without regular expression
+     * or awk <tt>split()</tt> function, though without regular expression
      * support.</p>
      *
      * <p>Note that the 1.4 JDK introduces a regular expression-based
@@ -607,7 +557,7 @@ public final class TextUtil
      *
      * <p>Note that the 1.4 JDK introduces a regular expression-based
      * <tt>split()</tt> method in the <tt>java.lang.String</tt> class. This
-     * method does not use regular expressions.</p> This version of
+     * method does not use regular expressions. This version of
      * <tt>split()</tt> does not preserve empty strings. That is, the
      * string "a:b::c", when split with a ":" delimiter, yields three
      * fields ("a", "b", "c"), since the two adjacent ":" characters are
@@ -644,7 +594,7 @@ public final class TextUtil
      *
      * <p>Note that the 1.4 JDK introduces a regular expression-based
      * <tt>split()</tt> method in the <tt>java.lang.String</tt> class. This
-     * method does not use regular expressions.</p> This version of
+     * method does not use regular expressions. This version of
      * <tt>split()</tt> does not preserve empty strings. That is, the
      * string "a:b::c", when split with a ":" delimiter, yields three
      * fields ("a", "b", "c"), since the two adjacent ":" characters are
@@ -1401,8 +1351,9 @@ public final class TextUtil
      * instance, to encode a number in base 36, you might use the following
      * code fragment:</p>
      *
-     * <pre>
      * <blockquote>
+     * <pre>
+     * {@code
      * StringBuilder buf = new StringBuilder();
      * long         num = ...
      * char[]       digits = new char[]
@@ -1413,8 +1364,9 @@ public final class TextUtil
      *                  'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
      *              };
      * TextUtils.encodeNumber (num, digits.length, digits, buf);
-     * </blockquote>
+     * }
      * </pre>
+     * </blockquote>
      *
      * <p>For convenience, this class provides a character array of
      * hexadecimal digits. (See {@link #HEXADECIMAL_DIGITS}.) However, it's
@@ -1479,8 +1431,9 @@ public final class TextUtil
      * instance, to encode a number in base 36, you might use the following
      * code fragment:</p>
      *
-     * <pre>
      * <blockquote>
+     * <pre>
+     * {@code
      * StringBuilder buf = new StringBuilder();
      * short        num = ...
      * char[]       digits = new char[]
@@ -1491,8 +1444,9 @@ public final class TextUtil
      *                  'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
      *              };
      * TextUtils.encodeNumber (num, digits.length, digits, buf);
-     * </blockquote>
+     * }
      * </pre>
+     * </blockquote>
      *
      * <p>For convenience, this class provides a character array of
      * hexadecimal digits. (See {@link #HEXADECIMAL_DIGITS}.) However, it's
@@ -1558,8 +1512,9 @@ public final class TextUtil
      * to encode a number in base 36, you might use the following code
      * fragment:</p>
      *
-     * <pre>
      * <blockquote>
+     * <pre>
+     * {@code
      * StringBuilder buf = new StringBuilder();
      * int          num = ...
      * char[]       digits = new char[]
@@ -1570,8 +1525,9 @@ public final class TextUtil
      *                  'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
      *              };
      * TextUtils.encodeNumber (num, digits.length, digits, buf);
-     * </blockquote>
+     * }
      * </pre>
+     * </blockquote>
      *
      * <p>For convenience, this class provides a character array of
      * hexadecimal digits. (See {@link #HEXADECIMAL_DIGITS}.)
@@ -1785,6 +1741,8 @@ public final class TextUtil
      *
      * @param c   the character
      *
+     * @return the Unicode escape sequence for the character
+     *
      * @see #charToUnicodeEscape(char)
      */
     public static String charToUnicodeEscape(char c)
@@ -1793,7 +1751,7 @@ public final class TextUtil
     }
 
     /**
-     * Determine whether a character is printable. This method uses a simple
+     * <p>Determine whether a character is printable. This method uses a simple
      * definition of "printable" that doesn't take into account specific
      * locales. A character is assumed to be printable if (a) it's in the Basic
      * Latin, Latin 1 Supplement, or Extended Latin A Unicode block, and
