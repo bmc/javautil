@@ -1,7 +1,4 @@
----
-title: Change log for org.clapper.util Java Utility Library
-layout: default
----
+# Change log for javautil
 
 Version 3.2.0 (22 March, 2017)
 
