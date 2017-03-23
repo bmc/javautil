@@ -25,7 +25,7 @@ Please see the [home page][] for more information, downloads, and the like.
 
 ## Building from Source
 
-This software builds with [SBT][http://scala-sbt.org/] (mostly because I
+This software builds with [SBT](http://scala-sbt.org/) (mostly because I
 can't stand Maven, and I'm tired of fighting with Gradle).
 
 If you're on a *nix box (including MacOS), simply run:
